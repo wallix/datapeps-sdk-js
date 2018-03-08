@@ -1,0 +1,41 @@
+{
+  "name": "datapeps-sdk",
+  "version": "0.0.12",
+  "description": "DataPeps SDK enables safe end-to-end-encryption for any application",
+  "main": "./src/DataPeps.js",
+  "types": "./src/DataPeps.d.ts",
+  "scripts": {
+    "build": "tsc -p .",
+    "pack": "webpack",
+    "doc": "typedoc --mode modules --out doc/ src/DataPeps.ts --tsconfig ./tsconfig.json --excludeExternals --excludeNotExported --readme README.md",
+    "ut": "mocha -r ts-node/register test/ut/*.ts",
+    "integration": "mocha -r ts-node/register test/integration/*.ts test/integration/Identity/*.ts"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.0.2",
+    "@types/mocha": "^2.2.41",
+    "@types/node": "^8.0.31",
+    "@types/text-encoding": "0.0.31",
+    "atob": "^2.0.3",
+    "awesome-typescript-loader": "^3.2.3",
+    "btoa": "^1.1.2",
+    "chai": "^4.1.0",
+    "mocha": "^3.5.0",
+    "mocha-junit-reporter": "^1.14.0",
+    "source-map-loader": "^0.2.2",
+    "text-encoding": "^0.6.4",
+    "ts-node": "^3.3.0",
+    "typedoc": "^0.10.0",
+    "typescript": "^2.5.3",
+    "webpack": "^3.6.0",
+    "ws": "^3.3.2",
+    "xhr2": "^0.1.4"
+  },
+  "dependencies": {
+    "bs58": "^4.0.1",
+    "long": "^3.2.0",
+    "protobufjs": "^6.8.3",
+    "sha.js": "^2.4.10",
+    "tweetnacl": "^1.0.0"
+  }
+}

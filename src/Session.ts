@@ -1,0 +1,756 @@
+import * as nacl from 'tweetnacl';
+import { types, command, events } from './proto';
+import { ID, Session, SessionRequest, PublicKeysCache, TrustPolicy, AccessRequestResolver } from './DataPeps';
+import { IdentityPublicKey, IdentityPublicKeyID, IdentityAccessKind } from './DataPeps';
+import { AccessRequest } from './DataPeps';
+import { Resource } from './DataPeps';
+import { Error, SDKKind, ServerKind } from './Error';
+import { Uint8Tool, Base64 } from './Tools';
+import { Client } from './HTTP';
+import { ResolvedCipher, Encryption } from './CryptoFuncs';
+
+import { IdentityImpl } from './Identity';
+import { ResourceImpl } from './Resource';
+import { AdminImpl } from './Admin';
+import { ChannelAPIImpl } from './Channel';
+
+export interface AssumeParams {
+    key: types.IDelegatedKeys
+    kind: IdentityAccessKind
+}
+
+class MemoryPublicKeyChache implements PublicKeysCache {
+    private cache: { [login: string]: IdentityPublicKey[] }
+    constructor() {
+        this.cache = {}
+    }
+    latest(login: string): IdentityPublicKey {
+        let keys = this.cache[login]
+        return (keys == null || keys.length == 0) ? null : keys[keys.length - 1]
+    }
+    get({ login, version }) {
+        let keys = this.cache[login]
+        return (keys == null || keys.length == 0) ? null : keys[version]
+    }
+    set({ login, version }, pk) {
+        let keys = this.cache[login]
+        if (keys == null) {
+            this.cache[login] = []
+        }
+        this.cache[login][version] = pk
+    }
+}
+
+class TrustOnFirstUse implements TrustPolicy {
+
+    private session: Session
+
+    constructor(session: Session) {
+        this.session = session
+    }
+
+    async trust(pk: IdentityPublicKey, mandate?: IdentityPublicKeyID): Promise<void> {
+        if (pk.version == 1) {
+            console.log("TrustFirstUse", pk.login, Base64.encode(pk.sign), Base64.encode(pk.box), " mandate by ", mandate)
+            return Promise.resolve()
+        }
+        await this.session.getPublicKey(mandate)
+        console.log("TrustByMandate", pk.login, pk.version, Base64.encode(pk.sign), Base64.encode(pk.box), " mandate by ", mandate)
+        return Promise.resolve()
+    }
+}
+
+async function loginWithKeys(client, keys: types.IDelegatedKeys) {
+    return await _login(client, keys.login, (e, c) => {
+        let encryption = new Encryption(e)
+        encryption.recoverWithKeys(keys, c)
+        return encryption
+    })
+}
+
+export async function _login(
+    client: Client,
+    login: string,
+    recover: (e: types.IdentityEncryption, c: types.IdentityPublicKey) => Encryption,
+    options?: { saltKind?: types.SessionSaltKind }
+): Promise<Session> {
+    let saltKind = options != null && options.saltKind != null ? options.saltKind : types.SessionSaltKind.TIME
+    let challengeRequest = types.SessionCreateChallengeRequest.create({
+        login: login,
+        saltKind: saltKind
+    })
+    let createResponse = await client.doRequest({
+        method: "POST", code: 201,
+        path: "/api/v4/session/challenge/create",
+        request: () => types.SessionCreateChallengeRequest.encode({
+            login: login,
+            saltKind: saltKind,
+        }).finish(),
+        response: types.SessionCreateChallengeResponse.decode,
+        before: (x, b) => x.setRequestHeader("content-type", "application/x-protobuf")
+    })
+    let creator = types.IdentityPublicKey.create(createResponse.creator)
+    let encryption = recover(
+        types.IdentityEncryption.create(createResponse.encryption),
+        types.IdentityPublicKey.create(createResponse.creator),
+    )
+    let token = createResponse.token
+    let salt = createResponse.salt
+    let resolveResponse = await client.doRequest({
+        method: "POST", code: 200,
+        path: "/api/v4/session/challenge/resolve",
+        request: () => types.SessionResolveChallengeRequest.encode({
+            token, salt,
+            signature: encryption.sign(salt),
+        }).finish(),
+        response: types.SessionResolveChallengeResponse.decode,
+        before: (x, b) => x.setRequestHeader("content-type", "application/x-protobuf")
+    })
+    saltKind = createResponse.saltKind
+    salt = createResponse.salt
+    return new SessionImpl(login, token, salt, saltKind, encryption, client)
+}
+
+export class SessionImpl implements Session {
+
+    APIHost: string
+    WSHost: string
+
+    login: string
+    encryption: Encryption
+
+    client: Client
+    token: string // base64 encoded
+    private salt: Uint8Array
+    private saltKind: types.SessionSaltKind
+    private deltaSaltTime: number
+
+    private pkCache: PublicKeysCache
+    private trustPolicy: TrustPolicy
+    private assumeKeyCache: { [login: string]: types.IDelegatedKeys }
+
+    wsManager: WebSocketManager
+
+    constructor(
+        login: string, token: Uint8Array, salt: Uint8Array, saltKind: types.SessionSaltKind,
+        encryption: Encryption, client: Client
+    ) {
+        this.encryption = encryption
+        this.token = Base64.encode(token)
+        this.salt = salt
+        this.saltKind = saltKind
+
+        this.login = login
+        this.client = client
+        this.pkCache = new MemoryPublicKeyChache()
+        this.trustPolicy = new TrustOnFirstUse(this)
+        this.assumeKeyCache = {}
+        this.wsManager = new WebSocketManager(this)
+        this.afterRequestHandleSalt()
+    }
+
+    Identity = new IdentityImpl(this)
+
+    Resource = new ResourceImpl(this)
+
+    Admin = new AdminImpl(this)
+
+    Channel = new ChannelAPIImpl(this)
+
+    async close(): Promise<void> {
+        this.wsManager.close()
+        return await this.doProtoRequest<void>({
+            method: "PUT", code: 200,
+            path: "/api/v4/session/close",
+        })
+    }
+
+    async renewKeys(secret?: string | Uint8Array): Promise<void> {
+        await this.Identity.renewKeys(this.login, secret)
+        if (secret != null) {
+            (this.encryption as any).secret = Uint8Tool.convert(secret)
+        }
+    }
+
+    getSessionPublicKey(): IdentityPublicKey {
+        let p = this.encryption.getPublic()
+        return {
+            login: this.login,
+            version: this.encryption.version,
+            sign: p.signEncrypted.publicKey,
+            box: p.boxEncrypted.publicKey,
+        }
+    }
+
+    async getLatestPublicKey(login: string): Promise<IdentityPublicKey> {
+        let [key] = await this.getLatestPublicKeys([login])
+        return key
+    }
+
+    async getLatestPublicKeys(logins: string[]): Promise<IdentityPublicKey[]> {
+        let { chains } = await this.doProtoRequest({
+            method: "POST", code: 200,
+            path: "/api/v4/identities/latestPublicChains",
+            request: () => types.IdentityGetLatestPublicChainsRequest.encode({
+                ids: logins.map(login => {
+                    let pk = this.pkCache.latest(login)
+                    return { login, since: pk == null ? 0 : pk.version }
+                })
+            }).finish(),
+            response: types.IdentityGetLatestPublicChainsResponse.decode,
+        })
+        await this.validateChains(chains)
+        return logins.map(login => this.pkCache.latest(login))
+    }
+
+    async getPublicKey(id: IdentityPublicKeyID): Promise<IdentityPublicKey> {
+        let [key] = await this.getPublicKeys([id])
+        return key
+    }
+
+    async getPublicKeys(ids: IdentityPublicKeyID[]): Promise<IdentityPublicKey[]> {
+        let requestIds: { [login: string]: number } = {}
+        ids.forEach((id) => {
+            if (this.pkCache.get(id) != null) {
+                return
+            }
+            let version = requestIds[id.login]
+            if (version == null || version < id.version) {
+                requestIds[id.login] = id.version
+            }
+        })
+        let logins = Object.keys(requestIds)
+        if (logins.length == 0) {
+            return ids.map(id => this.pkCache.get(id))
+        }
+        let { chains } = await this.doProtoRequest({
+            method: "POST", code: 200,
+            path: "/api/v4/identities/publicChains",
+            request: () => types.IdentityGetPublicChainsRequest.encode({
+                ids: Object.keys(requestIds).map(login => {
+                    let pk = this.pkCache.latest(login)
+                    let since = pk == null ? 0 : pk.version
+                    let version = requestIds[login]
+                    return { id: { login, version }, since }
+                })
+            }).finish(),
+            response: types.IdentityGetPublicChainsResponse.decode
+        })
+        await this.validateChains(chains)
+        return ids.map(id => this.pkCache.get(id))
+    }
+
+    async resolveAccessRequest(requestId: ID): Promise<AccessRequestResolver> {
+        let { sign, resource } = await this.doProtoRequest({
+            method: "GET", code: 200,
+            path: "/api/v4/delegatedAccess/" + requestId.toString(),
+            response: types.DelegatedGetResponse.decode,
+        })
+        let r = await new ResourceImpl(this)._makeResourceFromResponse(resource, null, null)
+        // Verify sign
+        let msg = Uint8Tool.concat(
+            new TextEncoder().encode(this.login),
+            r.publicKey()
+        )
+        if (!nacl.sign.detached.verify(msg, sign, r.creator.sign)) {
+            throw new Error({
+                kind: SDKKind.IdentitySignChainInvalid, payload: {
+                    requestId, requester: r.creator,
+                }
+            })
+        }
+        return new AccessRequestResolverImpl(requestId, r, this)
+    }
+
+    async createSession(login: string): Promise<Session> {
+        let keys = await this.getKeys(login)
+        return loginWithKeys(this.client, keys)
+    }
+
+    setTrustPolicy(policy: TrustPolicy) {
+        this.trustPolicy = policy
+    }
+
+    setPublicKeyCache(cache: PublicKeysCache) {
+        this.pkCache = cache
+    }
+
+    sign(message: Uint8Array): Uint8Array {
+        return this.encryption.sign(message)
+    }
+
+    async doRequest<T>(r: SessionRequest<T>): Promise<T> {
+        let assumeParams = await this.getAssumeParams(r.assume)
+        let xhr: XMLHttpRequest
+        let r2 = {
+            ...r,
+            before: (x: XMLHttpRequest, body: Uint8Array) => {
+                xhr = x
+                if (r.before != null) {
+                    r.before(x, body)
+                }
+                this.beforeRequest(x, body, assumeParams)
+            }
+        }
+        try {
+            let resp = await this.client.doRequest(r2)
+            this.afterRequest(xhr)
+            return resp
+        } catch (err) {
+            switch (err.kind) {
+                case ServerKind.SessionStale:
+                    try {
+                        await this.unStale()
+                    } catch (e) {
+                        if (e instanceof Error && e.kind == SDKKind.SDKEncryptionDecryptFail) {
+                            throw err
+                        }
+                        throw e
+                    }
+                    return this.doRequest(r)
+                case ServerKind.AssumeStale:
+                    this.clearAssumeParams(r.assume.login)
+                    return this.doRequest(r)
+            }
+            this.afterRequest(xhr)
+            throw err
+        }
+    }
+
+    async doProtoRequest<T>(r: SessionRequest<T>): Promise<T> {
+        return this.doRequest({
+            ...r, before(x, b) {
+                x.setRequestHeader("content-type", "application/x-protobuf")
+                if (r.before != null) {
+                    r.before(x, b)
+                }
+            }
+        })
+    }
+
+    private async validateChains(chains: types.IIdentityPublicChain[]) {
+        await Promise.all(chains.map(chain => this.validateChain(chain)))
+    }
+
+    private async validateChain({ login, version, chains }: types.IIdentityPublicChain) {
+        let firstVersion = version - chains.length
+        if (firstVersion < 0) {
+            throw new Error({
+                kind: SDKKind.InvalidServerChain,
+                payload: { login, version, chains }
+            })
+        }
+        let pk = this.pkCache.get({ login, version: firstVersion })
+        // Check if the server try to erase a root key
+        if (firstVersion == 0) {
+            if (pk == null) {
+                let { box, sign, mandate } = chains.shift()
+                pk = { login, version: 1, box, sign }
+                await this.trustPolicy.trust(pk, mandate as IdentityPublicKeyID)
+                this.pkCache.set({ login, version: 1 }, pk)
+            } else if ((!Uint8Tool.equals(pk.box, chains[0].box) || !Uint8Tool.equals(pk.sign, chains[0].sign))) {
+                throw new Error({
+                    kind: SDKKind.IdentitySignChainInvalid,
+                    payload: { login, version: 1 }
+                })
+            }
+        }
+        // Check the sign chains and populate the cache
+        await chains.reduce(async (ppk, { box, sign, chain, mandate }) => {
+            let pk = await ppk
+            let id = { login, version: pk.version + 1 }
+            let pksign = pk.sign
+            if (mandate != null) {
+                await this.trustPolicy.trust(pk, mandate as IdentityPublicKeyID)
+                let mpk = await this.getPublicKey(mandate as IdentityPublicKeyID)
+                pksign = mpk.sign
+            }
+            if (!nacl.sign.detached.verify(Uint8Tool.concat(box, sign), chain, pksign)) {
+                throw new Error({
+                    kind: SDKKind.IdentitySignChainInvalid,
+                    payload: { login, version }
+                })
+            }
+            pk = { login, version: id.version, box, sign }
+            this.pkCache.set(id, pk)
+            return pk
+        }, Promise.resolve(pk))
+
+    }
+
+    private afterRequest(request: XMLHttpRequest) {
+        let salt = request.getResponseHeader("x-peps-salt")
+        if (salt == null) {
+            throw new Error({
+                kind: SDKKind.ProtocolError,
+                payload: { missing: "x-peps-salt", headers: request.getAllResponseHeaders() }
+            })
+        }
+        this.salt = Base64.decode(salt)
+        this.afterRequestHandleSalt()
+    }
+
+    private afterRequestHandleSalt() {
+        let secondsServer = (this.salt[0] << 24) + (this.salt[1] << 16) + (this.salt[2] << 8) + this.salt[3]
+        let secondsLocal = Math.floor(Date.now() / 1000)
+        this.deltaSaltTime = secondsServer - secondsLocal
+    }
+
+    private beforeRequest(request: XMLHttpRequest, body: Uint8Array, assume?: AssumeParams) {
+        let salt = this.getSalt()
+        let tosign = body == null ? salt : Uint8Tool.concat(body, salt)
+        request.setRequestHeader("x-peps-token", this.token)
+        request.setRequestHeader("x-peps-signature", Base64.encode(this.encryption.sign(tosign)))
+        request.setRequestHeader("x-peps-salt", Base64.encode(salt))
+        if (assume == null) {
+            return
+        }
+        request.setRequestHeader("x-peps-assume-access", assume.kind.toString())
+        request.setRequestHeader("x-peps-assume-identity", assume.key.login + "/" + assume.key.version)
+        let key = assume.kind == IdentityAccessKind.READ ? assume.key.readKey : assume.key.signKey
+        request.setRequestHeader("x-peps-assume-signature", Base64.encode(nacl.sign.detached(tosign, key)))
+    }
+
+    getSalt(): Uint8Array {
+        switch (this.saltKind) {
+            case types.SessionSaltKind.RAND: return this.salt
+            case types.SessionSaltKind.TIME:
+                let seconds = Math.floor(Date.now() / 1000) + this.deltaSaltTime
+                let salt = new Uint8Array(4)
+                salt[0] = (seconds >>> 24) & 0xFF
+                salt[1] = (seconds >>> 16) & 0xFF
+                salt[2] = (seconds >>> 8) & 0xFF
+                salt[3] = seconds & 0xFF
+                return salt
+        }
+    }
+
+    private unStale(): Promise<void> {
+        return this.doProtoRequest({
+            method: "PUT", code: 200,
+            path: "/api/v4/session/unStale",
+            response: types.SessionUnStaleResponse.decode,
+        }).then(({ encryption, creator }) => {
+            this.clearAssumeParams(this.login)
+            let e = new Encryption(encryption)
+            e.recover(this.encryption.secret, creator as IdentityPublicKey)
+            this.encryption = e
+        })
+    }
+
+    async resolveCipherList(ciphers: types.ICipher[]): Promise<ResolvedCipher[]> {
+        let signs = ciphers.map((cipher) => cipher.sign)
+        let publicKeys = await this.getPublicKeys(signs as IdentityPublicKeyID[])
+        return ciphers.map(({ message, nonce, sign }) => {
+            let pk = publicKeys.find((pk) => sign.login == pk.login && sign.version == pk.version)
+            if (pk == null) {
+                throw new Error({
+                    kind: SDKKind.SDKInternalError,
+                    payload: { reason: "cannot find pk", sign }
+                })
+            }
+            return { message, nonce, sign: pk }
+        })
+    }
+
+    async decryptCipherList(type: types.ResourceType, ciphers: types.ICipher[], secretKey?: Uint8Array): Promise<Uint8Array> {
+        let resolvedCiphers = await this.resolveCipherList(ciphers)
+        return this.encryption.decrypt(type, secretKey).decryptList(resolvedCiphers)
+    }
+
+    async getAssumeParams(assume?: { login: string, kind: IdentityAccessKind }): Promise<AssumeParams> {
+        if (assume == null) {
+            return null
+        }
+        let key = await this.getKeys(assume.login)
+        return { key, kind: assume.kind }
+    }
+
+    private async getKeys(login: string): Promise<types.IDelegatedKeys> {
+        let key = this.assumeKeyCache[login]
+        if (key != null) {
+            return key
+        }
+        let keys = await this.fetchKeys(login)
+        this.assumeKeyCache[login] = keys
+        return keys
+    }
+
+    async fetchKeys(login: string): Promise<types.IDelegatedKeys> {
+        if (this.login == login) {
+            let sharingKey = (this.encryption as any).sharingKeyPair.secretKey
+            let signKey = (this.encryption as any).signKeyPair.secretKey
+            let boxKey = (this.encryption as any).boxKeyPair.secretKey
+            let readKey = (this.encryption as any).readKeyPair.secretKey
+            return ({ sharingKey, signKey, boxKey, readKey, version: this.encryption.version, login })
+        }
+        let { sharingKey, signKey, boxKey, readKey, version } = await this.doProtoRequest({
+            method: "GET",
+            path: "/api/v4/identity/" + encodeURI(login) + "/keys",
+            code: 200,
+            response: types.IdentityGetKeysResponse.decode,
+        })
+        let decryptedSharingKey = await this.decryptCipherList(types.ResourceType.SES, sharingKey)
+        let [cipherSignkey, cipherBoxKey, cipherReadKey] =
+            await this.resolveCipherList([signKey, boxKey, readKey])
+        let decryptedSignKey = this.encryption.decrypt(types.ResourceType.SES, decryptedSharingKey).decrypt(cipherSignkey)
+        let decryptedBoxKey = this.encryption.decrypt(types.ResourceType.SES, decryptedSharingKey).decrypt(cipherBoxKey)
+        let decryptedReadKey = this.encryption.decrypt(types.ResourceType.SES, decryptedBoxKey).decrypt(cipherReadKey)
+        return {
+            sharingKey: decryptedSharingKey,
+            signKey: decryptedSignKey,
+            boxKey: decryptedBoxKey,
+            readKey: decryptedReadKey,
+            version, login
+        }
+    }
+
+    clearAssumeParams(login: string) {
+        delete this.assumeKeyCache[login]
+    }
+
+}
+
+export class AccessRequestImpl implements AccessRequest {
+
+    id: ID
+    login: string
+
+    private keys: types.IDelegatedKeys
+    private reason: any
+    private client: Client
+    private resource: Resource<null>
+    private resolve: () => void
+    private reject: (reason?: any) => void
+
+    constructor(id: ID, login: string, client: Client, resource: Resource<null>) {
+        this.id = id
+        this.login = login
+        this.resolve = () => { }
+        this.reject = () => { }
+        this.client = client
+        this.resource = resource
+        this.init()
+    }
+
+    private async init() {
+        try {
+            let { keys } = await this.client.doRequest({
+                method: "GET", code: 200,
+                path: "/api/v4/delegatedAccess/" + this.id.toString() + "/keys",
+                response: types.DelegatedGetKeysResponse.decode,
+                before: (x, b) => x.setRequestHeader("content-type", "application/x-protobuf")
+            })
+            this.keys = types.DelegatedKeys.decode(this.resource.decrypt(keys))
+            this.resolve()
+        } catch (e) {
+            this.reason = e
+            this.reject(e)
+        }
+    }
+
+    wait(): Promise<void> {
+        if (this.keys != null) {
+            return Promise.resolve()
+        }
+        if (this.reason != null) {
+            return Promise.reject(this.reason)
+        }
+        return new Promise((resolve, reject) => {
+            let presolve = this.resolve
+            this.resolve = () => {
+                resolve()
+                presolve()
+            }
+            let preject = this.reject
+            this.reject = (reason?) => {
+                reject(reason)
+                preject(reason)
+            }
+        })
+    }
+
+    async waitSession(): Promise<Session> {
+        await this.wait()
+        return await loginWithKeys(this.client, this.keys)
+    }
+}
+
+class AccessRequestResolverImpl implements AccessRequestResolver {
+
+    id: ID
+    requesterKey: IdentityPublicKey
+    private resource: Resource<null>
+    private session: SessionImpl
+
+    constructor(id: ID, resource: Resource<null>, session: SessionImpl) {
+        this.id = id
+        this.requesterKey = resource.creator
+        this.resource = resource
+        this.session = session
+    }
+
+    async resolve(login: string): Promise<void> {
+        let keys = await this.session.fetchKeys(login)
+        await this.session.doProtoRequest({
+            method: "PUT", code: 200,
+            path: "/api/v4/delegatedAccess/" + this.id.toString() + "/keys",
+            request: () => types.DelegatedPostKeysRequest.encode({
+                keys: this.resource.encrypt(
+                    types.DelegatedKeys.encode(keys).finish()
+                )
+            }).finish()
+        })
+    }
+}
+
+export interface Event<T> {
+    type: string
+    payload: T
+}
+
+export class WebSocketManager {
+    private session: SessionImpl
+    private webSocketHost: string
+    private webSocket: WebSocket
+    private channelMessageListener: { [id: string]: ((event: Event<any>) => any)[] }
+    private commandId: number
+    private commandK: {
+        [id: number]: {
+            resolve: (value: any) => void,
+            reject: (reason?: any) => void,
+        }
+    }
+
+    constructor(session: SessionImpl) {
+        this.session = session
+        this.webSocketHost = session.client.wsHost
+        this.channelMessageListener = {}
+        this.commandId = 1
+        this.commandK = {}
+    }
+
+    close() {
+        if (this.webSocket != null) {
+            this.webSocket.close()
+        }
+    }
+
+    async listenChannelMessage(channelId: ID, onEvent: (event: Event<any>) => any) {
+        let listeners = this.channelMessageListener[channelId.toString()]
+        if (listeners == null) {
+            listeners = []
+            this.channelMessageListener[channelId.toString()] = listeners
+        }
+        listeners.push(onEvent)
+        return await this.init()
+    }
+
+    async init() {
+        if (this.webSocket != null) {
+            return
+        }
+        return await new Promise<void>((resolve, reject) => {
+            let opened = false
+            let url = this.webSocketHost + "/api/v4/events/listen"
+            let salt = this.session.getSalt()
+            let sign = this.session.encryption.sign(salt)
+            this.webSocket = new WebSocket(url +
+                "?token=" + encodeURIComponent(this.session.token) +
+                "&signature=" + encodeURIComponent(Base64.encode(sign)) +
+                "&salt=" + encodeURIComponent(Base64.encode(salt))
+            )
+            this.webSocket.onopen = () => {
+                opened = true
+                resolve()
+            }
+            this.webSocket.onmessage = (evt: MessageEvent) => {
+                let event: types.Event
+                try {
+                    event = types.Event.decode(evt.data)
+                } catch (e) {
+                    console.error("WebSocket", "cannot decode the message as event", e)
+                    return
+                }
+                this.dispatchEvent(event)
+            }
+            this.webSocket.onerror = function (evt) {
+                if (!opened) {
+                    return reject(evt)
+                }
+                console.log("ws error", evt)
+                // TODO - Retry?
+            }
+        })
+    }
+
+    sendCommandSync(kind: command.RequestKind, payload?: {
+        value: any,
+        type: string
+    }): Promise<any> {
+        let id = this.commandId++
+        let payloadX
+        if (payload != null) {
+            let X = command[payload.type]
+            if (X == null) {
+                throw new Error({
+                    kind: SDKKind.SDKInternalError,
+                    payload: {
+                        message: "cannot find command type",
+                        payload,
+                    }
+                })
+            }
+            payloadX = {
+                type_url: "type.googleapis.com/command." + payload.type,
+                value: X.encode(payload.value).finish()
+            }
+        }
+        let message = command.Request.encode({
+            id, kind,
+            payload: payloadX
+        }).finish()
+        this.webSocket.send(message)
+        let p = new Promise((resolve, reject) => {
+            this.commandK[id] = { resolve, reject }
+        })
+        return p
+    }
+
+    private dispatchEvent(event: types.Event) {
+        let e = this.typesEventToEvent(event)
+        switch (e.type) {
+            case "CommandResponse":
+                this.handleCommandResponse(e)
+                break;
+            case "ChannelMessage":
+                this.dispatchChannelMessage(e)
+                break;
+            default:
+                console.error("cannot dispatch event", e)
+        }
+    }
+
+    private typesEventToEvent(event: types.Event): Event<any> {
+        let type = event.payload.type_url.split('.').pop()
+        let X = events[type]
+        return { type, payload: X.decode(event.payload.value) }
+    }
+
+    private async handleCommandResponse(event: Event<events.CommandResponse>) {
+        let k = this.commandK[event.payload.id]
+        delete this.commandK[event.payload.id]
+        if (event.payload.error != null) {
+            return k.reject(event.payload.error)
+        }
+        return k.resolve(event.payload.success)
+    }
+
+    private dispatchChannelMessage(event: Event<events.ChannelMessage>) {
+        let listeners = this.channelMessageListener[event.payload.channelId.toString()]
+        if (listeners == null) {
+            return
+        }
+        listeners.forEach(listener => listener(event))
+    }
+}

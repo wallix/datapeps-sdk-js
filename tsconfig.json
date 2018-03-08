@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "lib": ["dom", "es2015.promise", "es6"],
+        "target": "es5",
+        "module": "commonjs",
+        "sourceMap": true,
+        "declaration": true
+    },
+    "exclude": [
+        "./test/",
+        "./node_modules"
+    ]
+}

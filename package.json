@@ -1,13 +1,13 @@
 {
   "name": "datapeps-sdk",
-  "version": "0.0.12",
+  "version": "0.0.14",
   "description": "DataPeps SDK enables safe end-to-end-encryption for any application",
   "main": "./src/DataPeps.js",
   "types": "./src/DataPeps.d.ts",
   "scripts": {
     "build": "tsc -p .",
     "pack": "webpack",
-    "doc": "typedoc --mode modules --out doc/ src/DataPeps.ts --tsconfig ./tsconfig.json --excludeExternals --excludeNotExported --readme README.md",
+    "doc": "typedoc --mode modules --out docs/ src/DataPeps.ts --tsconfig ./tsconfig.json --excludeExternals --excludeNotExported --readme ./README.md",
     "ut": "mocha -r ts-node/register test/ut/*.ts",
     "integration": "mocha -r ts-node/register test/integration/*.ts test/integration/Identity/*.ts"
   },

@@ -15,7 +15,7 @@ export const RegisterTokenStatus = types.RegisterTokenStatus
 protobugjs.util.Long = Long
 protobugjs.configure()
 
-const defaultAPIURL = "https://core.datapeps.com"
+const defaultAPIURL = "https://api.datapeps.com"
 const defaultWSURL = "https://ws.datapeps.com"
 
 let client = new Client(defaultAPIURL, defaultWSURL);

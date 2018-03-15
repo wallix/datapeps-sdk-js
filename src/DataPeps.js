@@ -51,7 +51,7 @@ exports.SDKError = Error_1.SDKKind;
 exports.RegisterTokenStatus = proto_1.types.RegisterTokenStatus;
 protobugjs.util.Long = Long;
 protobugjs.configure();
-var defaultAPIURL = "https://core.datapeps.com";
+var defaultAPIURL = "https://api.datapeps.com";
 var defaultWSURL = "https://ws.datapeps.com";
 var client = new HTTP_1.Client(defaultAPIURL, defaultWSURL);
 var webSocketURL = defaultWSURL;

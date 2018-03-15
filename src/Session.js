@@ -364,6 +364,19 @@ var SessionImpl = /** @class */ (function () {
     SessionImpl.prototype.setPublicKeyCache = function (cache) {
         this.pkCache = cache;
     };
+    SessionImpl.prototype.getSecretToken = function (login) {
+        return __awaiter(this, void 0, void 0, function () {
+            var keys;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.getKeys(login)];
+                    case 1:
+                        keys = _a.sent();
+                        return [2 /*return*/, Tools_1.Base64.encode(keys.signKey)];
+                }
+            });
+        });
+    };
     SessionImpl.prototype.sign = function (message) {
         return this.encryption.sign(message);
     };

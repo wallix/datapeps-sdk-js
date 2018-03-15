@@ -260,6 +260,10 @@ export interface Session {
      */
     sign(message: Uint8Array): any;
     /**
+     * Get the secret token of an identity.
+     */
+    getSecretToken(login: string): Promise<string>;
+    /**
      * Do an authenticated request.
      * @param request
      */

@@ -46,6 +46,7 @@ export declare class SessionImpl implements Session {
     createSession(login: string): Promise<Session>;
     setTrustPolicy(policy: TrustPolicy): void;
     setPublicKeyCache(cache: PublicKeysCache): void;
+    getSecretToken(login: string): Promise<string>;
     sign(message: Uint8Array): Uint8Array;
     doRequest<T>(r: SessionRequest<T>): Promise<T>;
     doProtoRequest<T>(r: SessionRequest<T>): Promise<T>;

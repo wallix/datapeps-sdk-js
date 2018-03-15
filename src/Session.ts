@@ -275,6 +275,12 @@ export class SessionImpl implements Session {
         this.pkCache = cache
     }
 
+    async getSecretToken(login: string): Promise<string> {
+        let keys = await this.getKeys(login)
+        return Base64.encode(keys.signKey)
+    }
+
+
     sign(message: Uint8Array): Uint8Array {
         return this.encryption.sign(message)
     }

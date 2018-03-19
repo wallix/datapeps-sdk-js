@@ -1,0 +1,342 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>datapeps-sdk</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.js" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">datapeps-sdk</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1> datapeps-sdk</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<!-- % Setting up -->
+				<p>To start working with DataPeps, you need to add DataPeps SDK to your project.</p>
+				<h2 id="using-a-package-manager">Using a package manager</h2>
+				<p>The simplest way to get started, is to add DataPeps SDK, using your favourite package manager.</p>
+				<h3 id="npm">npm</h3>
+				<p>Go to your project directory and run:</p>
+				<pre><code class="lang-bash">npm install datapeps-sdk
+</code></pre>
+				<h3 id="yarn">yarn</h3>
+				<p>Go to your project directory and run:</p>
+				<pre><code class="lang-bash">yarn add datapeps-sdk
+</code></pre>
+				<h2 id="instantiation-of-datapeps-sdk">Instantiation of DataPeps SDK</h2>
+				<p>Just add the following line to your code to import the DataPeps SDK:</p>
+				<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> DataPeps <span class="hljs-keyword">from</span> <span class="hljs-string">'datapeps-sdk'</span>;
+</code></pre>
+				<h2 id="using-the-sdk-with-node-js">Using the SDK with Node.js</h2>
+				<p>When using DataPeps SDK with <a href="https://nodejs.org/">Node.js</a> (on backend or if testing with <a href="https://mochajs.org/">Mocha</a>), you need to add the following packages:</p>
+				<ul>
+					<li><a href="https://www.npmjs.com/package/@types/text-encoding">@types/text-encoding</a></li>
+					<li><a href="https://www.npmjs.com/package/atob">atob</a></li>
+					<li><a href="https://www.npmjs.com/package/btoa">btoa</a></li>
+					<li><a href="https://www.npmjs.com/package/text-encoding">text-encoding</a></li>
+					<li><a href="https://www.npmjs.com/package/ws">ws</a></li>
+					<li><a href="https://www.npmjs.com/package/xhr2">xhr2</a></li>
+				</ul>
+				<p>The components above are supported by browsers, but when calling DataPeps API on backend, you need to add them to the project manually along with a couple of lines to configure their usage. We&#39;ll show how to do it <a href="#adding-dependencies-for-nodejs">further</a>.</p>
+				<h2 id="hello-datapeps-">Hello, DataPeps!</h2>
+				<p>Let&#39;s have a glimpse at how exactly DataPeps simplifies cryptography for a developer.</p>
+				<p>Say there are two friends, Alice and Bob. Alice wants to share a nice photo of a cheetah with Bob; however, Alice is quite rather concerned about data security (good for her!), and she wants to ensure, that only Bob can eventually see the picture. DataPeps to the rescue!</p>
+				<p>First, we will show you Alice&#39;s part:</p>
+				<pre><code class="lang-typescript"><span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">aliceSend</span>(<span class="hljs-params">sdk, fileName</span>) </span>{
+    <span class="hljs-keyword">let</span> session = <span class="hljs-keyword">await</span> sdk.login(<span class="hljs-string">"alice@datapeps.com"</span>, <span class="hljs-string">"pass"</span>)
+    <span class="hljs-keyword">let</span> resource = <span class="hljs-keyword">await</span> session.Resource.create(<span class="hljs-string">"img/jpg"</span>, <span class="hljs-string">""</span>, [<span class="hljs-string">"bob@datapeps.com"</span>])
+    <span class="hljs-keyword">let</span> photo = <span class="hljs-keyword">await</span> readFile(fileName)
+    <span class="hljs-keyword">let</span> encryptedPhoto = resource.encrypt(photo)
+    <span class="hljs-keyword">await</span> writeFile(<span class="hljs-string">"encrypted_"</span> + fileName, encryptedPhoto)
+    <span class="hljs-keyword">return</span> [resource.id, <span class="hljs-string">"encrypted_"</span> + fileName]
+}
+</code></pre>
+				<p>and Bob&#39;s part:</p>
+				<pre><code class="lang-typescript"><span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">bobReceive</span>(<span class="hljs-params">
+        sdk,
+        resourceId,
+        encryptedFileName</span>) </span>{
+    <span class="hljs-keyword">let</span> session = <span class="hljs-keyword">await</span> sdk.login(<span class="hljs-string">"bob@peps.test"</span>, <span class="hljs-string">"pass"</span>)
+    <span class="hljs-keyword">let</span> resource = <span class="hljs-keyword">await</span> session.Resource.get(resourceId)
+    <span class="hljs-keyword">let</span> encryptedData = <span class="hljs-keyword">await</span> readFile(encryptedFileName)
+    <span class="hljs-keyword">let</span> decryptedData = resource.decrypt(encryptedData)
+    <span class="hljs-keyword">await</span> writeFile(<span class="hljs-string">"decrypted_"</span> + encryptedFileName, decryptedData)
+}
+</code></pre>
+				<p>Short and awesome! Now, let&#39;s discuss it a bit.</p>
+				<p>Suppose, Alice and Bob are already registered with DataPeps (we cover the case when they are not a bit <a href="#identity-registration">further</a>). First of all, Alice needs to <a href="Session#session-establishment">establish a session</a> with DataPeps server:</p>
+				<pre><code class="lang-typescript"><span class="hljs-keyword">let</span> session = <span class="hljs-keyword">await</span> sdk.login(<span class="hljs-string">"alice@datapeps.com"</span>, <span class="hljs-string">"pass"</span>)
+</code></pre>
+				<p>Now, as Alice wants only Bob to have access to the picture, she needs to encrypt it for Bob (and only Bob). For this Alice <a href="Resource#creating-a-resource">creates</a> &quot;<a href="Resource">a resource</a>&quot;:</p>
+				<pre><code class="lang-typescript"><span class="hljs-keyword">let</span> resource = <span class="hljs-keyword">await</span> session.Resource.create(<span class="hljs-string">"img/jpg"</span>, <span class="hljs-string">""</span>, [<span class="hljs-string">"bob@datapeps.com"</span>])
+</code></pre>
+				<p>Last, Alice encrypts the photo and saves the result:</p>
+				<pre><code class="lang-typescript"><span class="hljs-keyword">let</span> photo = <span class="hljs-keyword">await</span> readFile(fileName)
+<span class="hljs-keyword">let</span> encryptedPhoto = resource.encrypt(photo)
+<span class="hljs-keyword">await</span> writeFile(<span class="hljs-string">"encrypted_"</span> + fileName, encryptedPhoto)
+</code></pre>
+				<p>Alice sends Bob the encrypted file and the resource&#39;s ID:</p>
+				<pre><code class="lang-typescript"><span class="hljs-keyword">return</span> [resource.id, <span class="hljs-string">"encrypted_"</span> + fileName]
+</code></pre>
+				<p>When Bob wants to decrypt the encrypted file from Alice, he establishes the session (the same way Alice did) and fetches the resource, created by Alice from the DataPeps server, using the resource id:</p>
+				<pre><code class="lang-typescript"><span class="hljs-keyword">let</span> session = <span class="hljs-keyword">await</span> sdk.login(<span class="hljs-string">"bob@peps.test"</span>, <span class="hljs-string">"pass"</span>)
+<span class="hljs-keyword">let</span> resource = <span class="hljs-keyword">await</span> session.Resource.get(resourceId)
+</code></pre>
+				<p>Bob decrypts the file and saves the result:</p>
+				<pre><code class="lang-typescript"><span class="hljs-keyword">let</span> encryptedData = <span class="hljs-keyword">await</span> readFile(encryptedFileName)
+<span class="hljs-keyword">let</span> decryptedData = resource.decrypt(encryptedData)
+<span class="hljs-keyword">await</span> writeFile(<span class="hljs-string">"decrypted_"</span> + encryptedFileName, decryptedData)
+</code></pre>
+				<h3 id="adding-dependencies-for-node-js">Adding dependencies for Node.js</h3>
+				<p>We will use Node.js to run the resulting code, so we will need to satisfy all the relevant <a href="#using-the-sdk-with-nodejs">dependencies</a>:</p>
+				<pre><code class="lang-typescript"><span class="hljs-keyword">declare</span> <span class="hljs-keyword">var</span> global: <span class="hljs-built_in">any</span>
+global[<span class="hljs-string">"TextEncoder"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'text-encoding'</span>).TextEncoder                                                                                                                                                                                                            
+global[<span class="hljs-string">"TextDecoder"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'text-encoding'</span>).TextDecoder                                                                                                                                                                                               
+global[<span class="hljs-string">"XMLHttpRequest"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'xhr2'</span>)                                                                                                                                                                                                                                                          
+global[<span class="hljs-string">"WebSocket"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'ws'</span>)                                                                              
+global[<span class="hljs-string">"btoa"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'btoa'</span>)
+global[<span class="hljs-string">"atob"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'atob'</span>)
+</code></pre>
+				<h2 id="hello-datapeps-code">&quot;Hello, DataPeps&quot; code</h2>
+				<p>Here is the complete example, with definitions of <em>readFile</em> and <em>writeFile</em> functions:</p>
+				<p><details>
+						<summary>
+							Show code
+				</summary></p>
+				<pre><code class="lang-typescript"><span class="hljs-keyword">declare</span> <span class="hljs-keyword">var</span> global: <span class="hljs-built_in">any</span>
+global[<span class="hljs-string">"TextEncoder"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'text-encoding'</span>).TextEncoder                                                                                                                                                                                                            
+global[<span class="hljs-string">"TextDecoder"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'text-encoding'</span>).TextDecoder                                                                                                                                                                                               
+global[<span class="hljs-string">"XMLHttpRequest"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'xhr2'</span>)                                                                                                                                                                                                                                                          
+global[<span class="hljs-string">"WebSocket"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'ws'</span>)                                                                              
+global[<span class="hljs-string">"btoa"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'btoa'</span>)
+global[<span class="hljs-string">"atob"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'atob'</span>)
+
+<span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> Peps <span class="hljs-keyword">from</span> <span class="hljs-string">'pepssdk'</span>
+<span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> Fs <span class="hljs-keyword">from</span> <span class="hljs-string">'fs'</span>
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">readFile</span>(<span class="hljs-params">filePath: <span class="hljs-built_in">string</span></span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>&lt;Buffer&gt;<span class="hljs-function">(<span class="hljs-params">(<span class="hljs-params">resolve, reject</span>) =&gt; {
+        <span class="hljs-keyword">let</span> data = Fs.readFile(<span class="hljs-params">filePath, (<span class="hljs-params">e, data</span>) =&gt; {
+            <span class="hljs-keyword">if</span> (<span class="hljs-params">e</span>) {
+                <span class="hljs-keyword">return</span> reject(<span class="hljs-params">e</span>)
+            }
+            <span class="hljs-keyword">return</span> resolve(<span class="hljs-params">data</span>)
+        }</span>)
+    }</span>)
+}
+
+<span class="hljs-params">function</span> <span class="hljs-params">writeFile</span>(<span class="hljs-params">filePath, data</span>) {
+    <span class="hljs-params">return</span> <span class="hljs-params">new</span> <span class="hljs-params">Promise</span>&lt;<span class="hljs-params">void</span>&gt;(<span class="hljs-params">(<span class="hljs-params">resolve, reject</span>) =&gt; {
+        Fs.writeFile(<span class="hljs-params">filePath, data, (<span class="hljs-params">e</span>) =&gt; {
+            <span class="hljs-keyword">if</span> (<span class="hljs-params">e</span>) {
+                <span class="hljs-keyword">return</span> reject(<span class="hljs-params">e</span>)
+            }
+            <span class="hljs-keyword">return</span> resolve(<span class="hljs-params"></span>)
+        }</span>)
+    }</span>)
+}
+
+<span class="hljs-params">async</span> <span class="hljs-params">function</span> <span class="hljs-params">aliceSend</span>(<span class="hljs-params">, fileName</span>) {
+    <span class="hljs-params">let</span> <span class="hljs-params">session</span> = <span class="hljs-params">await</span> <span class="hljs-params">sdk</span>.<span class="hljs-params">login</span>(<span class="hljs-params">"alice@datapeps.com", "pass"</span>)
+    <span class="hljs-params">let</span> <span class="hljs-params">resource</span> = <span class="hljs-params">await</span> <span class="hljs-params">session</span>.<span class="hljs-params">Resource</span>.<span class="hljs-params">create</span>(<span class="hljs-params">"img/jpg", "", ["bob@datapeps.com"]</span>)
+    <span class="hljs-params">let</span> <span class="hljs-params">photo</span> = <span class="hljs-params">await</span> <span class="hljs-params">readFile</span>(<span class="hljs-params">fileName</span>)
+    <span class="hljs-params">let</span> <span class="hljs-params">encryptedPhoto</span> = <span class="hljs-params">resource</span>.<span class="hljs-params">encrypt</span>(<span class="hljs-params">photo</span>)
+    <span class="hljs-params">await</span> <span class="hljs-params">writeFile</span>(<span class="hljs-params">"encrypted_" + fileName, encryptedPhoto</span>)
+    <span class="hljs-params">return</span> [<span class="hljs-params">resource</span>.<span class="hljs-params">id</span>, "<span class="hljs-params">encrypted_</span>" + <span class="hljs-params">fileName</span>]
+}
+
+<span class="hljs-params">async</span> <span class="hljs-params">function</span> <span class="hljs-params">bobReceive</span>(<span class="hljs-params">
+        sdk,
+        resourceId,
+        encryptedFileName</span>) {
+    <span class="hljs-params">let</span> <span class="hljs-params">session</span> = <span class="hljs-params">await</span> <span class="hljs-params">sdk</span>.<span class="hljs-params">login</span>(<span class="hljs-params">"bob@datapeps.com", "pass"</span>)
+    <span class="hljs-params">let</span> <span class="hljs-params">resource</span> = <span class="hljs-params">await</span> <span class="hljs-params">session</span>.<span class="hljs-params">Resource</span>.<span class="hljs-params">get</span>(<span class="hljs-params">resourceId</span>)
+    <span class="hljs-params">let</span> <span class="hljs-params">encryptedData</span> = <span class="hljs-params">await</span> <span class="hljs-params">readFile</span>(<span class="hljs-params">encryptedFileName</span>)
+    <span class="hljs-params">let</span> <span class="hljs-params">decryptedData</span> = <span class="hljs-params">resource</span>.<span class="hljs-params">decrypt</span>(<span class="hljs-params">encryptedData</span>)
+    <span class="hljs-params">await</span> <span class="hljs-params">writeFile</span>(<span class="hljs-params">"decrypted_" + encryptedFileName, decryptedData</span>)
+}
+
+<span class="hljs-params">async</span> <span class="hljs-params">function</span> <span class="hljs-params">main</span><span class="hljs-params">()</span> {
+    <span class="hljs-params">var</span> <span class="hljs-params">sdk</span> = <span class="hljs-params">new</span> <span class="hljs-params">Peps</span>.<span class="hljs-params">SDK</span>(<span class="hljs-params">"https:<span class="hljs-comment">//192.168.99.100:32511")</span>
+    <span class="hljs-keyword">var</span> [resourceId, encryptedFileName] = <span class="hljs-keyword">await</span> aliceSend(<span class="hljs-params">sdk, "awmore.jpg"</span>)
+    <span class="hljs-keyword">await</span> bobReceive(<span class="hljs-params">sdk, resourceId, encryptedFileName</span>)
+}
+
+main(<span class="hljs-params"></span>).<span class="hljs-keyword">catch</span>(<span class="hljs-params">(<span class="hljs-params">_</span>) =&gt; process.stdout.write(<span class="hljs-params">"An error has occurred\n"</span>)</span>)</span></span>
+</code></pre>
+				<p></details>
+					<br>
+				Finally, create the following <em>package.json</em> in the project directory:</p>
+				<pre><code class="lang-json">{
+    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"hello-datapeps"</span>,
+    <span class="hljs-attr">"version"</span>: <span class="hljs-string">"0.0.1"</span>,
+    <span class="hljs-attr">"main"</span>: <span class="hljs-string">"hello-datapeps.js"</span>,
+    <span class="hljs-attr">"scripts"</span>: {
+        <span class="hljs-attr">"start"</span>: <span class="hljs-string">"node hello-datapeps.js"</span>
+    },
+    <span class="hljs-attr">"dependencies"</span>: {
+        <span class="hljs-attr">"pepssdk"</span>: <span class="hljs-string">"^0.0.5"</span>,
+        <span class="hljs-attr">"@types/text-encoding"</span>: <span class="hljs-string">"0.0.31"</span>,
+        <span class="hljs-attr">"atob"</span>: <span class="hljs-string">"^2.0.3"</span>,
+        <span class="hljs-attr">"btoa"</span>: <span class="hljs-string">"^1.1.2"</span>,
+        <span class="hljs-attr">"text-encoding"</span>: <span class="hljs-string">"^0.6.4"</span>,
+        <span class="hljs-attr">"ws"</span>: <span class="hljs-string">"^3.3.2"</span>,
+        <span class="hljs-attr">"xhr2"</span>: <span class="hljs-string">"^0.1.4"</span>
+    }
+}
+</code></pre>
+				<p>and the following <em>tsconfig.json</em> (for compiling TypeScript):</p>
+				<pre><code class="lang-json">{
+    <span class="hljs-attr">"compilerOptions"</span>: {
+        <span class="hljs-attr">"lib"</span>: [
+            <span class="hljs-string">"dom"</span>,
+            <span class="hljs-string">"es2015.promise"</span>,
+            <span class="hljs-string">"es6"</span>
+        ],
+        <span class="hljs-attr">"module"</span>: <span class="hljs-string">"commonjs"</span>,
+        <span class="hljs-attr">"target"</span>: <span class="hljs-string">"es5"</span>
+    }
+}
+</code></pre>
+				<p>Compile and run the code:</p>
+				<pre><code class="lang-bash">npm install &amp;&amp; tsc &amp;&amp; npm start
+</code></pre>
+				<p>If you use yarn instead of npm, run:</p>
+				<pre><code class="lang-bash">yarn install &amp;&amp; tsc &amp;&amp; yarn run start
+</code></pre>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_datapeps_.html">"<wbr>Data<wbr>Peps"</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="http://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>

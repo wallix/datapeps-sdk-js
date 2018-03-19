@@ -272,35 +272,6 @@ function sendRegisterLink(email) {
 }
 exports.sendRegisterLink = sendRegisterLink;
 /**
- * Get the email address associated with the given registration token.
- * @param token A regitration token
- * @return(p) On success the promise will be resolved with the email address associated with the `token`.
- * On error the promise will be rejected with an {@link Error} with kind
- * - `RegisterTokenNotFound` if the `token` is not found.
- */
-function getRegisteredEmail(token) {
-    return __awaiter(this, void 0, void 0, function () {
-        var btoken;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    btoken = token instanceof Uint8Array ? Tools_1.Base64.encode(token) : token;
-                    return [4 /*yield*/, client.doRequest({
-                            method: "GET", code: 200,
-                            path: "/api/v4/register/link/" + encodeURIComponent(btoken) + "/email",
-                            response: proto_1.types.LinkTokenGetResponse.decode,
-                            before: function (x, b) { return x.setRequestHeader("content-type", "application/x-protobuf"); }
-                        }).then(function (_a) {
-                            var email = _a.email;
-                            return email;
-                        })];
-                case 1: return [2 /*return*/, _a.sent()];
-            }
-        });
-    });
-}
-exports.getRegisteredEmail = getRegisteredEmail;
-/**
  * Create a new session.
  * @param login The login of the identity to login with.
  * @param secret The secret of the identity.

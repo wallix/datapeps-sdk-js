@@ -49,13 +49,6 @@ describe('Register', () => {
         token = link.token
     })
 
-    it('get registered link token', async () => {
-        let email = await sdk.getRegisteredEmail(token)
-        expect(email).to.not.be.null
-        expect(email).equals(norman.login)
-    })
-
-
     it('call registration endpoint', async () => {
         await sdk.registerWithToken(token, norman, normanSecret)
     })

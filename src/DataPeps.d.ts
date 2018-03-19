@@ -89,14 +89,6 @@ export declare function getLatestPublicKey(login: string): Promise<IdentityPubli
  */
 export declare function sendRegisterLink(email: string): Promise<void>;
 /**
- * Get the email address associated with the given registration token.
- * @param token A regitration token
- * @return(p) On success the promise will be resolved with the email address associated with the `token`.
- * On error the promise will be rejected with an {@link Error} with kind
- * - `RegisterTokenNotFound` if the `token` is not found.
- */
-export declare function getRegisteredEmail(token: string | Uint8Array): Promise<string>;
-/**
  * Type of identitfier of DataPeps objects.
  */
 export declare type ID = Long | number;

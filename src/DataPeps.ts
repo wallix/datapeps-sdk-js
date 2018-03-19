@@ -203,23 +203,6 @@ export async function sendRegisterLink(email: string): Promise<void> {
 }
 
 /**
- * Get the email address associated with the given registration token.
- * @param token A regitration token
- * @return(p) On success the promise will be resolved with the email address associated with the `token`.
- * On error the promise will be rejected with an {@link Error} with kind
- * - `RegisterTokenNotFound` if the `token` is not found.
- */
-export async function getRegisteredEmail(token: string | Uint8Array): Promise<string> {
-    let btoken = token instanceof Uint8Array ? Base64.encode(token) : token
-    return await client.doRequest({
-        method: "GET", code: 200,
-        path: "/api/v4/register/link/" + encodeURIComponent(btoken) + "/email",
-        response: types.LinkTokenGetResponse.decode,
-        before: (x, b) => x.setRequestHeader("content-type", "application/x-protobuf")
-    }).then(({ email }) => email)
-}
-
-/**
  * Type of identitfier of DataPeps objects. 
  */
 export type ID = Long | number

@@ -1,6 +1,6 @@
 {
   "name": "datapeps-sdk",
-  "version": "0.0.22",
+  "version": "0.0.23",
   "description": "DataPeps SDK enables safe end-to-end-encryption for any application",
   "main": "./src/DataPeps.js",
   "types": "./src/DataPeps.d.ts",

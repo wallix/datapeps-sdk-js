@@ -60,7 +60,6 @@
 	<div class="row">
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
-				<!-- % Setting up -->
 				<p>To start working with DataPeps, you need to add DataPeps SDK to your project.</p>
 				<h2 id="using-a-package-manager">Using a package manager</h2>
 				<p>The simplest way to get started, is to add DataPeps SDK, using your favourite package manager.</p>
@@ -89,129 +88,110 @@
 				<p>The components above are supported by browsers, but when calling DataPeps API on backend, you need to add them to the project manually along with a couple of lines to configure their usage. We&#39;ll show how to do it <a href="#adding-dependencies-for-nodejs">further</a>.</p>
 				<h2 id="hello-datapeps-">Hello, DataPeps!</h2>
 				<p>Let&#39;s have a glimpse at how exactly DataPeps simplifies cryptography for a developer.</p>
-				<p>Say there are two friends, Alice and Bob. Alice wants to share a nice photo of a cheetah with Bob; however, Alice is quite rather concerned about data security (good for her!), and she wants to ensure, that only Bob can eventually see the picture. DataPeps to the rescue!</p>
-				<p>First, we will show you Alice&#39;s part:</p>
-				<pre><code class="lang-typescript"><span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">aliceSend</span>(<span class="hljs-params">sdk, fileName</span>) </span>{
-    <span class="hljs-keyword">let</span> session = <span class="hljs-keyword">await</span> sdk.login(<span class="hljs-string">"alice@datapeps.com"</span>, <span class="hljs-string">"pass"</span>)
-    <span class="hljs-keyword">let</span> resource = <span class="hljs-keyword">await</span> session.Resource.create(<span class="hljs-string">"img/jpg"</span>, <span class="hljs-string">""</span>, [<span class="hljs-string">"bob@datapeps.com"</span>])
-    <span class="hljs-keyword">let</span> photo = <span class="hljs-keyword">await</span> readFile(fileName)
-    <span class="hljs-keyword">let</span> encryptedPhoto = resource.encrypt(photo)
-    <span class="hljs-keyword">await</span> writeFile(<span class="hljs-string">"encrypted_"</span> + fileName, encryptedPhoto)
-    <span class="hljs-keyword">return</span> [resource.id, <span class="hljs-string">"encrypted_"</span> + fileName]
+				<p>Say there are two friends, Alice and Bob. Alice wants to send a message to Bob; however, Alice is quite rather concerned about data security (good for her!), and she wants to ensure, that only Bob can eventually read the picture. DataPeps to the rescue!</p>
+				<p>With DataPeps Alice encrypts the message like this:</p>
+				<pre><code class="lang-javascript"><span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">aliceSend</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">let</span> aliceSession = <span class="hljs-keyword">await</span> DataPeps.login(aliceLogin, alicePassword);
+    <span class="hljs-keyword">let</span> resource = <span class="hljs-keyword">await</span> aliceSession.Resource.create(<span class="hljs-string">"text"</span>, <span class="hljs-string">""</span>, [bobLogin]);
+    <span class="hljs-keyword">let</span> messageToBob = <span class="hljs-string">"Hello, Bob!"</span>;
+    <span class="hljs-keyword">let</span> encryptedMessage = resource.encrypt(<span class="hljs-keyword">new</span> TextEncoder().encode(messageToBob));
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Alice sent a message: \""</span> + messageToBob + <span class="hljs-string">"\""</span>);
+    <span class="hljs-keyword">return</span> [resource.id, encryptedMessage];
 }
 </code></pre>
-				<p>and Bob&#39;s part:</p>
-				<pre><code class="lang-typescript"><span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">bobReceive</span>(<span class="hljs-params">
-        sdk,
-        resourceId,
-        encryptedFileName</span>) </span>{
-    <span class="hljs-keyword">let</span> session = <span class="hljs-keyword">await</span> sdk.login(<span class="hljs-string">"bob@peps.test"</span>, <span class="hljs-string">"pass"</span>)
-    <span class="hljs-keyword">let</span> resource = <span class="hljs-keyword">await</span> session.Resource.get(resourceId)
-    <span class="hljs-keyword">let</span> encryptedData = <span class="hljs-keyword">await</span> readFile(encryptedFileName)
-    <span class="hljs-keyword">let</span> decryptedData = resource.decrypt(encryptedData)
-    <span class="hljs-keyword">await</span> writeFile(<span class="hljs-string">"decrypted_"</span> + encryptedFileName, decryptedData)
+				<p>and Bob decrypts the message like this:</p>
+				<pre><code class="lang-javascript"><span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">bobReceive</span>(<span class="hljs-params">resourceId, encryptedMessage</span>) </span>{
+    <span class="hljs-keyword">let</span> bobSession = <span class="hljs-keyword">await</span> DataPeps.login(bobLogin, bobPassword);
+    <span class="hljs-keyword">let</span> resource = <span class="hljs-keyword">await</span> bobSession.Resource.get(resourceId);
+    <span class="hljs-keyword">let</span> decryptedMessage = resource.decrypt(encryptedMessage);
+    <span class="hljs-keyword">let</span> messageToBob = <span class="hljs-keyword">new</span> TextDecoder().decode(decryptedMessage);
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Bob received message: \""</span> + messageToBob + <span class="hljs-string">"\""</span>);
 }
 </code></pre>
 				<p>Short and awesome! Now, let&#39;s discuss it a bit.</p>
 				<p>Suppose, Alice and Bob are already registered with DataPeps (we cover the case when they are not a bit <a href="#identity-registration">further</a>). First of all, Alice needs to <a href="Session#session-establishment">establish a session</a> with DataPeps server:</p>
-				<pre><code class="lang-typescript"><span class="hljs-keyword">let</span> session = <span class="hljs-keyword">await</span> sdk.login(<span class="hljs-string">"alice@datapeps.com"</span>, <span class="hljs-string">"pass"</span>)
+				<pre><code class="lang-javascript"><span class="hljs-keyword">let</span> aliceSession = <span class="hljs-keyword">await</span> DataPeps.login(aliceLogin, alicePassword);
 </code></pre>
-				<p>Now, as Alice wants only Bob to have access to the picture, she needs to encrypt it for Bob (and only Bob). For this Alice <a href="Resource#creating-a-resource">creates</a> &quot;<a href="Resource">a resource</a>&quot;:</p>
-				<pre><code class="lang-typescript"><span class="hljs-keyword">let</span> resource = <span class="hljs-keyword">await</span> session.Resource.create(<span class="hljs-string">"img/jpg"</span>, <span class="hljs-string">""</span>, [<span class="hljs-string">"bob@datapeps.com"</span>])
+				<p>Now, as Alice wants that only Bob reads a message, she needs to encrypt it for Bob (and just for him). For this Alice <a href="Resource#creating-a-resource">creates</a> &quot;<a href="Resource">a resource</a>&quot;:</p>
+				<pre><code class="lang-javascript"><span class="hljs-keyword">let</span> resource = <span class="hljs-keyword">await</span> aliceSession.Resource.create(<span class="hljs-string">"text"</span>, <span class="hljs-string">""</span>, [bobLogin]);
 </code></pre>
-				<p>Last, Alice encrypts the photo and saves the result:</p>
-				<pre><code class="lang-typescript"><span class="hljs-keyword">let</span> photo = <span class="hljs-keyword">await</span> readFile(fileName)
-<span class="hljs-keyword">let</span> encryptedPhoto = resource.encrypt(photo)
-<span class="hljs-keyword">await</span> writeFile(<span class="hljs-string">"encrypted_"</span> + fileName, encryptedPhoto)
+				<p>Last, Alice encrypts the message:</p>
+				<pre><code class="lang-javascript"><span class="hljs-keyword">let</span> messageToBob = <span class="hljs-string">"Hello, Bob!"</span>;
+<span class="hljs-keyword">let</span> encryptedMessage = resource.encrypt(<span class="hljs-keyword">new</span> TextEncoder().encode(messageToBob));
 </code></pre>
-				<p>Alice sends Bob the encrypted file and the resource&#39;s ID:</p>
-				<pre><code class="lang-typescript"><span class="hljs-keyword">return</span> [resource.id, <span class="hljs-string">"encrypted_"</span> + fileName]
+				<p>Alice sends Bob the encrypted message and the resource&#39;s ID:</p>
+				<pre><code class="lang-javascript"><span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Alice sent message: \""</span> + messageToBob + <span class="hljs-string">"\""</span>);
+<span class="hljs-keyword">return</span> [resource.id, encryptedMessage];
 </code></pre>
-				<p>When Bob wants to decrypt the encrypted file from Alice, he establishes the session (the same way Alice did) and fetches the resource, created by Alice from the DataPeps server, using the resource id:</p>
-				<pre><code class="lang-typescript"><span class="hljs-keyword">let</span> session = <span class="hljs-keyword">await</span> sdk.login(<span class="hljs-string">"bob@peps.test"</span>, <span class="hljs-string">"pass"</span>)
-<span class="hljs-keyword">let</span> resource = <span class="hljs-keyword">await</span> session.Resource.get(resourceId)
+				<p>When Bob wants to decrypt the message received from Alice, he establishes the session (as Alice did before) and fetches the resource, created by Alice from the DataPeps server, using the resource id:</p>
+				<pre><code class="lang-javascript"><span class="hljs-keyword">let</span> bobSession = <span class="hljs-keyword">await</span> DataPeps.login(bobLogin, bobPassword);
+<span class="hljs-keyword">let</span> resource = <span class="hljs-keyword">await</span> bobSession.Resource.get(resourceId);
 </code></pre>
-				<p>Bob decrypts the file and saves the result:</p>
-				<pre><code class="lang-typescript"><span class="hljs-keyword">let</span> encryptedData = <span class="hljs-keyword">await</span> readFile(encryptedFileName)
-<span class="hljs-keyword">let</span> decryptedData = resource.decrypt(encryptedData)
-<span class="hljs-keyword">await</span> writeFile(<span class="hljs-string">"decrypted_"</span> + encryptedFileName, decryptedData)
+				<p>Bob can now decrypt the message:</p>
+				<pre><code class="lang-javascript"><span class="hljs-keyword">let</span> decryptedMessage = resource.decrypt(encryptedMessage);
+<span class="hljs-keyword">let</span> messageToBob = <span class="hljs-keyword">new</span> TextDecoder().decode(decryptedMessage);
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Bob received a message: \""</span> + messageToBob + <span class="hljs-string">"\""</span>);
 </code></pre>
 				<h3 id="adding-dependencies-for-node-js">Adding dependencies for Node.js</h3>
 				<p>We will use Node.js to run the resulting code, so we will need to satisfy all the relevant <a href="#using-the-sdk-with-nodejs">dependencies</a>:</p>
-				<pre><code class="lang-typescript"><span class="hljs-keyword">declare</span> <span class="hljs-keyword">var</span> global: <span class="hljs-built_in">any</span>
-global[<span class="hljs-string">"TextEncoder"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'text-encoding'</span>).TextEncoder                                                                                                                                                                                                            
-global[<span class="hljs-string">"TextDecoder"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'text-encoding'</span>).TextDecoder                                                                                                                                                                                               
-global[<span class="hljs-string">"XMLHttpRequest"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'xhr2'</span>)                                                                                                                                                                                                                                                          
-global[<span class="hljs-string">"WebSocket"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'ws'</span>)                                                                              
-global[<span class="hljs-string">"btoa"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'btoa'</span>)
-global[<span class="hljs-string">"atob"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'atob'</span>)
+				<pre><code class="lang-javascript"><span class="hljs-keyword">var</span> DataPeps = <span class="hljs-built_in">require</span>(<span class="hljs-string">"datapeps-sdk"</span>);
+
+global[<span class="hljs-string">"TextEncoder"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'text-encoding'</span>).TextEncoder;
+global[<span class="hljs-string">"TextDecoder"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'text-encoding'</span>).TextDecoder;
+global[<span class="hljs-string">"XMLHttpRequest"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'xhr2'</span>);
+global[<span class="hljs-string">"WebSocket"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'ws'</span>);
+global[<span class="hljs-string">"btoa"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'btoa'</span>);
+global[<span class="hljs-string">"atob"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'atob'</span>);
+</code></pre>
+				<p>We also need to specify the IP address of the DataPeps service:</p>
+				<pre><code class="lang-javascript">DataPeps.configure(<span class="hljs-string">"https://"</span> + process.env.PEPSCRYPTO_HOST);
 </code></pre>
 				<h2 id="hello-datapeps-code">&quot;Hello, DataPeps&quot; code</h2>
-				<p>Here is the complete example, with definitions of <em>readFile</em> and <em>writeFile</em> functions:</p>
+				<p>Here is the complete example:</p>
 				<p><details>
 						<summary>
 							Show code
 				</summary></p>
-				<pre><code class="lang-typescript"><span class="hljs-keyword">declare</span> <span class="hljs-keyword">var</span> global: <span class="hljs-built_in">any</span>
-global[<span class="hljs-string">"TextEncoder"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'text-encoding'</span>).TextEncoder                                                                                                                                                                                                            
-global[<span class="hljs-string">"TextDecoder"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'text-encoding'</span>).TextDecoder                                                                                                                                                                                               
-global[<span class="hljs-string">"XMLHttpRequest"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'xhr2'</span>)                                                                                                                                                                                                                                                          
-global[<span class="hljs-string">"WebSocket"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'ws'</span>)                                                                              
-global[<span class="hljs-string">"btoa"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'btoa'</span>)
-global[<span class="hljs-string">"atob"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'atob'</span>)
+				<pre><code class="lang-javascript"><span class="hljs-keyword">var</span> DataPeps = <span class="hljs-built_in">require</span>(<span class="hljs-string">"datapeps-sdk"</span>);
 
-<span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> Peps <span class="hljs-keyword">from</span> <span class="hljs-string">'pepssdk'</span>
-<span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> Fs <span class="hljs-keyword">from</span> <span class="hljs-string">'fs'</span>
+global[<span class="hljs-string">"TextEncoder"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'text-encoding'</span>).TextEncoder;
+global[<span class="hljs-string">"TextDecoder"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'text-encoding'</span>).TextDecoder;
+global[<span class="hljs-string">"XMLHttpRequest"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'xhr2'</span>);
+global[<span class="hljs-string">"WebSocket"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'ws'</span>);
+global[<span class="hljs-string">"btoa"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'btoa'</span>);
+global[<span class="hljs-string">"atob"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'atob'</span>);
 
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">readFile</span>(<span class="hljs-params">filePath: <span class="hljs-built_in">string</span></span>) </span>{
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>&lt;Buffer&gt;<span class="hljs-function">(<span class="hljs-params">(<span class="hljs-params">resolve, reject</span>) =&gt; {
-        <span class="hljs-keyword">let</span> data = Fs.readFile(<span class="hljs-params">filePath, (<span class="hljs-params">e, data</span>) =&gt; {
-            <span class="hljs-keyword">if</span> (<span class="hljs-params">e</span>) {
-                <span class="hljs-keyword">return</span> reject(<span class="hljs-params">e</span>)
-            }
-            <span class="hljs-keyword">return</span> resolve(<span class="hljs-params">data</span>)
-        }</span>)
-    }</span>)
+DataPeps.configure(<span class="hljs-string">"https://"</span> + process.env.PEPSCRYPTO_HOST);
+
+<span class="hljs-keyword">let</span> aliceLogin = <span class="hljs-string">"aliceliddell@peps.test"</span>,
+    bobLogin = <span class="hljs-string">"bobmorane@peps.test"</span>;
+
+<span class="hljs-keyword">let</span> alicePassword = <span class="hljs-string">"aliceP@ssw0rd"</span>,
+    bobPassword = <span class="hljs-string">"bobP@ssw0rd"</span>;
+
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">aliceSend</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">let</span> aliceSession = <span class="hljs-keyword">await</span> DataPeps.login(aliceLogin, alicePassword);
+    <span class="hljs-keyword">let</span> resource = <span class="hljs-keyword">await</span> aliceSession.Resource.create(<span class="hljs-string">"text"</span>, <span class="hljs-string">""</span>, [bobLogin]);
+    <span class="hljs-keyword">let</span> messageToBob = <span class="hljs-string">"Hello, Bob!"</span>;
+    <span class="hljs-keyword">let</span> encryptedMessage = resource.encrypt(<span class="hljs-keyword">new</span> TextEncoder().encode(messageToBob));
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Alice sent a message: \""</span> + messageToBob + <span class="hljs-string">"\""</span>);
+    <span class="hljs-keyword">return</span> [resource.id, encryptedMessage];
 }
 
-<span class="hljs-params">function</span> <span class="hljs-params">writeFile</span>(<span class="hljs-params">filePath, data</span>) {
-    <span class="hljs-params">return</span> <span class="hljs-params">new</span> <span class="hljs-params">Promise</span>&lt;<span class="hljs-params">void</span>&gt;(<span class="hljs-params">(<span class="hljs-params">resolve, reject</span>) =&gt; {
-        Fs.writeFile(<span class="hljs-params">filePath, data, (<span class="hljs-params">e</span>) =&gt; {
-            <span class="hljs-keyword">if</span> (<span class="hljs-params">e</span>) {
-                <span class="hljs-keyword">return</span> reject(<span class="hljs-params">e</span>)
-            }
-            <span class="hljs-keyword">return</span> resolve(<span class="hljs-params"></span>)
-        }</span>)
-    }</span>)
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">bobReceive</span>(<span class="hljs-params">resourceId, encryptedMessage</span>) </span>{
+    <span class="hljs-keyword">let</span> bobSession = <span class="hljs-keyword">await</span> DataPeps.login(bobLogin, bobPassword);
+    <span class="hljs-keyword">let</span> resource = <span class="hljs-keyword">await</span> bobSession.Resource.get(resourceId);
+    <span class="hljs-keyword">let</span> decryptedMessage = resource.decrypt(encryptedMessage);
+    <span class="hljs-keyword">let</span> messageToBob = <span class="hljs-keyword">new</span> TextDecoder().decode(decryptedMessage);
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Bob received a message: \""</span> + messageToBob + <span class="hljs-string">"\""</span>);
 }
 
-<span class="hljs-params">async</span> <span class="hljs-params">function</span> <span class="hljs-params">aliceSend</span>(<span class="hljs-params">, fileName</span>) {
-    <span class="hljs-params">let</span> <span class="hljs-params">session</span> = <span class="hljs-params">await</span> <span class="hljs-params">sdk</span>.<span class="hljs-params">login</span>(<span class="hljs-params">"alice@datapeps.com", "pass"</span>)
-    <span class="hljs-params">let</span> <span class="hljs-params">resource</span> = <span class="hljs-params">await</span> <span class="hljs-params">session</span>.<span class="hljs-params">Resource</span>.<span class="hljs-params">create</span>(<span class="hljs-params">"img/jpg", "", ["bob@datapeps.com"]</span>)
-    <span class="hljs-params">let</span> <span class="hljs-params">photo</span> = <span class="hljs-params">await</span> <span class="hljs-params">readFile</span>(<span class="hljs-params">fileName</span>)
-    <span class="hljs-params">let</span> <span class="hljs-params">encryptedPhoto</span> = <span class="hljs-params">resource</span>.<span class="hljs-params">encrypt</span>(<span class="hljs-params">photo</span>)
-    <span class="hljs-params">await</span> <span class="hljs-params">writeFile</span>(<span class="hljs-params">"encrypted_" + fileName, encryptedPhoto</span>)
-    <span class="hljs-params">return</span> [<span class="hljs-params">resource</span>.<span class="hljs-params">id</span>, "<span class="hljs-params">encrypted_</span>" + <span class="hljs-params">fileName</span>]
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">main</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">var</span> [resourceId, encryptedMessage] = <span class="hljs-keyword">await</span> aliceSend();
+    <span class="hljs-keyword">await</span> bobReceive(resourceId, encryptedMessage);
 }
 
-<span class="hljs-params">async</span> <span class="hljs-params">function</span> <span class="hljs-params">bobReceive</span>(<span class="hljs-params">
-        sdk,
-        resourceId,
-        encryptedFileName</span>) {
-    <span class="hljs-params">let</span> <span class="hljs-params">session</span> = <span class="hljs-params">await</span> <span class="hljs-params">sdk</span>.<span class="hljs-params">login</span>(<span class="hljs-params">"bob@datapeps.com", "pass"</span>)
-    <span class="hljs-params">let</span> <span class="hljs-params">resource</span> = <span class="hljs-params">await</span> <span class="hljs-params">session</span>.<span class="hljs-params">Resource</span>.<span class="hljs-params">get</span>(<span class="hljs-params">resourceId</span>)
-    <span class="hljs-params">let</span> <span class="hljs-params">encryptedData</span> = <span class="hljs-params">await</span> <span class="hljs-params">readFile</span>(<span class="hljs-params">encryptedFileName</span>)
-    <span class="hljs-params">let</span> <span class="hljs-params">decryptedData</span> = <span class="hljs-params">resource</span>.<span class="hljs-params">decrypt</span>(<span class="hljs-params">encryptedData</span>)
-    <span class="hljs-params">await</span> <span class="hljs-params">writeFile</span>(<span class="hljs-params">"decrypted_" + encryptedFileName, decryptedData</span>)
-}
-
-<span class="hljs-params">async</span> <span class="hljs-params">function</span> <span class="hljs-params">main</span><span class="hljs-params">()</span> {
-    <span class="hljs-params">var</span> <span class="hljs-params">sdk</span> = <span class="hljs-params">new</span> <span class="hljs-params">Peps</span>.<span class="hljs-params">SDK</span>(<span class="hljs-params">"https:<span class="hljs-comment">//192.168.99.100:32511")</span>
-    <span class="hljs-keyword">var</span> [resourceId, encryptedFileName] = <span class="hljs-keyword">await</span> aliceSend(<span class="hljs-params">sdk, "awmore.jpg"</span>)
-    <span class="hljs-keyword">await</span> bobReceive(<span class="hljs-params">sdk, resourceId, encryptedFileName</span>)
-}
-
-main(<span class="hljs-params"></span>).<span class="hljs-keyword">catch</span>(<span class="hljs-params">(<span class="hljs-params">_</span>) =&gt; process.stdout.write(<span class="hljs-params">"An error has occurred\n"</span>)</span>)</span></span>
+main().catch(<span class="hljs-function">(<span class="hljs-params">_</span>) =&gt;</span> process.stdout.write(<span class="hljs-string">"An error has occurred\n"</span>));
 </code></pre>
 				<p></details>
 					<br>
@@ -224,7 +204,7 @@ main(<span class="hljs-params"></span>).<span class="hljs-keyword">catch</span>(
         <span class="hljs-attr">"start"</span>: <span class="hljs-string">"node hello-datapeps.js"</span>
     },
     <span class="hljs-attr">"dependencies"</span>: {
-        <span class="hljs-attr">"pepssdk"</span>: <span class="hljs-string">"^0.0.5"</span>,
+        <span class="hljs-attr">"datapeps-sdk"</span>: <span class="hljs-string">"^0.0.5"</span>,
         <span class="hljs-attr">"@types/text-encoding"</span>: <span class="hljs-string">"0.0.31"</span>,
         <span class="hljs-attr">"atob"</span>: <span class="hljs-string">"^2.0.3"</span>,
         <span class="hljs-attr">"btoa"</span>: <span class="hljs-string">"^1.1.2"</span>,
@@ -234,24 +214,11 @@ main(<span class="hljs-params"></span>).<span class="hljs-keyword">catch</span>(
     }
 }
 </code></pre>
-				<p>and the following <em>tsconfig.json</em> (for compiling TypeScript):</p>
-				<pre><code class="lang-json">{
-    <span class="hljs-attr">"compilerOptions"</span>: {
-        <span class="hljs-attr">"lib"</span>: [
-            <span class="hljs-string">"dom"</span>,
-            <span class="hljs-string">"es2015.promise"</span>,
-            <span class="hljs-string">"es6"</span>
-        ],
-        <span class="hljs-attr">"module"</span>: <span class="hljs-string">"commonjs"</span>,
-        <span class="hljs-attr">"target"</span>: <span class="hljs-string">"es5"</span>
-    }
-}
-</code></pre>
-				<p>Compile and run the code:</p>
-				<pre><code class="lang-bash">npm install &amp;&amp; tsc &amp;&amp; npm start
+				<p>Run the code:</p>
+				<pre><code class="lang-bash">npm install &amp;&amp; node hello-datapeps.js
 </code></pre>
 				<p>If you use yarn instead of npm, run:</p>
-				<pre><code class="lang-bash">yarn install &amp;&amp; tsc &amp;&amp; yarn run start
+				<pre><code class="lang-bash">yarn install &amp;&amp; node run hello-datapeps.js
 </code></pre>
 			</div>
 		</div>

@@ -60,36 +60,24 @@
 	<div class="row">
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
-				<p>To start working with DataPeps, you need to add DataPeps SDK to your project.</p>
-				<h2 id="using-a-package-manager">Using a package manager</h2>
-				<p>The simplest way to get started, is to add DataPeps SDK, using your favourite package manager.</p>
-				<h3 id="npm">npm</h3>
-				<p>Go to your project directory and run:</p>
+				<h1 id="datapeps-sdk">DataPeps SDK</h1>
+				<p>This repository contains the source for the DataPeps SDK for JavaScript (written in TypeScript), released under the Apache License. </p>
+				<p><a href="https://datapeps.com">DataPeps</a> is an <a href="https://en.wikipedia.org/wiki/End-to-end_encryption">End-to-End Encryption</a> platform. By integrating this very SDK in your application, you can encrypt resources on clients (web, mobile, ...) to store and share data securely. For you, as a developer, one of the main benefits is that the cryptography implementation is foolproof and you don&#39;t need any knowledge of cryptography.</p>
+				<h2 id="getting-started">Getting started</h2>
+				<p>The simplest way to get started is to add DataPeps SDK, using your favourite package manager.</p>
+				<p>With <code>npm</code>, go to your project directory and run:</p>
 				<pre><code class="lang-bash">npm install datapeps-sdk
 </code></pre>
-				<h3 id="yarn">yarn</h3>
-				<p>Go to your project directory and run:</p>
+				<p>If you prefer <code>yarn</code>, go to your project directory and run:</p>
 				<pre><code class="lang-bash">yarn add datapeps-sdk
 </code></pre>
-				<h2 id="instantiation-of-datapeps-sdk">Instantiation of DataPeps SDK</h2>
-				<p>Just add the following line to your code to import the DataPeps SDK:</p>
+				<p>Once installed, just add the following line to your code to import the DataPeps SDK:</p>
 				<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> DataPeps <span class="hljs-keyword">from</span> <span class="hljs-string">'datapeps-sdk'</span>;
 </code></pre>
-				<h2 id="using-the-sdk-with-node-js">Using the SDK with Node.js</h2>
-				<p>When using DataPeps SDK with <a href="https://nodejs.org/">Node.js</a> (on backend or if testing with <a href="https://mochajs.org/">Mocha</a>), you need to add the following packages:</p>
-				<ul>
-					<li><a href="https://www.npmjs.com/package/@types/text-encoding">@types/text-encoding</a></li>
-					<li><a href="https://www.npmjs.com/package/atob">atob</a></li>
-					<li><a href="https://www.npmjs.com/package/btoa">btoa</a></li>
-					<li><a href="https://www.npmjs.com/package/text-encoding">text-encoding</a></li>
-					<li><a href="https://www.npmjs.com/package/ws">ws</a></li>
-					<li><a href="https://www.npmjs.com/package/xhr2">xhr2</a></li>
-				</ul>
-				<p>The components above are supported by browsers, but when calling DataPeps API on backend, you need to add them to the project manually along with a couple of lines to configure their usage. We&#39;ll show how to do it <a href="#adding-dependencies-for-nodejs">further</a>.</p>
+				<p>If you plan to use DataPeps with Node.js (for testing with <a href="https://mochajs.org/">Mocha</a> for instance), please read more about dependencies <a href="https://github.com/wallix/datapeps-sdk-js/wiki/Setting-up#using-the-sdk-with-nodejs">in the wiki</a>.</p>
 				<h2 id="hello-datapeps-">Hello, DataPeps!</h2>
-				<p>Let&#39;s have a glimpse at how exactly DataPeps simplifies cryptography for a developer.</p>
-				<p>Say there are two friends, Alice and Bob. Alice wants to send a message to Bob; however, Alice is quite rather concerned about data security (good for her!), and she wants to ensure, that only Bob can eventually read the picture. DataPeps to the rescue!</p>
-				<p>With DataPeps Alice encrypts the message like this:</p>
+				<p>Say there are two friends, Alice and Bob. Alice wants to send a picture to Bob; however, Alice is quite rather concerned about data security (good for her!), and she wants to ensure, that only Bob can eventually read the picture. DataPeps to the rescue!</p>
+				<p>With DataPeps, Alice encrypts the message like this:</p>
 				<pre><code class="lang-javascript"><span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">aliceSend</span>(<span class="hljs-params"></span>) </span>{
     <span class="hljs-keyword">let</span> aliceSession = <span class="hljs-keyword">await</span> DataPeps.login(aliceLogin, alicePassword);
     <span class="hljs-keyword">let</span> resource = <span class="hljs-keyword">await</span> aliceSession.Resource.create(<span class="hljs-string">"text"</span>, <span class="hljs-string">""</span>, [bobLogin]);
@@ -108,118 +96,14 @@
     <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Bob received message: \""</span> + messageToBob + <span class="hljs-string">"\""</span>);
 }
 </code></pre>
-				<p>Short and awesome! Now, let&#39;s discuss it a bit.</p>
-				<p>Suppose, Alice and Bob are already registered with DataPeps (we cover the case when they are not a bit <a href="#identity-registration">further</a>). First of all, Alice needs to <a href="Session#session-establishment">establish a session</a> with DataPeps server:</p>
-				<pre><code class="lang-javascript"><span class="hljs-keyword">let</span> aliceSession = <span class="hljs-keyword">await</span> DataPeps.login(aliceLogin, alicePassword);
-</code></pre>
-				<p>Now, as Alice wants that only Bob reads a message, she needs to encrypt it for Bob (and just for him). For this Alice <a href="Resource#creating-a-resource">creates</a> &quot;<a href="Resource">a resource</a>&quot;:</p>
-				<pre><code class="lang-javascript"><span class="hljs-keyword">let</span> resource = <span class="hljs-keyword">await</span> aliceSession.Resource.create(<span class="hljs-string">"text"</span>, <span class="hljs-string">""</span>, [bobLogin]);
-</code></pre>
-				<p>Last, Alice encrypts the message:</p>
-				<pre><code class="lang-javascript"><span class="hljs-keyword">let</span> messageToBob = <span class="hljs-string">"Hello, Bob!"</span>;
-<span class="hljs-keyword">let</span> encryptedMessage = resource.encrypt(<span class="hljs-keyword">new</span> TextEncoder().encode(messageToBob));
-</code></pre>
-				<p>Alice sends Bob the encrypted message and the resource&#39;s ID:</p>
-				<pre><code class="lang-javascript"><span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Alice sent message: \""</span> + messageToBob + <span class="hljs-string">"\""</span>);
-<span class="hljs-keyword">return</span> [resource.id, encryptedMessage];
-</code></pre>
-				<p>When Bob wants to decrypt the message received from Alice, he establishes the session (as Alice did before) and fetches the resource, created by Alice from the DataPeps server, using the resource id:</p>
-				<pre><code class="lang-javascript"><span class="hljs-keyword">let</span> bobSession = <span class="hljs-keyword">await</span> DataPeps.login(bobLogin, bobPassword);
-<span class="hljs-keyword">let</span> resource = <span class="hljs-keyword">await</span> bobSession.Resource.get(resourceId);
-</code></pre>
-				<p>Bob can now decrypt the message:</p>
-				<pre><code class="lang-javascript"><span class="hljs-keyword">let</span> decryptedMessage = resource.decrypt(encryptedMessage);
-<span class="hljs-keyword">let</span> messageToBob = <span class="hljs-keyword">new</span> TextDecoder().decode(decryptedMessage);
-<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Bob received a message: \""</span> + messageToBob + <span class="hljs-string">"\""</span>);
-</code></pre>
-				<h3 id="adding-dependencies-for-node-js">Adding dependencies for Node.js</h3>
-				<p>We will use Node.js to run the resulting code, so we will need to satisfy all the relevant <a href="#using-the-sdk-with-nodejs">dependencies</a>:</p>
-				<pre><code class="lang-javascript"><span class="hljs-keyword">var</span> DataPeps = <span class="hljs-built_in">require</span>(<span class="hljs-string">"datapeps-sdk"</span>);
-
-global[<span class="hljs-string">"TextEncoder"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'text-encoding'</span>).TextEncoder;
-global[<span class="hljs-string">"TextDecoder"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'text-encoding'</span>).TextDecoder;
-global[<span class="hljs-string">"XMLHttpRequest"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'xhr2'</span>);
-global[<span class="hljs-string">"WebSocket"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'ws'</span>);
-global[<span class="hljs-string">"btoa"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'btoa'</span>);
-global[<span class="hljs-string">"atob"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'atob'</span>);
-</code></pre>
-				<p>We also need to specify the IP address of the DataPeps service:</p>
-				<pre><code class="lang-javascript">DataPeps.configure(<span class="hljs-string">"https://"</span> + process.env.PEPSCRYPTO_HOST);
-</code></pre>
-				<h2 id="hello-datapeps-code">&quot;Hello, DataPeps&quot; code</h2>
-				<p>Here is the complete example:</p>
-				<p><details>
-						<summary>
-							Show code
-				</summary></p>
-				<pre><code class="lang-javascript"><span class="hljs-keyword">var</span> DataPeps = <span class="hljs-built_in">require</span>(<span class="hljs-string">"datapeps-sdk"</span>);
-
-global[<span class="hljs-string">"TextEncoder"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'text-encoding'</span>).TextEncoder;
-global[<span class="hljs-string">"TextDecoder"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'text-encoding'</span>).TextDecoder;
-global[<span class="hljs-string">"XMLHttpRequest"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'xhr2'</span>);
-global[<span class="hljs-string">"WebSocket"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'ws'</span>);
-global[<span class="hljs-string">"btoa"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'btoa'</span>);
-global[<span class="hljs-string">"atob"</span>] = <span class="hljs-built_in">require</span>(<span class="hljs-string">'atob'</span>);
-
-DataPeps.configure(<span class="hljs-string">"https://"</span> + process.env.PEPSCRYPTO_HOST);
-
-<span class="hljs-keyword">let</span> aliceLogin = <span class="hljs-string">"aliceliddell@peps.test"</span>,
-    bobLogin = <span class="hljs-string">"bobmorane@peps.test"</span>;
-
-<span class="hljs-keyword">let</span> alicePassword = <span class="hljs-string">"aliceP@ssw0rd"</span>,
-    bobPassword = <span class="hljs-string">"bobP@ssw0rd"</span>;
-
-<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">aliceSend</span>(<span class="hljs-params"></span>) </span>{
-    <span class="hljs-keyword">let</span> aliceSession = <span class="hljs-keyword">await</span> DataPeps.login(aliceLogin, alicePassword);
-    <span class="hljs-keyword">let</span> resource = <span class="hljs-keyword">await</span> aliceSession.Resource.create(<span class="hljs-string">"text"</span>, <span class="hljs-string">""</span>, [bobLogin]);
-    <span class="hljs-keyword">let</span> messageToBob = <span class="hljs-string">"Hello, Bob!"</span>;
-    <span class="hljs-keyword">let</span> encryptedMessage = resource.encrypt(<span class="hljs-keyword">new</span> TextEncoder().encode(messageToBob));
-    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Alice sent a message: \""</span> + messageToBob + <span class="hljs-string">"\""</span>);
-    <span class="hljs-keyword">return</span> [resource.id, encryptedMessage];
-}
-
-<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">bobReceive</span>(<span class="hljs-params">resourceId, encryptedMessage</span>) </span>{
-    <span class="hljs-keyword">let</span> bobSession = <span class="hljs-keyword">await</span> DataPeps.login(bobLogin, bobPassword);
-    <span class="hljs-keyword">let</span> resource = <span class="hljs-keyword">await</span> bobSession.Resource.get(resourceId);
-    <span class="hljs-keyword">let</span> decryptedMessage = resource.decrypt(encryptedMessage);
-    <span class="hljs-keyword">let</span> messageToBob = <span class="hljs-keyword">new</span> TextDecoder().decode(decryptedMessage);
-    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Bob received a message: \""</span> + messageToBob + <span class="hljs-string">"\""</span>);
-}
-
-<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">main</span>(<span class="hljs-params"></span>) </span>{
-    <span class="hljs-keyword">var</span> [resourceId, encryptedMessage] = <span class="hljs-keyword">await</span> aliceSend();
-    <span class="hljs-keyword">await</span> bobReceive(resourceId, encryptedMessage);
-}
-
-main().catch(<span class="hljs-function">(<span class="hljs-params">_</span>) =&gt;</span> process.stdout.write(<span class="hljs-string">"An error has occurred\n"</span>));
-</code></pre>
-				<p></details>
-					<br>
-				Finally, create the following <em>package.json</em> in the project directory:</p>
-				<pre><code class="lang-json">{
-    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"hello-datapeps"</span>,
-    <span class="hljs-attr">"version"</span>: <span class="hljs-string">"0.0.1"</span>,
-    <span class="hljs-attr">"main"</span>: <span class="hljs-string">"hello-datapeps.js"</span>,
-    <span class="hljs-attr">"scripts"</span>: {
-        <span class="hljs-attr">"start"</span>: <span class="hljs-string">"node hello-datapeps.js"</span>
-    },
-    <span class="hljs-attr">"dependencies"</span>: {
-        <span class="hljs-attr">"datapeps-sdk"</span>: <span class="hljs-string">"^0.0.5"</span>,
-        <span class="hljs-attr">"@types/text-encoding"</span>: <span class="hljs-string">"0.0.31"</span>,
-        <span class="hljs-attr">"atob"</span>: <span class="hljs-string">"^2.0.3"</span>,
-        <span class="hljs-attr">"btoa"</span>: <span class="hljs-string">"^1.1.2"</span>,
-        <span class="hljs-attr">"text-encoding"</span>: <span class="hljs-string">"^0.6.4"</span>,
-        <span class="hljs-attr">"ws"</span>: <span class="hljs-string">"^3.3.2"</span>,
-        <span class="hljs-attr">"xhr2"</span>: <span class="hljs-string">"^0.1.4"</span>
-    }
-}
-</code></pre>
-				<p>Run the code:</p>
-				<pre><code class="lang-bash">npm install &amp;&amp; node hello-datapeps.js
-</code></pre>
-				<p>If you use yarn instead of npm, run:</p>
-				<pre><code class="lang-bash">yarn install &amp;&amp; node run hello-datapeps.js
-</code></pre>
+				<p>If you want a detailed explanation of the code above, look it up <a href="https://github.com/wallix/datapeps-sdk-js/wiki/Setting-up#hello-datapeps">in the wiki</a>.</p>
+				<p>Want to try asap? Here is a <a href="https://gist.github.com/hbi-wallix/2229fec260f8670de5657628ef28e522">complete Gist</a>.</p>
+				<h2 id="learn-more">Learn more</h2>
+				<p>DataPeps is written by the Innovation Department at <a href="https://wallix.com">WALLIX</a>. </p>
+				<ul>
+					<li><a href="https://datapeps.com">Website</a></li>
+					<li><a href="https://twitter.com/DataPeps_WALLIX">Twitter</a></li>
+				</ul>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">

@@ -7,7 +7,7 @@ export declare enum SDKKind {
     BadResponse = -2,
     NetworkException = -3,
     SDKInternalError = -4,
-    SDKEncryptionDecryptFail = -5,
+    BadSecret = -5,
     IdentitySignChainInvalid = -6,
     ProtocolError = -7,
     SDKDecryptFail = -8,

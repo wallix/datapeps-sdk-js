@@ -53,20 +53,20 @@ var Identity_1 = require("./Identity");
 var Resource_1 = require("./Resource");
 var Admin_1 = require("./Admin");
 var Channel_1 = require("./Channel");
-var MemoryPublicKeyChache = /** @class */ (function () {
-    function MemoryPublicKeyChache() {
+var MemoryPublicKeyCache = /** @class */ (function () {
+    function MemoryPublicKeyCache() {
         this.cache = {};
     }
-    MemoryPublicKeyChache.prototype.latest = function (login) {
+    MemoryPublicKeyCache.prototype.latest = function (login) {
         var keys = this.cache[login];
         return (keys == null || keys.length == 0) ? null : keys[keys.length - 1];
     };
-    MemoryPublicKeyChache.prototype.get = function (_a) {
+    MemoryPublicKeyCache.prototype.get = function (_a) {
         var login = _a.login, version = _a.version;
         var keys = this.cache[login];
         return (keys == null || keys.length == 0) ? null : keys[version];
     };
-    MemoryPublicKeyChache.prototype.set = function (_a, pk) {
+    MemoryPublicKeyCache.prototype.set = function (_a, pk) {
         var login = _a.login, version = _a.version;
         var keys = this.cache[login];
         if (keys == null) {
@@ -74,7 +74,7 @@ var MemoryPublicKeyChache = /** @class */ (function () {
         }
         this.cache[login][version] = pk;
     };
-    return MemoryPublicKeyChache;
+    return MemoryPublicKeyCache;
 }());
 var TrustOnFirstUse = /** @class */ (function () {
     function TrustOnFirstUse(session) {
@@ -173,7 +173,7 @@ var SessionImpl = /** @class */ (function () {
         this.saltKind = saltKind;
         this.login = login;
         this.client = client;
-        this.pkCache = new MemoryPublicKeyChache();
+        this.pkCache = new MemoryPublicKeyCache();
         this.trustPolicy = new TrustOnFirstUse(this);
         this.assumeKeyCache = {};
         this.wsManager = new WebSocketManager(this);
@@ -327,8 +327,8 @@ var SessionImpl = /** @class */ (function () {
                         })];
                     case 1:
                         _a = _b.sent(), sign = _a.sign, resource = _a.resource;
-                        return [4 /*yield*/, new Resource_1.ResourceImpl(this)._makeResourceFromResponse(resource, null, null)
-                            // Verify sign
+                        return [4 /*yield*/, new Resource_1.ResourceImpl(this)._makeResourceFromResponse(resource, proto_1.types.ResourceType.ANONYMOUS, null, null)
+                            // Verify requester's signature
                         ];
                     case 2:
                         r = _b.sent();
@@ -420,7 +420,7 @@ var SessionImpl = /** @class */ (function () {
                         return [3 /*break*/, 8];
                     case 7:
                         e_1 = _b.sent();
-                        if (e_1 instanceof Error_1.Error && e_1.kind == Error_1.SDKKind.SDKEncryptionDecryptFail) {
+                        if (e_1 instanceof Error_1.Error && e_1.kind == Error_1.SDKKind.BadSecret) {
                             throw err_1;
                         }
                         throw e_1;
@@ -495,7 +495,7 @@ var SessionImpl = /** @class */ (function () {
                         }
                         _c.label = 3;
                     case 3: 
-                    // Check the sign chains and populate the cache
+                    // Check the sign chains and update the cache
                     return [4 /*yield*/, chains.reduce(function (ppk, _a) {
                             var box = _a.box, sign = _a.sign, chain = _a.chain, mandate = _a.mandate;
                             return __awaiter(_this, void 0, void 0, function () {
@@ -531,7 +531,7 @@ var SessionImpl = /** @class */ (function () {
                             });
                         }, Promise.resolve(pk))];
                     case 4:
-                        // Check the sign chains and populate the cache
+                        // Check the sign chains and update the cache
                         _c.sent();
                         return [2 /*return*/];
                 }

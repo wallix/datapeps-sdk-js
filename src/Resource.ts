@@ -30,6 +30,9 @@ export class Resource<T> {
         this.keypair = keypair
         this.creator = creator
         this.type = type
+        if (type != ResourceType.ANONYMOUS) {
+            throw new Error("Error Resource support yet only anonymous mode");
+        }
     }
 
     publicKey(): Uint8Array {
@@ -77,11 +80,12 @@ export class ResourceImpl implements ResourceAPI {
 
     async create<T>(kind: string, payload: T, sharingGroup: string[], options?: {
         serialize?: ((payload: T) => Uint8Array),
-        type?: types.ResourceType
     }): Promise<Resource<T>> {
         options = options == null ? {} : options
-        let type = options.type == null ? types.ResourceType.SES : options.type
-        let encryptFunc = this.session.encryption.encrypt(type)
+        // keys and payload are always encrypted with SES
+        let encryptFunc = this.session.encryption.encrypt(types.ResourceType.SES)
+        // resource only support ANONYMOUS for now (i.e. the data encrypted by the resource)
+        let type = types.ResourceType.ANONYMOUS
         let creator = this.session.getSessionPublicKey()
         let { body, keypair } = await this._createBodyRequest(payload, sharingGroup, encryptFunc, options)
         let { id } = await this.session.doProtoRequest({
@@ -107,18 +111,22 @@ export class ResourceImpl implements ResourceAPI {
             assume: { login: assume, kind: IdentityAccessKind.READ },
             response: r => types.ResourceGetResponse.decode(r),
         })
-        return this._makeResourceFromResponse(response, options.parse, assume)
+        return this._makeResourceFromResponse(response, types.ResourceType.SES, options.parse, assume)
     }
 
-    async _makeResourceFromResponse({ resource, encryptedKey, creator }: types.IResourceGetResponse, parse?, assume?) {
+    async _makeResourceFromResponse(
+        { resource, encryptedKey, creator }: types.IResourceGetResponse,
+        typeOfKey: types.ResourceType,
+        parse?, assume?,
+    ) {
         parse = parse != null ? parse : u => JSON.parse(new TextDecoder().decode(u))
         assume = assume != null ? assume : this.session.login
         let { key } = await this.session.getAssumeParams({ login: assume, kind: IdentityAccessKind.READ })
-        let resourceCipher = encryptedKey.pop()
+        let secretKeyCipher = encryptedKey.pop()
         let accessKey = await this.session.decryptCipherList(types.ResourceType.SES, encryptedKey, key.boxKey)
-        let secretKey = await this.session.decryptCipherList(resource.type, [resourceCipher], accessKey)
+        let secretKey = await this.session.decryptCipherList(typeOfKey, [secretKeyCipher], accessKey)
         let keypair = nacl.box.keyPair.fromSecretKey(secretKey)
-        let payload = resource.payload.length == 0 ? null : parse(await this.session.decryptCipherList(resource.type, [{
+        let payload = resource.payload.length == 0 ? null : parse(await this.session.decryptCipherList(types.ResourceType.SES, [{
             message: resource.payload,
             nonce: resource.nonce,
             sign: creator
@@ -152,8 +160,9 @@ export class ResourceImpl implements ResourceAPI {
             path: "/api/v4/resource/" + id + "/key",
             response: types.ResourceGetKeyResponse.decode,
         })
-        let secretKey = await this.session.decryptCipherList(type, encryptedKey)
-        let encryptFunc = this.session.encryption.encrypt(type)
+        let { key } = await this.session.getAssumeParams({ login: assume, kind: IdentityAccessKind.READ })
+        let secretKey = await this.session.decryptCipherList(types.ResourceType.SES, encryptedKey, key.boxKey)
+        let encryptFunc = this.session.encryption.encrypt(types.ResourceType.SES)
         let encryptedSharingGroup = await this.encryptForSharingGroup(secretKey, sharingGroup, encryptFunc)
         return await this.session.doProtoRequest<void>({
             method: "PATCH", code: 201,

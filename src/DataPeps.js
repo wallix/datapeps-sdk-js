@@ -187,7 +187,7 @@ function requestDelegatedAccess(login, sign) {
                         })];
                 case 3:
                     id = (_b.sent()).id;
-                    resource = new Resource_1.Resource(0, null, null, keypair, null, null);
+                    resource = new Resource_1.Resource(0, null, null, keypair, null);
                     return [2 /*return*/, new Session_1.AccessRequestImpl(id, login, client, resource)];
             }
         });

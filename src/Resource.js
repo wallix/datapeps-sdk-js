@@ -60,6 +60,9 @@ var Resource = /** @class */ (function () {
         this.keypair = keypair;
         this.creator = creator;
         this.type = type;
+        if (type != ResourceType.ANONYMOUS) {
+            throw new Error("Error Resource support yet only anonymous mode");
+        }
     }
     Resource.prototype.publicKey = function () {
         return this.keypair.publicKey;
@@ -109,13 +112,13 @@ var ResourceImpl = /** @class */ (function () {
     };
     ResourceImpl.prototype.create = function (kind, payload, sharingGroup, options) {
         return __awaiter(this, void 0, void 0, function () {
-            var type, encryptFunc, creator, _a, body, keypair, id;
+            var encryptFunc, type, creator, _a, body, keypair, id;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         options = options == null ? {} : options;
-                        type = options.type == null ? proto_1.types.ResourceType.SES : options.type;
-                        encryptFunc = this.session.encryption.encrypt(type);
+                        encryptFunc = this.session.encryption.encrypt(proto_1.types.ResourceType.SES);
+                        type = proto_1.types.ResourceType.ANONYMOUS;
                         creator = this.session.getSessionPublicKey();
                         return [4 /*yield*/, this._createBodyRequest(payload, sharingGroup, encryptFunc, options)];
                     case 1:
@@ -149,15 +152,15 @@ var ResourceImpl = /** @class */ (function () {
                             })];
                     case 1:
                         response = _a.sent();
-                        return [2 /*return*/, this._makeResourceFromResponse(response, options.parse, assume)];
+                        return [2 /*return*/, this._makeResourceFromResponse(response, proto_1.types.ResourceType.SES, options.parse, assume)];
                 }
             });
         });
     };
-    ResourceImpl.prototype._makeResourceFromResponse = function (_a, parse, assume) {
+    ResourceImpl.prototype._makeResourceFromResponse = function (_a, typeOfKey, parse, assume) {
         var resource = _a.resource, encryptedKey = _a.encryptedKey, creator = _a.creator;
         return __awaiter(this, void 0, void 0, function () {
-            var key, resourceCipher, accessKey, secretKey, keypair, payload, _b, _c, rcreator;
+            var key, secretKeyCipher, accessKey, secretKey, keypair, payload, _b, _c, rcreator;
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
@@ -166,11 +169,11 @@ var ResourceImpl = /** @class */ (function () {
                         return [4 /*yield*/, this.session.getAssumeParams({ login: assume, kind: DataPeps_1.IdentityAccessKind.READ })];
                     case 1:
                         key = (_d.sent()).key;
-                        resourceCipher = encryptedKey.pop();
+                        secretKeyCipher = encryptedKey.pop();
                         return [4 /*yield*/, this.session.decryptCipherList(proto_1.types.ResourceType.SES, encryptedKey, key.boxKey)];
                     case 2:
                         accessKey = _d.sent();
-                        return [4 /*yield*/, this.session.decryptCipherList(resource.type, [resourceCipher], accessKey)];
+                        return [4 /*yield*/, this.session.decryptCipherList(typeOfKey, [secretKeyCipher], accessKey)];
                     case 3:
                         secretKey = _d.sent();
                         keypair = nacl.box.keyPair.fromSecretKey(secretKey);
@@ -179,7 +182,7 @@ var ResourceImpl = /** @class */ (function () {
                         return [3 /*break*/, 6];
                     case 4:
                         _c = parse;
-                        return [4 /*yield*/, this.session.decryptCipherList(resource.type, [{
+                        return [4 /*yield*/, this.session.decryptCipherList(proto_1.types.ResourceType.SES, [{
                                     message: resource.payload,
                                     nonce: resource.nonce,
                                     sign: creator
@@ -219,7 +222,7 @@ var ResourceImpl = /** @class */ (function () {
     };
     ResourceImpl.prototype.extendSharingGroup = function (id, sharingGroup, options) {
         return __awaiter(this, void 0, void 0, function () {
-            var assume, _a, encryptedKey, type, secretKey, encryptFunc, encryptedSharingGroup;
+            var assume, _a, encryptedKey, type, key, secretKey, encryptFunc, encryptedSharingGroup;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -232,12 +235,15 @@ var ResourceImpl = /** @class */ (function () {
                             })];
                     case 1:
                         _a = _b.sent(), encryptedKey = _a.encryptedKey, type = _a.type;
-                        return [4 /*yield*/, this.session.decryptCipherList(type, encryptedKey)];
+                        return [4 /*yield*/, this.session.getAssumeParams({ login: assume, kind: DataPeps_1.IdentityAccessKind.READ })];
                     case 2:
-                        secretKey = _b.sent();
-                        encryptFunc = this.session.encryption.encrypt(type);
-                        return [4 /*yield*/, this.encryptForSharingGroup(secretKey, sharingGroup, encryptFunc)];
+                        key = (_b.sent()).key;
+                        return [4 /*yield*/, this.session.decryptCipherList(proto_1.types.ResourceType.SES, encryptedKey, key.boxKey)];
                     case 3:
+                        secretKey = _b.sent();
+                        encryptFunc = this.session.encryption.encrypt(proto_1.types.ResourceType.SES);
+                        return [4 /*yield*/, this.encryptForSharingGroup(secretKey, sharingGroup, encryptFunc)];
+                    case 4:
                         encryptedSharingGroup = _b.sent();
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "PATCH", code: 201,
@@ -246,7 +252,7 @@ var ResourceImpl = /** @class */ (function () {
                                     sharingGroup: encryptedSharingGroup
                                 }).finish(); }
                             })];
-                    case 4: return [2 /*return*/, _b.sent()];
+                    case 5: return [2 /*return*/, _b.sent()];
                 }
             });
         });

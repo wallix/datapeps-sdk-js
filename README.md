@@ -2,7 +2,7 @@
 
 This repository contains the source for the DataPeps SDK for JavaScript (written in TypeScript), released under the Apache License. 
 
-[DataPeps](https://datapeps.com) is an [End-to-End Encryption](https://en.wikipedia.org/wiki/End-to-end_encryption) platform. By integrating this very SDK in your application, you can encrypt resources on clients (web, mobile, ...) to store and share data securely. For you, as a developer, one of the main benefits is that the cryptography implementation is foolproof and you don't need any knowledge of cryptography.
+[DataPeps](https://datapeps.com) is an [End-to-End Encryption](https://en.wikipedia.org/wiki/End-to-end_encryption) platform. By integrating this  SDK in your application, you can encrypt resources on clients (web, mobile, ...) to store and share data securely. For you, as a developer, one of the main benefits is that the cryptography implementation is foolproof and you don't need any knowledge of cryptography.
 
 ## Getting started
 
@@ -11,7 +11,7 @@ The simplest way to get started is to add DataPeps SDK, using your favourite pac
 With `npm`, go to your project directory and run:
 
 ```bash
-npm install datapeps-sdk
+npm install datapeps-sdk --save
 ```
 
 If you prefer `yarn`, go to your project directory and run:

@@ -67,7 +67,7 @@ var Encryption = /** @class */ (function (_super) {
         catch (err) {
             if (err instanceof Error_1.Error && err.kind == Error_1.SDKKind.SDKDecryptFail) {
                 throw new Error_1.Error({
-                    kind: Error_1.SDKKind.SDKEncryptionDecryptFail,
+                    kind: Error_1.SDKKind.BadSecret,
                     payload: err
                 });
             }

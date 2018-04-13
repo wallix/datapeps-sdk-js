@@ -146,7 +146,7 @@ export async function requestDelegatedAccess(
             x.setRequestHeader("content-type", "application/x-protobuf")
         }
     })
-    let resource = new Resource(0, null, null, keypair, null, null)
+    let resource = new Resource(0, null, null, keypair, null)
     return new AccessRequestImpl(id, login, client, resource)
 }
 

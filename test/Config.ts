@@ -9,14 +9,9 @@ if (APIHost == null) {
 }
 APIHost = "https://" + APIHost
 
-let WSHost = process.env.PEPSWS_HOST
-if (WSHost == null) {
-    throw new Error("Missing PEPSWS_HOST")
-}
-WSHost = "wss://" + WSHost
-
 let sdk = DataPeps
-sdk.configure(APIHost, WSHost)
+sdk.configure(APIHost)
+
 export { sdk }
 
 let admin: DataPeps.Identity<any> = {
@@ -52,10 +47,10 @@ export function adminLogin(): Promise<DataPeps.Session> {
 declare var require: any
 declare var global: any
 
-if(global["btoa"] === undefined) {
+if (global["btoa"] === undefined) {
     global["btoa"] = require('btoa')
 }
-if(global["atob"] === undefined) {
+if (global["atob"] === undefined) {
     global["atob"] = require('atob')
 }
 if (global["TextEncoder"] === undefined) {
@@ -64,9 +59,9 @@ if (global["TextEncoder"] === undefined) {
 if (global["TextDecoder"] === undefined) {
     global["TextDecoder"] = require('text-encoding').TextDecoder
 }
-if(global["XMLHttpRequest"] === undefined) {
+if (global["XMLHttpRequest"] === undefined) {
     global["XMLHttpRequest"] = require('xhr2')
 }
-if(global["WebSocket"] === undefined) {
+if (global["WebSocket"] === undefined) {
     global["WebSocket"] = require('ws')
 }

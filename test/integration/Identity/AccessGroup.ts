@@ -3,6 +3,9 @@ import * as DataPeps from '../../../src/DataPeps';
 import * as nacl from 'tweetnacl';
 import { expect } from 'chai';
 
+/**
+ * This test is about testing of the funtion DataPeps.IdentityAPI.getAccessGroup
+ */
 describe('Identity.AccessGroup', () => {
     let seed = Math.floor(Math.random() * 99999)
 

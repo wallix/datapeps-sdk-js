@@ -39,13 +39,12 @@ export declare class ResourceImpl implements ResourceAPI {
     }>;
     create<T>(kind: string, payload: T, sharingGroup: string[], options?: {
         serialize?: ((payload: T) => Uint8Array);
-        type?: types.ResourceType;
     }): Promise<Resource<T>>;
     get<T>(id: ID, options?: {
         assume?: string;
         parse?: ((u: Uint8Array) => T);
     }): Promise<Resource<T>>;
-    _makeResourceFromResponse({resource, encryptedKey, creator}: types.IResourceGetResponse, parse?: any, assume?: any): Promise<Resource<any>>;
+    _makeResourceFromResponse({resource, encryptedKey, creator}: types.IResourceGetResponse, typeOfKey: types.ResourceType, parse?: any, assume?: any): Promise<Resource<any>>;
     delete(id: ID, options?: {
         soft?: boolean;
         assume?: string;

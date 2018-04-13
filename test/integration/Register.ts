@@ -15,7 +15,7 @@ describe('Register', () => {
         }).catch(done)
     })
     let seed = Math.floor(Math.random() * 99999)
-    let domain = "toto" + seed + ".test"
+    let domain = "gmail.com"
     let normanSecret = nacl.randomBytes(128)
     let norman: DataPeps.Identity<Uint8Array> = {
         login: "normanscaife" + seed + "@" + domain,

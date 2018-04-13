@@ -1,6 +1,6 @@
 {
   "name": "datapeps-sdk",
-  "version": "0.0.27",
+  "version": "0.0.30",
   "description": "DataPeps SDK enables safe end-to-end-encryption for any application",
   "main": "./src/DataPeps.js",
   "types": "./src/DataPeps.d.ts",
@@ -8,15 +8,14 @@
   "scripts": {
     "build": "tsc -p .",
     "pack": "webpack",
-    "doc": "typedoc --mode modules --out doc/ src/DataPeps.ts --tsconfig ./tsconfig.json --excludeExternals --excludeNotExported --readme ./README.md --sourcefile-url-prefix \"https://github.com/wallix/datapeps-sdk-js/blob/master/src/\"",
+    "doc": "typedoc --mode modules --out doc/ src/DataPeps.ts --tsconfig ./tsconfig.json --excludeExternals --excludeNotExported --readme ./README.md --sourcefile-url-prefix \"https://github.com/wallix/datapeps-sdk-js/blob/master/src/\" --ignoreCompilerErrors",
     "ut": "mocha -r ts-node/register test/ut/*.ts",
-    "integration": "mocha -r ts-node/register test/integration/*.ts test/integration/Identity/*.ts"
+    "integration": "mocha -r ts-node/register test/integration/*.ts test/integration/*/*.ts"
   },
   "devDependencies": {
     "@types/chai": "^4.0.2",
     "@types/mocha": "^2.2.41",
     "@types/node": "^8.0.31",
-    "@types/text-encoding": "0.0.31",
     "atob": "^2.0.3",
     "awesome-typescript-loader": "^3.2.3",
     "btoa": "^1.1.2",
@@ -28,7 +27,7 @@
     "ts-node": "^3.3.0",
     "typedoc": "^0.10.0",
     "typedoc-plugin-sourcefile-url": "^1.0.3",
-    "typescript": "^2.5.3",
+    "typescript": "^2.8.1",
     "webpack": "^3.6.0",
     "ws": "^3.3.2",
     "xhr2": "^0.1.4"

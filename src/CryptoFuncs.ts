@@ -88,7 +88,7 @@ export class Encryption extends types.IdentityEncryption {
         } catch (err) {
             if (err instanceof Error && err.kind == SDKKind.SDKDecryptFail) {
                 throw new Error({
-                    kind: SDKKind.SDKEncryptionDecryptFail,
+                    kind: SDKKind.BadSecret,
                     payload: err
                 })
             }

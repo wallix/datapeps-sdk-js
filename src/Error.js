@@ -8,7 +8,7 @@ var SDKKind;
     SDKKind[SDKKind["BadResponse"] = -2] = "BadResponse";
     SDKKind[SDKKind["NetworkException"] = -3] = "NetworkException";
     SDKKind[SDKKind["SDKInternalError"] = -4] = "SDKInternalError";
-    SDKKind[SDKKind["SDKEncryptionDecryptFail"] = -5] = "SDKEncryptionDecryptFail";
+    SDKKind[SDKKind["BadSecret"] = -5] = "BadSecret";
     SDKKind[SDKKind["IdentitySignChainInvalid"] = -6] = "IdentitySignChainInvalid";
     SDKKind[SDKKind["ProtocolError"] = -7] = "ProtocolError";
     SDKKind[SDKKind["SDKDecryptFail"] = -8] = "SDKDecryptFail";

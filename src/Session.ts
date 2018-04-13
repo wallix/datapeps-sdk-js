@@ -19,7 +19,7 @@ export interface AssumeParams {
     kind: IdentityAccessKind
 }
 
-class MemoryPublicKeyChache implements PublicKeysCache {
+class MemoryPublicKeyCache implements PublicKeysCache {
     private cache: { [login: string]: IdentityPublicKey[] }
     constructor() {
         this.cache = {}
@@ -142,7 +142,7 @@ export class SessionImpl implements Session {
 
         this.login = login
         this.client = client
-        this.pkCache = new MemoryPublicKeyChache()
+        this.pkCache = new MemoryPublicKeyCache()
         this.trustPolicy = new TrustOnFirstUse(this)
         this.assumeKeyCache = {}
         this.wsManager = new WebSocketManager(this)
@@ -246,8 +246,8 @@ export class SessionImpl implements Session {
             path: "/api/v4/delegatedAccess/" + requestId.toString(),
             response: types.DelegatedGetResponse.decode,
         })
-        let r = await new ResourceImpl(this)._makeResourceFromResponse(resource, null, null)
-        // Verify sign
+        let r = await new ResourceImpl(this)._makeResourceFromResponse(resource, types.ResourceType.ANONYMOUS, null, null)
+        // Verify requester's signature
         let msg = Uint8Tool.concat(
             new TextEncoder().encode(this.login),
             r.publicKey()
@@ -308,7 +308,7 @@ export class SessionImpl implements Session {
                     try {
                         await this.unStale()
                     } catch (e) {
-                        if (e instanceof Error && e.kind == SDKKind.SDKEncryptionDecryptFail) {
+                        if (e instanceof Error && e.kind == SDKKind.BadSecret) {
                             throw err
                         }
                         throw e
@@ -347,21 +347,23 @@ export class SessionImpl implements Session {
             })
         }
         let pk = this.pkCache.get({ login, version: firstVersion })
-        // Check if the server try to erase a root key
+        
         if (firstVersion == 0) {
             if (pk == null) {
                 let { box, sign, mandate } = chains.shift()
                 pk = { login, version: 1, box, sign }
                 await this.trustPolicy.trust(pk, mandate as IdentityPublicKeyID)
                 this.pkCache.set({ login, version: 1 }, pk)
-            } else if ((!Uint8Tool.equals(pk.box, chains[0].box) || !Uint8Tool.equals(pk.sign, chains[0].sign))) {
+            }
+            // Check if the server tries to erase the root key
+            else if ((!Uint8Tool.equals(pk.box, chains[0].box) || !Uint8Tool.equals(pk.sign, chains[0].sign))) {
                 throw new Error({
                     kind: SDKKind.IdentitySignChainInvalid,
                     payload: { login, version: 1 }
                 })
             }
         }
-        // Check the sign chains and populate the cache
+        // Check the sign chains and update the cache
         await chains.reduce(async (ppk, { box, sign, chain, mandate }) => {
             let pk = await ppk
             let id = { login, version: pk.version + 1 }

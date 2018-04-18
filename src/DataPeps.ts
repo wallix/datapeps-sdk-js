@@ -1,7 +1,7 @@
 import * as nacl from 'tweetnacl';
 import * as Long from 'long';
 import * as protobugjs from 'protobufjs';
-import { types, errors, command, events } from './proto';
+import { types, errors, events } from './proto';
 import { Base64, Uint8Tool } from './Tools';
 import { Encryption, EncryptAnonymous } from './CryptoFuncs';
 import { Client, Request } from './HTTP';
@@ -52,6 +52,21 @@ export const hashIdentityPublicKey = (key: IdentityPublicKey): Uint8Array => {
  */
 export const printIdentityPublicKey = (key: IdentityPublicKey): string => {
     return bs58.encode(hashIdentityPublicKey(key));
+}
+
+/**
+ * Returns the date from a DataPeps ID
+ * @param id The id from which the date is extracted
+ * @return(s) The date of the creation of this id
+ */
+export const dateFromID = (id: ID): Date => {
+    let l: Long
+    if (id instanceof Long) {
+        l = id
+    } else {
+        l = Long.fromNumber(id, true)
+    }
+    return new Date(l.getHighBitsUnsigned() * 1000)
 }
 
 /**
@@ -310,9 +325,6 @@ export interface Session {
 
     /** Access to the resource service API. */
     Resource: ResourceAPI
-
-    /** Access to the channel service API. */
-    Channel: ChannelAPI
 
     /** Access to the admin API.*/
     Admin: AdminAPI
@@ -622,7 +634,10 @@ export interface Resource<T> {
     // Encrypts a clear text to a cipher text that could be decrypted by the decrypt function of the resource.
     encrypt(clear: Uint8Array): Uint8Array
 
-    // Decrypts a cipher text, that should be encrypted by the encrypt function of the resource, to the original clear text.
+    /**
+     * Decrypts a cipher text, that should be encrypted by the encrypt function of the resource, to the original clear text.
+     * @throws DataPeps.Error with kind `DataPeps.SDKError.DecryptFail`
+     */
     decrypt(cipher: Uint8Array): Uint8Array
 }
 
@@ -643,11 +658,23 @@ export interface ResourceAPI {
         serialize?: ((payload: T) => Uint8Array)
     }): Promise<Resource<T>>
 
+
+    /**
+     * Get the resources accessible to the identity.
+     * @param options A collection of options:
+     *  - parse: A function used to parse the resource payload. By default JSON.parse.
+     * @return(p) On success the promise will be resolved with a list of all resources accessible to the identity.
+     * On error the promise will be rejected with an {@link Error}
+     */
+    list<T>(options?: {
+        parse?: ((u: Uint8Array) => T)
+    }): Promise<Resource<T>[]>
+
     /**
      * Get a resource thanks its identifier.
      * @param id The identifier of the resource to get.
      * @param options A collection of options:
-     *  - parse: A functon that be used to parse the resorce payload. By default JSON.parse.
+     *  - parse: A function used to parse the resource payload. By default JSON.parse.
      * @return(p) On success the promise will be resolved with the resource.
      * On error the promise will be rejected with an {@link Error} with kind:
      * - `ResourceNotFound` if the resource does not exists.
@@ -683,27 +710,6 @@ export interface ResourceAPI {
     extendSharingGroup(id: ID, sharingGroup: string[], options?: {
         assume?: string
     }): Promise<void>
-}
-
-/////////////////////////////////////////////////
-// Channel
-/////////////////////////////////////////////////
-
-export interface ChannelMessage {
-    content: Uint8Array
-    from?: IdentityPublicKeyID
-}
-
-export interface Channel {
-    id: ID
-    creator: IdentityPublicKey
-    send(content: Uint8Array): Promise<void>
-    listen(onMessage: (message: ChannelMessage) => any): Promise<void>
-}
-
-export interface ChannelAPI {
-    create(sharingGroup: string[]): Promise<Channel>
-    get(id: ID): Promise<Channel>
 }
 
 /////////////////////////////////////////////////

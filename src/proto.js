@@ -206,6 +206,7 @@ $root.errors = (function() {
                 case 21:
                 case 22:
                 case 23:
+                case 24:
                     break;
                 }
             if (message.payload != null && message.hasOwnProperty("payload")) {
@@ -323,6 +324,10 @@ $root.errors = (function() {
             case 23:
                 message.kind = 23;
                 break;
+            case "DelegatedAccessNotFound":
+            case 24:
+                message.kind = 24;
+                break;
             }
             if (object.payload != null) {
                 if (typeof object.payload !== "object")
@@ -400,6 +405,7 @@ $root.errors = (function() {
      * @property {number} RegisterInvalidEmail=21 RegisterInvalidEmail value
      * @property {number} RegisterTokenNotFound=22 RegisterTokenNotFound value
      * @property {number} ChannelNotFound=23 ChannelNotFound value
+     * @property {number} DelegatedAccessNotFound=24 DelegatedAccessNotFound value
      */
     errors.PepsErrorKind = (function() {
         var valuesById = {}, values = Object.create(valuesById);
@@ -426,6 +432,7 @@ $root.errors = (function() {
         values[valuesById[21] = "RegisterInvalidEmail"] = 21;
         values[valuesById[22] = "RegisterTokenNotFound"] = 22;
         values[valuesById[23] = "ChannelNotFound"] = 23;
+        values[valuesById[24] = "DelegatedAccessNotFound"] = 24;
         return values;
     })();
 
@@ -3961,6 +3968,207 @@ $root.errors = (function() {
         };
 
         return PayloadChannelNotFound;
+    })();
+
+    errors.PayloadDelegatedAccessNotFound = (function() {
+
+        /**
+         * Properties of a PayloadDelegatedAccessNotFound.
+         * @memberof errors
+         * @interface IPayloadDelegatedAccessNotFound
+         * @property {number|Long|null} [id] PayloadDelegatedAccessNotFound id
+         */
+
+        /**
+         * Constructs a new PayloadDelegatedAccessNotFound.
+         * @memberof errors
+         * @classdesc Represents a PayloadDelegatedAccessNotFound.
+         * @implements IPayloadDelegatedAccessNotFound
+         * @constructor
+         * @param {errors.IPayloadDelegatedAccessNotFound=} [properties] Properties to set
+         */
+        function PayloadDelegatedAccessNotFound(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * PayloadDelegatedAccessNotFound id.
+         * @member {number|Long} id
+         * @memberof errors.PayloadDelegatedAccessNotFound
+         * @instance
+         */
+        PayloadDelegatedAccessNotFound.prototype.id = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
+
+        /**
+         * Creates a new PayloadDelegatedAccessNotFound instance using the specified properties.
+         * @function create
+         * @memberof errors.PayloadDelegatedAccessNotFound
+         * @static
+         * @param {errors.IPayloadDelegatedAccessNotFound=} [properties] Properties to set
+         * @returns {errors.PayloadDelegatedAccessNotFound} PayloadDelegatedAccessNotFound instance
+         */
+        PayloadDelegatedAccessNotFound.create = function create(properties) {
+            return new PayloadDelegatedAccessNotFound(properties);
+        };
+
+        /**
+         * Encodes the specified PayloadDelegatedAccessNotFound message. Does not implicitly {@link errors.PayloadDelegatedAccessNotFound.verify|verify} messages.
+         * @function encode
+         * @memberof errors.PayloadDelegatedAccessNotFound
+         * @static
+         * @param {errors.IPayloadDelegatedAccessNotFound} message PayloadDelegatedAccessNotFound message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        PayloadDelegatedAccessNotFound.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.id != null && message.hasOwnProperty("id"))
+                writer.uint32(/* id 1, wireType 0 =*/8).uint64(message.id);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified PayloadDelegatedAccessNotFound message, length delimited. Does not implicitly {@link errors.PayloadDelegatedAccessNotFound.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof errors.PayloadDelegatedAccessNotFound
+         * @static
+         * @param {errors.IPayloadDelegatedAccessNotFound} message PayloadDelegatedAccessNotFound message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        PayloadDelegatedAccessNotFound.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a PayloadDelegatedAccessNotFound message from the specified reader or buffer.
+         * @function decode
+         * @memberof errors.PayloadDelegatedAccessNotFound
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {errors.PayloadDelegatedAccessNotFound} PayloadDelegatedAccessNotFound
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        PayloadDelegatedAccessNotFound.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.errors.PayloadDelegatedAccessNotFound();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.id = reader.uint64();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a PayloadDelegatedAccessNotFound message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof errors.PayloadDelegatedAccessNotFound
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {errors.PayloadDelegatedAccessNotFound} PayloadDelegatedAccessNotFound
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        PayloadDelegatedAccessNotFound.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a PayloadDelegatedAccessNotFound message.
+         * @function verify
+         * @memberof errors.PayloadDelegatedAccessNotFound
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        PayloadDelegatedAccessNotFound.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.id != null && message.hasOwnProperty("id"))
+                if (!$util.isInteger(message.id) && !(message.id && $util.isInteger(message.id.low) && $util.isInteger(message.id.high)))
+                    return "id: integer|Long expected";
+            return null;
+        };
+
+        /**
+         * Creates a PayloadDelegatedAccessNotFound message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof errors.PayloadDelegatedAccessNotFound
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {errors.PayloadDelegatedAccessNotFound} PayloadDelegatedAccessNotFound
+         */
+        PayloadDelegatedAccessNotFound.fromObject = function fromObject(object) {
+            if (object instanceof $root.errors.PayloadDelegatedAccessNotFound)
+                return object;
+            var message = new $root.errors.PayloadDelegatedAccessNotFound();
+            if (object.id != null)
+                if ($util.Long)
+                    (message.id = $util.Long.fromValue(object.id)).unsigned = true;
+                else if (typeof object.id === "string")
+                    message.id = parseInt(object.id, 10);
+                else if (typeof object.id === "number")
+                    message.id = object.id;
+                else if (typeof object.id === "object")
+                    message.id = new $util.LongBits(object.id.low >>> 0, object.id.high >>> 0).toNumber(true);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a PayloadDelegatedAccessNotFound message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof errors.PayloadDelegatedAccessNotFound
+         * @static
+         * @param {errors.PayloadDelegatedAccessNotFound} message PayloadDelegatedAccessNotFound
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        PayloadDelegatedAccessNotFound.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults)
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, true);
+                    object.id = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.id = options.longs === String ? "0" : 0;
+            if (message.id != null && message.hasOwnProperty("id"))
+                if (typeof message.id === "number")
+                    object.id = options.longs === String ? String(message.id) : message.id;
+                else
+                    object.id = options.longs === String ? $util.Long.prototype.toString.call(message.id) : options.longs === Number ? new $util.LongBits(message.id.low >>> 0, message.id.high >>> 0).toNumber(true) : message.id;
+            return object;
+        };
+
+        /**
+         * Converts this PayloadDelegatedAccessNotFound to JSON.
+         * @function toJSON
+         * @memberof errors.PayloadDelegatedAccessNotFound
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        PayloadDelegatedAccessNotFound.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return PayloadDelegatedAccessNotFound;
     })();
 
     return errors;
@@ -16244,6 +16452,280 @@ $root.types = (function() {
         return ResourceGetResponse;
     })();
 
+    types.ResourceWithKey = (function() {
+
+        /**
+         * Properties of a ResourceWithKey.
+         * @memberof types
+         * @interface IResourceWithKey
+         * @property {types.IResource|null} [resource] ResourceWithKey resource
+         * @property {types.IIdentityKeyID|null} [owner] ResourceWithKey owner
+         * @property {types.IIdentityKeyID|null} [creator] ResourceWithKey creator
+         * @property {types.ICipher|null} [encryptedKey] ResourceWithKey encryptedKey
+         */
+
+        /**
+         * Constructs a new ResourceWithKey.
+         * @memberof types
+         * @classdesc Represents a ResourceWithKey.
+         * @implements IResourceWithKey
+         * @constructor
+         * @param {types.IResourceWithKey=} [properties] Properties to set
+         */
+        function ResourceWithKey(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * ResourceWithKey resource.
+         * @member {types.IResource|null|undefined} resource
+         * @memberof types.ResourceWithKey
+         * @instance
+         */
+        ResourceWithKey.prototype.resource = null;
+
+        /**
+         * ResourceWithKey owner.
+         * @member {types.IIdentityKeyID|null|undefined} owner
+         * @memberof types.ResourceWithKey
+         * @instance
+         */
+        ResourceWithKey.prototype.owner = null;
+
+        /**
+         * ResourceWithKey creator.
+         * @member {types.IIdentityKeyID|null|undefined} creator
+         * @memberof types.ResourceWithKey
+         * @instance
+         */
+        ResourceWithKey.prototype.creator = null;
+
+        /**
+         * ResourceWithKey encryptedKey.
+         * @member {types.ICipher|null|undefined} encryptedKey
+         * @memberof types.ResourceWithKey
+         * @instance
+         */
+        ResourceWithKey.prototype.encryptedKey = null;
+
+        /**
+         * Creates a new ResourceWithKey instance using the specified properties.
+         * @function create
+         * @memberof types.ResourceWithKey
+         * @static
+         * @param {types.IResourceWithKey=} [properties] Properties to set
+         * @returns {types.ResourceWithKey} ResourceWithKey instance
+         */
+        ResourceWithKey.create = function create(properties) {
+            return new ResourceWithKey(properties);
+        };
+
+        /**
+         * Encodes the specified ResourceWithKey message. Does not implicitly {@link types.ResourceWithKey.verify|verify} messages.
+         * @function encode
+         * @memberof types.ResourceWithKey
+         * @static
+         * @param {types.IResourceWithKey} message ResourceWithKey message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ResourceWithKey.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.resource != null && message.hasOwnProperty("resource"))
+                $root.types.Resource.encode(message.resource, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            if (message.owner != null && message.hasOwnProperty("owner"))
+                $root.types.IdentityKeyID.encode(message.owner, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+            if (message.creator != null && message.hasOwnProperty("creator"))
+                $root.types.IdentityKeyID.encode(message.creator, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+            if (message.encryptedKey != null && message.hasOwnProperty("encryptedKey"))
+                $root.types.Cipher.encode(message.encryptedKey, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified ResourceWithKey message, length delimited. Does not implicitly {@link types.ResourceWithKey.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof types.ResourceWithKey
+         * @static
+         * @param {types.IResourceWithKey} message ResourceWithKey message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ResourceWithKey.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a ResourceWithKey message from the specified reader or buffer.
+         * @function decode
+         * @memberof types.ResourceWithKey
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {types.ResourceWithKey} ResourceWithKey
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ResourceWithKey.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.types.ResourceWithKey();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.resource = $root.types.Resource.decode(reader, reader.uint32());
+                    break;
+                case 2:
+                    message.owner = $root.types.IdentityKeyID.decode(reader, reader.uint32());
+                    break;
+                case 3:
+                    message.creator = $root.types.IdentityKeyID.decode(reader, reader.uint32());
+                    break;
+                case 4:
+                    message.encryptedKey = $root.types.Cipher.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a ResourceWithKey message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof types.ResourceWithKey
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {types.ResourceWithKey} ResourceWithKey
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ResourceWithKey.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a ResourceWithKey message.
+         * @function verify
+         * @memberof types.ResourceWithKey
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        ResourceWithKey.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.resource != null && message.hasOwnProperty("resource")) {
+                var error = $root.types.Resource.verify(message.resource);
+                if (error)
+                    return "resource." + error;
+            }
+            if (message.owner != null && message.hasOwnProperty("owner")) {
+                var error = $root.types.IdentityKeyID.verify(message.owner);
+                if (error)
+                    return "owner." + error;
+            }
+            if (message.creator != null && message.hasOwnProperty("creator")) {
+                var error = $root.types.IdentityKeyID.verify(message.creator);
+                if (error)
+                    return "creator." + error;
+            }
+            if (message.encryptedKey != null && message.hasOwnProperty("encryptedKey")) {
+                var error = $root.types.Cipher.verify(message.encryptedKey);
+                if (error)
+                    return "encryptedKey." + error;
+            }
+            return null;
+        };
+
+        /**
+         * Creates a ResourceWithKey message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof types.ResourceWithKey
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {types.ResourceWithKey} ResourceWithKey
+         */
+        ResourceWithKey.fromObject = function fromObject(object) {
+            if (object instanceof $root.types.ResourceWithKey)
+                return object;
+            var message = new $root.types.ResourceWithKey();
+            if (object.resource != null) {
+                if (typeof object.resource !== "object")
+                    throw TypeError(".types.ResourceWithKey.resource: object expected");
+                message.resource = $root.types.Resource.fromObject(object.resource);
+            }
+            if (object.owner != null) {
+                if (typeof object.owner !== "object")
+                    throw TypeError(".types.ResourceWithKey.owner: object expected");
+                message.owner = $root.types.IdentityKeyID.fromObject(object.owner);
+            }
+            if (object.creator != null) {
+                if (typeof object.creator !== "object")
+                    throw TypeError(".types.ResourceWithKey.creator: object expected");
+                message.creator = $root.types.IdentityKeyID.fromObject(object.creator);
+            }
+            if (object.encryptedKey != null) {
+                if (typeof object.encryptedKey !== "object")
+                    throw TypeError(".types.ResourceWithKey.encryptedKey: object expected");
+                message.encryptedKey = $root.types.Cipher.fromObject(object.encryptedKey);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a ResourceWithKey message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof types.ResourceWithKey
+         * @static
+         * @param {types.ResourceWithKey} message ResourceWithKey
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        ResourceWithKey.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.resource = null;
+                object.owner = null;
+                object.creator = null;
+                object.encryptedKey = null;
+            }
+            if (message.resource != null && message.hasOwnProperty("resource"))
+                object.resource = $root.types.Resource.toObject(message.resource, options);
+            if (message.owner != null && message.hasOwnProperty("owner"))
+                object.owner = $root.types.IdentityKeyID.toObject(message.owner, options);
+            if (message.creator != null && message.hasOwnProperty("creator"))
+                object.creator = $root.types.IdentityKeyID.toObject(message.creator, options);
+            if (message.encryptedKey != null && message.hasOwnProperty("encryptedKey"))
+                object.encryptedKey = $root.types.Cipher.toObject(message.encryptedKey, options);
+            return object;
+        };
+
+        /**
+         * Converts this ResourceWithKey to JSON.
+         * @function toJSON
+         * @memberof types.ResourceWithKey
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        ResourceWithKey.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return ResourceWithKey;
+    })();
+
     types.ResourceGetKeyResponse = (function() {
 
         /**
@@ -17534,6 +18016,214 @@ $root.types = (function() {
         };
 
         return ResourceExtendSharingGroupRequest;
+    })();
+
+    types.ResourceListResponse = (function() {
+
+        /**
+         * Properties of a ResourceListResponse.
+         * @memberof types
+         * @interface IResourceListResponse
+         * @property {Array.<types.IResourceWithKey>|null} [resources] ResourceListResponse resources
+         */
+
+        /**
+         * Constructs a new ResourceListResponse.
+         * @memberof types
+         * @classdesc Represents a ResourceListResponse.
+         * @implements IResourceListResponse
+         * @constructor
+         * @param {types.IResourceListResponse=} [properties] Properties to set
+         */
+        function ResourceListResponse(properties) {
+            this.resources = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * ResourceListResponse resources.
+         * @member {Array.<types.IResourceWithKey>} resources
+         * @memberof types.ResourceListResponse
+         * @instance
+         */
+        ResourceListResponse.prototype.resources = $util.emptyArray;
+
+        /**
+         * Creates a new ResourceListResponse instance using the specified properties.
+         * @function create
+         * @memberof types.ResourceListResponse
+         * @static
+         * @param {types.IResourceListResponse=} [properties] Properties to set
+         * @returns {types.ResourceListResponse} ResourceListResponse instance
+         */
+        ResourceListResponse.create = function create(properties) {
+            return new ResourceListResponse(properties);
+        };
+
+        /**
+         * Encodes the specified ResourceListResponse message. Does not implicitly {@link types.ResourceListResponse.verify|verify} messages.
+         * @function encode
+         * @memberof types.ResourceListResponse
+         * @static
+         * @param {types.IResourceListResponse} message ResourceListResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ResourceListResponse.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.resources != null && message.resources.length)
+                for (var i = 0; i < message.resources.length; ++i)
+                    $root.types.ResourceWithKey.encode(message.resources[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified ResourceListResponse message, length delimited. Does not implicitly {@link types.ResourceListResponse.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof types.ResourceListResponse
+         * @static
+         * @param {types.IResourceListResponse} message ResourceListResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ResourceListResponse.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a ResourceListResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof types.ResourceListResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {types.ResourceListResponse} ResourceListResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ResourceListResponse.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.types.ResourceListResponse();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    if (!(message.resources && message.resources.length))
+                        message.resources = [];
+                    message.resources.push($root.types.ResourceWithKey.decode(reader, reader.uint32()));
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a ResourceListResponse message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof types.ResourceListResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {types.ResourceListResponse} ResourceListResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ResourceListResponse.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a ResourceListResponse message.
+         * @function verify
+         * @memberof types.ResourceListResponse
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        ResourceListResponse.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.resources != null && message.hasOwnProperty("resources")) {
+                if (!Array.isArray(message.resources))
+                    return "resources: array expected";
+                for (var i = 0; i < message.resources.length; ++i) {
+                    var error = $root.types.ResourceWithKey.verify(message.resources[i]);
+                    if (error)
+                        return "resources." + error;
+                }
+            }
+            return null;
+        };
+
+        /**
+         * Creates a ResourceListResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof types.ResourceListResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {types.ResourceListResponse} ResourceListResponse
+         */
+        ResourceListResponse.fromObject = function fromObject(object) {
+            if (object instanceof $root.types.ResourceListResponse)
+                return object;
+            var message = new $root.types.ResourceListResponse();
+            if (object.resources) {
+                if (!Array.isArray(object.resources))
+                    throw TypeError(".types.ResourceListResponse.resources: array expected");
+                message.resources = [];
+                for (var i = 0; i < object.resources.length; ++i) {
+                    if (typeof object.resources[i] !== "object")
+                        throw TypeError(".types.ResourceListResponse.resources: object expected");
+                    message.resources[i] = $root.types.ResourceWithKey.fromObject(object.resources[i]);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a ResourceListResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof types.ResourceListResponse
+         * @static
+         * @param {types.ResourceListResponse} message ResourceListResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        ResourceListResponse.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.arrays || options.defaults)
+                object.resources = [];
+            if (message.resources && message.resources.length) {
+                object.resources = [];
+                for (var j = 0; j < message.resources.length; ++j)
+                    object.resources[j] = $root.types.ResourceWithKey.toObject(message.resources[j], options);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this ResourceListResponse to JSON.
+         * @function toJSON
+         * @memberof types.ResourceListResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        ResourceListResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return ResourceListResponse;
     })();
 
     types.Event = (function() {
@@ -21473,483 +22163,6 @@ $root.types = (function() {
     })();
 
     return types;
-})();
-
-$root.command = (function() {
-
-    /**
-     * Namespace command.
-     * @exports command
-     * @namespace
-     */
-    var command = {};
-
-    /**
-     * RequestKind enum.
-     * @name command.RequestKind
-     * @enum {string}
-     * @property {number} ListenIdentityEvents=0 ListenIdentityEvents value
-     * @property {number} ListenChannel=1 ListenChannel value
-     */
-    command.RequestKind = (function() {
-        var valuesById = {}, values = Object.create(valuesById);
-        values[valuesById[0] = "ListenIdentityEvents"] = 0;
-        values[valuesById[1] = "ListenChannel"] = 1;
-        return values;
-    })();
-
-    command.Request = (function() {
-
-        /**
-         * Properties of a Request.
-         * @memberof command
-         * @interface IRequest
-         * @property {number|null} [id] Request id
-         * @property {command.RequestKind|null} [kind] Request kind
-         * @property {google.protobuf.IAny|null} [payload] Request payload
-         */
-
-        /**
-         * Constructs a new Request.
-         * @memberof command
-         * @classdesc Represents a Request.
-         * @implements IRequest
-         * @constructor
-         * @param {command.IRequest=} [properties] Properties to set
-         */
-        function Request(properties) {
-            if (properties)
-                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                    if (properties[keys[i]] != null)
-                        this[keys[i]] = properties[keys[i]];
-        }
-
-        /**
-         * Request id.
-         * @member {number} id
-         * @memberof command.Request
-         * @instance
-         */
-        Request.prototype.id = 0;
-
-        /**
-         * Request kind.
-         * @member {command.RequestKind} kind
-         * @memberof command.Request
-         * @instance
-         */
-        Request.prototype.kind = 0;
-
-        /**
-         * Request payload.
-         * @member {google.protobuf.IAny|null|undefined} payload
-         * @memberof command.Request
-         * @instance
-         */
-        Request.prototype.payload = null;
-
-        /**
-         * Creates a new Request instance using the specified properties.
-         * @function create
-         * @memberof command.Request
-         * @static
-         * @param {command.IRequest=} [properties] Properties to set
-         * @returns {command.Request} Request instance
-         */
-        Request.create = function create(properties) {
-            return new Request(properties);
-        };
-
-        /**
-         * Encodes the specified Request message. Does not implicitly {@link command.Request.verify|verify} messages.
-         * @function encode
-         * @memberof command.Request
-         * @static
-         * @param {command.IRequest} message Request message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        Request.encode = function encode(message, writer) {
-            if (!writer)
-                writer = $Writer.create();
-            if (message.id != null && message.hasOwnProperty("id"))
-                writer.uint32(/* id 1, wireType 0 =*/8).uint32(message.id);
-            if (message.kind != null && message.hasOwnProperty("kind"))
-                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.kind);
-            if (message.payload != null && message.hasOwnProperty("payload"))
-                $root.google.protobuf.Any.encode(message.payload, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
-            return writer;
-        };
-
-        /**
-         * Encodes the specified Request message, length delimited. Does not implicitly {@link command.Request.verify|verify} messages.
-         * @function encodeDelimited
-         * @memberof command.Request
-         * @static
-         * @param {command.IRequest} message Request message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        Request.encodeDelimited = function encodeDelimited(message, writer) {
-            return this.encode(message, writer).ldelim();
-        };
-
-        /**
-         * Decodes a Request message from the specified reader or buffer.
-         * @function decode
-         * @memberof command.Request
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @param {number} [length] Message length if known beforehand
-         * @returns {command.Request} Request
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        Request.decode = function decode(reader, length) {
-            if (!(reader instanceof $Reader))
-                reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.command.Request();
-            while (reader.pos < end) {
-                var tag = reader.uint32();
-                switch (tag >>> 3) {
-                case 1:
-                    message.id = reader.uint32();
-                    break;
-                case 2:
-                    message.kind = reader.int32();
-                    break;
-                case 3:
-                    message.payload = $root.google.protobuf.Any.decode(reader, reader.uint32());
-                    break;
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-                }
-            }
-            return message;
-        };
-
-        /**
-         * Decodes a Request message from the specified reader or buffer, length delimited.
-         * @function decodeDelimited
-         * @memberof command.Request
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {command.Request} Request
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        Request.decodeDelimited = function decodeDelimited(reader) {
-            if (!(reader instanceof $Reader))
-                reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
-        };
-
-        /**
-         * Verifies a Request message.
-         * @function verify
-         * @memberof command.Request
-         * @static
-         * @param {Object.<string,*>} message Plain object to verify
-         * @returns {string|null} `null` if valid, otherwise the reason why it is not
-         */
-        Request.verify = function verify(message) {
-            if (typeof message !== "object" || message === null)
-                return "object expected";
-            if (message.id != null && message.hasOwnProperty("id"))
-                if (!$util.isInteger(message.id))
-                    return "id: integer expected";
-            if (message.kind != null && message.hasOwnProperty("kind"))
-                switch (message.kind) {
-                default:
-                    return "kind: enum value expected";
-                case 0:
-                case 1:
-                    break;
-                }
-            if (message.payload != null && message.hasOwnProperty("payload")) {
-                var error = $root.google.protobuf.Any.verify(message.payload);
-                if (error)
-                    return "payload." + error;
-            }
-            return null;
-        };
-
-        /**
-         * Creates a Request message from a plain object. Also converts values to their respective internal types.
-         * @function fromObject
-         * @memberof command.Request
-         * @static
-         * @param {Object.<string,*>} object Plain object
-         * @returns {command.Request} Request
-         */
-        Request.fromObject = function fromObject(object) {
-            if (object instanceof $root.command.Request)
-                return object;
-            var message = new $root.command.Request();
-            if (object.id != null)
-                message.id = object.id >>> 0;
-            switch (object.kind) {
-            case "ListenIdentityEvents":
-            case 0:
-                message.kind = 0;
-                break;
-            case "ListenChannel":
-            case 1:
-                message.kind = 1;
-                break;
-            }
-            if (object.payload != null) {
-                if (typeof object.payload !== "object")
-                    throw TypeError(".command.Request.payload: object expected");
-                message.payload = $root.google.protobuf.Any.fromObject(object.payload);
-            }
-            return message;
-        };
-
-        /**
-         * Creates a plain object from a Request message. Also converts values to other types if specified.
-         * @function toObject
-         * @memberof command.Request
-         * @static
-         * @param {command.Request} message Request
-         * @param {$protobuf.IConversionOptions} [options] Conversion options
-         * @returns {Object.<string,*>} Plain object
-         */
-        Request.toObject = function toObject(message, options) {
-            if (!options)
-                options = {};
-            var object = {};
-            if (options.defaults) {
-                object.id = 0;
-                object.kind = options.enums === String ? "ListenIdentityEvents" : 0;
-                object.payload = null;
-            }
-            if (message.id != null && message.hasOwnProperty("id"))
-                object.id = message.id;
-            if (message.kind != null && message.hasOwnProperty("kind"))
-                object.kind = options.enums === String ? $root.command.RequestKind[message.kind] : message.kind;
-            if (message.payload != null && message.hasOwnProperty("payload"))
-                object.payload = $root.google.protobuf.Any.toObject(message.payload, options);
-            return object;
-        };
-
-        /**
-         * Converts this Request to JSON.
-         * @function toJSON
-         * @memberof command.Request
-         * @instance
-         * @returns {Object.<string,*>} JSON object
-         */
-        Request.prototype.toJSON = function toJSON() {
-            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-        };
-
-        return Request;
-    })();
-
-    command.RequestListenChannel = (function() {
-
-        /**
-         * Properties of a RequestListenChannel.
-         * @memberof command
-         * @interface IRequestListenChannel
-         * @property {number|Long|null} [id] RequestListenChannel id
-         */
-
-        /**
-         * Constructs a new RequestListenChannel.
-         * @memberof command
-         * @classdesc Represents a RequestListenChannel.
-         * @implements IRequestListenChannel
-         * @constructor
-         * @param {command.IRequestListenChannel=} [properties] Properties to set
-         */
-        function RequestListenChannel(properties) {
-            if (properties)
-                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                    if (properties[keys[i]] != null)
-                        this[keys[i]] = properties[keys[i]];
-        }
-
-        /**
-         * RequestListenChannel id.
-         * @member {number|Long} id
-         * @memberof command.RequestListenChannel
-         * @instance
-         */
-        RequestListenChannel.prototype.id = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
-
-        /**
-         * Creates a new RequestListenChannel instance using the specified properties.
-         * @function create
-         * @memberof command.RequestListenChannel
-         * @static
-         * @param {command.IRequestListenChannel=} [properties] Properties to set
-         * @returns {command.RequestListenChannel} RequestListenChannel instance
-         */
-        RequestListenChannel.create = function create(properties) {
-            return new RequestListenChannel(properties);
-        };
-
-        /**
-         * Encodes the specified RequestListenChannel message. Does not implicitly {@link command.RequestListenChannel.verify|verify} messages.
-         * @function encode
-         * @memberof command.RequestListenChannel
-         * @static
-         * @param {command.IRequestListenChannel} message RequestListenChannel message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        RequestListenChannel.encode = function encode(message, writer) {
-            if (!writer)
-                writer = $Writer.create();
-            if (message.id != null && message.hasOwnProperty("id"))
-                writer.uint32(/* id 1, wireType 0 =*/8).uint64(message.id);
-            return writer;
-        };
-
-        /**
-         * Encodes the specified RequestListenChannel message, length delimited. Does not implicitly {@link command.RequestListenChannel.verify|verify} messages.
-         * @function encodeDelimited
-         * @memberof command.RequestListenChannel
-         * @static
-         * @param {command.IRequestListenChannel} message RequestListenChannel message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        RequestListenChannel.encodeDelimited = function encodeDelimited(message, writer) {
-            return this.encode(message, writer).ldelim();
-        };
-
-        /**
-         * Decodes a RequestListenChannel message from the specified reader or buffer.
-         * @function decode
-         * @memberof command.RequestListenChannel
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @param {number} [length] Message length if known beforehand
-         * @returns {command.RequestListenChannel} RequestListenChannel
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        RequestListenChannel.decode = function decode(reader, length) {
-            if (!(reader instanceof $Reader))
-                reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.command.RequestListenChannel();
-            while (reader.pos < end) {
-                var tag = reader.uint32();
-                switch (tag >>> 3) {
-                case 1:
-                    message.id = reader.uint64();
-                    break;
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-                }
-            }
-            return message;
-        };
-
-        /**
-         * Decodes a RequestListenChannel message from the specified reader or buffer, length delimited.
-         * @function decodeDelimited
-         * @memberof command.RequestListenChannel
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {command.RequestListenChannel} RequestListenChannel
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        RequestListenChannel.decodeDelimited = function decodeDelimited(reader) {
-            if (!(reader instanceof $Reader))
-                reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
-        };
-
-        /**
-         * Verifies a RequestListenChannel message.
-         * @function verify
-         * @memberof command.RequestListenChannel
-         * @static
-         * @param {Object.<string,*>} message Plain object to verify
-         * @returns {string|null} `null` if valid, otherwise the reason why it is not
-         */
-        RequestListenChannel.verify = function verify(message) {
-            if (typeof message !== "object" || message === null)
-                return "object expected";
-            if (message.id != null && message.hasOwnProperty("id"))
-                if (!$util.isInteger(message.id) && !(message.id && $util.isInteger(message.id.low) && $util.isInteger(message.id.high)))
-                    return "id: integer|Long expected";
-            return null;
-        };
-
-        /**
-         * Creates a RequestListenChannel message from a plain object. Also converts values to their respective internal types.
-         * @function fromObject
-         * @memberof command.RequestListenChannel
-         * @static
-         * @param {Object.<string,*>} object Plain object
-         * @returns {command.RequestListenChannel} RequestListenChannel
-         */
-        RequestListenChannel.fromObject = function fromObject(object) {
-            if (object instanceof $root.command.RequestListenChannel)
-                return object;
-            var message = new $root.command.RequestListenChannel();
-            if (object.id != null)
-                if ($util.Long)
-                    (message.id = $util.Long.fromValue(object.id)).unsigned = true;
-                else if (typeof object.id === "string")
-                    message.id = parseInt(object.id, 10);
-                else if (typeof object.id === "number")
-                    message.id = object.id;
-                else if (typeof object.id === "object")
-                    message.id = new $util.LongBits(object.id.low >>> 0, object.id.high >>> 0).toNumber(true);
-            return message;
-        };
-
-        /**
-         * Creates a plain object from a RequestListenChannel message. Also converts values to other types if specified.
-         * @function toObject
-         * @memberof command.RequestListenChannel
-         * @static
-         * @param {command.RequestListenChannel} message RequestListenChannel
-         * @param {$protobuf.IConversionOptions} [options] Conversion options
-         * @returns {Object.<string,*>} Plain object
-         */
-        RequestListenChannel.toObject = function toObject(message, options) {
-            if (!options)
-                options = {};
-            var object = {};
-            if (options.defaults)
-                if ($util.Long) {
-                    var long = new $util.Long(0, 0, true);
-                    object.id = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
-                } else
-                    object.id = options.longs === String ? "0" : 0;
-            if (message.id != null && message.hasOwnProperty("id"))
-                if (typeof message.id === "number")
-                    object.id = options.longs === String ? String(message.id) : message.id;
-                else
-                    object.id = options.longs === String ? $util.Long.prototype.toString.call(message.id) : options.longs === Number ? new $util.LongBits(message.id.low >>> 0, message.id.high >>> 0).toNumber(true) : message.id;
-            return object;
-        };
-
-        /**
-         * Converts this RequestListenChannel to JSON.
-         * @function toJSON
-         * @memberof command.RequestListenChannel
-         * @instance
-         * @returns {Object.<string,*>} JSON object
-         */
-        RequestListenChannel.prototype.toJSON = function toJSON() {
-            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-        };
-
-        return RequestListenChannel;
-    })();
-
-    return command;
 })();
 
 $root.events = (function() {

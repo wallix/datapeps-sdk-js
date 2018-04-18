@@ -26,6 +26,12 @@ export declare const hashIdentityPublicKey: (key: IdentityPublicKey) => Uint8Arr
  */
 export declare const printIdentityPublicKey: (key: IdentityPublicKey) => string;
 /**
+ * Returns the date from a DataPeps ID
+ * @param id The id from which the date is extracted
+ * @return(s) The date of the creation of this id
+ */
+export declare const dateFromID: (id: number | Long) => Date;
+/**
  * Register a new DataPeps identity.
  * @param identity The description of the identity to register.
  *  The login MUST be a peps email address, i.e. <login>@<pepsdomain>
@@ -175,8 +181,6 @@ export interface Session {
     Identity: IdentityAPI;
     /** Access to the resource service API. */
     Resource: ResourceAPI;
-    /** Access to the channel service API. */
-    Channel: ChannelAPI;
     /** Access to the admin API.*/
     Admin: AdminAPI;
     /**
@@ -429,6 +433,10 @@ export interface Resource<T> {
     creator: IdentityPublicKey;
     publicKey(): Uint8Array;
     encrypt(clear: Uint8Array): Uint8Array;
+    /**
+     * Decrypts a cipher text, that should be encrypted by the encrypt function of the resource, to the original clear text.
+     * @throws DataPeps.Error with kind `DataPeps.SDKError.DecryptFail`
+     */
     decrypt(cipher: Uint8Array): Uint8Array;
 }
 export interface ResourceAPI {
@@ -447,10 +455,20 @@ export interface ResourceAPI {
         serialize?: ((payload: T) => Uint8Array);
     }): Promise<Resource<T>>;
     /**
+     * Get the resources accessible to the identity.
+     * @param options A collection of options:
+     *  - parse: A function used to parse the resource payload. By default JSON.parse.
+     * @return(p) On success the promise will be resolved with a list of all resources accessible to the identity.
+     * On error the promise will be rejected with an {@link Error}
+     */
+    list<T>(options?: {
+        parse?: ((u: Uint8Array) => T);
+    }): Promise<Resource<T>[]>;
+    /**
      * Get a resource thanks its identifier.
      * @param id The identifier of the resource to get.
      * @param options A collection of options:
-     *  - parse: A functon that be used to parse the resorce payload. By default JSON.parse.
+     *  - parse: A function used to parse the resource payload. By default JSON.parse.
      * @return(p) On success the promise will be resolved with the resource.
      * On error the promise will be rejected with an {@link Error} with kind:
      * - `ResourceNotFound` if the resource does not exists.
@@ -484,20 +502,6 @@ export interface ResourceAPI {
     extendSharingGroup(id: ID, sharingGroup: string[], options?: {
         assume?: string;
     }): Promise<void>;
-}
-export interface ChannelMessage {
-    content: Uint8Array;
-    from?: IdentityPublicKeyID;
-}
-export interface Channel {
-    id: ID;
-    creator: IdentityPublicKey;
-    send(content: Uint8Array): Promise<void>;
-    listen(onMessage: (message: ChannelMessage) => any): Promise<void>;
-}
-export interface ChannelAPI {
-    create(sharingGroup: string[]): Promise<Channel>;
-    get(id: ID): Promise<Channel>;
 }
 export interface AdminAPI {
     /**

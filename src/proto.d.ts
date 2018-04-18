@@ -129,7 +129,8 @@ export namespace errors {
         ResourceNotFound = 20,
         RegisterInvalidEmail = 21,
         RegisterTokenNotFound = 22,
-        ChannelNotFound = 23
+        ChannelNotFound = 23,
+        DelegatedAccessNotFound = 24
     }
 
     /** Properties of a PayloadServerInternalError. */
@@ -1777,6 +1778,96 @@ export namespace errors {
 
         /**
          * Converts this PayloadChannelNotFound to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a PayloadDelegatedAccessNotFound. */
+    interface IPayloadDelegatedAccessNotFound {
+
+        /** PayloadDelegatedAccessNotFound id */
+        id?: (number|Long|null);
+    }
+
+    /** Represents a PayloadDelegatedAccessNotFound. */
+    class PayloadDelegatedAccessNotFound implements IPayloadDelegatedAccessNotFound {
+
+        /**
+         * Constructs a new PayloadDelegatedAccessNotFound.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: errors.IPayloadDelegatedAccessNotFound);
+
+        /** PayloadDelegatedAccessNotFound id. */
+        public id: (number|Long);
+
+        /**
+         * Creates a new PayloadDelegatedAccessNotFound instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PayloadDelegatedAccessNotFound instance
+         */
+        public static create(properties?: errors.IPayloadDelegatedAccessNotFound): errors.PayloadDelegatedAccessNotFound;
+
+        /**
+         * Encodes the specified PayloadDelegatedAccessNotFound message. Does not implicitly {@link errors.PayloadDelegatedAccessNotFound.verify|verify} messages.
+         * @param message PayloadDelegatedAccessNotFound message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: errors.IPayloadDelegatedAccessNotFound, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PayloadDelegatedAccessNotFound message, length delimited. Does not implicitly {@link errors.PayloadDelegatedAccessNotFound.verify|verify} messages.
+         * @param message PayloadDelegatedAccessNotFound message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: errors.IPayloadDelegatedAccessNotFound, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PayloadDelegatedAccessNotFound message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PayloadDelegatedAccessNotFound
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): errors.PayloadDelegatedAccessNotFound;
+
+        /**
+         * Decodes a PayloadDelegatedAccessNotFound message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PayloadDelegatedAccessNotFound
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): errors.PayloadDelegatedAccessNotFound;
+
+        /**
+         * Verifies a PayloadDelegatedAccessNotFound message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PayloadDelegatedAccessNotFound message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PayloadDelegatedAccessNotFound
+         */
+        public static fromObject(object: { [k: string]: any }): errors.PayloadDelegatedAccessNotFound;
+
+        /**
+         * Creates a plain object from a PayloadDelegatedAccessNotFound message. Also converts values to other types if specified.
+         * @param message PayloadDelegatedAccessNotFound
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: errors.PayloadDelegatedAccessNotFound, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PayloadDelegatedAccessNotFound to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -6807,6 +6898,114 @@ export namespace types {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of a ResourceWithKey. */
+    interface IResourceWithKey {
+
+        /** ResourceWithKey resource */
+        resource?: (types.IResource|null);
+
+        /** ResourceWithKey owner */
+        owner?: (types.IIdentityKeyID|null);
+
+        /** ResourceWithKey creator */
+        creator?: (types.IIdentityKeyID|null);
+
+        /** ResourceWithKey encryptedKey */
+        encryptedKey?: (types.ICipher|null);
+    }
+
+    /** Represents a ResourceWithKey. */
+    class ResourceWithKey implements IResourceWithKey {
+
+        /**
+         * Constructs a new ResourceWithKey.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: types.IResourceWithKey);
+
+        /** ResourceWithKey resource. */
+        public resource?: (types.IResource|null);
+
+        /** ResourceWithKey owner. */
+        public owner?: (types.IIdentityKeyID|null);
+
+        /** ResourceWithKey creator. */
+        public creator?: (types.IIdentityKeyID|null);
+
+        /** ResourceWithKey encryptedKey. */
+        public encryptedKey?: (types.ICipher|null);
+
+        /**
+         * Creates a new ResourceWithKey instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ResourceWithKey instance
+         */
+        public static create(properties?: types.IResourceWithKey): types.ResourceWithKey;
+
+        /**
+         * Encodes the specified ResourceWithKey message. Does not implicitly {@link types.ResourceWithKey.verify|verify} messages.
+         * @param message ResourceWithKey message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: types.IResourceWithKey, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ResourceWithKey message, length delimited. Does not implicitly {@link types.ResourceWithKey.verify|verify} messages.
+         * @param message ResourceWithKey message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: types.IResourceWithKey, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ResourceWithKey message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ResourceWithKey
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): types.ResourceWithKey;
+
+        /**
+         * Decodes a ResourceWithKey message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ResourceWithKey
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): types.ResourceWithKey;
+
+        /**
+         * Verifies a ResourceWithKey message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ResourceWithKey message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ResourceWithKey
+         */
+        public static fromObject(object: { [k: string]: any }): types.ResourceWithKey;
+
+        /**
+         * Creates a plain object from a ResourceWithKey message. Also converts values to other types if specified.
+         * @param message ResourceWithKey
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: types.ResourceWithKey, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ResourceWithKey to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of a ResourceGetKeyResponse. */
     interface IResourceGetKeyResponse {
 
@@ -7312,6 +7511,96 @@ export namespace types {
 
         /**
          * Converts this ResourceExtendSharingGroupRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a ResourceListResponse. */
+    interface IResourceListResponse {
+
+        /** ResourceListResponse resources */
+        resources?: (types.IResourceWithKey[]|null);
+    }
+
+    /** Represents a ResourceListResponse. */
+    class ResourceListResponse implements IResourceListResponse {
+
+        /**
+         * Constructs a new ResourceListResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: types.IResourceListResponse);
+
+        /** ResourceListResponse resources. */
+        public resources: types.IResourceWithKey[];
+
+        /**
+         * Creates a new ResourceListResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ResourceListResponse instance
+         */
+        public static create(properties?: types.IResourceListResponse): types.ResourceListResponse;
+
+        /**
+         * Encodes the specified ResourceListResponse message. Does not implicitly {@link types.ResourceListResponse.verify|verify} messages.
+         * @param message ResourceListResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: types.IResourceListResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ResourceListResponse message, length delimited. Does not implicitly {@link types.ResourceListResponse.verify|verify} messages.
+         * @param message ResourceListResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: types.IResourceListResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ResourceListResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ResourceListResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): types.ResourceListResponse;
+
+        /**
+         * Decodes a ResourceListResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ResourceListResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): types.ResourceListResponse;
+
+        /**
+         * Verifies a ResourceListResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ResourceListResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ResourceListResponse
+         */
+        public static fromObject(object: { [k: string]: any }): types.ResourceListResponse;
+
+        /**
+         * Creates a plain object from a ResourceListResponse message. Also converts values to other types if specified.
+         * @param message ResourceListResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: types.ResourceListResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ResourceListResponse to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -8981,208 +9270,6 @@ export namespace types {
 
         /**
          * Converts this RegisterPostLinkTokenRequest to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-}
-
-/** Namespace command. */
-export namespace command {
-
-    /** RequestKind enum. */
-    enum RequestKind {
-        ListenIdentityEvents = 0,
-        ListenChannel = 1
-    }
-
-    /** Properties of a Request. */
-    interface IRequest {
-
-        /** Request id */
-        id?: (number|null);
-
-        /** Request kind */
-        kind?: (command.RequestKind|null);
-
-        /** Request payload */
-        payload?: (google.protobuf.IAny|null);
-    }
-
-    /** Represents a Request. */
-    class Request implements IRequest {
-
-        /**
-         * Constructs a new Request.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: command.IRequest);
-
-        /** Request id. */
-        public id: number;
-
-        /** Request kind. */
-        public kind: command.RequestKind;
-
-        /** Request payload. */
-        public payload?: (google.protobuf.IAny|null);
-
-        /**
-         * Creates a new Request instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns Request instance
-         */
-        public static create(properties?: command.IRequest): command.Request;
-
-        /**
-         * Encodes the specified Request message. Does not implicitly {@link command.Request.verify|verify} messages.
-         * @param message Request message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: command.IRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified Request message, length delimited. Does not implicitly {@link command.Request.verify|verify} messages.
-         * @param message Request message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: command.IRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a Request message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns Request
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): command.Request;
-
-        /**
-         * Decodes a Request message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns Request
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): command.Request;
-
-        /**
-         * Verifies a Request message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Request message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Request
-         */
-        public static fromObject(object: { [k: string]: any }): command.Request;
-
-        /**
-         * Creates a plain object from a Request message. Also converts values to other types if specified.
-         * @param message Request
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: command.Request, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Request to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a RequestListenChannel. */
-    interface IRequestListenChannel {
-
-        /** RequestListenChannel id */
-        id?: (number|Long|null);
-    }
-
-    /** Represents a RequestListenChannel. */
-    class RequestListenChannel implements IRequestListenChannel {
-
-        /**
-         * Constructs a new RequestListenChannel.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: command.IRequestListenChannel);
-
-        /** RequestListenChannel id. */
-        public id: (number|Long);
-
-        /**
-         * Creates a new RequestListenChannel instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns RequestListenChannel instance
-         */
-        public static create(properties?: command.IRequestListenChannel): command.RequestListenChannel;
-
-        /**
-         * Encodes the specified RequestListenChannel message. Does not implicitly {@link command.RequestListenChannel.verify|verify} messages.
-         * @param message RequestListenChannel message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: command.IRequestListenChannel, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified RequestListenChannel message, length delimited. Does not implicitly {@link command.RequestListenChannel.verify|verify} messages.
-         * @param message RequestListenChannel message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: command.IRequestListenChannel, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a RequestListenChannel message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns RequestListenChannel
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): command.RequestListenChannel;
-
-        /**
-         * Decodes a RequestListenChannel message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns RequestListenChannel
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): command.RequestListenChannel;
-
-        /**
-         * Verifies a RequestListenChannel message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a RequestListenChannel message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns RequestListenChannel
-         */
-        public static fromObject(object: { [k: string]: any }): command.RequestListenChannel;
-
-        /**
-         * Creates a plain object from a RequestListenChannel message. Also converts values to other types if specified.
-         * @param message RequestListenChannel
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: command.RequestListenChannel, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this RequestListenChannel to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };

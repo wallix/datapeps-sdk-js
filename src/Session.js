@@ -52,7 +52,6 @@ var CryptoFuncs_1 = require("./CryptoFuncs");
 var Identity_1 = require("./Identity");
 var Resource_1 = require("./Resource");
 var Admin_1 = require("./Admin");
-var Channel_1 = require("./Channel");
 var MemoryPublicKeyCache = /** @class */ (function () {
     function MemoryPublicKeyCache() {
         this.cache = {};
@@ -166,7 +165,6 @@ var SessionImpl = /** @class */ (function () {
         this.Identity = new Identity_1.IdentityImpl(this);
         this.Resource = new Resource_1.ResourceImpl(this);
         this.Admin = new Admin_1.AdminImpl(this);
-        this.Channel = new Channel_1.ChannelAPIImpl(this);
         this.encryption = encryption;
         this.token = Tools_1.Base64.encode(token);
         this.salt = salt;
@@ -176,19 +174,16 @@ var SessionImpl = /** @class */ (function () {
         this.pkCache = new MemoryPublicKeyCache();
         this.trustPolicy = new TrustOnFirstUse(this);
         this.assumeKeyCache = {};
-        this.wsManager = new WebSocketManager(this);
         this.afterRequestHandleSalt();
     }
     SessionImpl.prototype.close = function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        this.wsManager.close();
-                        return [4 /*yield*/, this.doProtoRequest({
-                                method: "PUT", code: 200,
-                                path: "/api/v4/session/close",
-                            })];
+                    case 0: return [4 /*yield*/, this.doProtoRequest({
+                            method: "PUT", code: 200,
+                            path: "/api/v4/session/close",
+                        })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });
@@ -327,7 +322,7 @@ var SessionImpl = /** @class */ (function () {
                         })];
                     case 1:
                         _a = _b.sent(), sign = _a.sign, resource = _a.resource;
-                        return [4 /*yield*/, new Resource_1.ResourceImpl(this)._makeResourceFromResponse(resource, proto_1.types.ResourceType.ANONYMOUS, null, null)
+                        return [4 /*yield*/, Resource_1.makeResourceFromResponse(resource, proto_1.types.ResourceType.ANONYMOUS, this, null, null)
                             // Verify requester's signature
                         ];
                     case 2:
@@ -669,27 +664,31 @@ var SessionImpl = /** @class */ (function () {
             });
         });
     };
-    SessionImpl.prototype.fetchKeys = function (login) {
+    SessionImpl.prototype.fetchKeys = function (login, version) {
         return __awaiter(this, void 0, void 0, function () {
-            var sharingKey_1, signKey_1, boxKey_1, readKey_1, _a, sharingKey, signKey, boxKey, readKey, version, decryptedSharingKey, _b, cipherSignkey, cipherBoxKey, cipherReadKey, decryptedSignKey, decryptedBoxKey, decryptedReadKey;
+            var sharingKey_1, signKey_1, boxKey_1, readKey_1, params, _a, sharingKey, signKey, boxKey, readKey, identityVersion, decryptedSharingKey, _b, cipherSignkey, cipherBoxKey, cipherReadKey, decryptedSignKey, decryptedBoxKey, decryptedReadKey;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        if (this.login == login) {
+                        if (this.login == login && (version == undefined || this.encryption.version == version)) {
                             sharingKey_1 = this.encryption.sharingKeyPair.secretKey;
                             signKey_1 = this.encryption.signKeyPair.secretKey;
                             boxKey_1 = this.encryption.boxKeyPair.secretKey;
                             readKey_1 = this.encryption.readKeyPair.secretKey;
                             return [2 /*return*/, ({ sharingKey: sharingKey_1, signKey: signKey_1, boxKey: boxKey_1, readKey: readKey_1, version: this.encryption.version, login: login })];
                         }
+                        if (version != undefined) {
+                            params = { version: version.toString() };
+                        }
                         return [4 /*yield*/, this.doProtoRequest({
                                 method: "GET",
                                 path: "/api/v4/identity/" + encodeURI(login) + "/keys",
                                 code: 200,
                                 response: proto_1.types.IdentityGetKeysResponse.decode,
+                                params: params,
                             })];
                     case 1:
-                        _a = _c.sent(), sharingKey = _a.sharingKey, signKey = _a.signKey, boxKey = _a.boxKey, readKey = _a.readKey, version = _a.version;
+                        _a = _c.sent(), sharingKey = _a.sharingKey, signKey = _a.signKey, boxKey = _a.boxKey, readKey = _a.readKey, identityVersion = _a.version;
                         return [4 /*yield*/, this.decryptCipherList(proto_1.types.ResourceType.SES, sharingKey)];
                     case 2:
                         decryptedSharingKey = _c.sent();
@@ -704,7 +703,7 @@ var SessionImpl = /** @class */ (function () {
                                 signKey: decryptedSignKey,
                                 boxKey: decryptedBoxKey,
                                 readKey: decryptedReadKey,
-                                version: version, login: login
+                                version: identityVersion, login: login
                             }];
                 }
             });
@@ -823,152 +822,4 @@ var AccessRequestResolverImpl = /** @class */ (function () {
     };
     return AccessRequestResolverImpl;
 }());
-var WebSocketManager = /** @class */ (function () {
-    function WebSocketManager(session) {
-        this.session = session;
-        this.webSocketHost = session.client.wsHost;
-        this.channelMessageListener = {};
-        this.commandId = 1;
-        this.commandK = {};
-    }
-    WebSocketManager.prototype.close = function () {
-        if (this.webSocket != null) {
-            this.webSocket.close();
-        }
-    };
-    WebSocketManager.prototype.listenChannelMessage = function (channelId, onEvent) {
-        return __awaiter(this, void 0, void 0, function () {
-            var listeners;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        listeners = this.channelMessageListener[channelId.toString()];
-                        if (listeners == null) {
-                            listeners = [];
-                            this.channelMessageListener[channelId.toString()] = listeners;
-                        }
-                        listeners.push(onEvent);
-                        return [4 /*yield*/, this.init()];
-                    case 1: return [2 /*return*/, _a.sent()];
-                }
-            });
-        });
-    };
-    WebSocketManager.prototype.init = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var _this = this;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        if (this.webSocket != null) {
-                            return [2 /*return*/];
-                        }
-                        return [4 /*yield*/, new Promise(function (resolve, reject) {
-                                var opened = false;
-                                var url = _this.webSocketHost + "/api/v4/events/listen";
-                                var salt = _this.session.getSalt();
-                                var sign = _this.session.encryption.sign(salt);
-                                _this.webSocket = new WebSocket(url +
-                                    "?token=" + encodeURIComponent(_this.session.token) +
-                                    "&signature=" + encodeURIComponent(Tools_1.Base64.encode(sign)) +
-                                    "&salt=" + encodeURIComponent(Tools_1.Base64.encode(salt)));
-                                _this.webSocket.onopen = function () {
-                                    opened = true;
-                                    resolve();
-                                };
-                                _this.webSocket.onmessage = function (evt) {
-                                    var event;
-                                    try {
-                                        event = proto_1.types.Event.decode(evt.data);
-                                    }
-                                    catch (e) {
-                                        console.error("WebSocket", "cannot decode the message as event", e);
-                                        return;
-                                    }
-                                    _this.dispatchEvent(event);
-                                };
-                                _this.webSocket.onerror = function (evt) {
-                                    if (!opened) {
-                                        return reject(evt);
-                                    }
-                                    console.log("ws error", evt);
-                                    // TODO - Retry?
-                                };
-                            })];
-                    case 1: return [2 /*return*/, _a.sent()];
-                }
-            });
-        });
-    };
-    WebSocketManager.prototype.sendCommandSync = function (kind, payload) {
-        var _this = this;
-        var id = this.commandId++;
-        var payloadX;
-        if (payload != null) {
-            var X = proto_1.command[payload.type];
-            if (X == null) {
-                throw new Error_1.Error({
-                    kind: Error_1.SDKKind.SDKInternalError,
-                    payload: {
-                        message: "cannot find command type",
-                        payload: payload,
-                    }
-                });
-            }
-            payloadX = {
-                type_url: "type.googleapis.com/command." + payload.type,
-                value: X.encode(payload.value).finish()
-            };
-        }
-        var message = proto_1.command.Request.encode({
-            id: id, kind: kind,
-            payload: payloadX
-        }).finish();
-        this.webSocket.send(message);
-        var p = new Promise(function (resolve, reject) {
-            _this.commandK[id] = { resolve: resolve, reject: reject };
-        });
-        return p;
-    };
-    WebSocketManager.prototype.dispatchEvent = function (event) {
-        var e = this.typesEventToEvent(event);
-        switch (e.type) {
-            case "CommandResponse":
-                this.handleCommandResponse(e);
-                break;
-            case "ChannelMessage":
-                this.dispatchChannelMessage(e);
-                break;
-            default:
-                console.error("cannot dispatch event", e);
-        }
-    };
-    WebSocketManager.prototype.typesEventToEvent = function (event) {
-        var type = event.payload.type_url.split('.').pop();
-        var X = proto_1.events[type];
-        return { type: type, payload: X.decode(event.payload.value) };
-    };
-    WebSocketManager.prototype.handleCommandResponse = function (event) {
-        return __awaiter(this, void 0, void 0, function () {
-            var k;
-            return __generator(this, function (_a) {
-                k = this.commandK[event.payload.id];
-                delete this.commandK[event.payload.id];
-                if (event.payload.error != null) {
-                    return [2 /*return*/, k.reject(event.payload.error)];
-                }
-                return [2 /*return*/, k.resolve(event.payload.success)];
-            });
-        });
-    };
-    WebSocketManager.prototype.dispatchChannelMessage = function (event) {
-        var listeners = this.channelMessageListener[event.payload.channelId.toString()];
-        if (listeners == null) {
-            return;
-        }
-        listeners.forEach(function (listener) { return listener(event); });
-    };
-    return WebSocketManager;
-}());
-exports.WebSocketManager = WebSocketManager;
 //# sourceMappingURL=Session.js.map

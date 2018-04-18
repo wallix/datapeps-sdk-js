@@ -1,6 +1,6 @@
 import * as nacl from 'tweetnacl';
 import { types } from './proto';
-import { ID, IdentityPublicKey, ResourceAPI, IdentityAccessKind, IdentityPublicKeyID } from './DataPeps';
+import { ID, IdentityPublicKey, ResourceAPI, IdentityAccessKind, IdentityPublicKeyID, Error, SDKError } from './DataPeps';
 import { EncryptFuncs } from './CryptoFuncs';
 import { SessionImpl } from './Session';
 import { Uint8Tool } from './Tools';
@@ -30,9 +30,6 @@ export class Resource<T> {
         this.keypair = keypair
         this.creator = creator
         this.type = type
-        if (type != ResourceType.ANONYMOUS) {
-            throw new Error("Error Resource support yet only anonymous mode");
-        }
     }
 
     publicKey(): Uint8Array {
@@ -48,7 +45,14 @@ export class Resource<T> {
     decrypt(message: Uint8Array) {
         let nonce = message.slice(0, nacl.secretbox.nonceLength)
         let cipher = message.slice(nacl.secretbox.nonceLength)
-        return nacl.secretbox.open(cipher, nonce, this.keypair.secretKey)
+        let text = nacl.secretbox.open(cipher, nonce, this.keypair.secretKey)
+        if (text == null) {
+            throw new Error({
+                kind: SDKError.DecryptFail,
+                payload: {resource: this.id}
+            })
+        }
+        return text
     }
 }
 
@@ -99,6 +103,19 @@ export class ResourceImpl implements ResourceAPI {
         return new Resource(id, kind, payload, keypair, creator)
     }
 
+    async list<T>(options?: {
+        parse?: ((u: Uint8Array) => T)
+    }) {
+        options = options != null ? options : {}
+        return await this.session.doProtoRequest({
+            method: "GET", code: 200,
+            path: "/api/v4/resources",
+            response: r => types.ResourceListResponse.decode(r).resources as types.IResourceWithKey[]
+        }).then(
+            resources => makeResourcesFromResponses<T>(resources, this.session, options.parse)
+        );
+    }
+
     async get<T>(id: ID, options?: {
         assume?: string,
         parse?: ((u: Uint8Array) => T)
@@ -111,28 +128,7 @@ export class ResourceImpl implements ResourceAPI {
             assume: { login: assume, kind: IdentityAccessKind.READ },
             response: r => types.ResourceGetResponse.decode(r),
         })
-        return this._makeResourceFromResponse(response, types.ResourceType.SES, options.parse, assume)
-    }
-
-    async _makeResourceFromResponse(
-        { resource, encryptedKey, creator }: types.IResourceGetResponse,
-        typeOfKey: types.ResourceType,
-        parse?, assume?,
-    ) {
-        parse = parse != null ? parse : u => JSON.parse(new TextDecoder().decode(u))
-        assume = assume != null ? assume : this.session.login
-        let { key } = await this.session.getAssumeParams({ login: assume, kind: IdentityAccessKind.READ })
-        let secretKeyCipher = encryptedKey.pop()
-        let accessKey = await this.session.decryptCipherList(types.ResourceType.SES, encryptedKey, key.boxKey)
-        let secretKey = await this.session.decryptCipherList(typeOfKey, [secretKeyCipher], accessKey)
-        let keypair = nacl.box.keyPair.fromSecretKey(secretKey)
-        let payload = resource.payload.length == 0 ? null : parse(await this.session.decryptCipherList(types.ResourceType.SES, [{
-            message: resource.payload,
-            nonce: resource.nonce,
-            sign: creator
-        }], keypair.secretKey))
-        let rcreator = await this.session.getPublicKey(creator as IdentityPublicKeyID)
-        return new Resource(resource.id, resource.kind, payload, keypair, rcreator)
+        return makeResourceFromResponse<T>(response, types.ResourceType.SES, this.session, options.parse, assume)
     }
 
     async delete(id: ID, options?: {
@@ -183,5 +179,77 @@ export class ResourceImpl implements ResourceAPI {
             }
         })
     }
+}
 
+export async function makeResourceFromResponse<T>(
+    { resource, encryptedKey, creator }: types.IResourceGetResponse,
+    typeOfKey: types.ResourceType,
+    session: SessionImpl,
+    parse?, assume?) {
+
+    assume = assume != null ? assume : session.login
+    let { key } = await session.getAssumeParams({ login: assume, kind: IdentityAccessKind.READ })
+    let secretKeyCipher = encryptedKey.pop()
+    let accessKey = await session.decryptCipherList(types.ResourceType.SES, encryptedKey, key.boxKey)
+    return await makeResource<T>(
+        { resource, encryptedKey: secretKeyCipher, creator: creator },
+        typeOfKey, session, accessKey, parse
+    )
+}
+
+async function makeResource<T>(
+    { resource, encryptedKey, creator }: types.IResourceWithKey,
+    typeOfKey: types.ResourceType,
+    session: SessionImpl,
+    boxKey?: Uint8Array, parse?) {
+
+    let secretKey = await session.decryptCipherList(typeOfKey, [encryptedKey], boxKey);
+    let keypair = nacl.box.keyPair.fromSecretKey(secretKey);
+
+    parse = parse != null ? parse : u => JSON.parse(new TextDecoder().decode(u))
+    let payload = resource.payload.length == 0 ? null : parse(await session.decryptCipherList(types.ResourceType.SES, [{
+        message: resource.payload,
+        nonce: resource.nonce,
+        sign: creator
+    }], keypair.secretKey));
+    let rcreator = await session.getPublicKey(creator as IdentityPublicKeyID);
+    return new Resource<T>(resource.id, resource.kind, payload, keypair, rcreator);
+}
+
+async function makeResourcesFromResponses<T>(resources: types.IResourceWithKey[], session: SessionImpl, parse?) {
+    let owners: types.IIdentityKeyID[] = []
+    resources.forEach(resource => {
+        if (resource.owner != undefined) {
+            if (owners.find((id) => id.login == resource.owner.login && id.version == resource.owner.version) == undefined) {
+                owners.push(resource.owner)
+            }
+        } else {
+            throw new Error({
+                kind: SDKError.SDKInternalError,
+                payload:{
+                    message: "Empty owner for resource " + resource.resource.id.toString()
+                }
+            })
+        }
+    })
+    let ownersKeys: types.IDelegatedKeys[] = [];
+    for (let i = 0; i < owners.length; i++) {
+        let owner = owners[i]
+        if (owner.login != undefined && owner.version != undefined) {
+            let keys = await session.fetchKeys(owner.login, owner.version)
+            ownersKeys.push(keys);
+        }
+    }
+    let resolvedResources: Resource<T>[] = [];
+    for (let i = 0; i < resources.length; i++) {
+        let resource = resources[i];
+        let keys: types.IDelegatedKeys;
+        for (let j = 0; j < owners.length; j++) {
+            if (resource.owner.login == owners[j].login && resource.owner.version == owners[j].version) {
+                keys = ownersKeys[j]
+            }
+        }
+        resolvedResources.push(await makeResource<T>(resource, types.ResourceType.SES, session, keys != undefined ? keys.boxKey : undefined, parse));
+    }
+    return resolvedResources
 }

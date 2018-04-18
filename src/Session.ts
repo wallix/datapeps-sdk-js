@@ -1,5 +1,5 @@
 import * as nacl from 'tweetnacl';
-import { types, command, events } from './proto';
+import { types, events } from './proto';
 import { ID, Session, SessionRequest, PublicKeysCache, TrustPolicy, AccessRequestResolver } from './DataPeps';
 import { IdentityPublicKey, IdentityPublicKeyID, IdentityAccessKind } from './DataPeps';
 import { AccessRequest } from './DataPeps';
@@ -10,9 +10,8 @@ import { Client } from './HTTP';
 import { ResolvedCipher, Encryption } from './CryptoFuncs';
 
 import { IdentityImpl } from './Identity';
-import { ResourceImpl } from './Resource';
+import { ResourceImpl, makeResourceFromResponse } from './Resource';
 import { AdminImpl } from './Admin';
-import { ChannelAPIImpl } from './Channel';
 
 export interface AssumeParams {
     key: types.IDelegatedKeys
@@ -129,8 +128,6 @@ export class SessionImpl implements Session {
     private trustPolicy: TrustPolicy
     private assumeKeyCache: { [login: string]: types.IDelegatedKeys }
 
-    wsManager: WebSocketManager
-
     constructor(
         login: string, token: Uint8Array, salt: Uint8Array, saltKind: types.SessionSaltKind,
         encryption: Encryption, client: Client
@@ -145,7 +142,6 @@ export class SessionImpl implements Session {
         this.pkCache = new MemoryPublicKeyCache()
         this.trustPolicy = new TrustOnFirstUse(this)
         this.assumeKeyCache = {}
-        this.wsManager = new WebSocketManager(this)
         this.afterRequestHandleSalt()
     }
 
@@ -155,10 +151,7 @@ export class SessionImpl implements Session {
 
     Admin = new AdminImpl(this)
 
-    Channel = new ChannelAPIImpl(this)
-
     async close(): Promise<void> {
-        this.wsManager.close()
         return await this.doProtoRequest<void>({
             method: "PUT", code: 200,
             path: "/api/v4/session/close",
@@ -246,7 +239,7 @@ export class SessionImpl implements Session {
             path: "/api/v4/delegatedAccess/" + requestId.toString(),
             response: types.DelegatedGetResponse.decode,
         })
-        let r = await new ResourceImpl(this)._makeResourceFromResponse(resource, types.ResourceType.ANONYMOUS, null, null)
+        let r = await makeResourceFromResponse<null>(resource, types.ResourceType.ANONYMOUS, this, null, null)
         // Verify requester's signature
         let msg = Uint8Tool.concat(
             new TextEncoder().encode(this.login),
@@ -347,7 +340,7 @@ export class SessionImpl implements Session {
             })
         }
         let pk = this.pkCache.get({ login, version: firstVersion })
-        
+
         if (firstVersion == 0) {
             if (pk == null) {
                 let { box, sign, mandate } = chains.shift()
@@ -484,19 +477,25 @@ export class SessionImpl implements Session {
         return keys
     }
 
-    async fetchKeys(login: string): Promise<types.IDelegatedKeys> {
-        if (this.login == login) {
+    async fetchKeys(login: string, version?: number): Promise<types.IDelegatedKeys> {
+        if (this.login == login && (version == undefined || this.encryption.version == version)) {
             let sharingKey = (this.encryption as any).sharingKeyPair.secretKey
             let signKey = (this.encryption as any).signKeyPair.secretKey
             let boxKey = (this.encryption as any).boxKeyPair.secretKey
             let readKey = (this.encryption as any).readKeyPair.secretKey
             return ({ sharingKey, signKey, boxKey, readKey, version: this.encryption.version, login })
         }
-        let { sharingKey, signKey, boxKey, readKey, version } = await this.doProtoRequest({
+        let params: undefined | { version: string }
+        if (version != undefined) {
+            params = { version: version.toString() }
+        }
+
+        let { sharingKey, signKey, boxKey, readKey, version: identityVersion } = await this.doProtoRequest({
             method: "GET",
             path: "/api/v4/identity/" + encodeURI(login) + "/keys",
             code: 200,
             response: types.IdentityGetKeysResponse.decode,
+            params,
         })
         let decryptedSharingKey = await this.decryptCipherList(types.ResourceType.SES, sharingKey)
         let [cipherSignkey, cipherBoxKey, cipherReadKey] =
@@ -509,7 +508,7 @@ export class SessionImpl implements Session {
             signKey: decryptedSignKey,
             boxKey: decryptedBoxKey,
             readKey: decryptedReadKey,
-            version, login
+            version: identityVersion, login
         }
     }
 
@@ -615,150 +614,4 @@ class AccessRequestResolverImpl implements AccessRequestResolver {
 export interface Event<T> {
     type: string
     payload: T
-}
-
-export class WebSocketManager {
-    private session: SessionImpl
-    private webSocketHost: string
-    private webSocket: WebSocket
-    private channelMessageListener: { [id: string]: ((event: Event<any>) => any)[] }
-    private commandId: number
-    private commandK: {
-        [id: number]: {
-            resolve: (value: any) => void,
-            reject: (reason?: any) => void,
-        }
-    }
-
-    constructor(session: SessionImpl) {
-        this.session = session
-        this.webSocketHost = session.client.wsHost
-        this.channelMessageListener = {}
-        this.commandId = 1
-        this.commandK = {}
-    }
-
-    close() {
-        if (this.webSocket != null) {
-            this.webSocket.close()
-        }
-    }
-
-    async listenChannelMessage(channelId: ID, onEvent: (event: Event<any>) => any) {
-        let listeners = this.channelMessageListener[channelId.toString()]
-        if (listeners == null) {
-            listeners = []
-            this.channelMessageListener[channelId.toString()] = listeners
-        }
-        listeners.push(onEvent)
-        return await this.init()
-    }
-
-    async init() {
-        if (this.webSocket != null) {
-            return
-        }
-        return await new Promise<void>((resolve, reject) => {
-            let opened = false
-            let url = this.webSocketHost + "/api/v4/events/listen"
-            let salt = this.session.getSalt()
-            let sign = this.session.encryption.sign(salt)
-            this.webSocket = new WebSocket(url +
-                "?token=" + encodeURIComponent(this.session.token) +
-                "&signature=" + encodeURIComponent(Base64.encode(sign)) +
-                "&salt=" + encodeURIComponent(Base64.encode(salt))
-            )
-            this.webSocket.onopen = () => {
-                opened = true
-                resolve()
-            }
-            this.webSocket.onmessage = (evt: MessageEvent) => {
-                let event: types.Event
-                try {
-                    event = types.Event.decode(evt.data)
-                } catch (e) {
-                    console.error("WebSocket", "cannot decode the message as event", e)
-                    return
-                }
-                this.dispatchEvent(event)
-            }
-            this.webSocket.onerror = function (evt) {
-                if (!opened) {
-                    return reject(evt)
-                }
-                console.log("ws error", evt)
-                // TODO - Retry?
-            }
-        })
-    }
-
-    sendCommandSync(kind: command.RequestKind, payload?: {
-        value: any,
-        type: string
-    }): Promise<any> {
-        let id = this.commandId++
-        let payloadX
-        if (payload != null) {
-            let X = command[payload.type]
-            if (X == null) {
-                throw new Error({
-                    kind: SDKKind.SDKInternalError,
-                    payload: {
-                        message: "cannot find command type",
-                        payload,
-                    }
-                })
-            }
-            payloadX = {
-                type_url: "type.googleapis.com/command." + payload.type,
-                value: X.encode(payload.value).finish()
-            }
-        }
-        let message = command.Request.encode({
-            id, kind,
-            payload: payloadX
-        }).finish()
-        this.webSocket.send(message)
-        let p = new Promise((resolve, reject) => {
-            this.commandK[id] = { resolve, reject }
-        })
-        return p
-    }
-
-    private dispatchEvent(event: types.Event) {
-        let e = this.typesEventToEvent(event)
-        switch (e.type) {
-            case "CommandResponse":
-                this.handleCommandResponse(e)
-                break;
-            case "ChannelMessage":
-                this.dispatchChannelMessage(e)
-                break;
-            default:
-                console.error("cannot dispatch event", e)
-        }
-    }
-
-    private typesEventToEvent(event: types.Event): Event<any> {
-        let type = event.payload.type_url.split('.').pop()
-        let X = events[type]
-        return { type, payload: X.decode(event.payload.value) }
-    }
-
-    private async handleCommandResponse(event: Event<events.CommandResponse>) {
-        let k = this.commandK[event.payload.id]
-        delete this.commandK[event.payload.id]
-        if (event.payload.error != null) {
-            return k.reject(event.payload.error)
-        }
-        return k.resolve(event.payload.success)
-    }
-
-    private dispatchChannelMessage(event: Event<events.ChannelMessage>) {
-        let listeners = this.channelMessageListener[event.payload.channelId.toString()]
-        if (listeners == null) {
-            return
-        }
-        listeners.forEach(listener => listener(event))
-    }
 }

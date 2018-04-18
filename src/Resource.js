@@ -60,9 +60,6 @@ var Resource = /** @class */ (function () {
         this.keypair = keypair;
         this.creator = creator;
         this.type = type;
-        if (type != ResourceType.ANONYMOUS) {
-            throw new Error("Error Resource support yet only anonymous mode");
-        }
     }
     Resource.prototype.publicKey = function () {
         return this.keypair.publicKey;
@@ -75,7 +72,14 @@ var Resource = /** @class */ (function () {
     Resource.prototype.decrypt = function (message) {
         var nonce = message.slice(0, nacl.secretbox.nonceLength);
         var cipher = message.slice(nacl.secretbox.nonceLength);
-        return nacl.secretbox.open(cipher, nonce, this.keypair.secretKey);
+        var text = nacl.secretbox.open(cipher, nonce, this.keypair.secretKey);
+        if (text == null) {
+            throw new DataPeps_1.Error({
+                kind: DataPeps_1.SDKError.DecryptFail,
+                payload: { resource: this.id }
+            });
+        }
+        return text;
     };
     return Resource;
 }());
@@ -136,6 +140,23 @@ var ResourceImpl = /** @class */ (function () {
             });
         });
     };
+    ResourceImpl.prototype.list = function (options) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        options = options != null ? options : {};
+                        return [4 /*yield*/, this.session.doProtoRequest({
+                                method: "GET", code: 200,
+                                path: "/api/v4/resources",
+                                response: function (r) { return proto_1.types.ResourceListResponse.decode(r).resources; }
+                            }).then(function (resources) { return makeResourcesFromResponses(resources, _this.session, options.parse); })];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
     ResourceImpl.prototype.get = function (id, options) {
         return __awaiter(this, void 0, void 0, function () {
             var assume, response;
@@ -152,50 +173,7 @@ var ResourceImpl = /** @class */ (function () {
                             })];
                     case 1:
                         response = _a.sent();
-                        return [2 /*return*/, this._makeResourceFromResponse(response, proto_1.types.ResourceType.SES, options.parse, assume)];
-                }
-            });
-        });
-    };
-    ResourceImpl.prototype._makeResourceFromResponse = function (_a, typeOfKey, parse, assume) {
-        var resource = _a.resource, encryptedKey = _a.encryptedKey, creator = _a.creator;
-        return __awaiter(this, void 0, void 0, function () {
-            var key, secretKeyCipher, accessKey, secretKey, keypair, payload, _b, _c, rcreator;
-            return __generator(this, function (_d) {
-                switch (_d.label) {
-                    case 0:
-                        parse = parse != null ? parse : function (u) { return JSON.parse(new TextDecoder().decode(u)); };
-                        assume = assume != null ? assume : this.session.login;
-                        return [4 /*yield*/, this.session.getAssumeParams({ login: assume, kind: DataPeps_1.IdentityAccessKind.READ })];
-                    case 1:
-                        key = (_d.sent()).key;
-                        secretKeyCipher = encryptedKey.pop();
-                        return [4 /*yield*/, this.session.decryptCipherList(proto_1.types.ResourceType.SES, encryptedKey, key.boxKey)];
-                    case 2:
-                        accessKey = _d.sent();
-                        return [4 /*yield*/, this.session.decryptCipherList(typeOfKey, [secretKeyCipher], accessKey)];
-                    case 3:
-                        secretKey = _d.sent();
-                        keypair = nacl.box.keyPair.fromSecretKey(secretKey);
-                        if (!(resource.payload.length == 0)) return [3 /*break*/, 4];
-                        _b = null;
-                        return [3 /*break*/, 6];
-                    case 4:
-                        _c = parse;
-                        return [4 /*yield*/, this.session.decryptCipherList(proto_1.types.ResourceType.SES, [{
-                                    message: resource.payload,
-                                    nonce: resource.nonce,
-                                    sign: creator
-                                }], keypair.secretKey)];
-                    case 5:
-                        _b = _c.apply(void 0, [_d.sent()]);
-                        _d.label = 6;
-                    case 6:
-                        payload = _b;
-                        return [4 /*yield*/, this.session.getPublicKey(creator)];
-                    case 7:
-                        rcreator = _d.sent();
-                        return [2 /*return*/, new Resource(resource.id, resource.kind, payload, keypair, rcreator)];
+                        return [2 /*return*/, makeResourceFromResponse(response, proto_1.types.ResourceType.SES, this.session, options.parse, assume)];
                 }
             });
         });
@@ -280,4 +258,123 @@ var ResourceImpl = /** @class */ (function () {
     return ResourceImpl;
 }());
 exports.ResourceImpl = ResourceImpl;
+function makeResourceFromResponse(_a, typeOfKey, session, parse, assume) {
+    var resource = _a.resource, encryptedKey = _a.encryptedKey, creator = _a.creator;
+    return __awaiter(this, void 0, void 0, function () {
+        var key, secretKeyCipher, accessKey;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    assume = assume != null ? assume : session.login;
+                    return [4 /*yield*/, session.getAssumeParams({ login: assume, kind: DataPeps_1.IdentityAccessKind.READ })];
+                case 1:
+                    key = (_b.sent()).key;
+                    secretKeyCipher = encryptedKey.pop();
+                    return [4 /*yield*/, session.decryptCipherList(proto_1.types.ResourceType.SES, encryptedKey, key.boxKey)];
+                case 2:
+                    accessKey = _b.sent();
+                    return [4 /*yield*/, makeResource({ resource: resource, encryptedKey: secretKeyCipher, creator: creator }, typeOfKey, session, accessKey, parse)];
+                case 3: return [2 /*return*/, _b.sent()];
+            }
+        });
+    });
+}
+exports.makeResourceFromResponse = makeResourceFromResponse;
+function makeResource(_a, typeOfKey, session, boxKey, parse) {
+    var resource = _a.resource, encryptedKey = _a.encryptedKey, creator = _a.creator;
+    return __awaiter(this, void 0, void 0, function () {
+        var secretKey, keypair, payload, _b, _c, rcreator;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
+                case 0: return [4 /*yield*/, session.decryptCipherList(typeOfKey, [encryptedKey], boxKey)];
+                case 1:
+                    secretKey = _d.sent();
+                    keypair = nacl.box.keyPair.fromSecretKey(secretKey);
+                    parse = parse != null ? parse : function (u) { return JSON.parse(new TextDecoder().decode(u)); };
+                    if (!(resource.payload.length == 0)) return [3 /*break*/, 2];
+                    _b = null;
+                    return [3 /*break*/, 4];
+                case 2:
+                    _c = parse;
+                    return [4 /*yield*/, session.decryptCipherList(proto_1.types.ResourceType.SES, [{
+                                message: resource.payload,
+                                nonce: resource.nonce,
+                                sign: creator
+                            }], keypair.secretKey)];
+                case 3:
+                    _b = _c.apply(void 0, [_d.sent()]);
+                    _d.label = 4;
+                case 4:
+                    payload = _b;
+                    return [4 /*yield*/, session.getPublicKey(creator)];
+                case 5:
+                    rcreator = _d.sent();
+                    return [2 /*return*/, new Resource(resource.id, resource.kind, payload, keypair, rcreator)];
+            }
+        });
+    });
+}
+function makeResourcesFromResponses(resources, session, parse) {
+    return __awaiter(this, void 0, void 0, function () {
+        var owners, ownersKeys, i, owner, keys, resolvedResources, i, resource, keys, j, _a, _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0:
+                    owners = [];
+                    resources.forEach(function (resource) {
+                        if (resource.owner != undefined) {
+                            if (owners.find(function (id) { return id.login == resource.owner.login && id.version == resource.owner.version; }) == undefined) {
+                                owners.push(resource.owner);
+                            }
+                        }
+                        else {
+                            throw new DataPeps_1.Error({
+                                kind: DataPeps_1.SDKError.SDKInternalError,
+                                payload: {
+                                    message: "Empty owner for resource " + resource.resource.id.toString()
+                                }
+                            });
+                        }
+                    });
+                    ownersKeys = [];
+                    i = 0;
+                    _c.label = 1;
+                case 1:
+                    if (!(i < owners.length)) return [3 /*break*/, 4];
+                    owner = owners[i];
+                    if (!(owner.login != undefined && owner.version != undefined)) return [3 /*break*/, 3];
+                    return [4 /*yield*/, session.fetchKeys(owner.login, owner.version)];
+                case 2:
+                    keys = _c.sent();
+                    ownersKeys.push(keys);
+                    _c.label = 3;
+                case 3:
+                    i++;
+                    return [3 /*break*/, 1];
+                case 4:
+                    resolvedResources = [];
+                    i = 0;
+                    _c.label = 5;
+                case 5:
+                    if (!(i < resources.length)) return [3 /*break*/, 8];
+                    resource = resources[i];
+                    keys = void 0;
+                    for (j = 0; j < owners.length; j++) {
+                        if (resource.owner.login == owners[j].login && resource.owner.version == owners[j].version) {
+                            keys = ownersKeys[j];
+                        }
+                    }
+                    _b = (_a = resolvedResources).push;
+                    return [4 /*yield*/, makeResource(resource, proto_1.types.ResourceType.SES, session, keys != undefined ? keys.boxKey : undefined, parse)];
+                case 6:
+                    _b.apply(_a, [_c.sent()]);
+                    _c.label = 7;
+                case 7:
+                    i++;
+                    return [3 /*break*/, 5];
+                case 8: return [2 /*return*/, resolvedResources];
+            }
+        });
+    });
+}
 //# sourceMappingURL=Resource.js.map

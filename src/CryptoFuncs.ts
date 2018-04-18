@@ -86,7 +86,7 @@ export class Encryption extends types.IdentityEncryption {
         try {
             this.sharingKeyPair = this.decryptKeyWithMasterKey(this.sharingEncrypted, creator)
         } catch (err) {
-            if (err instanceof Error && err.kind == SDKKind.SDKDecryptFail) {
+            if (err instanceof Error && err.kind == SDKKind.DecryptFail) {
                 throw new Error({
                     kind: SDKKind.BadSecret,
                     payload: err
@@ -220,7 +220,7 @@ class DecryptAnonymous implements DecryptFuncs {
         let message = cipher.message.slice(nacl.box.publicKeyLength)
         let result = nacl.box.open(message, cipher.nonce, publicKey, secretKey)
         if (result == null) {
-            throw new Error({ kind: SDKKind.SDKDecryptFail })
+            throw new Error({ kind: SDKKind.DecryptFail })
         }
         return result
     }
@@ -266,21 +266,21 @@ class DecryptSES implements DecryptFuncs {
         let cipher = nacl.sign.open(message, sign.sign)
         if (cipher == null) {
             throw new Error({
-                kind: SDKKind.SDKDecryptFail,
+                kind: SDKKind.DecryptFail,
                 payload: { kind: "VerifyCipherText", cipher: { cipher, nonce, sign } }
             })
         }
         let msgSign = nacl.box.open(cipher, nonce, sign.box, secretKey)
         if (msgSign == null) {
             throw new Error({
-                kind: SDKKind.SDKDecryptFail,
+                kind: SDKKind.DecryptFail,
                 payload: { kind: "DecryptCipherText", cipher: { cipher, nonce, sign } }
             })
         }
         let msg = nacl.sign.open(msgSign, sign.sign)
         if (msg == null) {
             throw new Error({
-                kind: SDKKind.SDKDecryptFail,
+                kind: SDKKind.DecryptFail,
                 payload: { kind: "VerifyText", cipher: { cipher, nonce, sign } }
             })
         }

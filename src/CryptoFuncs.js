@@ -65,7 +65,7 @@ var Encryption = /** @class */ (function (_super) {
             this.sharingKeyPair = this.decryptKeyWithMasterKey(this.sharingEncrypted, creator);
         }
         catch (err) {
-            if (err instanceof Error_1.Error && err.kind == Error_1.SDKKind.SDKDecryptFail) {
+            if (err instanceof Error_1.Error && err.kind == Error_1.SDKKind.DecryptFail) {
                 throw new Error_1.Error({
                     kind: Error_1.SDKKind.BadSecret,
                     payload: err
@@ -185,7 +185,7 @@ var DecryptAnonymous = /** @class */ (function () {
         var message = cipher.message.slice(nacl.box.publicKeyLength);
         var result = nacl.box.open(message, cipher.nonce, publicKey, secretKey);
         if (result == null) {
-            throw new Error_1.Error({ kind: Error_1.SDKKind.SDKDecryptFail });
+            throw new Error_1.Error({ kind: Error_1.SDKKind.DecryptFail });
         }
         return result;
     };
@@ -225,21 +225,21 @@ var DecryptSES = /** @class */ (function () {
         var cipher = nacl.sign.open(message, sign.sign);
         if (cipher == null) {
             throw new Error_1.Error({
-                kind: Error_1.SDKKind.SDKDecryptFail,
+                kind: Error_1.SDKKind.DecryptFail,
                 payload: { kind: "VerifyCipherText", cipher: { cipher: cipher, nonce: nonce, sign: sign } }
             });
         }
         var msgSign = nacl.box.open(cipher, nonce, sign.box, secretKey);
         if (msgSign == null) {
             throw new Error_1.Error({
-                kind: Error_1.SDKKind.SDKDecryptFail,
+                kind: Error_1.SDKKind.DecryptFail,
                 payload: { kind: "DecryptCipherText", cipher: { cipher: cipher, nonce: nonce, sign: sign } }
             });
         }
         var msg = nacl.sign.open(msgSign, sign.sign);
         if (msg == null) {
             throw new Error_1.Error({
-                kind: Error_1.SDKKind.SDKDecryptFail,
+                kind: Error_1.SDKKind.DecryptFail,
                 payload: { kind: "VerifyText", cipher: { cipher: cipher, nonce: nonce, sign: sign } }
             });
         }

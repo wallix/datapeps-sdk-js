@@ -256,4 +256,17 @@ describe('Resource', () => {
         expect(resource.payload).to.be.deep.equals(res.payload)
     })
 
+    it('check error on decrypt fail', async () => {
+        try {
+            let resource = await bobSession.Resource.get(res.id, { assume: group.login })
+            expect(resource).to.be.not.null
+            let result = resource.decrypt(nacl.randomBytes(128))
+        } catch (err) {
+            expect(err).instanceof(DataPeps.Error)
+            expect(err.kind).to.be.equals(DataPeps.SDKError.DecryptFail)
+            return
+        }
+        throw new Error("illegal decrypt doesn't throw error");
+    })
+
 })

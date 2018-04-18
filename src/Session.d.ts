@@ -1,4 +1,4 @@
-import { types, command } from './proto';
+import { types } from './proto';
 import { ID, Session, SessionRequest, PublicKeysCache, TrustPolicy, AccessRequestResolver } from './DataPeps';
 import { IdentityPublicKey, IdentityPublicKeyID, IdentityAccessKind } from './DataPeps';
 import { AccessRequest } from './DataPeps';
@@ -8,7 +8,6 @@ import { ResolvedCipher, Encryption } from './CryptoFuncs';
 import { IdentityImpl } from './Identity';
 import { ResourceImpl } from './Resource';
 import { AdminImpl } from './Admin';
-import { ChannelAPIImpl } from './Channel';
 export interface AssumeParams {
     key: types.IDelegatedKeys;
     kind: IdentityAccessKind;
@@ -29,12 +28,10 @@ export declare class SessionImpl implements Session {
     private pkCache;
     private trustPolicy;
     private assumeKeyCache;
-    wsManager: WebSocketManager;
     constructor(login: string, token: Uint8Array, salt: Uint8Array, saltKind: types.SessionSaltKind, encryption: Encryption, client: Client);
     Identity: IdentityImpl;
     Resource: ResourceImpl;
     Admin: AdminImpl;
-    Channel: ChannelAPIImpl;
     close(): Promise<void>;
     renewKeys(secret?: string | Uint8Array): Promise<void>;
     getSessionPublicKey(): IdentityPublicKey;
@@ -64,7 +61,7 @@ export declare class SessionImpl implements Session {
         kind: IdentityAccessKind;
     }): Promise<AssumeParams>;
     private getKeys(login);
-    fetchKeys(login: string): Promise<types.IDelegatedKeys>;
+    fetchKeys(login: string, version?: number): Promise<types.IDelegatedKeys>;
     clearAssumeParams(login: string): void;
 }
 export declare class AccessRequestImpl implements AccessRequest {
@@ -84,24 +81,4 @@ export declare class AccessRequestImpl implements AccessRequest {
 export interface Event<T> {
     type: string;
     payload: T;
-}
-export declare class WebSocketManager {
-    private session;
-    private webSocketHost;
-    private webSocket;
-    private channelMessageListener;
-    private commandId;
-    private commandK;
-    constructor(session: SessionImpl);
-    close(): void;
-    listenChannelMessage(channelId: ID, onEvent: (event: Event<any>) => any): Promise<void>;
-    init(): Promise<void>;
-    sendCommandSync(kind: command.RequestKind, payload?: {
-        value: any;
-        type: string;
-    }): Promise<any>;
-    private dispatchEvent(event);
-    private typesEventToEvent(event);
-    private handleCommandResponse(event);
-    private dispatchChannelMessage(event);
 }

@@ -1,6 +1,6 @@
 {
   "name": "datapeps-sdk",
-  "version": "0.0.30",
+  "version": "0.0.31-dev-da16",
   "description": "DataPeps SDK enables safe end-to-end-encryption for any application",
   "main": "./src/DataPeps.js",
   "types": "./src/DataPeps.d.ts",
@@ -13,7 +13,7 @@
     "integration": "mocha -r ts-node/register test/integration/*.ts test/integration/*/*.ts"
   },
   "devDependencies": {
-    "@types/chai": "^4.0.2",
+    "@types/chai": "^4.1.2",
     "@types/mocha": "^2.2.41",
     "@types/node": "^8.0.31",
     "atob": "^2.0.3",

@@ -11,7 +11,7 @@ export enum SDKKind {
     BadSecret = -5,
     IdentitySignChainInvalid = -6,
     ProtocolError = -7,
-    SDKDecryptFail = -8,
+    DecryptFail = -8,
     InvalidServerChain = -10,
 }
 

@@ -11,7 +11,7 @@ var SDKKind;
     SDKKind[SDKKind["BadSecret"] = -5] = "BadSecret";
     SDKKind[SDKKind["IdentitySignChainInvalid"] = -6] = "IdentitySignChainInvalid";
     SDKKind[SDKKind["ProtocolError"] = -7] = "ProtocolError";
-    SDKKind[SDKKind["SDKDecryptFail"] = -8] = "SDKDecryptFail";
+    SDKKind[SDKKind["DecryptFail"] = -8] = "DecryptFail";
     SDKKind[SDKKind["InvalidServerChain"] = -10] = "InvalidServerChain";
 })(SDKKind = exports.SDKKind || (exports.SDKKind = {}));
 /**

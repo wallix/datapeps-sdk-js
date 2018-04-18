@@ -86,6 +86,21 @@ exports.printIdentityPublicKey = function (key) {
     return bs58.encode(exports.hashIdentityPublicKey(key));
 };
 /**
+ * Returns the date from a DataPeps ID
+ * @param id The id from which the date is extracted
+ * @return(s) The date of the creation of this id
+ */
+exports.dateFromID = function (id) {
+    var l;
+    if (id instanceof Long) {
+        l = id;
+    }
+    else {
+        l = Long.fromNumber(id, true);
+    }
+    return new Date(l.getHighBitsUnsigned() * 1000);
+};
+/**
  * Register a new DataPeps identity.
  * @param identity The description of the identity to register.
  *  The login MUST be a peps email address, i.e. <login>@<pepsdomain>

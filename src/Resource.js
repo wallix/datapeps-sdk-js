@@ -331,7 +331,8 @@ function makeResourcesFromResponses(resources, session, parse) {
                             throw new DataPeps_1.Error({
                                 kind: DataPeps_1.SDKError.SDKInternalError,
                                 payload: {
-                                    message: "Empty owner for resource " + resource.resource.id.toString()
+                                    message: "Missing owner field",
+                                    resource: resource.resource.id,
                                 }
                             });
                         }

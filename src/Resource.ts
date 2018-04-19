@@ -227,7 +227,8 @@ async function makeResourcesFromResponses<T>(resources: types.IResourceWithKey[]
             throw new Error({
                 kind: SDKError.SDKInternalError,
                 payload:{
-                    message: "Empty owner for resource " + resource.resource.id.toString()
+                    message: "Missing owner field",
+                    resource: resource.resource.id,
                 }
             })
         }

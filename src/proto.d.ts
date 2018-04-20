@@ -7606,6 +7606,186 @@ export namespace types {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of a ResourceGetSharingGroupResponse. */
+    interface IResourceGetSharingGroupResponse {
+
+        /** ResourceGetSharingGroupResponse sharingGroup */
+        sharingGroup?: (types.IResourceShareLink[]|null);
+    }
+
+    /** Represents a ResourceGetSharingGroupResponse. */
+    class ResourceGetSharingGroupResponse implements IResourceGetSharingGroupResponse {
+
+        /**
+         * Constructs a new ResourceGetSharingGroupResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: types.IResourceGetSharingGroupResponse);
+
+        /** ResourceGetSharingGroupResponse sharingGroup. */
+        public sharingGroup: types.IResourceShareLink[];
+
+        /**
+         * Creates a new ResourceGetSharingGroupResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ResourceGetSharingGroupResponse instance
+         */
+        public static create(properties?: types.IResourceGetSharingGroupResponse): types.ResourceGetSharingGroupResponse;
+
+        /**
+         * Encodes the specified ResourceGetSharingGroupResponse message. Does not implicitly {@link types.ResourceGetSharingGroupResponse.verify|verify} messages.
+         * @param message ResourceGetSharingGroupResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: types.IResourceGetSharingGroupResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ResourceGetSharingGroupResponse message, length delimited. Does not implicitly {@link types.ResourceGetSharingGroupResponse.verify|verify} messages.
+         * @param message ResourceGetSharingGroupResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: types.IResourceGetSharingGroupResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ResourceGetSharingGroupResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ResourceGetSharingGroupResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): types.ResourceGetSharingGroupResponse;
+
+        /**
+         * Decodes a ResourceGetSharingGroupResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ResourceGetSharingGroupResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): types.ResourceGetSharingGroupResponse;
+
+        /**
+         * Verifies a ResourceGetSharingGroupResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ResourceGetSharingGroupResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ResourceGetSharingGroupResponse
+         */
+        public static fromObject(object: { [k: string]: any }): types.ResourceGetSharingGroupResponse;
+
+        /**
+         * Creates a plain object from a ResourceGetSharingGroupResponse message. Also converts values to other types if specified.
+         * @param message ResourceGetSharingGroupResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: types.ResourceGetSharingGroupResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ResourceGetSharingGroupResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a ResourceShareLink. */
+    interface IResourceShareLink {
+
+        /** ResourceShareLink identityID */
+        identityID?: (types.IIdentityKeyID|null);
+    }
+
+    /** Represents a ResourceShareLink. */
+    class ResourceShareLink implements IResourceShareLink {
+
+        /**
+         * Constructs a new ResourceShareLink.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: types.IResourceShareLink);
+
+        /** ResourceShareLink identityID. */
+        public identityID?: (types.IIdentityKeyID|null);
+
+        /**
+         * Creates a new ResourceShareLink instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ResourceShareLink instance
+         */
+        public static create(properties?: types.IResourceShareLink): types.ResourceShareLink;
+
+        /**
+         * Encodes the specified ResourceShareLink message. Does not implicitly {@link types.ResourceShareLink.verify|verify} messages.
+         * @param message ResourceShareLink message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: types.IResourceShareLink, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ResourceShareLink message, length delimited. Does not implicitly {@link types.ResourceShareLink.verify|verify} messages.
+         * @param message ResourceShareLink message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: types.IResourceShareLink, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ResourceShareLink message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ResourceShareLink
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): types.ResourceShareLink;
+
+        /**
+         * Decodes a ResourceShareLink message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ResourceShareLink
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): types.ResourceShareLink;
+
+        /**
+         * Verifies a ResourceShareLink message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ResourceShareLink message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ResourceShareLink
+         */
+        public static fromObject(object: { [k: string]: any }): types.ResourceShareLink;
+
+        /**
+         * Creates a plain object from a ResourceShareLink message. Also converts values to other types if specified.
+         * @param message ResourceShareLink
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: types.ResourceShareLink, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ResourceShareLink to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of an Event. */
     interface IEvent {
 

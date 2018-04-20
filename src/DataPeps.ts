@@ -610,6 +610,11 @@ export enum ResourceType {
 }
 
 /**
+ * ResourceShareLink describes a share of a resource to an identity.
+ */
+export type ResourceShareLink = types.ResourceShareLink
+
+/**
  * A DataPeps Resource is a sharable object that handles the basic function encrypt/decrypt.
  */
 export interface Resource<T> {
@@ -710,6 +715,16 @@ export interface ResourceAPI {
     extendSharingGroup(id: ID, sharingGroup: string[], options?: {
         assume?: string
     }): Promise<void>
+
+    /**
+     * Get the sharing group of a resource. The sharing group of a resource is the set of identities that can
+     * access to this resource.
+     * @param id The identifier of the identity to get the sharing group.
+     * @return(p) On success the promise will be resolved with a list of links that describe accesses to the resource.
+     * On error the promise will be rejected with an {@link Error} with kind
+     * - `ResourceNotFound` if the resource does not exists.
+     */
+    getSharingGroup(id: ID): Promise<ResourceShareLink[]>
 }
 
 /////////////////////////////////////////////////

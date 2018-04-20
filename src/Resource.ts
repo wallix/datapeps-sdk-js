@@ -1,6 +1,6 @@
 import * as nacl from 'tweetnacl';
 import { types } from './proto';
-import { ID, IdentityPublicKey, ResourceAPI, IdentityAccessKind, IdentityPublicKeyID, Error, SDKError } from './DataPeps';
+import { ID, IdentityPublicKey, ResourceAPI, IdentityAccessKind, IdentityPublicKeyID, Error, SDKError, ResourceShareLink } from './DataPeps';
 import { EncryptFuncs } from './CryptoFuncs';
 import { SessionImpl } from './Session';
 import { Uint8Tool } from './Tools';
@@ -49,7 +49,7 @@ export class Resource<T> {
         if (text == null) {
             throw new Error({
                 kind: SDKError.DecryptFail,
-                payload: {resource: this.id}
+                payload: { resource: this.id }
             })
         }
         return text
@@ -169,6 +169,14 @@ export class ResourceImpl implements ResourceAPI {
         })
     }
 
+    async getSharingGroup(id: ID): Promise<ResourceShareLink[]> {
+        return await this.session.doProtoRequest({
+            method: "GET", code: 200,
+            path: "/api/v4/resource/" + id + "/sharingGroup",
+            response: r => types.ResourceGetSharingGroupResponse.decode(r).sharingGroup as ResourceShareLink[]
+        })
+    }
+
     private async encryptForSharingGroup(text: Uint8Array, sharingGroup: string[], crypto: EncryptFuncs) {
         let publicKeys = await this.session.getLatestPublicKeys(sharingGroup)
         return publicKeys.map(({ login, version, box, sign }) => {
@@ -226,7 +234,7 @@ async function makeResourcesFromResponses<T>(resources: types.IResourceWithKey[]
         } else {
             throw new Error({
                 kind: SDKError.SDKInternalError,
-                payload:{
+                payload: {
                     message: "Missing owner field",
                     resource: resource.resource.id,
                 }

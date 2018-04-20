@@ -116,10 +116,10 @@ describe('Resource.delete', () => {
         resourceCEncryptedContent = resourceC.encrypt(resourceCContent)
         resourceDEncryptedContent = resourceD.encrypt(resourceDContent)
 
-        randomResourceId = Math.floor(Math.random() * 9999999)
+        randomResourceId = Math.floor(Math.random() * 0xFFFFFFFF)
 
-        let low = Math.floor(Math.random() * 9999999999)
-        let high = Math.floor(Math.random() * 9999999999)
+        let low = Math.floor(Math.random() * 0xFFFFFFFF)
+        let high = Math.floor(Math.random() * 0x7FFFFFFF)
         randomResourceIdLong = new Long(low, high, true)
     })
 

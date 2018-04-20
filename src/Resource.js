@@ -235,6 +235,20 @@ var ResourceImpl = /** @class */ (function () {
             });
         });
     };
+    ResourceImpl.prototype.getSharingGroup = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.session.doProtoRequest({
+                            method: "GET", code: 200,
+                            path: "/api/v4/resource/" + id + "/sharingGroup",
+                            response: function (r) { return proto_1.types.ResourceGetSharingGroupResponse.decode(r).sharingGroup; }
+                        })];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
     ResourceImpl.prototype.encryptForSharingGroup = function (text, sharingGroup, crypto) {
         return __awaiter(this, void 0, void 0, function () {
             var publicKeys;

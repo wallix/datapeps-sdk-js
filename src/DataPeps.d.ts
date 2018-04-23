@@ -142,7 +142,11 @@ export interface AccessRequest {
     wait(): Promise<void>;
     /** Same as wait but returns an authenticated session of the identity that resolved the AccessRequest. */
     waitSession(): Promise<Session>;
+    openResolver(params: any): void;
 }
+export declare function configureAccessRequestResolver(params: {
+    open: (id: ID, login: string) => void;
+}): void;
 /**
  * The public keys of identities are fetched from DataPeps and then validated thanks to a {@TrustPolicy}.
  * Once the keys are fetched and trusted, they are locally saved to a cache.
@@ -161,9 +165,11 @@ export interface TrustPolicy {
     trust(pk: IdentityPublicKey, mandate?: IdentityPublicKeyID): Promise<void>;
 }
 /**
- * An object that allows to checks and resolve an AccessRequest.
+ * An object that allows to check and resolve an AccessRequest.
  */
 export interface AccessRequestResolver {
+    /** ID of the corresponding AccessRequest */
+    id: ID;
     /** The IdentityPublicKey of the identity who signed the access request. */
     requesterKey: IdentityPublicKey;
     /** Resolve the access request with the given login.

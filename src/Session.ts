@@ -1,4 +1,5 @@
 import * as nacl from 'tweetnacl';
+import * as Long from 'long';
 import { types, events } from './proto';
 import { ID, Session, SessionRequest, PublicKeysCache, TrustPolicy, AccessRequestResolver } from './DataPeps';
 import { IdentityPublicKey, IdentityPublicKeyID, IdentityAccessKind } from './DataPeps';
@@ -580,6 +581,18 @@ export class AccessRequestImpl implements AccessRequest {
     async waitSession(): Promise<Session> {
         await this.wait()
         return await loginWithKeys(this.client, this.keys)
+    }
+
+    openResolver() {
+        this._openConfigured(this.id, this.login);
+    }
+    
+    _openConfigured(id: ID, login: string) {
+        throw new Error(
+            {
+                kind: SDKKind.SDKInternalError,
+                payload: {reason: "AccessRequest.openResolver() function has not been configured"}
+            })
     }
 }
 

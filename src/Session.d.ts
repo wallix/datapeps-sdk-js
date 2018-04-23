@@ -77,6 +77,8 @@ export declare class AccessRequestImpl implements AccessRequest {
     private init();
     wait(): Promise<void>;
     waitSession(): Promise<Session>;
+    openResolver(): void;
+    _openConfigured(id: ID, login: string): void;
 }
 export interface Event<T> {
     type: string;

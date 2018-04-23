@@ -1,6 +1,6 @@
 import * as nacl from 'tweetnacl';
 import * as Long from 'long';
-import * as protobugjs from 'protobufjs';
+import * as protobufjs from 'protobufjs';
 import { types, errors, events } from './proto';
 import { Base64, Uint8Tool } from './Tools';
 import { Encryption, EncryptAnonymous } from './CryptoFuncs';
@@ -8,12 +8,14 @@ import { Client, Request } from './HTTP';
 import { SessionImpl, AccessRequestImpl, _login } from './Session';
 import { IdentityX } from './Identity';
 import { Resource } from './Resource';
+import { Error, SDKKind } from './Error';
+import { Constants } from './Constants';
 export { Error, ErrorKind, ServerKind as ServerError, SDKKind as SDKError } from './Error';
 export type RegisterTokenStatus = types.RegisterTokenStatus
 export const RegisterTokenStatus = types.RegisterTokenStatus
 
-protobugjs.util.Long = Long
-protobugjs.configure()
+protobufjs.util.Long = Long
+protobufjs.configure()
 
 const defaultAPIURL = "https://api.datapeps.com"
 const defaultWSURL = "https://ws.datapeps.com"
@@ -277,7 +279,34 @@ export interface AccessRequest {
 
     /** Same as wait but returns an authenticated session of the identity that resolved the AccessRequest. */
     waitSession(): Promise<Session>
+
+    openResolver(params: any): void
 }
+
+export function configureAccessRequestResolver(params: {open: (id: ID, login: string) => void}) {
+    AccessRequestImpl.prototype._openConfigured = params.open 
+}
+
+configureAccessRequestResolver({
+    open: (id: ID, login: string): void => {
+        // check if running in browser
+        if (typeof window == 'undefined'
+            || typeof window.document == 'undefined') {
+                throw new Error({
+                    kind: SDKKind.SDKInternalError,
+                    payload: {
+                        reason: "AccessRequest.openResolver() must be configured"}
+                    });
+        }
+
+        let resolverUrl = encodeURIComponent(
+            Constants.Session.RESOLVER_URL +
+            "?id=" + id.toString() +
+            "&login=" + login)
+        let features = Constants.Session.RESOLVER_WINDOW_DEFAULT_FEATURES
+        window.open(resolverUrl, "", features)
+    },
+})
 
 /**
  * The public keys of identities are fetched from DataPeps and then validated thanks to a {@TrustPolicy}.
@@ -299,9 +328,12 @@ export interface TrustPolicy {
 }
 
 /**
- * An object that allows to checks and resolve an AccessRequest. 
+ * An object that allows to check and resolve an AccessRequest. 
  */
 export interface AccessRequestResolver {
+    /** ID of the corresponding AccessRequest */
+    id: ID
+
     /** The IdentityPublicKey of the identity who signed the access request. */
     requesterKey: IdentityPublicKey
 

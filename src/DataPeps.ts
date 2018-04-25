@@ -704,7 +704,8 @@ export interface ResourceAPI {
      * On error the promise will be rejected with an {@link Error}
      */
     list<T>(options?: {
-        parse?: ((u: Uint8Array) => T)
+        parse?: ((u: Uint8Array) => T),
+        assume?: string,
     }): Promise<Resource<T>[]>
 
     /**
@@ -756,7 +757,9 @@ export interface ResourceAPI {
      * On error the promise will be rejected with an {@link Error} with kind
      * - `ResourceNotFound` if the resource does not exists.
      */
-    getSharingGroup(id: ID): Promise<ResourceShareLink[]>
+    getSharingGroup(id: ID, options?: {
+        assume?: string
+    }): Promise<ResourceShareLink[]>
 }
 
 /////////////////////////////////////////////////

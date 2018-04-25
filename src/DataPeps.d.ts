@@ -473,6 +473,7 @@ export interface ResourceAPI {
      */
     list<T>(options?: {
         parse?: ((u: Uint8Array) => T);
+        assume?: string;
     }): Promise<Resource<T>[]>;
     /**
      * Get a resource thanks its identifier.
@@ -520,7 +521,9 @@ export interface ResourceAPI {
      * On error the promise will be rejected with an {@link Error} with kind
      * - `ResourceNotFound` if the resource does not exists.
      */
-    getSharingGroup(id: ID): Promise<ResourceShareLink[]>;
+    getSharingGroup(id: ID, options?: {
+        assume?: string;
+    }): Promise<ResourceShareLink[]>;
 }
 export interface AdminAPI {
     /**

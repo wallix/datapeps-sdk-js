@@ -41,25 +41,37 @@ describe('Resource.getSharingGroup', () => {
         })),
     }
 
+    let deviceSecret = nacl.randomBytes(128)
+    let device: DataPeps.IdentityFields = {
+        login: "device." + seed + "@peps.test",
+        name: "device 1",
+        kind: "device",
+        payload: null,
+    }
+
     let aliceSession: DataPeps.Session
     let bobSession: DataPeps.Session
     let charlieSession: DataPeps.Session
-    let adminSession: DataPeps.Session
+    let deviceSession: DataPeps.Session
 
     before(async () => {
         await Config.init()
         await DataPeps.register(alice, aliceSecret)
         await DataPeps.register(bob, bobSecret)
         await DataPeps.register(charlie, charlieSecret)
-        adminSession = await Config.adminLogin()
         aliceSession = await DataPeps.login(alice.login, aliceSecret)
         bobSession = await DataPeps.login(bob.login, bobSecret)
         charlieSession = await DataPeps.login(charlie.login, charlieSecret)
+        await aliceSession.Identity.create(device, { secret: deviceSecret })
+        await aliceSession.Identity.extendSharingGroup(alice.login, [device.login])
+        deviceSession = await DataPeps.login(device.login, deviceSecret)
     })
 
     it('Check Alice is in resource sharing group', async () => {
         let aliceRes = await aliceSession.Resource.create("test/A", { description: "This is a test resource for Alice" }, [alice.login])
         let got = await aliceSession.Resource.getSharingGroup(aliceRes.id)
+        expect(got.map(share => share.identityID.login)).to.be.deep.equal([aliceSession.login])
+        got = await deviceSession.Resource.getSharingGroup(aliceRes.id, {assume: aliceSession.login})
         expect(got.map(share => share.identityID.login)).to.be.deep.equal([aliceSession.login])
     })
 

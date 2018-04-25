@@ -143,13 +143,16 @@ var ResourceImpl = /** @class */ (function () {
     ResourceImpl.prototype.list = function (options) {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
+            var assume;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         options = options != null ? options : {};
+                        assume = options.assume != null ? options.assume : this.session.login;
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "GET", code: 200,
                                 path: "/api/v4/resources",
+                                assume: { login: assume, kind: DataPeps_1.IdentityAccessKind.READ },
                                 response: function (r) { return proto_1.types.ResourceListResponse.decode(r).resources; }
                             }).then(function (resources) { return makeResourcesFromResponses(resources, _this.session, options.parse); })];
                     case 1: return [2 /*return*/, _a.sent()];
@@ -226,6 +229,7 @@ var ResourceImpl = /** @class */ (function () {
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "PATCH", code: 201,
                                 path: "/api/v4/resource/" + id + "/sharingGroup",
+                                assume: { login: assume, kind: DataPeps_1.IdentityAccessKind.WRITE },
                                 request: function () { return proto_1.types.ResourceExtendSharingGroupRequest.encode({
                                     sharingGroup: encryptedSharingGroup
                                 }).finish(); }
@@ -235,15 +239,20 @@ var ResourceImpl = /** @class */ (function () {
             });
         });
     };
-    ResourceImpl.prototype.getSharingGroup = function (id) {
+    ResourceImpl.prototype.getSharingGroup = function (id, options) {
         return __awaiter(this, void 0, void 0, function () {
+            var assume;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.session.doProtoRequest({
-                            method: "GET", code: 200,
-                            path: "/api/v4/resource/" + id + "/sharingGroup",
-                            response: function (r) { return proto_1.types.ResourceGetSharingGroupResponse.decode(r).sharingGroup; }
-                        })];
+                    case 0:
+                        options = options != null ? options : {};
+                        assume = options.assume != null ? options.assume : this.session.login;
+                        return [4 /*yield*/, this.session.doProtoRequest({
+                                method: "GET", code: 200,
+                                path: "/api/v4/resource/" + id + "/sharingGroup",
+                                assume: { login: assume, kind: DataPeps_1.IdentityAccessKind.READ },
+                                response: function (r) { return proto_1.types.ResourceGetSharingGroupResponse.decode(r).sharingGroup; }
+                            })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });

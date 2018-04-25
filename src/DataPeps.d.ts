@@ -12,6 +12,13 @@ export declare const RegisterTokenStatus: typeof types.RegisterTokenStatus;
  */
 export declare function configure(APIUrl: string, WSUrl?: string): void;
 /**
+ * Redefine the AccessRequest.openResolver() default function
+ * @param params An object containing the new AccessRequest.openResolver() function
+ */
+export declare function configureAccessRequestResolver(params: {
+    open: (id: ID, login: string) => void;
+}): void;
+/**
  * Returns the hash of an IdentityPublicKey.
  * The hash is computed thanks a sha2156 of the concat of box and sign key.
  * @param key The key to hash.
@@ -142,11 +149,9 @@ export interface AccessRequest {
     wait(): Promise<void>;
     /** Same as wait but returns an authenticated session of the identity that resolved the AccessRequest. */
     waitSession(): Promise<Session>;
+    /** Open a control element (a window when calling from a browser) that allows to resolve the access request */
     openResolver(params: any): void;
 }
-export declare function configureAccessRequestResolver(params: {
-    open: (id: ID, login: string) => void;
-}): void;
 /**
  * The public keys of identities are fetched from DataPeps and then validated thanks to a {@TrustPolicy}.
  * Once the keys are fetched and trusted, they are locally saved to a cache.

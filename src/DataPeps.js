@@ -66,6 +66,14 @@ function configure(APIUrl, WSUrl) {
     webSocketURL = WSUrl;
 }
 exports.configure = configure;
+/**
+ * Redefine the AccessRequest.openResolver() default function
+ * @param params An object containing the new AccessRequest.openResolver() function
+ */
+function configureAccessRequestResolver(params) {
+    Session_1.AccessRequestImpl.prototype._openConfigured = params.open;
+}
+exports.configureAccessRequestResolver = configureAccessRequestResolver;
 var bs58 = require('bs58');
 var sha = require('sha.js');
 /**
@@ -319,10 +327,7 @@ var IdentityAccessKind;
     IdentityAccessKind[IdentityAccessKind["READ"] = 0] = "READ";
     IdentityAccessKind[IdentityAccessKind["WRITE"] = 1] = "WRITE";
 })(IdentityAccessKind = exports.IdentityAccessKind || (exports.IdentityAccessKind = {}));
-function configureAccessRequestResolver(params) {
-    Session_1.AccessRequestImpl.prototype._openConfigured = params.open;
-}
-exports.configureAccessRequestResolver = configureAccessRequestResolver;
+// Configure the AccessRequest.openResolver() function to be called by default
 configureAccessRequestResolver({
     open: function (id, login) {
         // check if running in browser

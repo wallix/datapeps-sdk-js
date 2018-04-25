@@ -32,6 +32,14 @@ export function configure(APIUrl: string, WSUrl?: string) {
     webSocketURL = WSUrl
 }
 
+/**
+ * Redefine the AccessRequest.openResolver() default function
+ * @param params An object containing the new AccessRequest.openResolver() function
+ */
+export function configureAccessRequestResolver(params: {open: (id: ID, login: string) => void}) {
+    AccessRequestImpl.prototype._openConfigured = params.open 
+}
+
 let bs58 = require('bs58')
 let sha = require('sha.js')
 
@@ -280,13 +288,11 @@ export interface AccessRequest {
     /** Same as wait but returns an authenticated session of the identity that resolved the AccessRequest. */
     waitSession(): Promise<Session>
 
+    /** Open a control element (a window when calling from a browser) that allows to resolve the access request */
     openResolver(params: any): void
 }
 
-export function configureAccessRequestResolver(params: {open: (id: ID, login: string) => void}) {
-    AccessRequestImpl.prototype._openConfigured = params.open 
-}
-
+// Configure the AccessRequest.openResolver() function to be called by default
 configureAccessRequestResolver({
     open: (id: ID, login: string): void => {
         // check if running in browser

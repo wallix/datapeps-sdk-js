@@ -8,7 +8,7 @@ import 'mocha';
 type TestResource =
     DataPeps.Resource<{ description: string; }>
 
-describe('Resource.List', () => {
+describe('Resource.list', () => {
     let seed = Math.floor(Math.random() * 99999)
 
     let aliceSecret = nacl.randomBytes(128)
@@ -41,10 +41,18 @@ describe('Resource.List', () => {
         })),
     }
 
+    let deviceSecret = nacl.randomBytes(128)
+    let device: DataPeps.IdentityFields = {
+        login: "device." + seed + "@peps.test",
+        name: "device 1",
+        kind: "device",
+        payload: null,
+    }
+
     let aliceSession: DataPeps.Session
     let bobSession: DataPeps.Session
     let charlieSession: DataPeps.Session
-    let adminSession: DataPeps.Session
+    let deviceSession: DataPeps.Session
 
     let aliceRes1: TestResource
     let aliceRes2: TestResource
@@ -56,10 +64,12 @@ describe('Resource.List', () => {
         await DataPeps.register(alice, aliceSecret)
         await DataPeps.register(bob, bobSecret)
         await DataPeps.register(charlie, charlieSecret)
-        adminSession = await Config.adminLogin()
         aliceSession = await DataPeps.login(alice.login, aliceSecret)
         bobSession = await DataPeps.login(bob.login, bobSecret)
         charlieSession = await DataPeps.login(charlie.login, charlieSecret)
+        await aliceSession.Identity.create(device, { secret: deviceSecret })
+        await aliceSession.Identity.extendSharingGroup(alice.login, [device.login])
+        deviceSession = await DataPeps.login(device.login, deviceSecret)
         aliceRes1 = await aliceSession.Resource.create("test/A", { description: "This is a test resource for Alice 1" }, [alice.login])
         aliceRes2 = await aliceSession.Resource.create("test/A", { description: "This is a test resource for Alice 2" }, [alice.login])
         bobRes = await bobSession.Resource.create("test/A", { description: "This is a test resource for Bob" }, [bob.login])
@@ -81,10 +91,11 @@ describe('Resource.List', () => {
         expect(got).to.be.deep.equal([aliceRes1, aliceRes2])
     })
 
+    let aliceRes3: TestResource
     it('Check alice can access to a new resource after key renewal', async () => {
         await aliceSession.renewKeys()
         expect(await aliceSession.Resource.get(aliceRes1.id)).to.be.deep.equal(aliceRes1) //TODO: remove when key staling has been fixed for resource creation
-        let aliceRes3 = await aliceSession.Resource.create("test/A", { description: "This is a test resource for Alice 3" }, [alice.login])
+        aliceRes3 = await aliceSession.Resource.create("test/A", { description: "This is a test resource for Alice 3" }, [alice.login])
 
         let got = await aliceSession.Resource.list<{ description: string }>()
         expect(got).to.be.deep.equal([aliceRes1, aliceRes2, aliceRes3])
@@ -121,5 +132,10 @@ describe('Resource.List', () => {
         })
         expect(got[1].payload).to.be.equal(contentRes1)
         expect(got[2].payload).to.be.equal(contentRes2)
+    })
+
+    it('Check device can list resources by assuming alice identity', async () => {
+        let got = await deviceSession.Resource.list<{ description: string }>({assume: alice.login})
+        expect(got).to.be.deep.equal([aliceRes1, aliceRes2, aliceRes3, sharedRes])
     })
 })

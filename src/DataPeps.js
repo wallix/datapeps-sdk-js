@@ -37,7 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var nacl = require("tweetnacl");
 var Long = require("long");
-var protobugjs = require("protobufjs");
+var protobufjs = require("protobufjs");
 var proto_1 = require("./proto");
 var Tools_1 = require("./Tools");
 var CryptoFuncs_1 = require("./CryptoFuncs");
@@ -45,12 +45,14 @@ var HTTP_1 = require("./HTTP");
 var Session_1 = require("./Session");
 var Resource_1 = require("./Resource");
 var Error_1 = require("./Error");
-exports.Error = Error_1.Error;
-exports.ServerError = Error_1.ServerKind;
-exports.SDKError = Error_1.SDKKind;
+var Constants_1 = require("./Constants");
+var Error_2 = require("./Error");
+exports.Error = Error_2.Error;
+exports.ServerError = Error_2.ServerKind;
+exports.SDKError = Error_2.SDKKind;
 exports.RegisterTokenStatus = proto_1.types.RegisterTokenStatus;
-protobugjs.util.Long = Long;
-protobugjs.configure();
+protobufjs.util.Long = Long;
+protobufjs.configure();
 var defaultAPIURL = "https://api.datapeps.com";
 var defaultWSURL = "https://ws.datapeps.com";
 var client = new HTTP_1.Client(defaultAPIURL, defaultWSURL);
@@ -64,6 +66,14 @@ function configure(APIUrl, WSUrl) {
     webSocketURL = WSUrl;
 }
 exports.configure = configure;
+/**
+ * Redefine the AccessRequest.openResolver() default function
+ * @param params An object containing the new AccessRequest.openResolver() function
+ */
+function configureAccessRequestResolver(params) {
+    Session_1.AccessRequestImpl.prototype._openConfigured = params.open;
+}
+exports.configureAccessRequestResolver = configureAccessRequestResolver;
 var bs58 = require('bs58');
 var sha = require('sha.js');
 /**
@@ -317,6 +327,26 @@ var IdentityAccessKind;
     IdentityAccessKind[IdentityAccessKind["READ"] = 0] = "READ";
     IdentityAccessKind[IdentityAccessKind["WRITE"] = 1] = "WRITE";
 })(IdentityAccessKind = exports.IdentityAccessKind || (exports.IdentityAccessKind = {}));
+// Configure the AccessRequest.openResolver() function to be called by default
+configureAccessRequestResolver({
+    open: function (id, login) {
+        // check if running in browser
+        if (typeof window == 'undefined'
+            || typeof window.document == 'undefined') {
+            throw new Error_1.Error({
+                kind: Error_1.SDKKind.SDKInternalError,
+                payload: {
+                    reason: "AccessRequest.openResolver() must be configured"
+                }
+            });
+        }
+        var resolverUrl = encodeURIComponent(Constants_1.Constants.Session.RESOLVER_URL +
+            "?id=" + id.toString() +
+            "&login=" + login);
+        var features = Constants_1.Constants.Session.RESOLVER_WINDOW_DEFAULT_FEATURES;
+        window.open(resolverUrl, "", features);
+    },
+});
 /////////////////////////////////////////////////
 // Resource
 /////////////////////////////////////////////////

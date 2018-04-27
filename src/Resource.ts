@@ -1,6 +1,6 @@
 import * as nacl from 'tweetnacl';
 import { types } from './proto';
-import { ID, IdentityPublicKey, ResourceAPI, IdentityAccessKind, IdentityPublicKeyID, Error, SDKError } from './DataPeps';
+import { ID, IdentityPublicKey, ResourceAPI, IdentityAccessKind, IdentityPublicKeyID, Error, SDKError, ResourceShareLink } from './DataPeps';
 import { EncryptFuncs } from './CryptoFuncs';
 import { SessionImpl } from './Session';
 import { Uint8Tool } from './Tools';
@@ -49,7 +49,7 @@ export class Resource<T> {
         if (text == null) {
             throw new Error({
                 kind: SDKError.DecryptFail,
-                payload: {resource: this.id}
+                payload: { resource: this.id }
             })
         }
         return text
@@ -104,12 +104,15 @@ export class ResourceImpl implements ResourceAPI {
     }
 
     async list<T>(options?: {
-        parse?: ((u: Uint8Array) => T)
+        parse?: ((u: Uint8Array) => T),
+        assume?: string,
     }) {
         options = options != null ? options : {}
+        let assume = options.assume != null ? options.assume : this.session.login
         return await this.session.doProtoRequest({
             method: "GET", code: 200,
             path: "/api/v4/resources",
+            assume: { login: assume, kind: IdentityAccessKind.READ },
             response: r => types.ResourceListResponse.decode(r).resources as types.IResourceWithKey[]
         }).then(
             resources => makeResourcesFromResponses<T>(resources, this.session, options.parse)
@@ -163,9 +166,23 @@ export class ResourceImpl implements ResourceAPI {
         return await this.session.doProtoRequest<void>({
             method: "PATCH", code: 201,
             path: "/api/v4/resource/" + id + "/sharingGroup",
+            assume: { login: assume, kind: IdentityAccessKind.WRITE },
             request: () => types.ResourceExtendSharingGroupRequest.encode({
                 sharingGroup: encryptedSharingGroup
             }).finish()
+        })
+    }
+
+    async getSharingGroup(id: ID, options?: {
+        assume?: string
+    }): Promise<ResourceShareLink[]> {
+        options = options != null ? options : {}
+        let assume = options.assume != null ? options.assume : this.session.login
+        return await this.session.doProtoRequest({
+            method: "GET", code: 200,
+            path: "/api/v4/resource/" + id + "/sharingGroup",
+            assume: { login: assume, kind: IdentityAccessKind.READ },
+            response: r => types.ResourceGetSharingGroupResponse.decode(r).sharingGroup as ResourceShareLink[]
         })
     }
 
@@ -226,8 +243,9 @@ async function makeResourcesFromResponses<T>(resources: types.IResourceWithKey[]
         } else {
             throw new Error({
                 kind: SDKError.SDKInternalError,
-                payload:{
-                    message: "Empty owner for resource " + resource.resource.id.toString()
+                payload: {
+                    message: "Missing owner field",
+                    resource: resource.resource.id,
                 }
             })
         }

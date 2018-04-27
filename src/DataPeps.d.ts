@@ -12,6 +12,13 @@ export declare const RegisterTokenStatus: typeof types.RegisterTokenStatus;
  */
 export declare function configure(APIUrl: string, WSUrl?: string): void;
 /**
+ * Redefine the AccessRequest.openResolver() default function
+ * @param params An object containing the new AccessRequest.openResolver() function
+ */
+export declare function configureAccessRequestResolver(params: {
+    open: (id: ID, login: string) => void;
+}): void;
+/**
  * Returns the hash of an IdentityPublicKey.
  * The hash is computed thanks a sha2156 of the concat of box and sign key.
  * @param key The key to hash.
@@ -142,6 +149,8 @@ export interface AccessRequest {
     wait(): Promise<void>;
     /** Same as wait but returns an authenticated session of the identity that resolved the AccessRequest. */
     waitSession(): Promise<Session>;
+    /** Open a control element (a window when calling from a browser) that allows to resolve the access request */
+    openResolver(params: any): void;
 }
 /**
  * The public keys of identities are fetched from DataPeps and then validated thanks to a {@TrustPolicy}.
@@ -161,9 +170,11 @@ export interface TrustPolicy {
     trust(pk: IdentityPublicKey, mandate?: IdentityPublicKeyID): Promise<void>;
 }
 /**
- * An object that allows to checks and resolve an AccessRequest.
+ * An object that allows to check and resolve an AccessRequest.
  */
 export interface AccessRequestResolver {
+    /** ID of the corresponding AccessRequest */
+    id: ID;
     /** The IdentityPublicKey of the identity who signed the access request. */
     requesterKey: IdentityPublicKey;
     /** Resolve the access request with the given login.
@@ -423,6 +434,10 @@ export declare enum ResourceType {
     ANONYMOUS = 0,
 }
 /**
+ * ResourceShareLink describes a share of a resource to an identity.
+ */
+export declare type ResourceShareLink = types.ResourceShareLink;
+/**
  * A DataPeps Resource is a sharable object that handles the basic function encrypt/decrypt.
  */
 export interface Resource<T> {
@@ -463,6 +478,7 @@ export interface ResourceAPI {
      */
     list<T>(options?: {
         parse?: ((u: Uint8Array) => T);
+        assume?: string;
     }): Promise<Resource<T>[]>;
     /**
      * Get a resource thanks its identifier.
@@ -502,6 +518,17 @@ export interface ResourceAPI {
     extendSharingGroup(id: ID, sharingGroup: string[], options?: {
         assume?: string;
     }): Promise<void>;
+    /**
+     * Get the sharing group of a resource. The sharing group of a resource is the set of identities that can
+     * access to this resource.
+     * @param id The identifier of the identity to get the sharing group.
+     * @return(p) On success the promise will be resolved with a list of links that describe accesses to the resource.
+     * On error the promise will be rejected with an {@link Error} with kind
+     * - `ResourceNotFound` if the resource does not exists.
+     */
+    getSharingGroup(id: ID, options?: {
+        assume?: string;
+    }): Promise<ResourceShareLink[]>;
 }
 export interface AdminAPI {
     /**

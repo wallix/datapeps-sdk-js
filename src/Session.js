@@ -787,6 +787,15 @@ var AccessRequestImpl = /** @class */ (function () {
             });
         });
     };
+    AccessRequestImpl.prototype.openResolver = function () {
+        this._openConfigured(this.id, this.login);
+    };
+    AccessRequestImpl.prototype._openConfigured = function (id, login) {
+        throw new Error_1.Error({
+            kind: Error_1.SDKKind.SDKInternalError,
+            payload: { reason: "AccessRequest.openResolver() function has not been configured" }
+        });
+    };
     return AccessRequestImpl;
 }());
 exports.AccessRequestImpl = AccessRequestImpl;

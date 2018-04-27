@@ -18226,6 +18226,406 @@ $root.types = (function() {
         return ResourceListResponse;
     })();
 
+    types.ResourceGetSharingGroupResponse = (function() {
+
+        /**
+         * Properties of a ResourceGetSharingGroupResponse.
+         * @memberof types
+         * @interface IResourceGetSharingGroupResponse
+         * @property {Array.<types.IResourceShareLink>|null} [sharingGroup] ResourceGetSharingGroupResponse sharingGroup
+         */
+
+        /**
+         * Constructs a new ResourceGetSharingGroupResponse.
+         * @memberof types
+         * @classdesc Represents a ResourceGetSharingGroupResponse.
+         * @implements IResourceGetSharingGroupResponse
+         * @constructor
+         * @param {types.IResourceGetSharingGroupResponse=} [properties] Properties to set
+         */
+        function ResourceGetSharingGroupResponse(properties) {
+            this.sharingGroup = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * ResourceGetSharingGroupResponse sharingGroup.
+         * @member {Array.<types.IResourceShareLink>} sharingGroup
+         * @memberof types.ResourceGetSharingGroupResponse
+         * @instance
+         */
+        ResourceGetSharingGroupResponse.prototype.sharingGroup = $util.emptyArray;
+
+        /**
+         * Creates a new ResourceGetSharingGroupResponse instance using the specified properties.
+         * @function create
+         * @memberof types.ResourceGetSharingGroupResponse
+         * @static
+         * @param {types.IResourceGetSharingGroupResponse=} [properties] Properties to set
+         * @returns {types.ResourceGetSharingGroupResponse} ResourceGetSharingGroupResponse instance
+         */
+        ResourceGetSharingGroupResponse.create = function create(properties) {
+            return new ResourceGetSharingGroupResponse(properties);
+        };
+
+        /**
+         * Encodes the specified ResourceGetSharingGroupResponse message. Does not implicitly {@link types.ResourceGetSharingGroupResponse.verify|verify} messages.
+         * @function encode
+         * @memberof types.ResourceGetSharingGroupResponse
+         * @static
+         * @param {types.IResourceGetSharingGroupResponse} message ResourceGetSharingGroupResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ResourceGetSharingGroupResponse.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.sharingGroup != null && message.sharingGroup.length)
+                for (var i = 0; i < message.sharingGroup.length; ++i)
+                    $root.types.ResourceShareLink.encode(message.sharingGroup[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified ResourceGetSharingGroupResponse message, length delimited. Does not implicitly {@link types.ResourceGetSharingGroupResponse.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof types.ResourceGetSharingGroupResponse
+         * @static
+         * @param {types.IResourceGetSharingGroupResponse} message ResourceGetSharingGroupResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ResourceGetSharingGroupResponse.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a ResourceGetSharingGroupResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof types.ResourceGetSharingGroupResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {types.ResourceGetSharingGroupResponse} ResourceGetSharingGroupResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ResourceGetSharingGroupResponse.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.types.ResourceGetSharingGroupResponse();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    if (!(message.sharingGroup && message.sharingGroup.length))
+                        message.sharingGroup = [];
+                    message.sharingGroup.push($root.types.ResourceShareLink.decode(reader, reader.uint32()));
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a ResourceGetSharingGroupResponse message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof types.ResourceGetSharingGroupResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {types.ResourceGetSharingGroupResponse} ResourceGetSharingGroupResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ResourceGetSharingGroupResponse.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a ResourceGetSharingGroupResponse message.
+         * @function verify
+         * @memberof types.ResourceGetSharingGroupResponse
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        ResourceGetSharingGroupResponse.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.sharingGroup != null && message.hasOwnProperty("sharingGroup")) {
+                if (!Array.isArray(message.sharingGroup))
+                    return "sharingGroup: array expected";
+                for (var i = 0; i < message.sharingGroup.length; ++i) {
+                    var error = $root.types.ResourceShareLink.verify(message.sharingGroup[i]);
+                    if (error)
+                        return "sharingGroup." + error;
+                }
+            }
+            return null;
+        };
+
+        /**
+         * Creates a ResourceGetSharingGroupResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof types.ResourceGetSharingGroupResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {types.ResourceGetSharingGroupResponse} ResourceGetSharingGroupResponse
+         */
+        ResourceGetSharingGroupResponse.fromObject = function fromObject(object) {
+            if (object instanceof $root.types.ResourceGetSharingGroupResponse)
+                return object;
+            var message = new $root.types.ResourceGetSharingGroupResponse();
+            if (object.sharingGroup) {
+                if (!Array.isArray(object.sharingGroup))
+                    throw TypeError(".types.ResourceGetSharingGroupResponse.sharingGroup: array expected");
+                message.sharingGroup = [];
+                for (var i = 0; i < object.sharingGroup.length; ++i) {
+                    if (typeof object.sharingGroup[i] !== "object")
+                        throw TypeError(".types.ResourceGetSharingGroupResponse.sharingGroup: object expected");
+                    message.sharingGroup[i] = $root.types.ResourceShareLink.fromObject(object.sharingGroup[i]);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a ResourceGetSharingGroupResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof types.ResourceGetSharingGroupResponse
+         * @static
+         * @param {types.ResourceGetSharingGroupResponse} message ResourceGetSharingGroupResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        ResourceGetSharingGroupResponse.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.arrays || options.defaults)
+                object.sharingGroup = [];
+            if (message.sharingGroup && message.sharingGroup.length) {
+                object.sharingGroup = [];
+                for (var j = 0; j < message.sharingGroup.length; ++j)
+                    object.sharingGroup[j] = $root.types.ResourceShareLink.toObject(message.sharingGroup[j], options);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this ResourceGetSharingGroupResponse to JSON.
+         * @function toJSON
+         * @memberof types.ResourceGetSharingGroupResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        ResourceGetSharingGroupResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return ResourceGetSharingGroupResponse;
+    })();
+
+    types.ResourceShareLink = (function() {
+
+        /**
+         * Properties of a ResourceShareLink.
+         * @memberof types
+         * @interface IResourceShareLink
+         * @property {types.IIdentityKeyID|null} [identityID] ResourceShareLink identityID
+         */
+
+        /**
+         * Constructs a new ResourceShareLink.
+         * @memberof types
+         * @classdesc Represents a ResourceShareLink.
+         * @implements IResourceShareLink
+         * @constructor
+         * @param {types.IResourceShareLink=} [properties] Properties to set
+         */
+        function ResourceShareLink(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * ResourceShareLink identityID.
+         * @member {types.IIdentityKeyID|null|undefined} identityID
+         * @memberof types.ResourceShareLink
+         * @instance
+         */
+        ResourceShareLink.prototype.identityID = null;
+
+        /**
+         * Creates a new ResourceShareLink instance using the specified properties.
+         * @function create
+         * @memberof types.ResourceShareLink
+         * @static
+         * @param {types.IResourceShareLink=} [properties] Properties to set
+         * @returns {types.ResourceShareLink} ResourceShareLink instance
+         */
+        ResourceShareLink.create = function create(properties) {
+            return new ResourceShareLink(properties);
+        };
+
+        /**
+         * Encodes the specified ResourceShareLink message. Does not implicitly {@link types.ResourceShareLink.verify|verify} messages.
+         * @function encode
+         * @memberof types.ResourceShareLink
+         * @static
+         * @param {types.IResourceShareLink} message ResourceShareLink message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ResourceShareLink.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.identityID != null && message.hasOwnProperty("identityID"))
+                $root.types.IdentityKeyID.encode(message.identityID, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified ResourceShareLink message, length delimited. Does not implicitly {@link types.ResourceShareLink.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof types.ResourceShareLink
+         * @static
+         * @param {types.IResourceShareLink} message ResourceShareLink message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ResourceShareLink.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a ResourceShareLink message from the specified reader or buffer.
+         * @function decode
+         * @memberof types.ResourceShareLink
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {types.ResourceShareLink} ResourceShareLink
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ResourceShareLink.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.types.ResourceShareLink();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.identityID = $root.types.IdentityKeyID.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a ResourceShareLink message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof types.ResourceShareLink
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {types.ResourceShareLink} ResourceShareLink
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ResourceShareLink.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a ResourceShareLink message.
+         * @function verify
+         * @memberof types.ResourceShareLink
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        ResourceShareLink.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.identityID != null && message.hasOwnProperty("identityID")) {
+                var error = $root.types.IdentityKeyID.verify(message.identityID);
+                if (error)
+                    return "identityID." + error;
+            }
+            return null;
+        };
+
+        /**
+         * Creates a ResourceShareLink message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof types.ResourceShareLink
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {types.ResourceShareLink} ResourceShareLink
+         */
+        ResourceShareLink.fromObject = function fromObject(object) {
+            if (object instanceof $root.types.ResourceShareLink)
+                return object;
+            var message = new $root.types.ResourceShareLink();
+            if (object.identityID != null) {
+                if (typeof object.identityID !== "object")
+                    throw TypeError(".types.ResourceShareLink.identityID: object expected");
+                message.identityID = $root.types.IdentityKeyID.fromObject(object.identityID);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a ResourceShareLink message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof types.ResourceShareLink
+         * @static
+         * @param {types.ResourceShareLink} message ResourceShareLink
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        ResourceShareLink.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults)
+                object.identityID = null;
+            if (message.identityID != null && message.hasOwnProperty("identityID"))
+                object.identityID = $root.types.IdentityKeyID.toObject(message.identityID, options);
+            return object;
+        };
+
+        /**
+         * Converts this ResourceShareLink to JSON.
+         * @function toJSON
+         * @memberof types.ResourceShareLink
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        ResourceShareLink.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return ResourceShareLink;
+    })();
+
     types.Event = (function() {
 
         /**

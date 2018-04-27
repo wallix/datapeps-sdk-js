@@ -36,8 +36,8 @@ export function configure(APIUrl: string, WSUrl?: string) {
  * Redefine the AccessRequest.openResolver() default function
  * @param params An object containing the new AccessRequest.openResolver() function
  */
-export function configureAccessRequestResolver(params: {open: (id: ID, login: string) => void}) {
-    AccessRequestImpl.prototype._openConfigured = params.open 
+export function configureAccessRequestResolver(params: { open: (id: ID, login: string) => void }) {
+    AccessRequestImpl.prototype._openConfigured = params.open
 }
 
 let bs58 = require('bs58')
@@ -298,17 +298,18 @@ configureAccessRequestResolver({
         // check if running in browser
         if (typeof window == 'undefined'
             || typeof window.document == 'undefined') {
-                throw new Error({
-                    kind: SDKKind.SDKInternalError,
-                    payload: {
-                        reason: "AccessRequest.openResolver() must be configured"}
-                    });
+            throw new Error({
+                kind: SDKKind.SDKInternalError,
+                payload: {
+                    reason: "AccessRequest.openResolver() must be configured"
+                }
+            });
         }
 
-        let resolverUrl = encodeURIComponent(
+        let resolverUrl =
             Constants.Session.RESOLVER_URL +
-            "?id=" + id.toString() +
-            "&login=" + login)
+            "?id=" + encodeURIComponent(id.toString()) +
+            "&login=" + encodeURIComponent(login)
         let features = Constants.Session.RESOLVER_WINDOW_DEFAULT_FEATURES
         window.open(resolverUrl, "", features)
     },

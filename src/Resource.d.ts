@@ -42,6 +42,8 @@ export declare class ResourceImpl implements ResourceAPI {
     }): Promise<Resource<T>>;
     list<T>(options?: {
         parse?: ((u: Uint8Array) => T);
+        offset?: number;
+        limit?: number;
         assume?: string;
     }): Promise<Resource<T>[]>;
     get<T>(id: ID, options?: {

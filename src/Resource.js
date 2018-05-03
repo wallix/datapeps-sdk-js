@@ -152,6 +152,7 @@ var ResourceImpl = /** @class */ (function () {
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "GET", code: 200,
                                 path: "/api/v4/resources",
+                                params: options,
                                 assume: { login: assume, kind: DataPeps_1.IdentityAccessKind.READ },
                                 response: function (r) { return proto_1.types.ResourceListResponse.decode(r).resources; }
                             }).then(function (resources) { return makeResourcesFromResponses(resources, _this.session, options.parse); })];

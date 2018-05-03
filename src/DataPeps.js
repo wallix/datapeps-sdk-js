@@ -340,9 +340,9 @@ configureAccessRequestResolver({
                 }
             });
         }
-        var resolverUrl = encodeURIComponent(Constants_1.Constants.Session.RESOLVER_URL +
-            "?id=" + id.toString() +
-            "&login=" + login);
+        var resolverUrl = Constants_1.Constants.Session.RESOLVER_URL +
+            "?id=" + encodeURIComponent(id.toString()) +
+            "&login=" + encodeURIComponent(login);
         var features = Constants_1.Constants.Session.RESOLVER_WINDOW_DEFAULT_FEATURES;
         window.open(resolverUrl, "", features);
     },

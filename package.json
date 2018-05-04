@@ -1,10 +1,16 @@
 {
   "name": "datapeps-sdk",
-  "version": "0.0.35-dev-17527b",
+  "version": "0.0.35-dev-c37a30",
   "description": "DataPeps SDK enables safe end-to-end-encryption for any application",
   "main": "./src/DataPeps.js",
   "types": "./src/DataPeps.d.ts",
   "url": "https://github.com/wallix/datapeps-sdk-js",
+  "license": "Apache-2.0",
+  "homepage": "https://datapeps.com/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wallix/datapeps-sdk-js.git"
+  },
   "scripts": {
     "build": "tsc -p .",
     "pack": "webpack",

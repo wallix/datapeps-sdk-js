@@ -135,7 +135,21 @@ describe('Resource.list', () => {
     })
 
     it('Check device can list resources by assuming alice identity', async () => {
-        let got = await deviceSession.Resource.list<{ description: string }>({assume: alice.login})
+        let got = await deviceSession.Resource.list<{ description: string }>({ assume: alice.login })
         expect(got).to.be.deep.equal([aliceRes1, aliceRes2, aliceRes3, sharedRes])
+    })
+
+    it('Check offset and limit', async () => {
+        let got = await aliceSession.Resource.list<{ description: string }>({ limit: 10 })
+        expect(got).to.be.deep.equal([aliceRes1, aliceRes2, aliceRes3, sharedRes])
+
+        got = await aliceSession.Resource.list<{ description: string }>({ limit: 2 })
+        expect(got).to.be.deep.equal([aliceRes1, aliceRes2])
+
+        got = await aliceSession.Resource.list<{ description: string }>({ limit: 2, offset: 1 })
+        expect(got).to.be.deep.equal([aliceRes2, aliceRes3])
+
+        got = await aliceSession.Resource.list<{ description: string }>({ limit: 2, offset: 5 })
+        expect(got).to.be.deep.equal([])
     })
 })

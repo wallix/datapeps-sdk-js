@@ -707,11 +707,16 @@ export interface ResourceAPI {
      * Get the resources accessible to the identity.
      * @param options A collection of options:
      *  - parse: A function used to parse the resource payload. By default JSON.parse.
+     *  - offset: Skip this number of results.
+     *  - limit: Limit the length of the result (default: 10).
+     *  - assume: Return resources of the assume identity instead.
      * @return(p) On success the promise will be resolved with a list of all resources accessible to the identity.
      * On error the promise will be rejected with an {@link Error}
      */
     list<T>(options?: {
         parse?: ((u: Uint8Array) => T),
+        offset?: number,
+        limit?: number,
         assume?: string,
     }): Promise<Resource<T>[]>
 

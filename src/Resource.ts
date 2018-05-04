@@ -105,6 +105,8 @@ export class ResourceImpl implements ResourceAPI {
 
     async list<T>(options?: {
         parse?: ((u: Uint8Array) => T),
+        offset?: number,
+        limit?: number,
         assume?: string,
     }) {
         options = options != null ? options : {}
@@ -112,6 +114,7 @@ export class ResourceImpl implements ResourceAPI {
         return await this.session.doProtoRequest({
             method: "GET", code: 200,
             path: "/api/v4/resources",
+            params: options,
             assume: { login: assume, kind: IdentityAccessKind.READ },
             response: r => types.ResourceListResponse.decode(r).resources as types.IResourceWithKey[]
         }).then(

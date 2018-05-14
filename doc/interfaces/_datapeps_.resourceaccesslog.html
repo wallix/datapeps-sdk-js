@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>IdentityPublicKeyID | datapeps-sdk</title>
+	<title>ResourceAccessLog | datapeps-sdk</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -55,33 +55,21 @@
 					<a href="../modules/_datapeps_.html">&quot;DataPeps&quot;</a>
 				</li>
 				<li>
-					<a href="_datapeps_.identitypublickeyid.html">IdentityPublicKeyID</a>
+					<a href="_datapeps_.resourceaccesslog.html">ResourceAccessLog</a>
 				</li>
 			</ul>
-			<h1>Interface IdentityPublicKeyID</h1>
+			<h1>Interface ResourceAccessLog</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<section class="tsd-panel tsd-comment">
-				<div class="tsd-comment tsd-typography">
-					<div class="lead">
-						<p>An {@Identity} owns several keys, this is a reference to the unique version of an identity public key.</p>
-					</div>
-				</div>
-			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">IdentityPublicKeyID</span>
-						<ul class="tsd-hierarchy">
-							<li>
-								<a href="_datapeps_.identitypublickey.html" class="tsd-signature-type">IdentityPublicKey</a>
-							</li>
-						</ul>
+						<span class="target">ResourceAccessLog</span>
 					</li>
 				</ul>
 			</section>
@@ -92,8 +80,11 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_datapeps_.identitypublickeyid.html#login" class="tsd-kind-icon">login</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_datapeps_.identitypublickeyid.html#version" class="tsd-kind-icon">version</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_datapeps_.resourceaccesslog.html#assume" class="tsd-kind-icon">assume</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_datapeps_.resourceaccesslog.html#owner" class="tsd-kind-icon">owner</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_datapeps_.resourceaccesslog.html#reason" class="tsd-kind-icon">reason</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_datapeps_.resourceaccesslog.html#resourceid" class="tsd-kind-icon">resourceID</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_datapeps_.resourceaccesslog.html#timestamp" class="tsd-kind-icon">timestamp</a></li>
 							</ul>
 						</section>
 					</div>
@@ -102,24 +93,79 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="login" class="tsd-anchor"></a>
-					<h3>login</h3>
-					<div class="tsd-signature tsd-kind-icon">login<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="assume" class="tsd-anchor"></a>
+					<h3>assume</h3>
+					<div class="tsd-signature tsd-kind-icon">assume<span class="tsd-signature-symbol">:</span> <a href="_datapeps_.identitypublickeyid.html" class="tsd-signature-type">IdentityPublicKeyID</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L476">DataPeps.ts:476</a></li>
+							<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L704">DataPeps.ts:704</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The identity assumed to access to the resource.</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="version" class="tsd-anchor"></a>
-					<h3>version</h3>
-					<div class="tsd-signature tsd-kind-icon">version<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<a name="owner" class="tsd-anchor"></a>
+					<h3>owner</h3>
+					<div class="tsd-signature tsd-kind-icon">owner<span class="tsd-signature-symbol">:</span> <a href="_datapeps_.identitypublickeyid.html" class="tsd-signature-type">IdentityPublicKeyID</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L477">DataPeps.ts:477</a></li>
+							<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L699">DataPeps.ts:699</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The identity that has acessed to the resource.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="reason" class="tsd-anchor"></a>
+					<h3>reason</h3>
+					<div class="tsd-signature tsd-kind-icon">reason<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L714">DataPeps.ts:714</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The reason of the access.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="resourceid" class="tsd-anchor"></a>
+					<h3>resourceID</h3>
+					<div class="tsd-signature tsd-kind-icon">resourceID<span class="tsd-signature-symbol">:</span> <a href="../modules/_datapeps_.html#id" class="tsd-signature-type">ID</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L694">DataPeps.ts:694</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The ID of the resource that has been accessed.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="timestamp" class="tsd-anchor"></a>
+					<h3>timestamp</h3>
+					<div class="tsd-signature tsd-kind-icon">timestamp<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Date</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L709">DataPeps.ts:709</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The date of the access.</p>
+						</div>
+					</div>
 				</section>
 			</section>
 		</div>
@@ -163,21 +209,9 @@
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="_datapeps_.identitypublickey.html" class="tsd-kind-icon">Identity<wbr>Public<wbr>Key</a>
 					</li>
-				</ul>
-				<ul class="current">
-					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="_datapeps_.identitypublickeyid.html" class="tsd-kind-icon">Identity<wbr>Public<wbr>KeyID</a>
-						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_datapeps_.identitypublickeyid.html#login" class="tsd-kind-icon">login</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_datapeps_.identitypublickeyid.html#version" class="tsd-kind-icon">version</a>
-							</li>
-						</ul>
 					</li>
-				</ul>
-				<ul class="after-current">
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="_datapeps_.publickeyscache.html" class="tsd-kind-icon">Public<wbr>Keys<wbr>Cache</a>
 					</li>
@@ -187,9 +221,30 @@
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="_datapeps_.resourceapi.html" class="tsd-kind-icon">ResourceAPI</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="_datapeps_.resourceaccesslog.html" class="tsd-kind-icon">Resource<wbr>Access<wbr>Log</a>
+						<ul>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_datapeps_.resourceaccesslog.html#assume" class="tsd-kind-icon">assume</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_datapeps_.resourceaccesslog.html#owner" class="tsd-kind-icon">owner</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_datapeps_.resourceaccesslog.html#reason" class="tsd-kind-icon">reason</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_datapeps_.resourceaccesslog.html#resourceid" class="tsd-kind-icon">resourceID</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_datapeps_.resourceaccesslog.html#timestamp" class="tsd-kind-icon">timestamp</a>
+							</li>
+						</ul>
 					</li>
+				</ul>
+				<ul class="after-current">
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="_datapeps_.session.html" class="tsd-kind-icon">Session</a>
 					</li>

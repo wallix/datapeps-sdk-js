@@ -546,7 +546,7 @@ export interface IdentityAPI {
      * List identities registered on DataPeps.
      * @param options A collection of options:
      *  - offset: Skip this number of results.
-     *  - limit: Limit the length of the result (default: 1000).
+     *  - limit: Limit the length of the result (default: 10).
      *  - domain: Filter on a specific domain.
      * @return(p) On success the promise will be resolved with a list.
      */
@@ -684,6 +684,35 @@ export interface Resource<T> {
      */
     decrypt(cipher: Uint8Array): Uint8Array
 }
+export type ResourceAccessReason = types.ResourceAccessReason
+export const ResourceAccessReason = types.ResourceAccessReason
+
+export interface ResourceAccessLog {
+    /**
+     * The ID of the resource that has been accessed.
+     */
+    resourceID: ID
+
+    /**
+     * The identity that has acessed to the resource.
+     */
+    owner: IdentityPublicKeyID
+
+    /**
+     * The identity assumed to access to the resource.
+     */
+    assume: IdentityPublicKeyID
+
+    /**
+     * The date of the access.
+     */
+    timestamp: Date
+
+    /**
+     * The reason of the access.
+     */
+    reason: string
+}
 
 export interface ResourceAPI {
 
@@ -710,6 +739,7 @@ export interface ResourceAPI {
      *  - offset: Skip this number of results.
      *  - limit: Limit the length of the result (default: 10).
      *  - assume: Return resources of the assume identity instead.
+     *  - reason: Gives an annotative reason to list these resources
      * @return(p) On success the promise will be resolved with a list of all resources accessible to the identity.
      * On error the promise will be rejected with an {@link Error}
      */
@@ -718,13 +748,16 @@ export interface ResourceAPI {
         offset?: number,
         limit?: number,
         assume?: string,
+        reason?: string,
     }): Promise<Resource<T>[]>
 
     /**
      * Get a resource thanks its identifier.
      * @param id The identifier of the resource to get.
      * @param options A collection of options:
+     *  - assume: Assume this identity to access the resource.
      *  - parse: A function used to parse the resource payload. By default JSON.parse.
+     *  - reason: Gives an annotative reason to get this resources
      * @return(p) On success the promise will be resolved with the resource.
      * On error the promise will be rejected with an {@link Error} with kind:
      * - `ResourceNotFound` if the resource does not exists.
@@ -732,6 +765,7 @@ export interface ResourceAPI {
     get<T>(id: ID, options?: {
         assume?: string,
         parse?: ((u: Uint8Array) => T)
+        reason?: string,
     }): Promise<Resource<T>>
 
     /**
@@ -752,7 +786,8 @@ export interface ResourceAPI {
      * Extends the sharing group of a resource.
      * @param id The identifier of the resource to extend the sharing group.
      * @param sharingGroup The set of identities to add on the sharing of the resource.
-     * @param options 
+     * @param options
+     *  - assume: Assume this identity to extend the sharing group.
      * @return(p) On success the promise will be resolved with void.
      * On error the promise will be rejected with an {@link Error} with kind:
      * - `ResourceNotFound` if the resource does not exists.
@@ -760,6 +795,23 @@ export interface ResourceAPI {
     extendSharingGroup(id: ID, sharingGroup: string[], options?: {
         assume?: string
     }): Promise<void>
+
+    /**
+     * Get the latests access logs of resources.
+     * @param options A collection of options:
+     *  - resourceIds: Filter logs for only resource ids set.
+     *  - offset: Skip this number of results.
+     *  - limit: Limit the length of the result (default: 10).
+     *  - assume: Return logs of the assume identity instead.
+     * @return(p) On success the promise will be resolved with void.
+     * On error the promise will be rejected with an {@link Error}.
+     */
+    getAccessLogs(options?: {
+        resourceIDs?: ID[],
+        offset?: number,
+        limit?: number,
+        assume?: string,
+    }): Promise<ResourceAccessLog[]>
 
     /**
      * Get the sharing group of a resource. The sharing group of a resource is the set of identities that can
@@ -818,7 +870,7 @@ export interface AdminAPI {
      * List registered token on DataPeps.
      * @param options A collection of options:
      *  - offset: Skip this number of results.
-     *  - limit: Limit the length of the result (default: 1000).
+     *  - limit: Limit the length of the result (default: 10).
      *  - domain: Filter on a specific domain.
      * @return(p) On success the promise will be resolved with a list.
      */

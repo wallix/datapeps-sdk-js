@@ -357,4 +357,5 @@ var ResourceType;
 (function (ResourceType) {
     ResourceType[ResourceType["ANONYMOUS"] = 0] = "ANONYMOUS";
 })(ResourceType = exports.ResourceType || (exports.ResourceType = {}));
+exports.ResourceAccessReason = proto_1.types.ResourceAccessReason;
 //# sourceMappingURL=DataPeps.js.map

@@ -6670,6 +6670,14 @@ export namespace types {
         SES = 1
     }
 
+    /** ResourceAccessReason enum. */
+    enum ResourceAccessReason {
+        UNKOWN = 0,
+        READ_ACCESS = 1,
+        SHARE_ACCESS = 2,
+        CUSTOM_ACCESS = 3
+    }
+
     /** Properties of a Resource. */
     interface IResource {
 
@@ -7781,6 +7789,312 @@ export namespace types {
 
         /**
          * Converts this ResourceShareLink to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a ResourceAccessLog. */
+    interface IResourceAccessLog {
+
+        /** ResourceAccessLog resourceID */
+        resourceID?: (number|Long|null);
+
+        /** ResourceAccessLog owner */
+        owner?: (types.IIdentityKeyID|null);
+
+        /** ResourceAccessLog assume */
+        assume?: (types.IIdentityKeyID|null);
+
+        /** ResourceAccessLog timestamp */
+        timestamp?: (number|Long|null);
+
+        /** ResourceAccessLog reason */
+        reason?: (string|null);
+    }
+
+    /** Represents a ResourceAccessLog. */
+    class ResourceAccessLog implements IResourceAccessLog {
+
+        /**
+         * Constructs a new ResourceAccessLog.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: types.IResourceAccessLog);
+
+        /** ResourceAccessLog resourceID. */
+        public resourceID: (number|Long);
+
+        /** ResourceAccessLog owner. */
+        public owner?: (types.IIdentityKeyID|null);
+
+        /** ResourceAccessLog assume. */
+        public assume?: (types.IIdentityKeyID|null);
+
+        /** ResourceAccessLog timestamp. */
+        public timestamp: (number|Long);
+
+        /** ResourceAccessLog reason. */
+        public reason: string;
+
+        /**
+         * Creates a new ResourceAccessLog instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ResourceAccessLog instance
+         */
+        public static create(properties?: types.IResourceAccessLog): types.ResourceAccessLog;
+
+        /**
+         * Encodes the specified ResourceAccessLog message. Does not implicitly {@link types.ResourceAccessLog.verify|verify} messages.
+         * @param message ResourceAccessLog message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: types.IResourceAccessLog, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ResourceAccessLog message, length delimited. Does not implicitly {@link types.ResourceAccessLog.verify|verify} messages.
+         * @param message ResourceAccessLog message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: types.IResourceAccessLog, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ResourceAccessLog message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ResourceAccessLog
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): types.ResourceAccessLog;
+
+        /**
+         * Decodes a ResourceAccessLog message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ResourceAccessLog
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): types.ResourceAccessLog;
+
+        /**
+         * Verifies a ResourceAccessLog message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ResourceAccessLog message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ResourceAccessLog
+         */
+        public static fromObject(object: { [k: string]: any }): types.ResourceAccessLog;
+
+        /**
+         * Creates a plain object from a ResourceAccessLog message. Also converts values to other types if specified.
+         * @param message ResourceAccessLog
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: types.ResourceAccessLog, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ResourceAccessLog to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a ResourceGetAccessLogsRequest. */
+    interface IResourceGetAccessLogsRequest {
+
+        /** ResourceGetAccessLogsRequest resourceIDs */
+        resourceIDs?: ((number|Long)[]|null);
+
+        /** ResourceGetAccessLogsRequest limit */
+        limit?: (number|null);
+
+        /** ResourceGetAccessLogsRequest offset */
+        offset?: (number|null);
+    }
+
+    /** Represents a ResourceGetAccessLogsRequest. */
+    class ResourceGetAccessLogsRequest implements IResourceGetAccessLogsRequest {
+
+        /**
+         * Constructs a new ResourceGetAccessLogsRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: types.IResourceGetAccessLogsRequest);
+
+        /** ResourceGetAccessLogsRequest resourceIDs. */
+        public resourceIDs: (number|Long)[];
+
+        /** ResourceGetAccessLogsRequest limit. */
+        public limit: number;
+
+        /** ResourceGetAccessLogsRequest offset. */
+        public offset: number;
+
+        /**
+         * Creates a new ResourceGetAccessLogsRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ResourceGetAccessLogsRequest instance
+         */
+        public static create(properties?: types.IResourceGetAccessLogsRequest): types.ResourceGetAccessLogsRequest;
+
+        /**
+         * Encodes the specified ResourceGetAccessLogsRequest message. Does not implicitly {@link types.ResourceGetAccessLogsRequest.verify|verify} messages.
+         * @param message ResourceGetAccessLogsRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: types.IResourceGetAccessLogsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ResourceGetAccessLogsRequest message, length delimited. Does not implicitly {@link types.ResourceGetAccessLogsRequest.verify|verify} messages.
+         * @param message ResourceGetAccessLogsRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: types.IResourceGetAccessLogsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ResourceGetAccessLogsRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ResourceGetAccessLogsRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): types.ResourceGetAccessLogsRequest;
+
+        /**
+         * Decodes a ResourceGetAccessLogsRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ResourceGetAccessLogsRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): types.ResourceGetAccessLogsRequest;
+
+        /**
+         * Verifies a ResourceGetAccessLogsRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ResourceGetAccessLogsRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ResourceGetAccessLogsRequest
+         */
+        public static fromObject(object: { [k: string]: any }): types.ResourceGetAccessLogsRequest;
+
+        /**
+         * Creates a plain object from a ResourceGetAccessLogsRequest message. Also converts values to other types if specified.
+         * @param message ResourceGetAccessLogsRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: types.ResourceGetAccessLogsRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ResourceGetAccessLogsRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a ResourceGetAccessLogsResponse. */
+    interface IResourceGetAccessLogsResponse {
+
+        /** ResourceGetAccessLogsResponse logs */
+        logs?: (types.IResourceAccessLog[]|null);
+    }
+
+    /** Represents a ResourceGetAccessLogsResponse. */
+    class ResourceGetAccessLogsResponse implements IResourceGetAccessLogsResponse {
+
+        /**
+         * Constructs a new ResourceGetAccessLogsResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: types.IResourceGetAccessLogsResponse);
+
+        /** ResourceGetAccessLogsResponse logs. */
+        public logs: types.IResourceAccessLog[];
+
+        /**
+         * Creates a new ResourceGetAccessLogsResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ResourceGetAccessLogsResponse instance
+         */
+        public static create(properties?: types.IResourceGetAccessLogsResponse): types.ResourceGetAccessLogsResponse;
+
+        /**
+         * Encodes the specified ResourceGetAccessLogsResponse message. Does not implicitly {@link types.ResourceGetAccessLogsResponse.verify|verify} messages.
+         * @param message ResourceGetAccessLogsResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: types.IResourceGetAccessLogsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ResourceGetAccessLogsResponse message, length delimited. Does not implicitly {@link types.ResourceGetAccessLogsResponse.verify|verify} messages.
+         * @param message ResourceGetAccessLogsResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: types.IResourceGetAccessLogsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ResourceGetAccessLogsResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ResourceGetAccessLogsResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): types.ResourceGetAccessLogsResponse;
+
+        /**
+         * Decodes a ResourceGetAccessLogsResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ResourceGetAccessLogsResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): types.ResourceGetAccessLogsResponse;
+
+        /**
+         * Verifies a ResourceGetAccessLogsResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ResourceGetAccessLogsResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ResourceGetAccessLogsResponse
+         */
+        public static fromObject(object: { [k: string]: any }): types.ResourceGetAccessLogsResponse;
+
+        /**
+         * Creates a plain object from a ResourceGetAccessLogsResponse message. Also converts values to other types if specified.
+         * @param message ResourceGetAccessLogsResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: types.ResourceGetAccessLogsResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ResourceGetAccessLogsResponse to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };

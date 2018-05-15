@@ -143,17 +143,18 @@ var ResourceImpl = /** @class */ (function () {
     ResourceImpl.prototype.list = function (options) {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
-            var assume;
+            var assume, params;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         options = options != null ? options : {};
                         assume = options.assume != null ? options.assume : this.session.login;
+                        params = options.reason != null ? __assign({}, options, { access_reason: options.reason }) : options;
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "GET", code: 200,
                                 path: "/api/v4/resources",
-                                params: options,
                                 assume: { login: assume, kind: DataPeps_1.IdentityAccessKind.READ },
+                                params: params,
                                 response: function (r) { return proto_1.types.ResourceListResponse.decode(r).resources; }
                             }).then(function (resources) { return makeResourcesFromResponses(resources, _this.session, options.parse); })];
                     case 1: return [2 /*return*/, _a.sent()];
@@ -163,16 +164,18 @@ var ResourceImpl = /** @class */ (function () {
     };
     ResourceImpl.prototype.get = function (id, options) {
         return __awaiter(this, void 0, void 0, function () {
-            var assume, response;
+            var assume, params, response;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         options = options != null ? options : {};
                         assume = options.assume != null ? options.assume : this.session.login;
+                        params = options.reason != null ? { access_reason: options.reason } : undefined;
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "GET", code: 200,
                                 path: "/api/v4/resource/" + id,
                                 assume: { login: assume, kind: DataPeps_1.IdentityAccessKind.READ },
+                                params: params,
                                 response: function (r) { return proto_1.types.ResourceGetResponse.decode(r); },
                             })];
                     case 1:
@@ -275,6 +278,31 @@ var ResourceImpl = /** @class */ (function () {
                                     encryptedKey: message
                                 };
                             })];
+                }
+            });
+        });
+    };
+    ResourceImpl.prototype.getAccessLogs = function (options) {
+        return __awaiter(this, void 0, void 0, function () {
+            var assume, logs;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        options = options != null ? options : {};
+                        assume = options.assume != null ? options.assume : this.session.login;
+                        return [4 /*yield*/, this.session.doProtoRequest({
+                                method: "POST", code: 200,
+                                path: "/api/v4/resources/accessLogs",
+                                request: function () { return proto_1.types.ResourceGetAccessLogsRequest.encode(options).finish(); },
+                                response: proto_1.types.ResourceGetAccessLogsResponse.decode,
+                                assume: {
+                                    login: assume,
+                                    kind: DataPeps_1.IdentityAccessKind.READ,
+                                },
+                            })];
+                    case 1:
+                        logs = (_a.sent()).logs;
+                        return [2 /*return*/, logs.map(function (log) { return (__assign({}, log, { timestamp: new Date(log.timestamp / 1000000) })); })];
                 }
             });
         });

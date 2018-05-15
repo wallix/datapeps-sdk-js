@@ -1,6 +1,6 @@
 import * as nacl from 'tweetnacl';
 import { types } from './proto';
-import { ID, IdentityPublicKey, ResourceAPI, IdentityAccessKind, IdentityPublicKeyID, Error, SDKError, ResourceShareLink } from './DataPeps';
+import { ID, IdentityPublicKey, ResourceAPI, IdentityAccessKind, IdentityPublicKeyID, Error, SDKError, ResourceShareLink, ResourceAccessLog } from './DataPeps';
 import { EncryptFuncs } from './CryptoFuncs';
 import { SessionImpl } from './Session';
 import { Uint8Tool } from './Tools';
@@ -108,14 +108,16 @@ export class ResourceImpl implements ResourceAPI {
         offset?: number,
         limit?: number,
         assume?: string,
+        reason?: string,
     }) {
         options = options != null ? options : {}
         let assume = options.assume != null ? options.assume : this.session.login
+        let params = options.reason != null ? { ...options, access_reason: options.reason } : options
         return await this.session.doProtoRequest({
             method: "GET", code: 200,
             path: "/api/v4/resources",
-            params: options,
             assume: { login: assume, kind: IdentityAccessKind.READ },
+            params,
             response: r => types.ResourceListResponse.decode(r).resources as types.IResourceWithKey[]
         }).then(
             resources => makeResourcesFromResponses<T>(resources, this.session, options.parse)
@@ -125,13 +127,16 @@ export class ResourceImpl implements ResourceAPI {
     async get<T>(id: ID, options?: {
         assume?: string,
         parse?: ((u: Uint8Array) => T)
+        reason?: string,
     }): Promise<Resource<T>> {
         options = options != null ? options : {}
         let assume = options.assume != null ? options.assume : this.session.login
+        let params = options.reason != null ? { access_reason: options.reason } : undefined
         let response = await this.session.doProtoRequest({
             method: "GET", code: 200,
             path: "/api/v4/resource/" + id,
             assume: { login: assume, kind: IdentityAccessKind.READ },
+            params,
             response: r => types.ResourceGetResponse.decode(r),
         })
         return makeResourceFromResponse<T>(response, types.ResourceType.SES, this.session, options.parse, assume)
@@ -198,6 +203,27 @@ export class ResourceImpl implements ResourceAPI {
                 encryptedKey: message
             }
         })
+    }
+
+    async getAccessLogs(options?: {
+        resourceIDs?: ID[],
+        offset?: number,
+        limit?: number,
+        assume?: string,
+    }): Promise<ResourceAccessLog[]> {
+        options = options != null ? options : {}
+        let assume = options.assume != null ? options.assume : this.session.login
+        let { logs } = await this.session.doProtoRequest({
+            method: "POST", code: 200,
+            path: "/api/v4/resources/accessLogs",
+            request: () => types.ResourceGetAccessLogsRequest.encode(options).finish(),
+            response: types.ResourceGetAccessLogsResponse.decode,
+            assume: {
+                login: assume,
+                kind: IdentityAccessKind.READ,
+            },
+        })
+        return logs.map(log => ({ ...log, timestamp: new Date(log.timestamp as number / 1000000) } as ResourceAccessLog))
     }
 }
 

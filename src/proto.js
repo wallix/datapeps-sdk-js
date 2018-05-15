@@ -15818,6 +15818,24 @@ $root.types = (function() {
         return values;
     })();
 
+    /**
+     * ResourceAccessReason enum.
+     * @name types.ResourceAccessReason
+     * @enum {string}
+     * @property {number} UNKOWN=0 UNKOWN value
+     * @property {number} READ_ACCESS=1 READ_ACCESS value
+     * @property {number} SHARE_ACCESS=2 SHARE_ACCESS value
+     * @property {number} CUSTOM_ACCESS=3 CUSTOM_ACCESS value
+     */
+    types.ResourceAccessReason = (function() {
+        var valuesById = {}, values = Object.create(valuesById);
+        values[valuesById[0] = "UNKOWN"] = 0;
+        values[valuesById[1] = "READ_ACCESS"] = 1;
+        values[valuesById[2] = "SHARE_ACCESS"] = 2;
+        values[valuesById[3] = "CUSTOM_ACCESS"] = 3;
+        return values;
+    })();
+
     types.Resource = (function() {
 
         /**
@@ -18624,6 +18642,795 @@ $root.types = (function() {
         };
 
         return ResourceShareLink;
+    })();
+
+    types.ResourceAccessLog = (function() {
+
+        /**
+         * Properties of a ResourceAccessLog.
+         * @memberof types
+         * @interface IResourceAccessLog
+         * @property {number|Long|null} [resourceID] ResourceAccessLog resourceID
+         * @property {types.IIdentityKeyID|null} [owner] ResourceAccessLog owner
+         * @property {types.IIdentityKeyID|null} [assume] ResourceAccessLog assume
+         * @property {number|Long|null} [timestamp] ResourceAccessLog timestamp
+         * @property {string|null} [reason] ResourceAccessLog reason
+         */
+
+        /**
+         * Constructs a new ResourceAccessLog.
+         * @memberof types
+         * @classdesc Represents a ResourceAccessLog.
+         * @implements IResourceAccessLog
+         * @constructor
+         * @param {types.IResourceAccessLog=} [properties] Properties to set
+         */
+        function ResourceAccessLog(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * ResourceAccessLog resourceID.
+         * @member {number|Long} resourceID
+         * @memberof types.ResourceAccessLog
+         * @instance
+         */
+        ResourceAccessLog.prototype.resourceID = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
+
+        /**
+         * ResourceAccessLog owner.
+         * @member {types.IIdentityKeyID|null|undefined} owner
+         * @memberof types.ResourceAccessLog
+         * @instance
+         */
+        ResourceAccessLog.prototype.owner = null;
+
+        /**
+         * ResourceAccessLog assume.
+         * @member {types.IIdentityKeyID|null|undefined} assume
+         * @memberof types.ResourceAccessLog
+         * @instance
+         */
+        ResourceAccessLog.prototype.assume = null;
+
+        /**
+         * ResourceAccessLog timestamp.
+         * @member {number|Long} timestamp
+         * @memberof types.ResourceAccessLog
+         * @instance
+         */
+        ResourceAccessLog.prototype.timestamp = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
+
+        /**
+         * ResourceAccessLog reason.
+         * @member {string} reason
+         * @memberof types.ResourceAccessLog
+         * @instance
+         */
+        ResourceAccessLog.prototype.reason = "";
+
+        /**
+         * Creates a new ResourceAccessLog instance using the specified properties.
+         * @function create
+         * @memberof types.ResourceAccessLog
+         * @static
+         * @param {types.IResourceAccessLog=} [properties] Properties to set
+         * @returns {types.ResourceAccessLog} ResourceAccessLog instance
+         */
+        ResourceAccessLog.create = function create(properties) {
+            return new ResourceAccessLog(properties);
+        };
+
+        /**
+         * Encodes the specified ResourceAccessLog message. Does not implicitly {@link types.ResourceAccessLog.verify|verify} messages.
+         * @function encode
+         * @memberof types.ResourceAccessLog
+         * @static
+         * @param {types.IResourceAccessLog} message ResourceAccessLog message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ResourceAccessLog.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.resourceID != null && message.hasOwnProperty("resourceID"))
+                writer.uint32(/* id 1, wireType 0 =*/8).uint64(message.resourceID);
+            if (message.owner != null && message.hasOwnProperty("owner"))
+                $root.types.IdentityKeyID.encode(message.owner, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+            if (message.assume != null && message.hasOwnProperty("assume"))
+                $root.types.IdentityKeyID.encode(message.assume, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+            if (message.timestamp != null && message.hasOwnProperty("timestamp"))
+                writer.uint32(/* id 4, wireType 0 =*/32).uint64(message.timestamp);
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                writer.uint32(/* id 5, wireType 2 =*/42).string(message.reason);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified ResourceAccessLog message, length delimited. Does not implicitly {@link types.ResourceAccessLog.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof types.ResourceAccessLog
+         * @static
+         * @param {types.IResourceAccessLog} message ResourceAccessLog message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ResourceAccessLog.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a ResourceAccessLog message from the specified reader or buffer.
+         * @function decode
+         * @memberof types.ResourceAccessLog
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {types.ResourceAccessLog} ResourceAccessLog
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ResourceAccessLog.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.types.ResourceAccessLog();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.resourceID = reader.uint64();
+                    break;
+                case 2:
+                    message.owner = $root.types.IdentityKeyID.decode(reader, reader.uint32());
+                    break;
+                case 3:
+                    message.assume = $root.types.IdentityKeyID.decode(reader, reader.uint32());
+                    break;
+                case 4:
+                    message.timestamp = reader.uint64();
+                    break;
+                case 5:
+                    message.reason = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a ResourceAccessLog message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof types.ResourceAccessLog
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {types.ResourceAccessLog} ResourceAccessLog
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ResourceAccessLog.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a ResourceAccessLog message.
+         * @function verify
+         * @memberof types.ResourceAccessLog
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        ResourceAccessLog.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.resourceID != null && message.hasOwnProperty("resourceID"))
+                if (!$util.isInteger(message.resourceID) && !(message.resourceID && $util.isInteger(message.resourceID.low) && $util.isInteger(message.resourceID.high)))
+                    return "resourceID: integer|Long expected";
+            if (message.owner != null && message.hasOwnProperty("owner")) {
+                var error = $root.types.IdentityKeyID.verify(message.owner);
+                if (error)
+                    return "owner." + error;
+            }
+            if (message.assume != null && message.hasOwnProperty("assume")) {
+                var error = $root.types.IdentityKeyID.verify(message.assume);
+                if (error)
+                    return "assume." + error;
+            }
+            if (message.timestamp != null && message.hasOwnProperty("timestamp"))
+                if (!$util.isInteger(message.timestamp) && !(message.timestamp && $util.isInteger(message.timestamp.low) && $util.isInteger(message.timestamp.high)))
+                    return "timestamp: integer|Long expected";
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                if (!$util.isString(message.reason))
+                    return "reason: string expected";
+            return null;
+        };
+
+        /**
+         * Creates a ResourceAccessLog message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof types.ResourceAccessLog
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {types.ResourceAccessLog} ResourceAccessLog
+         */
+        ResourceAccessLog.fromObject = function fromObject(object) {
+            if (object instanceof $root.types.ResourceAccessLog)
+                return object;
+            var message = new $root.types.ResourceAccessLog();
+            if (object.resourceID != null)
+                if ($util.Long)
+                    (message.resourceID = $util.Long.fromValue(object.resourceID)).unsigned = true;
+                else if (typeof object.resourceID === "string")
+                    message.resourceID = parseInt(object.resourceID, 10);
+                else if (typeof object.resourceID === "number")
+                    message.resourceID = object.resourceID;
+                else if (typeof object.resourceID === "object")
+                    message.resourceID = new $util.LongBits(object.resourceID.low >>> 0, object.resourceID.high >>> 0).toNumber(true);
+            if (object.owner != null) {
+                if (typeof object.owner !== "object")
+                    throw TypeError(".types.ResourceAccessLog.owner: object expected");
+                message.owner = $root.types.IdentityKeyID.fromObject(object.owner);
+            }
+            if (object.assume != null) {
+                if (typeof object.assume !== "object")
+                    throw TypeError(".types.ResourceAccessLog.assume: object expected");
+                message.assume = $root.types.IdentityKeyID.fromObject(object.assume);
+            }
+            if (object.timestamp != null)
+                if ($util.Long)
+                    (message.timestamp = $util.Long.fromValue(object.timestamp)).unsigned = true;
+                else if (typeof object.timestamp === "string")
+                    message.timestamp = parseInt(object.timestamp, 10);
+                else if (typeof object.timestamp === "number")
+                    message.timestamp = object.timestamp;
+                else if (typeof object.timestamp === "object")
+                    message.timestamp = new $util.LongBits(object.timestamp.low >>> 0, object.timestamp.high >>> 0).toNumber(true);
+            if (object.reason != null)
+                message.reason = String(object.reason);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a ResourceAccessLog message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof types.ResourceAccessLog
+         * @static
+         * @param {types.ResourceAccessLog} message ResourceAccessLog
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        ResourceAccessLog.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, true);
+                    object.resourceID = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.resourceID = options.longs === String ? "0" : 0;
+                object.owner = null;
+                object.assume = null;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, true);
+                    object.timestamp = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.timestamp = options.longs === String ? "0" : 0;
+                object.reason = "";
+            }
+            if (message.resourceID != null && message.hasOwnProperty("resourceID"))
+                if (typeof message.resourceID === "number")
+                    object.resourceID = options.longs === String ? String(message.resourceID) : message.resourceID;
+                else
+                    object.resourceID = options.longs === String ? $util.Long.prototype.toString.call(message.resourceID) : options.longs === Number ? new $util.LongBits(message.resourceID.low >>> 0, message.resourceID.high >>> 0).toNumber(true) : message.resourceID;
+            if (message.owner != null && message.hasOwnProperty("owner"))
+                object.owner = $root.types.IdentityKeyID.toObject(message.owner, options);
+            if (message.assume != null && message.hasOwnProperty("assume"))
+                object.assume = $root.types.IdentityKeyID.toObject(message.assume, options);
+            if (message.timestamp != null && message.hasOwnProperty("timestamp"))
+                if (typeof message.timestamp === "number")
+                    object.timestamp = options.longs === String ? String(message.timestamp) : message.timestamp;
+                else
+                    object.timestamp = options.longs === String ? $util.Long.prototype.toString.call(message.timestamp) : options.longs === Number ? new $util.LongBits(message.timestamp.low >>> 0, message.timestamp.high >>> 0).toNumber(true) : message.timestamp;
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                object.reason = message.reason;
+            return object;
+        };
+
+        /**
+         * Converts this ResourceAccessLog to JSON.
+         * @function toJSON
+         * @memberof types.ResourceAccessLog
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        ResourceAccessLog.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return ResourceAccessLog;
+    })();
+
+    types.ResourceGetAccessLogsRequest = (function() {
+
+        /**
+         * Properties of a ResourceGetAccessLogsRequest.
+         * @memberof types
+         * @interface IResourceGetAccessLogsRequest
+         * @property {Array.<number|Long>|null} [resourceIDs] ResourceGetAccessLogsRequest resourceIDs
+         * @property {number|null} [limit] ResourceGetAccessLogsRequest limit
+         * @property {number|null} [offset] ResourceGetAccessLogsRequest offset
+         */
+
+        /**
+         * Constructs a new ResourceGetAccessLogsRequest.
+         * @memberof types
+         * @classdesc Represents a ResourceGetAccessLogsRequest.
+         * @implements IResourceGetAccessLogsRequest
+         * @constructor
+         * @param {types.IResourceGetAccessLogsRequest=} [properties] Properties to set
+         */
+        function ResourceGetAccessLogsRequest(properties) {
+            this.resourceIDs = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * ResourceGetAccessLogsRequest resourceIDs.
+         * @member {Array.<number|Long>} resourceIDs
+         * @memberof types.ResourceGetAccessLogsRequest
+         * @instance
+         */
+        ResourceGetAccessLogsRequest.prototype.resourceIDs = $util.emptyArray;
+
+        /**
+         * ResourceGetAccessLogsRequest limit.
+         * @member {number} limit
+         * @memberof types.ResourceGetAccessLogsRequest
+         * @instance
+         */
+        ResourceGetAccessLogsRequest.prototype.limit = 0;
+
+        /**
+         * ResourceGetAccessLogsRequest offset.
+         * @member {number} offset
+         * @memberof types.ResourceGetAccessLogsRequest
+         * @instance
+         */
+        ResourceGetAccessLogsRequest.prototype.offset = 0;
+
+        /**
+         * Creates a new ResourceGetAccessLogsRequest instance using the specified properties.
+         * @function create
+         * @memberof types.ResourceGetAccessLogsRequest
+         * @static
+         * @param {types.IResourceGetAccessLogsRequest=} [properties] Properties to set
+         * @returns {types.ResourceGetAccessLogsRequest} ResourceGetAccessLogsRequest instance
+         */
+        ResourceGetAccessLogsRequest.create = function create(properties) {
+            return new ResourceGetAccessLogsRequest(properties);
+        };
+
+        /**
+         * Encodes the specified ResourceGetAccessLogsRequest message. Does not implicitly {@link types.ResourceGetAccessLogsRequest.verify|verify} messages.
+         * @function encode
+         * @memberof types.ResourceGetAccessLogsRequest
+         * @static
+         * @param {types.IResourceGetAccessLogsRequest} message ResourceGetAccessLogsRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ResourceGetAccessLogsRequest.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.resourceIDs != null && message.resourceIDs.length) {
+                writer.uint32(/* id 1, wireType 2 =*/10).fork();
+                for (var i = 0; i < message.resourceIDs.length; ++i)
+                    writer.uint64(message.resourceIDs[i]);
+                writer.ldelim();
+            }
+            if (message.limit != null && message.hasOwnProperty("limit"))
+                writer.uint32(/* id 2, wireType 0 =*/16).uint32(message.limit);
+            if (message.offset != null && message.hasOwnProperty("offset"))
+                writer.uint32(/* id 3, wireType 0 =*/24).uint32(message.offset);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified ResourceGetAccessLogsRequest message, length delimited. Does not implicitly {@link types.ResourceGetAccessLogsRequest.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof types.ResourceGetAccessLogsRequest
+         * @static
+         * @param {types.IResourceGetAccessLogsRequest} message ResourceGetAccessLogsRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ResourceGetAccessLogsRequest.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a ResourceGetAccessLogsRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof types.ResourceGetAccessLogsRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {types.ResourceGetAccessLogsRequest} ResourceGetAccessLogsRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ResourceGetAccessLogsRequest.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.types.ResourceGetAccessLogsRequest();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    if (!(message.resourceIDs && message.resourceIDs.length))
+                        message.resourceIDs = [];
+                    if ((tag & 7) === 2) {
+                        var end2 = reader.uint32() + reader.pos;
+                        while (reader.pos < end2)
+                            message.resourceIDs.push(reader.uint64());
+                    } else
+                        message.resourceIDs.push(reader.uint64());
+                    break;
+                case 2:
+                    message.limit = reader.uint32();
+                    break;
+                case 3:
+                    message.offset = reader.uint32();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a ResourceGetAccessLogsRequest message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof types.ResourceGetAccessLogsRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {types.ResourceGetAccessLogsRequest} ResourceGetAccessLogsRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ResourceGetAccessLogsRequest.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a ResourceGetAccessLogsRequest message.
+         * @function verify
+         * @memberof types.ResourceGetAccessLogsRequest
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        ResourceGetAccessLogsRequest.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.resourceIDs != null && message.hasOwnProperty("resourceIDs")) {
+                if (!Array.isArray(message.resourceIDs))
+                    return "resourceIDs: array expected";
+                for (var i = 0; i < message.resourceIDs.length; ++i)
+                    if (!$util.isInteger(message.resourceIDs[i]) && !(message.resourceIDs[i] && $util.isInteger(message.resourceIDs[i].low) && $util.isInteger(message.resourceIDs[i].high)))
+                        return "resourceIDs: integer|Long[] expected";
+            }
+            if (message.limit != null && message.hasOwnProperty("limit"))
+                if (!$util.isInteger(message.limit))
+                    return "limit: integer expected";
+            if (message.offset != null && message.hasOwnProperty("offset"))
+                if (!$util.isInteger(message.offset))
+                    return "offset: integer expected";
+            return null;
+        };
+
+        /**
+         * Creates a ResourceGetAccessLogsRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof types.ResourceGetAccessLogsRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {types.ResourceGetAccessLogsRequest} ResourceGetAccessLogsRequest
+         */
+        ResourceGetAccessLogsRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.types.ResourceGetAccessLogsRequest)
+                return object;
+            var message = new $root.types.ResourceGetAccessLogsRequest();
+            if (object.resourceIDs) {
+                if (!Array.isArray(object.resourceIDs))
+                    throw TypeError(".types.ResourceGetAccessLogsRequest.resourceIDs: array expected");
+                message.resourceIDs = [];
+                for (var i = 0; i < object.resourceIDs.length; ++i)
+                    if ($util.Long)
+                        (message.resourceIDs[i] = $util.Long.fromValue(object.resourceIDs[i])).unsigned = true;
+                    else if (typeof object.resourceIDs[i] === "string")
+                        message.resourceIDs[i] = parseInt(object.resourceIDs[i], 10);
+                    else if (typeof object.resourceIDs[i] === "number")
+                        message.resourceIDs[i] = object.resourceIDs[i];
+                    else if (typeof object.resourceIDs[i] === "object")
+                        message.resourceIDs[i] = new $util.LongBits(object.resourceIDs[i].low >>> 0, object.resourceIDs[i].high >>> 0).toNumber(true);
+            }
+            if (object.limit != null)
+                message.limit = object.limit >>> 0;
+            if (object.offset != null)
+                message.offset = object.offset >>> 0;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a ResourceGetAccessLogsRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof types.ResourceGetAccessLogsRequest
+         * @static
+         * @param {types.ResourceGetAccessLogsRequest} message ResourceGetAccessLogsRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        ResourceGetAccessLogsRequest.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.arrays || options.defaults)
+                object.resourceIDs = [];
+            if (options.defaults) {
+                object.limit = 0;
+                object.offset = 0;
+            }
+            if (message.resourceIDs && message.resourceIDs.length) {
+                object.resourceIDs = [];
+                for (var j = 0; j < message.resourceIDs.length; ++j)
+                    if (typeof message.resourceIDs[j] === "number")
+                        object.resourceIDs[j] = options.longs === String ? String(message.resourceIDs[j]) : message.resourceIDs[j];
+                    else
+                        object.resourceIDs[j] = options.longs === String ? $util.Long.prototype.toString.call(message.resourceIDs[j]) : options.longs === Number ? new $util.LongBits(message.resourceIDs[j].low >>> 0, message.resourceIDs[j].high >>> 0).toNumber(true) : message.resourceIDs[j];
+            }
+            if (message.limit != null && message.hasOwnProperty("limit"))
+                object.limit = message.limit;
+            if (message.offset != null && message.hasOwnProperty("offset"))
+                object.offset = message.offset;
+            return object;
+        };
+
+        /**
+         * Converts this ResourceGetAccessLogsRequest to JSON.
+         * @function toJSON
+         * @memberof types.ResourceGetAccessLogsRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        ResourceGetAccessLogsRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return ResourceGetAccessLogsRequest;
+    })();
+
+    types.ResourceGetAccessLogsResponse = (function() {
+
+        /**
+         * Properties of a ResourceGetAccessLogsResponse.
+         * @memberof types
+         * @interface IResourceGetAccessLogsResponse
+         * @property {Array.<types.IResourceAccessLog>|null} [logs] ResourceGetAccessLogsResponse logs
+         */
+
+        /**
+         * Constructs a new ResourceGetAccessLogsResponse.
+         * @memberof types
+         * @classdesc Represents a ResourceGetAccessLogsResponse.
+         * @implements IResourceGetAccessLogsResponse
+         * @constructor
+         * @param {types.IResourceGetAccessLogsResponse=} [properties] Properties to set
+         */
+        function ResourceGetAccessLogsResponse(properties) {
+            this.logs = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * ResourceGetAccessLogsResponse logs.
+         * @member {Array.<types.IResourceAccessLog>} logs
+         * @memberof types.ResourceGetAccessLogsResponse
+         * @instance
+         */
+        ResourceGetAccessLogsResponse.prototype.logs = $util.emptyArray;
+
+        /**
+         * Creates a new ResourceGetAccessLogsResponse instance using the specified properties.
+         * @function create
+         * @memberof types.ResourceGetAccessLogsResponse
+         * @static
+         * @param {types.IResourceGetAccessLogsResponse=} [properties] Properties to set
+         * @returns {types.ResourceGetAccessLogsResponse} ResourceGetAccessLogsResponse instance
+         */
+        ResourceGetAccessLogsResponse.create = function create(properties) {
+            return new ResourceGetAccessLogsResponse(properties);
+        };
+
+        /**
+         * Encodes the specified ResourceGetAccessLogsResponse message. Does not implicitly {@link types.ResourceGetAccessLogsResponse.verify|verify} messages.
+         * @function encode
+         * @memberof types.ResourceGetAccessLogsResponse
+         * @static
+         * @param {types.IResourceGetAccessLogsResponse} message ResourceGetAccessLogsResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ResourceGetAccessLogsResponse.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.logs != null && message.logs.length)
+                for (var i = 0; i < message.logs.length; ++i)
+                    $root.types.ResourceAccessLog.encode(message.logs[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified ResourceGetAccessLogsResponse message, length delimited. Does not implicitly {@link types.ResourceGetAccessLogsResponse.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof types.ResourceGetAccessLogsResponse
+         * @static
+         * @param {types.IResourceGetAccessLogsResponse} message ResourceGetAccessLogsResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ResourceGetAccessLogsResponse.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a ResourceGetAccessLogsResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof types.ResourceGetAccessLogsResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {types.ResourceGetAccessLogsResponse} ResourceGetAccessLogsResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ResourceGetAccessLogsResponse.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.types.ResourceGetAccessLogsResponse();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    if (!(message.logs && message.logs.length))
+                        message.logs = [];
+                    message.logs.push($root.types.ResourceAccessLog.decode(reader, reader.uint32()));
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a ResourceGetAccessLogsResponse message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof types.ResourceGetAccessLogsResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {types.ResourceGetAccessLogsResponse} ResourceGetAccessLogsResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ResourceGetAccessLogsResponse.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a ResourceGetAccessLogsResponse message.
+         * @function verify
+         * @memberof types.ResourceGetAccessLogsResponse
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        ResourceGetAccessLogsResponse.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.logs != null && message.hasOwnProperty("logs")) {
+                if (!Array.isArray(message.logs))
+                    return "logs: array expected";
+                for (var i = 0; i < message.logs.length; ++i) {
+                    var error = $root.types.ResourceAccessLog.verify(message.logs[i]);
+                    if (error)
+                        return "logs." + error;
+                }
+            }
+            return null;
+        };
+
+        /**
+         * Creates a ResourceGetAccessLogsResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof types.ResourceGetAccessLogsResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {types.ResourceGetAccessLogsResponse} ResourceGetAccessLogsResponse
+         */
+        ResourceGetAccessLogsResponse.fromObject = function fromObject(object) {
+            if (object instanceof $root.types.ResourceGetAccessLogsResponse)
+                return object;
+            var message = new $root.types.ResourceGetAccessLogsResponse();
+            if (object.logs) {
+                if (!Array.isArray(object.logs))
+                    throw TypeError(".types.ResourceGetAccessLogsResponse.logs: array expected");
+                message.logs = [];
+                for (var i = 0; i < object.logs.length; ++i) {
+                    if (typeof object.logs[i] !== "object")
+                        throw TypeError(".types.ResourceGetAccessLogsResponse.logs: object expected");
+                    message.logs[i] = $root.types.ResourceAccessLog.fromObject(object.logs[i]);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a ResourceGetAccessLogsResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof types.ResourceGetAccessLogsResponse
+         * @static
+         * @param {types.ResourceGetAccessLogsResponse} message ResourceGetAccessLogsResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        ResourceGetAccessLogsResponse.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.arrays || options.defaults)
+                object.logs = [];
+            if (message.logs && message.logs.length) {
+                object.logs = [];
+                for (var j = 0; j < message.logs.length; ++j)
+                    object.logs[j] = $root.types.ResourceAccessLog.toObject(message.logs[j], options);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this ResourceGetAccessLogsResponse to JSON.
+         * @function toJSON
+         * @memberof types.ResourceGetAccessLogsResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        ResourceGetAccessLogsResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return ResourceGetAccessLogsResponse;
     })();
 
     types.Event = (function() {

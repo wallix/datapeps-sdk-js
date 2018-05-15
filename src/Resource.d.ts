@@ -1,6 +1,6 @@
 import * as nacl from 'tweetnacl';
 import { types } from './proto';
-import { ID, IdentityPublicKey, ResourceAPI, ResourceShareLink } from './DataPeps';
+import { ID, IdentityPublicKey, ResourceAPI, ResourceShareLink, ResourceAccessLog } from './DataPeps';
 import { EncryptFuncs } from './CryptoFuncs';
 import { SessionImpl } from './Session';
 export declare enum ResourceType {
@@ -45,10 +45,12 @@ export declare class ResourceImpl implements ResourceAPI {
         offset?: number;
         limit?: number;
         assume?: string;
+        reason?: string;
     }): Promise<Resource<T>[]>;
     get<T>(id: ID, options?: {
         assume?: string;
         parse?: ((u: Uint8Array) => T);
+        reason?: string;
     }): Promise<Resource<T>>;
     delete(id: ID, options?: {
         soft?: boolean;
@@ -61,5 +63,11 @@ export declare class ResourceImpl implements ResourceAPI {
         assume?: string;
     }): Promise<ResourceShareLink[]>;
     private encryptForSharingGroup(text, sharingGroup, crypto);
+    getAccessLogs(options?: {
+        resourceIDs?: ID[];
+        offset?: number;
+        limit?: number;
+        assume?: string;
+    }): Promise<ResourceAccessLog[]>;
 }
 export declare function makeResourceFromResponse<T>({resource, encryptedKey, creator}: types.IResourceGetResponse, typeOfKey: types.ResourceType, session: SessionImpl, parse?: any, assume?: any): Promise<Resource<T>>;

@@ -84,6 +84,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_datapeps_.resourceapi.html#delete" class="tsd-kind-icon">delete</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_datapeps_.resourceapi.html#extendsharinggroup" class="tsd-kind-icon">extend<wbr>Sharing<wbr>Group</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter"><a href="_datapeps_.resourceapi.html#get" class="tsd-kind-icon">get</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_datapeps_.resourceapi.html#getaccesslogs" class="tsd-kind-icon">get<wbr>Access<wbr>Logs</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_datapeps_.resourceapi.html#getsharinggroup" class="tsd-kind-icon">get<wbr>Sharing<wbr>Group</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter"><a href="_datapeps_.resourceapi.html#list" class="tsd-kind-icon">list</a></li>
 							</ul>
@@ -103,7 +104,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L701">DataPeps.ts:701</a></li>
+									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L730">DataPeps.ts:730</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -172,7 +173,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L746">DataPeps.ts:746</a></li>
+									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L780">DataPeps.ts:780</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -223,7 +224,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L760">DataPeps.ts:760</a></li>
+									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L795">DataPeps.ts:795</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -256,6 +257,11 @@
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <span class="tsd-signature-type">object</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<ul>
+											<li>assume: Assume this identity to extend the sharing group.</li>
+										</ul>
+									</div>
 									<ul class="tsd-parameters">
 									</ul>
 								</li>
@@ -274,7 +280,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L732">DataPeps.ts:732</a></li>
+									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L765">DataPeps.ts:765</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -310,7 +316,9 @@
 									<div class="tsd-comment tsd-typography">
 										<p>A collection of options:</p>
 										<ul>
+											<li>assume: Assume this identity to access the resource.</li>
 											<li>parse: A function used to parse the resource payload. By default JSON.parse.</li>
+											<li>reason: Gives an annotative reason to get this resources</li>
 										</ul>
 									</div>
 									<ul class="tsd-parameters">
@@ -318,6 +326,51 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Resource</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="getaccesslogs" class="tsd-anchor"></a>
+					<h3>get<wbr>Access<wbr>Logs</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Access<wbr>Logs<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="_datapeps_.resourceaccesslog.html" class="tsd-signature-type">ResourceAccessLog</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L809">DataPeps.ts:809</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get the latests access logs of resources.</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>return(p)</dt>
+									<dd><p>On success the promise will be resolved with void.
+										On error the promise will be rejected with an {@link Error}.</p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <span class="tsd-signature-type">object</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>A collection of options:</p>
+										<ul>
+											<li>resourceIds: Filter logs for only resource ids set.</li>
+											<li>offset: Skip this number of results.</li>
+											<li>limit: Limit the length of the result (default: 10).</li>
+											<li>assume: Return logs of the assume identity instead.</li>
+										</ul>
+									</div>
+									<ul class="tsd-parameters">
+									</ul>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="_datapeps_.resourceaccesslog.html" class="tsd-signature-type">ResourceAccessLog</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -331,7 +384,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L772">DataPeps.ts:772</a></li>
+									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L824">DataPeps.ts:824</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -377,7 +430,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L716">DataPeps.ts:716</a></li>
+									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L746">DataPeps.ts:746</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -408,6 +461,7 @@
 											<li>offset: Skip this number of results.</li>
 											<li>limit: Limit the length of the result (default: 10).</li>
 											<li>assume: Return resources of the assume identity instead.</li>
+											<li>reason: Gives an annotative reason to list these resources</li>
 										</ul>
 									</div>
 									<ul class="tsd-parameters">
@@ -487,6 +541,9 @@
 								<a href="_datapeps_.resourceapi.html#get" class="tsd-kind-icon">get</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="_datapeps_.resourceapi.html#getaccesslogs" class="tsd-kind-icon">get<wbr>Access<wbr>Logs</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="_datapeps_.resourceapi.html#getsharinggroup" class="tsd-kind-icon">get<wbr>Sharing<wbr>Group</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
@@ -496,6 +553,9 @@
 					</li>
 				</ul>
 				<ul class="after-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="_datapeps_.resourceaccesslog.html" class="tsd-kind-icon">Resource<wbr>Access<wbr>Log</a>
+					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="_datapeps_.session.html" class="tsd-kind-icon">Session</a>
 					</li>
@@ -516,6 +576,9 @@
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
 						<a href="../modules/_datapeps_.html#registertokenstatus" class="tsd-kind-icon">Register<wbr>Token<wbr>Status</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="../modules/_datapeps_.html#resourceaccessreason" class="tsd-kind-icon">Resource<wbr>Access<wbr>Reason</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
 						<a href="../modules/_datapeps_.html#resourcesharelink" class="tsd-kind-icon">Resource<wbr>Share<wbr>Link</a>

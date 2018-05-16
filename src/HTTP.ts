@@ -29,6 +29,7 @@ export class Client {
             let uri = host + this.uri_query(r.path, r.params)
             xmlhttp.open(r.method, uri, true)
             xmlhttp.responseType = 'arraybuffer'
+            xmlhttp.setRequestHeader("Cache-Control", "no-cache")
             xmlhttp.onreadystatechange = (e) => {
                 if (xmlhttp.readyState != 4 || xmlhttp.status == 0) {
                     return

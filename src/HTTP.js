@@ -16,6 +16,7 @@ var Client = /** @class */ (function () {
             var uri = host + _this.uri_query(r.path, r.params);
             xmlhttp.open(r.method, uri, true);
             xmlhttp.responseType = 'arraybuffer';
+            xmlhttp.setRequestHeader("Cache-Control", "no-cache");
             xmlhttp.onreadystatechange = function (e) {
                 if (xmlhttp.readyState != 4 || xmlhttp.status == 0) {
                     return;

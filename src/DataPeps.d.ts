@@ -16,7 +16,7 @@ export declare function configure(APIUrl: string, WSUrl?: string): void;
  * @param params An object containing the new AccessRequest.openResolver() function
  */
 export declare function configureAccessRequestResolver(params: {
-    open: (id: ID, login: string) => void;
+    open: (id: ID, login: string) => any;
 }): void;
 /**
  * Returns the hash of an IdentityPublicKey.
@@ -150,7 +150,7 @@ export interface AccessRequest {
     /** Same as wait but returns an authenticated session of the identity that resolved the AccessRequest. */
     waitSession(): Promise<Session>;
     /** Open a control element (a window when calling from a browser) that allows to resolve the access request */
-    openResolver(params: any): void;
+    openResolver(params: any): any;
 }
 /**
  * The public keys of identities are fetched from DataPeps and then validated thanks to a {@TrustPolicy}.

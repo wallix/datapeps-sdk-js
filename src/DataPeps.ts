@@ -36,7 +36,7 @@ export function configure(APIUrl: string, WSUrl?: string) {
  * Redefine the AccessRequest.openResolver() default function
  * @param params An object containing the new AccessRequest.openResolver() function
  */
-export function configureAccessRequestResolver(params: { open: (id: ID, login: string) => void }) {
+export function configureAccessRequestResolver(params: { open: (id: ID, login: string) => any }) {
     AccessRequestImpl.prototype._openConfigured = params.open
 }
 
@@ -289,12 +289,12 @@ export interface AccessRequest {
     waitSession(): Promise<Session>
 
     /** Open a control element (a window when calling from a browser) that allows to resolve the access request */
-    openResolver(params: any): void
+    openResolver(params: any): any
 }
 
 // Configure the AccessRequest.openResolver() function to be called by default
 configureAccessRequestResolver({
-    open: (id: ID, login: string): void => {
+    open: (id: ID, login: string): Window => {
         // check if running in browser
         if (typeof window == 'undefined'
             || typeof window.document == 'undefined') {
@@ -311,7 +311,7 @@ configureAccessRequestResolver({
             "?id=" + encodeURIComponent(id.toString()) +
             "&login=" + encodeURIComponent(login)
         let features = Constants.Session.RESOLVER_WINDOW_DEFAULT_FEATURES
-        window.open(resolverUrl, "", features)
+        return window.open(resolverUrl, "", features)
     },
 })
 

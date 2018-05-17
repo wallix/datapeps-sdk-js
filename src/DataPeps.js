@@ -344,7 +344,7 @@ configureAccessRequestResolver({
             "?id=" + encodeURIComponent(id.toString()) +
             "&login=" + encodeURIComponent(login);
         var features = Constants_1.Constants.Session.RESOLVER_WINDOW_DEFAULT_FEATURES;
-        window.open(resolverUrl, "", features);
+        return window.open(resolverUrl, "", features);
     },
 });
 /////////////////////////////////////////////////

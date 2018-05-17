@@ -320,10 +320,10 @@ describe('Resource.getAccessLogs', () => {
     })
 
     it('Check custom reason for list access', async () => {
-        await aliceSession.Resource.list({ reason: 'specific list access' })
+        await aliceSession.Resource.list({ reason: 'specific list access', limit:1 })
         let logs = await aliceSession.Resource.getAccessLogs({ limit: 1 })
         expect(logs.length).to.be.equals(1)
-        expect(logs[0].resourceID.toString()).to.be.equals(aliceRes1.id.toString())
+        expect(logs[0].resourceID.toString()).to.be.equals(aliceRes2.id.toString())
         expect(logs[0].owner.login).to.be.equals(alice.login)
         expect(logs[0].owner.version).to.be.equals(2)
         expect(logs[0].assume.login).to.be.equals(alice.login)

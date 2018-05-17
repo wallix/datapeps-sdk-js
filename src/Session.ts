@@ -583,11 +583,11 @@ export class AccessRequestImpl implements AccessRequest {
         return await loginWithKeys(this.client, this.keys)
     }
 
-    openResolver() {
-        this._openConfigured(this.id, this.login);
+    openResolver(): any {
+        return this._openConfigured(this.id, this.login);
     }
     
-    _openConfigured(id: ID, login: string) {
+    _openConfigured(id: ID, login: string): any {
         throw new Error(
             {
                 kind: SDKKind.SDKInternalError,

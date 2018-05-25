@@ -4512,6 +4512,9 @@ export namespace types {
 
         /** IdentityShareLink kind */
         kind?: (types.IdentityShareKind|null);
+
+        /** IdentityShareLink locked */
+        locked?: (boolean|null);
     }
 
     /** Represents an IdentityShareLink. */
@@ -4528,6 +4531,9 @@ export namespace types {
 
         /** IdentityShareLink kind. */
         public kind: types.IdentityShareKind;
+
+        /** IdentityShareLink locked. */
+        public locked: boolean;
 
         /**
          * Creates a new IdentityShareLink instance using the specified properties.

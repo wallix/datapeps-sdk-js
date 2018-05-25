@@ -530,6 +530,7 @@ export type IdentityKeyKind = types.IdentityShareKind
 export type IdentityShareLink = {
     id: IdentityPublicKeyID
     kind: IdentityKeyKind
+    locked: boolean
 }
 
 export interface IdentityAPI {

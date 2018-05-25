@@ -10480,6 +10480,7 @@ $root.types = (function() {
          * @interface IIdentityShareLink
          * @property {types.IIdentityKeyID|null} [id] IdentityShareLink id
          * @property {types.IdentityShareKind|null} [kind] IdentityShareLink kind
+         * @property {boolean|null} [locked] IdentityShareLink locked
          */
 
         /**
@@ -10514,6 +10515,14 @@ $root.types = (function() {
         IdentityShareLink.prototype.kind = 0;
 
         /**
+         * IdentityShareLink locked.
+         * @member {boolean} locked
+         * @memberof types.IdentityShareLink
+         * @instance
+         */
+        IdentityShareLink.prototype.locked = false;
+
+        /**
          * Creates a new IdentityShareLink instance using the specified properties.
          * @function create
          * @memberof types.IdentityShareLink
@@ -10541,6 +10550,8 @@ $root.types = (function() {
                 $root.types.IdentityKeyID.encode(message.id, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
             if (message.kind != null && message.hasOwnProperty("kind"))
                 writer.uint32(/* id 2, wireType 0 =*/16).int32(message.kind);
+            if (message.locked != null && message.hasOwnProperty("locked"))
+                writer.uint32(/* id 3, wireType 0 =*/24).bool(message.locked);
             return writer;
         };
 
@@ -10580,6 +10591,9 @@ $root.types = (function() {
                     break;
                 case 2:
                     message.kind = reader.int32();
+                    break;
+                case 3:
+                    message.locked = reader.bool();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -10629,6 +10643,9 @@ $root.types = (function() {
                 case 1:
                     break;
                 }
+            if (message.locked != null && message.hasOwnProperty("locked"))
+                if (typeof message.locked !== "boolean")
+                    return "locked: boolean expected";
             return null;
         };
 
@@ -10659,6 +10676,8 @@ $root.types = (function() {
                 message.kind = 1;
                 break;
             }
+            if (object.locked != null)
+                message.locked = Boolean(object.locked);
             return message;
         };
 
@@ -10678,11 +10697,14 @@ $root.types = (function() {
             if (options.defaults) {
                 object.id = null;
                 object.kind = options.enums === String ? "BOX" : 0;
+                object.locked = false;
             }
             if (message.id != null && message.hasOwnProperty("id"))
                 object.id = $root.types.IdentityKeyID.toObject(message.id, options);
             if (message.kind != null && message.hasOwnProperty("kind"))
                 object.kind = options.enums === String ? $root.types.IdentityShareKind[message.kind] : message.kind;
+            if (message.locked != null && message.hasOwnProperty("locked"))
+                object.locked = message.locked;
             return object;
         };
 

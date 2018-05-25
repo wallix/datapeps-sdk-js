@@ -332,6 +332,7 @@ export declare type IdentityKeyKind = types.IdentityShareKind;
 export declare type IdentityShareLink = {
     id: IdentityPublicKeyID;
     kind: IdentityKeyKind;
+    locked: boolean;
 };
 export interface IdentityAPI {
     /**

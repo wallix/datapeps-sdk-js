@@ -62,7 +62,7 @@ describe('Resource.extendSharingGroup', () => {
 
   let aliceSecret = nacl.randomBytes(128)
   let alice: DataPeps.IdentityFields = {
-      login: "alice." + seed + "@peps.test",
+      login: "alice." + seed,
       name: "Alice test identity, TS",
       kind: "user",
       payload: null,
@@ -70,7 +70,7 @@ describe('Resource.extendSharingGroup', () => {
 
   let bobSecret = nacl.randomBytes(128)
   let bob: DataPeps.IdentityFields = {
-      login: "bob." + seed + "@peps.test",
+      login: "bob." + seed,
       name: "Bob test identity, TS",
       kind: "user",
       payload: null,
@@ -78,7 +78,7 @@ describe('Resource.extendSharingGroup', () => {
 
   let charlieSecret = nacl.randomBytes(128)
   let charlie: DataPeps.IdentityFields = {
-      login: "charlie." + seed + "@peps.test",
+      login: "charlie." + seed,
       name: "Charlie test identity, TS",
       kind: "user",
       payload: null,
@@ -86,13 +86,13 @@ describe('Resource.extendSharingGroup', () => {
 
   let daveSecret = nacl.randomBytes(128)
   let dave : DataPeps.IdentityFields = {
-    login: "dave." + seed + "@peps.test",
+    login: "dave." + seed,
     name: "Dave test identity, TS",
     kind: "user",
     payload: null,
   }
 
-  let inexistantLogin = "john." + seed + "@peps.test";
+  let inexistantLogin = "john." + seed;
 
   let aliceSession: DataPeps.Session,
       bobSession: DataPeps.Session,

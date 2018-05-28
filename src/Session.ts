@@ -108,7 +108,7 @@ export async function _login(
     })
     saltKind = createResponse.saltKind
     salt = createResponse.salt
-    return new SessionImpl(login, token, salt, saltKind, encryption, client)
+    return new SessionImpl(resolveResponse.login, token, salt, saltKind, encryption, client)
 }
 
 export class SessionImpl implements Session {

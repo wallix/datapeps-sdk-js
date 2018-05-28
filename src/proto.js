@@ -7094,6 +7094,7 @@ $root.types = (function() {
          * @property {types.IIdentityEncryption|null} [encryption] IdentityCreateRequest encryption
          * @property {Uint8Array|null} [signChain] IdentityCreateRequest signChain
          * @property {Array.<types.IIdentityShareEntry>|null} [sharingGroup] IdentityCreateRequest sharingGroup
+         * @property {string|null} [email] IdentityCreateRequest email
          */
 
         /**
@@ -7145,6 +7146,14 @@ $root.types = (function() {
         IdentityCreateRequest.prototype.sharingGroup = $util.emptyArray;
 
         /**
+         * IdentityCreateRequest email.
+         * @member {string} email
+         * @memberof types.IdentityCreateRequest
+         * @instance
+         */
+        IdentityCreateRequest.prototype.email = "";
+
+        /**
          * Creates a new IdentityCreateRequest instance using the specified properties.
          * @function create
          * @memberof types.IdentityCreateRequest
@@ -7177,6 +7186,8 @@ $root.types = (function() {
             if (message.sharingGroup != null && message.sharingGroup.length)
                 for (var i = 0; i < message.sharingGroup.length; ++i)
                     $root.types.IdentityShareEntry.encode(message.sharingGroup[i], writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+            if (message.email != null && message.hasOwnProperty("email"))
+                writer.uint32(/* id 5, wireType 2 =*/42).string(message.email);
             return writer;
         };
 
@@ -7224,6 +7235,9 @@ $root.types = (function() {
                     if (!(message.sharingGroup && message.sharingGroup.length))
                         message.sharingGroup = [];
                     message.sharingGroup.push($root.types.IdentityShareEntry.decode(reader, reader.uint32()));
+                    break;
+                case 5:
+                    message.email = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -7282,6 +7296,9 @@ $root.types = (function() {
                         return "sharingGroup." + error;
                 }
             }
+            if (message.email != null && message.hasOwnProperty("email"))
+                if (!$util.isString(message.email))
+                    return "email: string expected";
             return null;
         };
 
@@ -7322,6 +7339,8 @@ $root.types = (function() {
                     message.sharingGroup[i] = $root.types.IdentityShareEntry.fromObject(object.sharingGroup[i]);
                 }
             }
+            if (object.email != null)
+                message.email = String(object.email);
             return message;
         };
 
@@ -7344,6 +7363,7 @@ $root.types = (function() {
                 object.identity = null;
                 object.encryption = null;
                 object.signChain = options.bytes === String ? "" : [];
+                object.email = "";
             }
             if (message.identity != null && message.hasOwnProperty("identity"))
                 object.identity = $root.types.IdentityFields.toObject(message.identity, options);
@@ -7356,6 +7376,8 @@ $root.types = (function() {
                 for (var j = 0; j < message.sharingGroup.length; ++j)
                     object.sharingGroup[j] = $root.types.IdentityShareEntry.toObject(message.sharingGroup[j], options);
             }
+            if (message.email != null && message.hasOwnProperty("email"))
+                object.email = message.email;
             return object;
         };
 
@@ -14960,6 +14982,7 @@ $root.types = (function() {
          * @memberof types
          * @interface ISessionResolveChallengeResponse
          * @property {Uint8Array|null} [salt] SessionResolveChallengeResponse salt
+         * @property {string|null} [login] SessionResolveChallengeResponse login
          */
 
         /**
@@ -14984,6 +15007,14 @@ $root.types = (function() {
          * @instance
          */
         SessionResolveChallengeResponse.prototype.salt = $util.newBuffer([]);
+
+        /**
+         * SessionResolveChallengeResponse login.
+         * @member {string} login
+         * @memberof types.SessionResolveChallengeResponse
+         * @instance
+         */
+        SessionResolveChallengeResponse.prototype.login = "";
 
         /**
          * Creates a new SessionResolveChallengeResponse instance using the specified properties.
@@ -15011,6 +15042,8 @@ $root.types = (function() {
                 writer = $Writer.create();
             if (message.salt != null && message.hasOwnProperty("salt"))
                 writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.salt);
+            if (message.login != null && message.hasOwnProperty("login"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.login);
             return writer;
         };
 
@@ -15047,6 +15080,9 @@ $root.types = (function() {
                 switch (tag >>> 3) {
                 case 1:
                     message.salt = reader.bytes();
+                    break;
+                case 2:
+                    message.login = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -15086,6 +15122,9 @@ $root.types = (function() {
             if (message.salt != null && message.hasOwnProperty("salt"))
                 if (!(message.salt && typeof message.salt.length === "number" || $util.isString(message.salt)))
                     return "salt: buffer expected";
+            if (message.login != null && message.hasOwnProperty("login"))
+                if (!$util.isString(message.login))
+                    return "login: string expected";
             return null;
         };
 
@@ -15106,6 +15145,8 @@ $root.types = (function() {
                     $util.base64.decode(object.salt, message.salt = $util.newBuffer($util.base64.length(object.salt)), 0);
                 else if (object.salt.length)
                     message.salt = object.salt;
+            if (object.login != null)
+                message.login = String(object.login);
             return message;
         };
 
@@ -15122,10 +15163,14 @@ $root.types = (function() {
             if (!options)
                 options = {};
             var object = {};
-            if (options.defaults)
+            if (options.defaults) {
                 object.salt = options.bytes === String ? "" : [];
+                object.login = "";
+            }
             if (message.salt != null && message.hasOwnProperty("salt"))
                 object.salt = options.bytes === String ? $util.base64.encode(message.salt, 0, message.salt.length) : options.bytes === Array ? Array.prototype.slice.call(message.salt) : message.salt;
+            if (message.login != null && message.hasOwnProperty("login"))
+                object.login = message.login;
             return object;
         };
 

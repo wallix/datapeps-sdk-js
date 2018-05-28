@@ -21,7 +21,13 @@ export class IdentityImpl implements IdentityAPI {
         })
     }
 
-    async create(identity: IdentityFields, options: { secret?: Uint8Array | string, sharingGroup?: string[] }): Promise<void> {
+    async create(
+        identity: IdentityFields,
+        options: {
+            secret?: Uint8Array | string,
+            sharingGroup?: string[],
+            email?: string
+        }): Promise<void> {
         options = options == null ? {} : options
         let osharingGroup = options.sharingGroup == null ? [] : options.sharingGroup
         let encryption = new Encryption()
@@ -40,7 +46,7 @@ export class IdentityImpl implements IdentityAPI {
             method: "POST", code: 201,
             path: "/api/v4/identity",
             request: () => types.IdentityCreateRequest.encode({
-                identity, sharingGroup, encryption,
+                identity, sharingGroup, encryption, email: options.email,
                 signChain: this.session.encryption.sign(Uint8Tool.concat(epub.boxEncrypted.publicKey, epub.signEncrypted.publicKey)),
             }).finish(),
         })

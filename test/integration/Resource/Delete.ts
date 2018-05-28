@@ -33,7 +33,7 @@ describe('Resource.delete', () => {
 
     let aliceSecret = nacl.randomBytes(128)
     let alice: DataPeps.IdentityFields = {
-        login: "alice." + seed + "@peps.test",
+        login: "alice." + seed,
         name: "alice test identity, TS",
         kind: "user",
         payload: null,
@@ -41,7 +41,7 @@ describe('Resource.delete', () => {
 
     let bobSecret = nacl.randomBytes(128)
     let bob: DataPeps.IdentityFields = {
-        login: "bob." + seed + "@peps.test",
+        login: "bob." + seed,
         name: "alice test identity, TS",
         kind: "user",
         payload: null,
@@ -49,7 +49,7 @@ describe('Resource.delete', () => {
 
     let aliceChildSecret = nacl.randomBytes(128)
     let aliceChild: DataPeps.IdentityFields = {
-        login: "aliceChild." + seed + "@peps.test",
+        login: "aliceChild." + seed,
         name: "aliceChild test identity, TS",
         kind: "user",
         payload: null,

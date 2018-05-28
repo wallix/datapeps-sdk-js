@@ -565,6 +565,7 @@ export interface IdentityAPI {
      * @param options A collection of options:
      *  - secret: An optional secret associated with the created identity that could be used to login.
      *  - sharingGroup: An optional list of identity logins that are shared with the created identity.
+     *  - email: An optional email associated with the identity to create.
      * @return(p) On success the promise will be resolved with void.
      * On error the promise will be rejected with an {@link Error} with kind
      * - `IdentityInvalidLogin` if identity.login is not a valid login.
@@ -572,7 +573,11 @@ export interface IdentityAPI {
      */
     create(
         identity: IdentityFields,
-        options: { secret?: Uint8Array | string, sharingGroup?: string[] }
+        options: {
+            secret?: Uint8Array | string,
+            sharingGroup?: string[],
+            email?: string
+        }
     ): Promise<void>
 
     /**

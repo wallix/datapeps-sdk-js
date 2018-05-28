@@ -7,7 +7,7 @@ describe('Resource', () => {
     let seed = Math.floor(Math.random() * 99999)
     let aliceSecret = nacl.randomBytes(128)
     let alice: DataPeps.Identity<Uint8Array> = {
-        login: "alice." + seed + "@peps.test",
+        login: "alice." + seed,
         name: "alice test identity, TS",
         admin: false,
         active: true,
@@ -21,7 +21,7 @@ describe('Resource', () => {
     }
     let bobSecret = nacl.randomBytes(128)
     let bob: DataPeps.Identity<Uint8Array> = {
-        login: "bob." + seed + "@peps.test",
+        login: "bob." + seed,
         name: "bob test identity, TS",
         admin: false,
         active: true,
@@ -34,7 +34,7 @@ describe('Resource', () => {
         }))
     }
     let group: DataPeps.Identity<Uint8Array> = {
-        login: "group." + seed + "@peps.test",
+        login: "group." + seed,
         name: "A group for the Resource test, TS",
         admin: false,
         active: true,

@@ -95,7 +95,7 @@ var IdentityImpl = /** @class */ (function () {
                                 method: "POST", code: 201,
                                 path: "/api/v4/identity",
                                 request: function () { return proto_1.types.IdentityCreateRequest.encode({
-                                    identity: identity, sharingGroup: sharingGroup, encryption: encryption,
+                                    identity: identity, sharingGroup: sharingGroup, encryption: encryption, email: options.email,
                                     signChain: _this.session.encryption.sign(Tools_1.Uint8Tool.concat(epub.boxEncrypted.publicKey, epub.signEncrypted.publicKey)),
                                 }).finish(); },
                             })];

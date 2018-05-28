@@ -4,11 +4,11 @@ import * as nacl from 'tweetnacl'
 import { expect } from 'chai'
 
 
-describe('Identity', () => {
+describe('Identity.Main', () => {
     let seed = Math.floor(Math.random() * 99999)
     let deviceASecret = nacl.randomBytes(128)
     let deviceA: DataPeps.IdentityFields = {
-        login: "alice.deviceA." + seed + "@peps.test",
+        login: "alice.deviceA." + seed,
         name: "An alice device, TS",
         kind: "device",
         payload: new TextEncoder().encode(JSON.stringify({
@@ -18,7 +18,7 @@ describe('Identity', () => {
     }
     let deviceBSecret = nacl.randomBytes(128)
     let deviceB: DataPeps.IdentityFields = {
-        login: "alice.deviceB." + seed + "@peps.test",
+        login: "alice.deviceB." + seed,
         name: "Another alice device, TS",
         kind: "device",
         payload: new TextEncoder().encode(JSON.stringify({
@@ -28,7 +28,7 @@ describe('Identity', () => {
     }
     let aliceSecret = nacl.randomBytes(128)
     let alice: DataPeps.IdentityFields = {
-        login: "alice." + seed + "@peps.test",
+        login: "alice." + seed,
         name: "alice test identity, TS",
         kind: "user",
         payload: new TextEncoder().encode(JSON.stringify({
@@ -39,7 +39,7 @@ describe('Identity', () => {
     }
     let bobSecret = nacl.randomBytes(128)
     let bob: DataPeps.IdentityFields = {
-        login: "bob." + seed + "@peps.test",
+        login: "bob." + seed,
         name: "bob test identity, TS",
         kind: "user",
         payload: new TextEncoder().encode(JSON.stringify({
@@ -49,7 +49,7 @@ describe('Identity', () => {
         }))
     }
     let group: DataPeps.IdentityFields = {
-        login: "group." + seed + "@peps.test",
+        login: "group." + seed,
         name: "A group for the Identity test, TS",
         kind: "group",
         payload: new TextEncoder().encode(JSON.stringify({

@@ -3084,6 +3084,9 @@ export namespace types {
 
         /** IdentityCreateRequest sharingGroup */
         sharingGroup?: (types.IIdentityShareEntry[]|null);
+
+        /** IdentityCreateRequest email */
+        email?: (string|null);
     }
 
     /** Represents an IdentityCreateRequest. */
@@ -3106,6 +3109,9 @@ export namespace types {
 
         /** IdentityCreateRequest sharingGroup. */
         public sharingGroup: types.IIdentityShareEntry[];
+
+        /** IdentityCreateRequest email. */
+        public email: string;
 
         /**
          * Creates a new IdentityCreateRequest instance using the specified properties.
@@ -6291,6 +6297,9 @@ export namespace types {
 
         /** SessionResolveChallengeResponse salt */
         salt?: (Uint8Array|null);
+
+        /** SessionResolveChallengeResponse login */
+        login?: (string|null);
     }
 
     /** Represents a SessionResolveChallengeResponse. */
@@ -6304,6 +6313,9 @@ export namespace types {
 
         /** SessionResolveChallengeResponse salt. */
         public salt: Uint8Array;
+
+        /** SessionResolveChallengeResponse login. */
+        public login: string;
 
         /**
          * Creates a new SessionResolveChallengeResponse instance using the specified properties.

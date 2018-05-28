@@ -15,7 +15,7 @@ sdk.configure(APIHost)
 export { sdk }
 
 let admin: DataPeps.Identity<any> = {
-    login: "administrator@peps.test",
+    login: "administrator",
     name: "Administrator created for Test from TS",
     admin: true,
     active: true,

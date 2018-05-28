@@ -154,7 +154,7 @@ function _login(client, login, recover, options) {
                     resolveResponse = _a.sent();
                     saltKind = createResponse.saltKind;
                     salt = createResponse.salt;
-                    return [2 /*return*/, new SessionImpl(login, token, salt, saltKind, encryption, client)];
+                    return [2 /*return*/, new SessionImpl(resolveResponse.login, token, salt, saltKind, encryption, client)];
             }
         });
     });

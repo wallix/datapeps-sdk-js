@@ -9,7 +9,7 @@ describe('Resource.getAccessLogs', () => {
 
     let aliceSecret = nacl.randomBytes(128)
     let alice: DataPeps.IdentityFields = {
-        login: "alice." + seed + "@peps.test",
+        login: "alice." + seed,
         name: "alice 1",
         kind: "user",
         payload: null,
@@ -17,7 +17,7 @@ describe('Resource.getAccessLogs', () => {
 
     let bobSecret = nacl.randomBytes(128)
     let bob: DataPeps.IdentityFields = {
-        login: "bob." + seed + "@peps.test",
+        login: "bob." + seed,
         name: "bob 1",
         kind: "user",
         payload: null,
@@ -25,7 +25,7 @@ describe('Resource.getAccessLogs', () => {
 
     let deviceSecret = nacl.randomBytes(128)
     let device: DataPeps.IdentityFields = {
-        login: "device." + seed + "@peps.test",
+        login: "device." + seed,
         name: "device 1",
         kind: "device",
         payload: null,

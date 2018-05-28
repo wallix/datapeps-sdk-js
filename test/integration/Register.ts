@@ -17,8 +17,9 @@ describe('Register', () => {
     let seed = Math.floor(Math.random() * 99999)
     let domain = "gmail.com"
     let normanSecret = nacl.randomBytes(128)
+    let normanEmail = "normanscaife" + seed + "@" + domain  
     let norman: DataPeps.Identity<Uint8Array> = {
-        login: "normanscaife" + seed + "@" + domain,
+        login: "normanscaife" + seed,
         name: "norman test identity, TS",
         admin: false,
         active: true,
@@ -33,16 +34,15 @@ describe('Register', () => {
 
 
     it('request a register link', async () => {
-        await sdk.sendRegisterLink(norman.login)
+        await sdk.sendRegisterLink(normanEmail)
     })
 
     var token: Uint8Array
     it('admin get registered links', async () => {
         let links = await adminSession.Admin.listRegisterTokens({ domain })
         expect(links).to.not.be.null
-        var exists = false
         let link = links.find(({ email }) => {
-            return email == norman.login
+            return email == normanEmail
         })
         expect(link).to.not.be.null
         expect(link.status).equal(DataPeps.RegisterTokenStatus.SENT)
@@ -53,10 +53,16 @@ describe('Register', () => {
         await sdk.registerWithToken(token, norman, normanSecret)
     })
 
-    let normanSession: DataPeps.Session
-    it('login', async () => {
-        normanSession = await sdk.login(norman.login, normanSecret)
-        expect(normanSession).to.not.be.null
+    it('login with login', async () => {
+        let session = await sdk.login(norman.login, normanSecret)
+        expect(session).to.not.be.null
+        expect(session.login).to.be.equals(norman.login)
+    })
+
+    it('login with email', async () => {
+        let session = await sdk.login(normanEmail, normanSecret)
+        expect(session).to.not.be.null
+        expect(session.login).to.be.equals(norman.login)
     })
 })
 

@@ -11,14 +11,14 @@ describe('Identity.AccessGroup', () => {
 
     let aliceSecret = nacl.randomBytes(128)
     let alice: DataPeps.IdentityFields = {
-        login: "alice." + seed + "@peps.test",
+        login: "alice." + seed,
         name: "alice test identity, TS",
         kind: "user",
         payload: null,
     }
 
     function getOtherLogin(i: number) {
-        return "other." + i + "." + seed + "@peps.test"
+        return "other." + i + "." + seed
     }
 
     let nothers = 10

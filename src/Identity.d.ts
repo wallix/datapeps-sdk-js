@@ -8,6 +8,7 @@ export declare class IdentityImpl implements IdentityAPI {
     create(identity: IdentityFields, options: {
         secret?: Uint8Array | string;
         sharingGroup?: string[];
+        email?: string;
     }): Promise<void>;
     update(identity: IdentityFields): Promise<void>;
     list(options?: {

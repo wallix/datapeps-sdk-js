@@ -19,7 +19,7 @@ let admin: DataPeps.Identity<any> = {
     name: "Administrator created for Test from TS",
     admin: true,
     active: true,
-    kind: "user",
+    kind: "pepsswarm/0",
     created: new Date(),
     payload: {
         firsname: "Quentin",

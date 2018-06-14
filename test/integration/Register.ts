@@ -39,7 +39,7 @@ describe('Register', () => {
 
     var token: Uint8Array
     it('admin get registered links', async () => {
-        let links = await adminSession.Admin.listRegisterTokens({ domain })
+        let links = await adminSession.Admin.listRegisterTokens({ domain, limit: 100 })
         expect(links).to.not.be.null
         let link = links.find(({ email }) => {
             return email == normanEmail

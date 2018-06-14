@@ -5653,18 +5653,6 @@ export namespace types {
         /** IdentityPostSharingGraphElement version */
         version?: (number|null);
 
-        /** IdentityPostSharingGraphElement sharingEncrypted */
-        sharingEncrypted?: (types.IIdentityEncryptedKey|null);
-
-        /** IdentityPostSharingGraphElement boxEncrypted */
-        boxEncrypted?: (types.IIdentityEncryptedKey|null);
-
-        /** IdentityPostSharingGraphElement signEncrypted */
-        signEncrypted?: (types.IIdentityEncryptedKey|null);
-
-        /** IdentityPostSharingGraphElement readEncrypted */
-        readEncrypted?: (types.IIdentityEncryptedKey|null);
-
         /** IdentityPostSharingGraphElement signChain */
         signChain?: (Uint8Array|null);
 
@@ -5673,6 +5661,9 @@ export namespace types {
 
         /** IdentityPostSharingGraphElement backward */
         backward?: (types.IIdentityBackwardKey|null);
+
+        /** IdentityPostSharingGraphElement encryption */
+        encryption?: (types.IIdentityEncryption|null);
     }
 
     /** Represents an IdentityPostSharingGraphElement. */
@@ -5690,18 +5681,6 @@ export namespace types {
         /** IdentityPostSharingGraphElement version. */
         public version: number;
 
-        /** IdentityPostSharingGraphElement sharingEncrypted. */
-        public sharingEncrypted?: (types.IIdentityEncryptedKey|null);
-
-        /** IdentityPostSharingGraphElement boxEncrypted. */
-        public boxEncrypted?: (types.IIdentityEncryptedKey|null);
-
-        /** IdentityPostSharingGraphElement signEncrypted. */
-        public signEncrypted?: (types.IIdentityEncryptedKey|null);
-
-        /** IdentityPostSharingGraphElement readEncrypted. */
-        public readEncrypted?: (types.IIdentityEncryptedKey|null);
-
         /** IdentityPostSharingGraphElement signChain. */
         public signChain: Uint8Array;
 
@@ -5710,6 +5689,9 @@ export namespace types {
 
         /** IdentityPostSharingGraphElement backward. */
         public backward?: (types.IIdentityBackwardKey|null);
+
+        /** IdentityPostSharingGraphElement encryption. */
+        public encryption?: (types.IIdentityEncryption|null);
 
         /**
          * Creates a new IdentityPostSharingGraphElement instance using the specified properties.

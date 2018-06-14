@@ -192,7 +192,7 @@ describe('Identity.Main', () => {
     })
 
     let renewSecret = nacl.randomBytes(128)
-    it('adinistrator overwrite keys for alice', async () => {
+    it('administrator overwrite keys for alice', async () => {
         await adminSession.Admin.overwriteKeys(alice.login, renewSecret)
     })
 

@@ -34,28 +34,7 @@ export class AdminImpl implements AdminAPI {
     }
 
     async overwriteKeys(login: string, secret: string | Uint8Array): Promise<void> {
-        let encryption = new Encryption()
-        encryption.generate(Uint8Tool.convert(secret), this.session.encryption)
-        let ids = await this.session.Identity.getSharingGroup(login)
-        let publicKeys = await this.session.getPublicKeys(ids.map(({ id }) => id))
-        let publicKeysWithKind = ids.map(({ kind }, i) => ({ kind, key: publicKeys[i] }))
-        let sharingGroup = publicKeysWithKind.map(({ kind, key: { login, version, sign, box } }) => {
-            let { message, nonce } = encryption.encryptKey(kind, this.session.encryption, box)
-            return {
-                login, version, nonce, kind,
-                encryptedKey: message
-            }
-        })
-        let epub = encryption.getPublic()
-        let signChain = this.session.encryption.sign(Uint8Tool.concat(epub.boxEncrypted.publicKey, epub.signEncrypted.publicKey))
-        return await this.session.doProtoRequest<void>({
-            method: "POST", code: 200,
-            path: "/api/v4/identity/" + encodeURIComponent(login) + "/keysToReplace",
-            request: () => types.IdentityPostKeysToRenewRequest.encode({
-                login, encryption: epub,
-                sharingGroup, signChain
-            }).finish()
-        })
+        await this.session.Identity.editSharingGraph(login, { overwriteKeys: { secret } });
     }
 
     async listRegisterTokens(options?: { offset?: number, limit?: number, domain?: string }): Promise<types.IRegisterEmailValidationToken[]> {

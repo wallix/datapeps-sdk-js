@@ -23,7 +23,13 @@ export declare class IdentityImpl implements IdentityAPI {
     renewKeys(login: string, secret?: string | Uint8Array): Promise<void>;
     extendSharingGroup(login: string, sharingGroup: string[]): Promise<void>;
     replaceSharingGroup(login: string, sharingGroup: string[]): Promise<void>;
-    private getSharingGraph(login);
+    editSharingGraph(login: string, options?: {
+        sharingGroup?: string[];
+        overwriteKeys?: {
+            secret: string | Uint8Array;
+        };
+    }): Promise<void>;
+    private getSharingGraph(login, options?);
 }
 export declare class IdentityX {
     static fromTypes(t: types.IIdentity): Identity<Uint8Array>;

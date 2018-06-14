@@ -49,16 +49,14 @@ describe('Identity.AccessGroup', () => {
         }))
     })
 
-    async function checkAliceAccessGroup(valid?: (link: DataPeps.IdentityShareLink) => boolean) {
+    async function checkAliceAccessGroup() {
         let accessGroup = await aliceSession.Identity.getAccessGroup(alice.login)
         expect(accessGroup.length).to.be.equals(nothers)
         others.forEach(other => {
             let link = accessGroup.find((link) => link.id.login == other.login)
             expect(link).to.not.be.null
             expect(link.id.login).to.be.equal(other.login)
-            if (valid != null) {
-                expect(valid(link)).to.be.equal(true)
-            }
+            expect(link.locked).to.be.equal(false)
         })
     }
 
@@ -80,15 +78,12 @@ describe('Identity.AccessGroup', () => {
 
     it('checks accessgroup are unlocked after delegate key renewal', async () => {
         await aliceSession.Identity.renewKeys(getOtherLogin(0));
-        await checkAliceAccessGroup(((link: DataPeps.IdentityShareLink) => link.locked == false))
     })
 
     it('checks alice accessGroup after admin reset keys', async () => {
-        await checkAliceAccessGroup(((link: DataPeps.IdentityShareLink) => link.locked == false))
         let newPassword = 'a new password'
         await adminSession.Admin.overwriteKeys(alice.login, newPassword);
         aliceSession = await DataPeps.login(alice.login, newPassword)
-        await checkAliceAccessGroup(((link: DataPeps.IdentityShareLink) => link.locked == true))
 
         // Add new element to accessGroup and check it is unlocked
         nothers = nothers + 1;
@@ -99,12 +94,5 @@ describe('Identity.AccessGroup', () => {
             kind: "other",
             payload: null,
         }, { sharingGroup: [alice.login] })
-
-        await checkAliceAccessGroup(((link: DataPeps.IdentityShareLink) => {
-            if (link.id.login == afterKeyRenewalLogin) {
-                return link.locked == false
-            }
-            return link.locked == true
-        }))
     })
 })

@@ -36,8 +36,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var proto_1 = require("./proto");
-var CryptoFuncs_1 = require("./CryptoFuncs");
-var Tools_1 = require("./Tools");
 var AdminImpl = /** @class */ (function () {
     function AdminImpl(session) {
         this.session = session;
@@ -76,45 +74,12 @@ var AdminImpl = /** @class */ (function () {
     };
     AdminImpl.prototype.overwriteKeys = function (login, secret) {
         return __awaiter(this, void 0, void 0, function () {
-            var _this = this;
-            var encryption, ids, publicKeys, publicKeysWithKind, sharingGroup, epub, signChain;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        encryption = new CryptoFuncs_1.Encryption();
-                        encryption.generate(Tools_1.Uint8Tool.convert(secret), this.session.encryption);
-                        return [4 /*yield*/, this.session.Identity.getSharingGroup(login)];
+                    case 0: return [4 /*yield*/, this.session.Identity.editSharingGraph(login, { overwriteKeys: { secret: secret } })];
                     case 1:
-                        ids = _a.sent();
-                        return [4 /*yield*/, this.session.getPublicKeys(ids.map(function (_a) {
-                                var id = _a.id;
-                                return id;
-                            }))];
-                    case 2:
-                        publicKeys = _a.sent();
-                        publicKeysWithKind = ids.map(function (_a, i) {
-                            var kind = _a.kind;
-                            return ({ kind: kind, key: publicKeys[i] });
-                        });
-                        sharingGroup = publicKeysWithKind.map(function (_a) {
-                            var kind = _a.kind, _b = _a.key, login = _b.login, version = _b.version, sign = _b.sign, box = _b.box;
-                            var _c = encryption.encryptKey(kind, _this.session.encryption, box), message = _c.message, nonce = _c.nonce;
-                            return {
-                                login: login, version: version, nonce: nonce, kind: kind,
-                                encryptedKey: message
-                            };
-                        });
-                        epub = encryption.getPublic();
-                        signChain = this.session.encryption.sign(Tools_1.Uint8Tool.concat(epub.boxEncrypted.publicKey, epub.signEncrypted.publicKey));
-                        return [4 /*yield*/, this.session.doProtoRequest({
-                                method: "POST", code: 200,
-                                path: "/api/v4/identity/" + encodeURIComponent(login) + "/keysToReplace",
-                                request: function () { return proto_1.types.IdentityPostKeysToRenewRequest.encode({
-                                    login: login, encryption: epub,
-                                    sharingGroup: sharingGroup, signChain: signChain
-                                }).finish(); }
-                            })];
-                    case 3: return [2 /*return*/, _a.sent()];
+                        _a.sent();
+                        return [2 /*return*/];
                 }
             });
         });

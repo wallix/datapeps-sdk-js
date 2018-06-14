@@ -13345,13 +13345,10 @@ $root.types = (function() {
          * @interface IIdentityPostSharingGraphElement
          * @property {string|null} [login] IdentityPostSharingGraphElement login
          * @property {number|null} [version] IdentityPostSharingGraphElement version
-         * @property {types.IIdentityEncryptedKey|null} [sharingEncrypted] IdentityPostSharingGraphElement sharingEncrypted
-         * @property {types.IIdentityEncryptedKey|null} [boxEncrypted] IdentityPostSharingGraphElement boxEncrypted
-         * @property {types.IIdentityEncryptedKey|null} [signEncrypted] IdentityPostSharingGraphElement signEncrypted
-         * @property {types.IIdentityEncryptedKey|null} [readEncrypted] IdentityPostSharingGraphElement readEncrypted
          * @property {Uint8Array|null} [signChain] IdentityPostSharingGraphElement signChain
          * @property {Array.<types.IIdentityShareEntry>|null} [sharingGroup] IdentityPostSharingGraphElement sharingGroup
          * @property {types.IIdentityBackwardKey|null} [backward] IdentityPostSharingGraphElement backward
+         * @property {types.IIdentityEncryption|null} [encryption] IdentityPostSharingGraphElement encryption
          */
 
         /**
@@ -13387,38 +13384,6 @@ $root.types = (function() {
         IdentityPostSharingGraphElement.prototype.version = 0;
 
         /**
-         * IdentityPostSharingGraphElement sharingEncrypted.
-         * @member {types.IIdentityEncryptedKey|null|undefined} sharingEncrypted
-         * @memberof types.IdentityPostSharingGraphElement
-         * @instance
-         */
-        IdentityPostSharingGraphElement.prototype.sharingEncrypted = null;
-
-        /**
-         * IdentityPostSharingGraphElement boxEncrypted.
-         * @member {types.IIdentityEncryptedKey|null|undefined} boxEncrypted
-         * @memberof types.IdentityPostSharingGraphElement
-         * @instance
-         */
-        IdentityPostSharingGraphElement.prototype.boxEncrypted = null;
-
-        /**
-         * IdentityPostSharingGraphElement signEncrypted.
-         * @member {types.IIdentityEncryptedKey|null|undefined} signEncrypted
-         * @memberof types.IdentityPostSharingGraphElement
-         * @instance
-         */
-        IdentityPostSharingGraphElement.prototype.signEncrypted = null;
-
-        /**
-         * IdentityPostSharingGraphElement readEncrypted.
-         * @member {types.IIdentityEncryptedKey|null|undefined} readEncrypted
-         * @memberof types.IdentityPostSharingGraphElement
-         * @instance
-         */
-        IdentityPostSharingGraphElement.prototype.readEncrypted = null;
-
-        /**
          * IdentityPostSharingGraphElement signChain.
          * @member {Uint8Array} signChain
          * @memberof types.IdentityPostSharingGraphElement
@@ -13441,6 +13406,14 @@ $root.types = (function() {
          * @instance
          */
         IdentityPostSharingGraphElement.prototype.backward = null;
+
+        /**
+         * IdentityPostSharingGraphElement encryption.
+         * @member {types.IIdentityEncryption|null|undefined} encryption
+         * @memberof types.IdentityPostSharingGraphElement
+         * @instance
+         */
+        IdentityPostSharingGraphElement.prototype.encryption = null;
 
         /**
          * Creates a new IdentityPostSharingGraphElement instance using the specified properties.
@@ -13470,14 +13443,6 @@ $root.types = (function() {
                 writer.uint32(/* id 1, wireType 2 =*/10).string(message.login);
             if (message.version != null && message.hasOwnProperty("version"))
                 writer.uint32(/* id 2, wireType 0 =*/16).uint32(message.version);
-            if (message.sharingEncrypted != null && message.hasOwnProperty("sharingEncrypted"))
-                $root.types.IdentityEncryptedKey.encode(message.sharingEncrypted, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
-            if (message.boxEncrypted != null && message.hasOwnProperty("boxEncrypted"))
-                $root.types.IdentityEncryptedKey.encode(message.boxEncrypted, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
-            if (message.signEncrypted != null && message.hasOwnProperty("signEncrypted"))
-                $root.types.IdentityEncryptedKey.encode(message.signEncrypted, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
-            if (message.readEncrypted != null && message.hasOwnProperty("readEncrypted"))
-                $root.types.IdentityEncryptedKey.encode(message.readEncrypted, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
             if (message.signChain != null && message.hasOwnProperty("signChain"))
                 writer.uint32(/* id 7, wireType 2 =*/58).bytes(message.signChain);
             if (message.sharingGroup != null && message.sharingGroup.length)
@@ -13485,6 +13450,8 @@ $root.types = (function() {
                     $root.types.IdentityShareEntry.encode(message.sharingGroup[i], writer.uint32(/* id 8, wireType 2 =*/66).fork()).ldelim();
             if (message.backward != null && message.hasOwnProperty("backward"))
                 $root.types.IdentityBackwardKey.encode(message.backward, writer.uint32(/* id 9, wireType 2 =*/74).fork()).ldelim();
+            if (message.encryption != null && message.hasOwnProperty("encryption"))
+                $root.types.IdentityEncryption.encode(message.encryption, writer.uint32(/* id 10, wireType 2 =*/82).fork()).ldelim();
             return writer;
         };
 
@@ -13525,18 +13492,6 @@ $root.types = (function() {
                 case 2:
                     message.version = reader.uint32();
                     break;
-                case 3:
-                    message.sharingEncrypted = $root.types.IdentityEncryptedKey.decode(reader, reader.uint32());
-                    break;
-                case 4:
-                    message.boxEncrypted = $root.types.IdentityEncryptedKey.decode(reader, reader.uint32());
-                    break;
-                case 5:
-                    message.signEncrypted = $root.types.IdentityEncryptedKey.decode(reader, reader.uint32());
-                    break;
-                case 6:
-                    message.readEncrypted = $root.types.IdentityEncryptedKey.decode(reader, reader.uint32());
-                    break;
                 case 7:
                     message.signChain = reader.bytes();
                     break;
@@ -13547,6 +13502,9 @@ $root.types = (function() {
                     break;
                 case 9:
                     message.backward = $root.types.IdentityBackwardKey.decode(reader, reader.uint32());
+                    break;
+                case 10:
+                    message.encryption = $root.types.IdentityEncryption.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -13589,26 +13547,6 @@ $root.types = (function() {
             if (message.version != null && message.hasOwnProperty("version"))
                 if (!$util.isInteger(message.version))
                     return "version: integer expected";
-            if (message.sharingEncrypted != null && message.hasOwnProperty("sharingEncrypted")) {
-                var error = $root.types.IdentityEncryptedKey.verify(message.sharingEncrypted);
-                if (error)
-                    return "sharingEncrypted." + error;
-            }
-            if (message.boxEncrypted != null && message.hasOwnProperty("boxEncrypted")) {
-                var error = $root.types.IdentityEncryptedKey.verify(message.boxEncrypted);
-                if (error)
-                    return "boxEncrypted." + error;
-            }
-            if (message.signEncrypted != null && message.hasOwnProperty("signEncrypted")) {
-                var error = $root.types.IdentityEncryptedKey.verify(message.signEncrypted);
-                if (error)
-                    return "signEncrypted." + error;
-            }
-            if (message.readEncrypted != null && message.hasOwnProperty("readEncrypted")) {
-                var error = $root.types.IdentityEncryptedKey.verify(message.readEncrypted);
-                if (error)
-                    return "readEncrypted." + error;
-            }
             if (message.signChain != null && message.hasOwnProperty("signChain"))
                 if (!(message.signChain && typeof message.signChain.length === "number" || $util.isString(message.signChain)))
                     return "signChain: buffer expected";
@@ -13625,6 +13563,11 @@ $root.types = (function() {
                 var error = $root.types.IdentityBackwardKey.verify(message.backward);
                 if (error)
                     return "backward." + error;
+            }
+            if (message.encryption != null && message.hasOwnProperty("encryption")) {
+                var error = $root.types.IdentityEncryption.verify(message.encryption);
+                if (error)
+                    return "encryption." + error;
             }
             return null;
         };
@@ -13645,26 +13588,6 @@ $root.types = (function() {
                 message.login = String(object.login);
             if (object.version != null)
                 message.version = object.version >>> 0;
-            if (object.sharingEncrypted != null) {
-                if (typeof object.sharingEncrypted !== "object")
-                    throw TypeError(".types.IdentityPostSharingGraphElement.sharingEncrypted: object expected");
-                message.sharingEncrypted = $root.types.IdentityEncryptedKey.fromObject(object.sharingEncrypted);
-            }
-            if (object.boxEncrypted != null) {
-                if (typeof object.boxEncrypted !== "object")
-                    throw TypeError(".types.IdentityPostSharingGraphElement.boxEncrypted: object expected");
-                message.boxEncrypted = $root.types.IdentityEncryptedKey.fromObject(object.boxEncrypted);
-            }
-            if (object.signEncrypted != null) {
-                if (typeof object.signEncrypted !== "object")
-                    throw TypeError(".types.IdentityPostSharingGraphElement.signEncrypted: object expected");
-                message.signEncrypted = $root.types.IdentityEncryptedKey.fromObject(object.signEncrypted);
-            }
-            if (object.readEncrypted != null) {
-                if (typeof object.readEncrypted !== "object")
-                    throw TypeError(".types.IdentityPostSharingGraphElement.readEncrypted: object expected");
-                message.readEncrypted = $root.types.IdentityEncryptedKey.fromObject(object.readEncrypted);
-            }
             if (object.signChain != null)
                 if (typeof object.signChain === "string")
                     $util.base64.decode(object.signChain, message.signChain = $util.newBuffer($util.base64.length(object.signChain)), 0);
@@ -13684,6 +13607,11 @@ $root.types = (function() {
                 if (typeof object.backward !== "object")
                     throw TypeError(".types.IdentityPostSharingGraphElement.backward: object expected");
                 message.backward = $root.types.IdentityBackwardKey.fromObject(object.backward);
+            }
+            if (object.encryption != null) {
+                if (typeof object.encryption !== "object")
+                    throw TypeError(".types.IdentityPostSharingGraphElement.encryption: object expected");
+                message.encryption = $root.types.IdentityEncryption.fromObject(object.encryption);
             }
             return message;
         };
@@ -13706,25 +13634,14 @@ $root.types = (function() {
             if (options.defaults) {
                 object.login = "";
                 object.version = 0;
-                object.sharingEncrypted = null;
-                object.boxEncrypted = null;
-                object.signEncrypted = null;
-                object.readEncrypted = null;
                 object.signChain = options.bytes === String ? "" : [];
                 object.backward = null;
+                object.encryption = null;
             }
             if (message.login != null && message.hasOwnProperty("login"))
                 object.login = message.login;
             if (message.version != null && message.hasOwnProperty("version"))
                 object.version = message.version;
-            if (message.sharingEncrypted != null && message.hasOwnProperty("sharingEncrypted"))
-                object.sharingEncrypted = $root.types.IdentityEncryptedKey.toObject(message.sharingEncrypted, options);
-            if (message.boxEncrypted != null && message.hasOwnProperty("boxEncrypted"))
-                object.boxEncrypted = $root.types.IdentityEncryptedKey.toObject(message.boxEncrypted, options);
-            if (message.signEncrypted != null && message.hasOwnProperty("signEncrypted"))
-                object.signEncrypted = $root.types.IdentityEncryptedKey.toObject(message.signEncrypted, options);
-            if (message.readEncrypted != null && message.hasOwnProperty("readEncrypted"))
-                object.readEncrypted = $root.types.IdentityEncryptedKey.toObject(message.readEncrypted, options);
             if (message.signChain != null && message.hasOwnProperty("signChain"))
                 object.signChain = options.bytes === String ? $util.base64.encode(message.signChain, 0, message.signChain.length) : options.bytes === Array ? Array.prototype.slice.call(message.signChain) : message.signChain;
             if (message.sharingGroup && message.sharingGroup.length) {
@@ -13734,6 +13651,8 @@ $root.types = (function() {
             }
             if (message.backward != null && message.hasOwnProperty("backward"))
                 object.backward = $root.types.IdentityBackwardKey.toObject(message.backward, options);
+            if (message.encryption != null && message.hasOwnProperty("encryption"))
+                object.encryption = $root.types.IdentityEncryption.toObject(message.encryption, options);
             return object;
         };
 

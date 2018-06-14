@@ -261,13 +261,20 @@ var IdentityImpl = /** @class */ (function () {
     };
     IdentityImpl.prototype.replaceSharingGroup = function (login, sharingGroup) {
         return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, this.editSharingGraph(login, { sharingGroup: sharingGroup })];
+            });
+        });
+    };
+    IdentityImpl.prototype.editSharingGraph = function (login, options) {
+        return __awaiter(this, void 0, void 0, function () {
             var _this = this;
-            var kind, graph, _a, newBoxPublicKeys, encryptedGraph;
+            var graph, _a, newBoxPublicKeys, encryptedGraph;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        kind = proto_1.types.IdentityShareKind.SHARING;
-                        return [4 /*yield*/, this.getSharingGraph(login)];
+                        options = options != null ? options : {};
+                        return [4 /*yield*/, this.getSharingGraph(login, { withKeys: options.overwriteKeys == null })];
                     case 1:
                         graph = _b.sent();
                         if (graph[0].login != login) {
@@ -276,20 +283,36 @@ var IdentityImpl = /** @class */ (function () {
                                 payload: { login: login, graph: graph, hint: "unexpected graph" }
                             });
                         }
+                        if (!(options.sharingGroup != null)) return [3 /*break*/, 3];
                         // Replace the sharing group of login
                         _a = graph[0];
-                        return [4 /*yield*/, this.session.getLatestPublicKeys(sharingGroup)
-                            // Filter only latest identites
-                        ];
+                        return [4 /*yield*/, this.session.getLatestPublicKeys(options.sharingGroup)];
                     case 2:
                         // Replace the sharing group of login
                         _a.sharingGroup = _b.sent();
+                        _b.label = 3;
+                    case 3:
                         // Filter only latest identites
                         graph = graph.filter(function (elt) { return elt.latest; });
+                        if (options.overwriteKeys != null) {
+                            // If keys are overwritten, we only update:
+                            // - the main identity
+                            // - the graph elements in which the only element in sharing group is the main identity (for example a delegate, but not a group)
+                            graph = graph.filter(function (elt) {
+                                return elt.login == login ||
+                                    (elt.sharingGroup.length == 1 && elt.sharingGroup[0].login == login);
+                            });
+                        }
                         newBoxPublicKeys = new Map();
                         encryptedGraph = graph.map(function (elt) {
                             var encryption = new CryptoFuncs_1.Encryption();
-                            encryption.generateWithMasterPublicKey(elt.masterPublicKey, null, _this.session.encryption);
+                            if (options.overwriteKeys != null && elt.login === login) {
+                                // Overwrite the key of main identity with secret
+                                encryption.generate(Tools_1.Uint8Tool.convert(options.overwriteKeys.secret), _this.session.encryption);
+                            }
+                            else {
+                                encryption.generateWithMasterPublicKey(elt.masterPublicKey, null, _this.session.encryption);
+                            }
                             encryption.version = elt.version + 1;
                             newBoxPublicKeys.set(elt.login, {
                                 login: login, sign: null,
@@ -300,17 +323,25 @@ var IdentityImpl = /** @class */ (function () {
                         }).map(function (_a) {
                             var elt = _a.elt, encryption = _a.encryption;
                             var epub = encryption.getPublic();
-                            var _b = _this.session.encryption.encrypt(proto_1.types.ResourceType.SES).encrypt(epub.boxEncrypted.publicKey, elt.sharingKey), message = _b.message, nonce = _b.nonce;
-                            var backward = { nonce: nonce, encryptedKey: message };
+                            var backward;
+                            var signChain;
+                            if (options.overwriteKeys != null) {
+                                // administrator signs the 'overwrited' new version of identity
+                                signChain = _this.session.encryption.sign(Tools_1.Uint8Tool.concat(epub.boxEncrypted.publicKey, epub.signEncrypted.publicKey));
+                            }
+                            else {
+                                // the new version of identity is signed by the previous one (as keys are accessible by current session)
+                                var _b = _this.session.encryption.encrypt(proto_1.types.ResourceType.SES).encrypt(epub.boxEncrypted.publicKey, elt.sharingKey), message = _b.message, nonce = _b.nonce;
+                                backward = { nonce: nonce, encryptedKey: message };
+                                signChain = nacl.sign.detached(Tools_1.Uint8Tool.concat(epub.boxEncrypted.publicKey, epub.signEncrypted.publicKey), elt.signKey);
+                            }
                             return {
                                 login: elt.login,
                                 version: elt.version + 1,
-                                sharingEncrypted: epub.sharingEncrypted,
-                                boxEncrypted: epub.boxEncrypted,
-                                signEncrypted: epub.signEncrypted,
-                                readEncrypted: epub.readEncrypted,
-                                signChain: nacl.sign.detached(Tools_1.Uint8Tool.concat(epub.boxEncrypted.publicKey, epub.signEncrypted.publicKey), elt.signKey),
+                                encryption: epub,
+                                signChain: signChain,
                                 sharingGroup: elt.sharingGroup.map(function (pk) {
+                                    var kind = proto_1.types.IdentityShareKind.SHARING;
                                     var newPk = newBoxPublicKeys.get(pk.login);
                                     pk = newPk != null ? newPk : pk;
                                     var _a = encryption.encryptKey(kind, _this.session.encryption, pk.box), message = _a.message, nonce = _a.nonce;
@@ -327,31 +358,36 @@ var IdentityImpl = /** @class */ (function () {
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "POST", code: 201,
                                 path: "/api/v4/identity/" + encodeURIComponent(login) + "/sharingGraph",
+                                assume: options.overwriteKeys != null ? undefined : { login: login, kind: DataPeps_1.IdentityAccessKind.WRITE },
                                 request: function () { return proto_1.types.IdentityPostSharingGraphRequest.encode({
                                     graph: encryptedGraph,
                                 }).finish(); }
                             })];
-                    case 3: return [2 /*return*/, _b.sent()];
+                    case 4: return [2 /*return*/, _b.sent()];
                 }
             });
         });
     };
-    IdentityImpl.prototype.getSharingGraph = function (login) {
+    IdentityImpl.prototype.getSharingGraph = function (login, options) {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
-            var graph, ciphers, resolvedCiphers, resolvedGraph, key, boxKeys, firstSharingKey, x;
+            var withKeys, graph, ciphers, resolvedCiphers, resolvedGraph, key, boxKeys, firstSharingKey, x;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.session.doProtoRequest({
-                            method: "GET", code: 200,
-                            path: "/api/v4/identity/" + encodeURIComponent(login) + "/sharingGraph",
-                            assume: { login: login, kind: DataPeps_1.IdentityAccessKind.WRITE },
-                            response: proto_1.types.IdentityGetSharingGraphResponse.decode,
-                        })
-                        // Resolve ciphers in graph
-                    ];
+                    case 0:
+                        options = options != null ? options : {};
+                        withKeys = options.withKeys == null ? true : options.withKeys;
+                        return [4 /*yield*/, this.session.doProtoRequest({
+                                method: "GET", code: 200,
+                                path: "/api/v4/identity/" + encodeURIComponent(login) + "/sharingGraph",
+                                assume: withKeys ? { login: login, kind: DataPeps_1.IdentityAccessKind.WRITE } : null,
+                                response: proto_1.types.IdentityGetSharingGraphResponse.decode,
+                            })];
                     case 1:
                         graph = (_a.sent()).graph;
+                        if (!withKeys) {
+                            return [2 /*return*/, graph];
+                        }
                         ciphers = [];
                         graph.forEach(function (elt, i) {
                             if (i != 0) {

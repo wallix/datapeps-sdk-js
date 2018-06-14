@@ -229,14 +229,14 @@ var DecryptSES = /** @class */ (function () {
                 payload: { kind: "VerifyCipherText", cipher: { cipher: cipher, nonce: nonce, sign: sign } }
             });
         }
-        var msgSign = nacl.box.open(cipher, nonce, sign.box, secretKey);
-        if (msgSign == null) {
+        var signedMsg = nacl.box.open(cipher, nonce, sign.box, secretKey);
+        if (signedMsg == null) {
             throw new Error_1.Error({
                 kind: Error_1.SDKKind.DecryptFail,
                 payload: { kind: "DecryptCipherText", cipher: { cipher: cipher, nonce: nonce, sign: sign } }
             });
         }
-        var msg = nacl.sign.open(msgSign, sign.sign);
+        var msg = nacl.sign.open(signedMsg, sign.sign);
         if (msg == null) {
             throw new Error_1.Error({
                 kind: Error_1.SDKKind.DecryptFail,

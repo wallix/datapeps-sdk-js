@@ -270,14 +270,14 @@ class DecryptSES implements DecryptFuncs {
                 payload: { kind: "VerifyCipherText", cipher: { cipher, nonce, sign } }
             })
         }
-        let msgSign = nacl.box.open(cipher, nonce, sign.box, secretKey)
-        if (msgSign == null) {
+        let signedMsg = nacl.box.open(cipher, nonce, sign.box, secretKey)
+        if (signedMsg == null) {
             throw new Error({
                 kind: SDKKind.DecryptFail,
                 payload: { kind: "DecryptCipherText", cipher: { cipher, nonce, sign } }
             })
         }
-        let msg = nacl.sign.open(msgSign, sign.sign)
+        let msg = nacl.sign.open(signedMsg, sign.sign)
         if (msg == null) {
             throw new Error({
                 kind: SDKKind.DecryptFail,

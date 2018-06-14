@@ -158,71 +158,114 @@ export class IdentityImpl implements IdentityAPI {
     }
 
     async replaceSharingGroup(login: string, sharingGroup: string[]): Promise<void> {
-        let kind = types.IdentityShareKind.SHARING
-        let graph = await this.getSharingGraph(login)
+        return this.editSharingGraph(login, { sharingGroup });
+    }
+
+    async editSharingGraph(login: string,
+        options?: {
+            sharingGroup?: string[],
+            overwriteKeys?: { secret: string | Uint8Array }
+        }
+    ) {
+        options = options != null ? options : {};
+        let graph = await this.getSharingGraph(login, { withKeys: options.overwriteKeys == null })
         if (graph[0].login != login) {
             throw new Error({
                 kind: SDKKind.SDKInternalError,
                 payload: { login, graph, hint: "unexpected graph" }
             })
         }
-        // Replace the sharing group of login
-        graph[0].sharingGroup = await this.session.getLatestPublicKeys(sharingGroup)
+        if (options.sharingGroup != null) {
+            // Replace the sharing group of login
+            graph[0].sharingGroup = await this.session.getLatestPublicKeys(options.sharingGroup)
+        }
         // Filter only latest identites
         graph = graph.filter(elt => elt.latest)
+        if (options.overwriteKeys != null) {
+            // If keys are overwritten, we only update:
+            // - the main identity
+            // - the graph elements in which the only element in sharing group is the main identity (for example a delegate, but not a group)
+            graph = graph.filter(
+                elt =>
+                    elt.login == login ||
+                    (elt.sharingGroup.length == 1 && elt.sharingGroup[0].login == login)
+            )
+        }
         let newBoxPublicKeys = new Map<string, IdentityPublicKey>()
-        let encryptedGraph = graph.map(elt => {
-            let encryption = new Encryption()
-            encryption.generateWithMasterPublicKey(elt.masterPublicKey, null, this.session.encryption)
-            encryption.version = elt.version + 1
-            newBoxPublicKeys.set(elt.login, {
-                login, sign: null,
-                box: encryption.getPublicKey(types.IdentityShareKind.BOX),
-                version: encryption.version,
-            })
-            return { elt, encryption }
-        }).map(({ elt, encryption }) => {
+        let encryptedGraph = graph.map(
+            elt => {
+                let encryption = new Encryption()
+                if (options.overwriteKeys != null && elt.login === login) {
+                    // Overwrite the key of main identity with secret
+                    encryption.generate(Uint8Tool.convert(options.overwriteKeys.secret), this.session.encryption)
+                } else {
+                    encryption.generateWithMasterPublicKey(elt.masterPublicKey, null, this.session.encryption)
+                }
+                encryption.version = elt.version + 1
+                newBoxPublicKeys.set(elt.login, {
+                    login, sign: null,
+                    box: encryption.getPublicKey(types.IdentityShareKind.BOX),
+                    version: encryption.version,
+                })
+                return { elt, encryption }
+            }
+        ).map(({ elt, encryption }) => {
             let epub = encryption.getPublic()
-            let { message, nonce } = this.session.encryption.encrypt(types.ResourceType.SES).encrypt(epub.boxEncrypted.publicKey, elt.sharingKey)
-            let backward = { nonce, encryptedKey: message }
+            let backward: { nonce: Uint8Array, encryptedKey: Uint8Array } | undefined;
+            let signChain: Uint8Array;
+            if (options.overwriteKeys != null) {
+                // administrator signs the 'overwrited' new version of identity
+                signChain = this.session.encryption.sign(Uint8Tool.concat(epub.boxEncrypted.publicKey, epub.signEncrypted.publicKey))
+            } else {
+                // the new version of identity is signed by the previous one (as keys are accessible by current session)
+                let { message, nonce } = this.session.encryption.encrypt(types.ResourceType.SES).encrypt(epub.boxEncrypted.publicKey, elt.sharingKey)
+                backward = { nonce, encryptedKey: message }
+                signChain = nacl.sign.detached(Uint8Tool.concat(epub.boxEncrypted.publicKey, epub.signEncrypted.publicKey), elt.signKey)
+            }
             return {
                 login: elt.login,
                 version: elt.version + 1,
-                sharingEncrypted: epub.sharingEncrypted,
-                boxEncrypted: epub.boxEncrypted,
-                signEncrypted: epub.signEncrypted,
-                readEncrypted: epub.readEncrypted,
-                signChain: nacl.sign.detached(Uint8Tool.concat(epub.boxEncrypted.publicKey, epub.signEncrypted.publicKey), elt.signKey),
-                sharingGroup: elt.sharingGroup.map(pk => {
-                    let newPk = newBoxPublicKeys.get(pk.login)
-                    pk = newPk != null ? newPk : pk
-                    let { message, nonce } = encryption.encryptKey(kind, this.session.encryption, pk.box)
-                    return {
-                        login: pk.login,
-                        version: pk.version,
-                        encryptedKey: message, nonce,
-                        kind
+                encryption: epub,
+                signChain,
+                sharingGroup: elt.sharingGroup.map(
+                    pk => {
+                        let kind = types.IdentityShareKind.SHARING
+                        let newPk = newBoxPublicKeys.get(pk.login)
+                        pk = newPk != null ? newPk : pk
+                        let { message, nonce } = encryption.encryptKey(kind, this.session.encryption, pk.box)
+                        return {
+                            login: pk.login,
+                            version: pk.version,
+                            encryptedKey: message, nonce,
+                            kind
+                        }
                     }
-                }),
+                ),
                 backward
             }
         })
         return await this.session.doProtoRequest<void>({
             method: "POST", code: 201,
             path: "/api/v4/identity/" + encodeURIComponent(login) + "/sharingGraph",
+            assume: options.overwriteKeys != null ? undefined : { login, kind: IdentityAccessKind.WRITE },
             request: () => types.IdentityPostSharingGraphRequest.encode({
                 graph: encryptedGraph,
             }).finish()
         })
     }
 
-    private async getSharingGraph(login: string): Promise<IdentitySharingElt[]> {
+    private async getSharingGraph(login: string, options?: { withKeys?: boolean }): Promise<IdentitySharingElt[]> {
+        options = options != null ? options : {};
+        let withKeys = options.withKeys == null ? true : options.withKeys;
         let { graph } = await this.session.doProtoRequest({
             method: "GET", code: 200,
             path: "/api/v4/identity/" + encodeURIComponent(login) + "/sharingGraph",
-            assume: { login, kind: IdentityAccessKind.WRITE },
+            assume: withKeys ? { login, kind: IdentityAccessKind.WRITE } : null,
             response: types.IdentityGetSharingGraphResponse.decode,
         })
+        if (!withKeys) {
+            return graph as IdentitySharingElt[];
+        }
         // Resolve ciphers in graph
         let ciphers: types.ICipher[] = []
         graph.forEach((elt, i) => {

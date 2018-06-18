@@ -9282,6 +9282,222 @@ export namespace types {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of a DelegatedAccess. */
+    interface IDelegatedAccess {
+
+        /** DelegatedAccess id */
+        id?: (number|Long|null);
+
+        /** DelegatedAccess publicKey */
+        publicKey?: (Uint8Array|null);
+
+        /** DelegatedAccess sign */
+        sign?: (Uint8Array|null);
+
+        /** DelegatedAccess requester */
+        requester?: (types.IIdentityKeyID|null);
+
+        /** DelegatedAccess target */
+        target?: (types.IIdentityKeyID|null);
+
+        /** DelegatedAccess created */
+        created?: (number|Long|null);
+
+        /** DelegatedAccess resolved */
+        resolved?: (boolean|null);
+    }
+
+    /** Represents a DelegatedAccess. */
+    class DelegatedAccess implements IDelegatedAccess {
+
+        /**
+         * Constructs a new DelegatedAccess.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: types.IDelegatedAccess);
+
+        /** DelegatedAccess id. */
+        public id: (number|Long);
+
+        /** DelegatedAccess publicKey. */
+        public publicKey: Uint8Array;
+
+        /** DelegatedAccess sign. */
+        public sign: Uint8Array;
+
+        /** DelegatedAccess requester. */
+        public requester?: (types.IIdentityKeyID|null);
+
+        /** DelegatedAccess target. */
+        public target?: (types.IIdentityKeyID|null);
+
+        /** DelegatedAccess created. */
+        public created: (number|Long);
+
+        /** DelegatedAccess resolved. */
+        public resolved: boolean;
+
+        /**
+         * Creates a new DelegatedAccess instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns DelegatedAccess instance
+         */
+        public static create(properties?: types.IDelegatedAccess): types.DelegatedAccess;
+
+        /**
+         * Encodes the specified DelegatedAccess message. Does not implicitly {@link types.DelegatedAccess.verify|verify} messages.
+         * @param message DelegatedAccess message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: types.IDelegatedAccess, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified DelegatedAccess message, length delimited. Does not implicitly {@link types.DelegatedAccess.verify|verify} messages.
+         * @param message DelegatedAccess message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: types.IDelegatedAccess, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a DelegatedAccess message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns DelegatedAccess
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): types.DelegatedAccess;
+
+        /**
+         * Decodes a DelegatedAccess message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns DelegatedAccess
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): types.DelegatedAccess;
+
+        /**
+         * Verifies a DelegatedAccess message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a DelegatedAccess message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns DelegatedAccess
+         */
+        public static fromObject(object: { [k: string]: any }): types.DelegatedAccess;
+
+        /**
+         * Creates a plain object from a DelegatedAccess message. Also converts values to other types if specified.
+         * @param message DelegatedAccess
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: types.DelegatedAccess, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this DelegatedAccess to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a DelegatedAccessListResponse. */
+    interface IDelegatedAccessListResponse {
+
+        /** DelegatedAccessListResponse accesses */
+        accesses?: (types.IDelegatedAccess[]|null);
+    }
+
+    /** Represents a DelegatedAccessListResponse. */
+    class DelegatedAccessListResponse implements IDelegatedAccessListResponse {
+
+        /**
+         * Constructs a new DelegatedAccessListResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: types.IDelegatedAccessListResponse);
+
+        /** DelegatedAccessListResponse accesses. */
+        public accesses: types.IDelegatedAccess[];
+
+        /**
+         * Creates a new DelegatedAccessListResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns DelegatedAccessListResponse instance
+         */
+        public static create(properties?: types.IDelegatedAccessListResponse): types.DelegatedAccessListResponse;
+
+        /**
+         * Encodes the specified DelegatedAccessListResponse message. Does not implicitly {@link types.DelegatedAccessListResponse.verify|verify} messages.
+         * @param message DelegatedAccessListResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: types.IDelegatedAccessListResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified DelegatedAccessListResponse message, length delimited. Does not implicitly {@link types.DelegatedAccessListResponse.verify|verify} messages.
+         * @param message DelegatedAccessListResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: types.IDelegatedAccessListResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a DelegatedAccessListResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns DelegatedAccessListResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): types.DelegatedAccessListResponse;
+
+        /**
+         * Decodes a DelegatedAccessListResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns DelegatedAccessListResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): types.DelegatedAccessListResponse;
+
+        /**
+         * Verifies a DelegatedAccessListResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a DelegatedAccessListResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns DelegatedAccessListResponse
+         */
+        public static fromObject(object: { [k: string]: any }): types.DelegatedAccessListResponse;
+
+        /**
+         * Creates a plain object from a DelegatedAccessListResponse message. Also converts values to other types if specified.
+         * @param message DelegatedAccessListResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: types.DelegatedAccessListResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this DelegatedAccessListResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** RegisterTokenStatus enum. */
     enum RegisterTokenStatus {
         PENDING = 0,

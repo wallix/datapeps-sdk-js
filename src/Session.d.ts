@@ -1,5 +1,5 @@
 import { types } from './proto';
-import { ID, Session, SessionRequest, PublicKeysCache, TrustPolicy, AccessRequestResolver } from './DataPeps';
+import { ID, Session, SessionRequest, PublicKeysCache, TrustPolicy, AccessRequestResolver, DelegatedAccess } from './DataPeps';
 import { IdentityPublicKey, IdentityPublicKeyID, IdentityAccessKind } from './DataPeps';
 import { AccessRequest } from './DataPeps';
 import { Resource } from './DataPeps';
@@ -44,6 +44,11 @@ export declare class SessionImpl implements Session {
     setTrustPolicy(policy: TrustPolicy): void;
     setPublicKeyCache(cache: PublicKeysCache): void;
     getSecretToken(login: string): Promise<string>;
+    listDelegatedAccess(login: string, options?: {
+        limit?: number;
+        sinceID?: ID;
+        maxID?: ID;
+    }): Promise<DelegatedAccess[]>;
     sign(message: Uint8Array): Uint8Array;
     doRequest<T>(r: SessionRequest<T>): Promise<T>;
     doProtoRequest<T>(r: SessionRequest<T>): Promise<T>;

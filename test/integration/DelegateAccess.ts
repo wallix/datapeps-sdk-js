@@ -97,4 +97,11 @@ describe('DelegatedAccess', () => {
         expect(resource.payload).to.be.deep.equals(res.payload)
     })
 
+    it('alice list delegated access', async () => {
+        let accesses = await aliceSession.listDelegatedAccess(aliceSession.login)
+        expect(accesses.length).to.be.equals(1)
+        expect(accesses[0].requester.login).to.be.equals(alice.login)
+        expect(accesses[0].target.login).to.be.equals(bob.login)
+    })
+
 })

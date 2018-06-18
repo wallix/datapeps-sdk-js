@@ -1,7 +1,7 @@
 import * as nacl from 'tweetnacl';
 import * as Long from 'long';
 import { types, events } from './proto';
-import { ID, Session, SessionRequest, PublicKeysCache, TrustPolicy, AccessRequestResolver } from './DataPeps';
+import { ID, Session, SessionRequest, PublicKeysCache, TrustPolicy, AccessRequestResolver, DelegatedAccess } from './DataPeps';
 import { IdentityPublicKey, IdentityPublicKeyID, IdentityAccessKind } from './DataPeps';
 import { AccessRequest } from './DataPeps';
 import { Resource } from './DataPeps';
@@ -274,6 +274,24 @@ export class SessionImpl implements Session {
         return Base64.encode(keys.signKey)
     }
 
+    async listDelegatedAccess(login: string, options?: {
+        limit?: number,
+        sinceID?: ID,
+        maxID?: ID,
+    }): Promise<DelegatedAccess[]> {
+        let { accesses } = await this.doProtoRequest({
+            method: "GET", code: 200,
+            path: "/api/v4/delegatedAccesses",
+            response: types.DelegatedAccessListResponse.decode,
+            assume: { login, kind: IdentityAccessKind.READ },
+            params: options,
+        })
+        return accesses.map(access => ({
+            ...access,
+            resolved: access.resolved,
+            created: new Date(access.created as number * 1000)
+        } as DelegatedAccess))
+    }
 
     sign(message: Uint8Array): Uint8Array {
         return this.encryption.sign(message)
@@ -586,12 +604,12 @@ export class AccessRequestImpl implements AccessRequest {
     openResolver(): any {
         return this._openConfigured(this.id, this.login);
     }
-    
+
     _openConfigured(id: ID, login: string): any {
         throw new Error(
             {
                 kind: SDKKind.SDKInternalError,
-                payload: {reason: "AccessRequest.openResolver() function has not been configured"}
+                payload: { reason: "AccessRequest.openResolver() function has not been configured" }
             })
     }
 }

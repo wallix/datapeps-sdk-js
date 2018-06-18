@@ -22226,6 +22226,578 @@ $root.types = (function() {
         return DelegatedPostKeysRequest;
     })();
 
+    types.DelegatedAccess = (function() {
+
+        /**
+         * Properties of a DelegatedAccess.
+         * @memberof types
+         * @interface IDelegatedAccess
+         * @property {number|Long|null} [id] DelegatedAccess id
+         * @property {Uint8Array|null} [publicKey] DelegatedAccess publicKey
+         * @property {Uint8Array|null} [sign] DelegatedAccess sign
+         * @property {types.IIdentityKeyID|null} [requester] DelegatedAccess requester
+         * @property {types.IIdentityKeyID|null} [target] DelegatedAccess target
+         * @property {number|Long|null} [created] DelegatedAccess created
+         * @property {boolean|null} [resolved] DelegatedAccess resolved
+         */
+
+        /**
+         * Constructs a new DelegatedAccess.
+         * @memberof types
+         * @classdesc Represents a DelegatedAccess.
+         * @implements IDelegatedAccess
+         * @constructor
+         * @param {types.IDelegatedAccess=} [properties] Properties to set
+         */
+        function DelegatedAccess(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * DelegatedAccess id.
+         * @member {number|Long} id
+         * @memberof types.DelegatedAccess
+         * @instance
+         */
+        DelegatedAccess.prototype.id = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
+
+        /**
+         * DelegatedAccess publicKey.
+         * @member {Uint8Array} publicKey
+         * @memberof types.DelegatedAccess
+         * @instance
+         */
+        DelegatedAccess.prototype.publicKey = $util.newBuffer([]);
+
+        /**
+         * DelegatedAccess sign.
+         * @member {Uint8Array} sign
+         * @memberof types.DelegatedAccess
+         * @instance
+         */
+        DelegatedAccess.prototype.sign = $util.newBuffer([]);
+
+        /**
+         * DelegatedAccess requester.
+         * @member {types.IIdentityKeyID|null|undefined} requester
+         * @memberof types.DelegatedAccess
+         * @instance
+         */
+        DelegatedAccess.prototype.requester = null;
+
+        /**
+         * DelegatedAccess target.
+         * @member {types.IIdentityKeyID|null|undefined} target
+         * @memberof types.DelegatedAccess
+         * @instance
+         */
+        DelegatedAccess.prototype.target = null;
+
+        /**
+         * DelegatedAccess created.
+         * @member {number|Long} created
+         * @memberof types.DelegatedAccess
+         * @instance
+         */
+        DelegatedAccess.prototype.created = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * DelegatedAccess resolved.
+         * @member {boolean} resolved
+         * @memberof types.DelegatedAccess
+         * @instance
+         */
+        DelegatedAccess.prototype.resolved = false;
+
+        /**
+         * Creates a new DelegatedAccess instance using the specified properties.
+         * @function create
+         * @memberof types.DelegatedAccess
+         * @static
+         * @param {types.IDelegatedAccess=} [properties] Properties to set
+         * @returns {types.DelegatedAccess} DelegatedAccess instance
+         */
+        DelegatedAccess.create = function create(properties) {
+            return new DelegatedAccess(properties);
+        };
+
+        /**
+         * Encodes the specified DelegatedAccess message. Does not implicitly {@link types.DelegatedAccess.verify|verify} messages.
+         * @function encode
+         * @memberof types.DelegatedAccess
+         * @static
+         * @param {types.IDelegatedAccess} message DelegatedAccess message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        DelegatedAccess.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.id != null && message.hasOwnProperty("id"))
+                writer.uint32(/* id 1, wireType 0 =*/8).uint64(message.id);
+            if (message.publicKey != null && message.hasOwnProperty("publicKey"))
+                writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.publicKey);
+            if (message.sign != null && message.hasOwnProperty("sign"))
+                writer.uint32(/* id 3, wireType 2 =*/26).bytes(message.sign);
+            if (message.requester != null && message.hasOwnProperty("requester"))
+                $root.types.IdentityKeyID.encode(message.requester, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+            if (message.target != null && message.hasOwnProperty("target"))
+                $root.types.IdentityKeyID.encode(message.target, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
+            if (message.created != null && message.hasOwnProperty("created"))
+                writer.uint32(/* id 6, wireType 0 =*/48).int64(message.created);
+            if (message.resolved != null && message.hasOwnProperty("resolved"))
+                writer.uint32(/* id 7, wireType 0 =*/56).bool(message.resolved);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified DelegatedAccess message, length delimited. Does not implicitly {@link types.DelegatedAccess.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof types.DelegatedAccess
+         * @static
+         * @param {types.IDelegatedAccess} message DelegatedAccess message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        DelegatedAccess.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a DelegatedAccess message from the specified reader or buffer.
+         * @function decode
+         * @memberof types.DelegatedAccess
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {types.DelegatedAccess} DelegatedAccess
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        DelegatedAccess.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.types.DelegatedAccess();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.id = reader.uint64();
+                    break;
+                case 2:
+                    message.publicKey = reader.bytes();
+                    break;
+                case 3:
+                    message.sign = reader.bytes();
+                    break;
+                case 4:
+                    message.requester = $root.types.IdentityKeyID.decode(reader, reader.uint32());
+                    break;
+                case 5:
+                    message.target = $root.types.IdentityKeyID.decode(reader, reader.uint32());
+                    break;
+                case 6:
+                    message.created = reader.int64();
+                    break;
+                case 7:
+                    message.resolved = reader.bool();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a DelegatedAccess message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof types.DelegatedAccess
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {types.DelegatedAccess} DelegatedAccess
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        DelegatedAccess.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a DelegatedAccess message.
+         * @function verify
+         * @memberof types.DelegatedAccess
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        DelegatedAccess.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.id != null && message.hasOwnProperty("id"))
+                if (!$util.isInteger(message.id) && !(message.id && $util.isInteger(message.id.low) && $util.isInteger(message.id.high)))
+                    return "id: integer|Long expected";
+            if (message.publicKey != null && message.hasOwnProperty("publicKey"))
+                if (!(message.publicKey && typeof message.publicKey.length === "number" || $util.isString(message.publicKey)))
+                    return "publicKey: buffer expected";
+            if (message.sign != null && message.hasOwnProperty("sign"))
+                if (!(message.sign && typeof message.sign.length === "number" || $util.isString(message.sign)))
+                    return "sign: buffer expected";
+            if (message.requester != null && message.hasOwnProperty("requester")) {
+                var error = $root.types.IdentityKeyID.verify(message.requester);
+                if (error)
+                    return "requester." + error;
+            }
+            if (message.target != null && message.hasOwnProperty("target")) {
+                var error = $root.types.IdentityKeyID.verify(message.target);
+                if (error)
+                    return "target." + error;
+            }
+            if (message.created != null && message.hasOwnProperty("created"))
+                if (!$util.isInteger(message.created) && !(message.created && $util.isInteger(message.created.low) && $util.isInteger(message.created.high)))
+                    return "created: integer|Long expected";
+            if (message.resolved != null && message.hasOwnProperty("resolved"))
+                if (typeof message.resolved !== "boolean")
+                    return "resolved: boolean expected";
+            return null;
+        };
+
+        /**
+         * Creates a DelegatedAccess message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof types.DelegatedAccess
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {types.DelegatedAccess} DelegatedAccess
+         */
+        DelegatedAccess.fromObject = function fromObject(object) {
+            if (object instanceof $root.types.DelegatedAccess)
+                return object;
+            var message = new $root.types.DelegatedAccess();
+            if (object.id != null)
+                if ($util.Long)
+                    (message.id = $util.Long.fromValue(object.id)).unsigned = true;
+                else if (typeof object.id === "string")
+                    message.id = parseInt(object.id, 10);
+                else if (typeof object.id === "number")
+                    message.id = object.id;
+                else if (typeof object.id === "object")
+                    message.id = new $util.LongBits(object.id.low >>> 0, object.id.high >>> 0).toNumber(true);
+            if (object.publicKey != null)
+                if (typeof object.publicKey === "string")
+                    $util.base64.decode(object.publicKey, message.publicKey = $util.newBuffer($util.base64.length(object.publicKey)), 0);
+                else if (object.publicKey.length)
+                    message.publicKey = object.publicKey;
+            if (object.sign != null)
+                if (typeof object.sign === "string")
+                    $util.base64.decode(object.sign, message.sign = $util.newBuffer($util.base64.length(object.sign)), 0);
+                else if (object.sign.length)
+                    message.sign = object.sign;
+            if (object.requester != null) {
+                if (typeof object.requester !== "object")
+                    throw TypeError(".types.DelegatedAccess.requester: object expected");
+                message.requester = $root.types.IdentityKeyID.fromObject(object.requester);
+            }
+            if (object.target != null) {
+                if (typeof object.target !== "object")
+                    throw TypeError(".types.DelegatedAccess.target: object expected");
+                message.target = $root.types.IdentityKeyID.fromObject(object.target);
+            }
+            if (object.created != null)
+                if ($util.Long)
+                    (message.created = $util.Long.fromValue(object.created)).unsigned = false;
+                else if (typeof object.created === "string")
+                    message.created = parseInt(object.created, 10);
+                else if (typeof object.created === "number")
+                    message.created = object.created;
+                else if (typeof object.created === "object")
+                    message.created = new $util.LongBits(object.created.low >>> 0, object.created.high >>> 0).toNumber();
+            if (object.resolved != null)
+                message.resolved = Boolean(object.resolved);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a DelegatedAccess message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof types.DelegatedAccess
+         * @static
+         * @param {types.DelegatedAccess} message DelegatedAccess
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        DelegatedAccess.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, true);
+                    object.id = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.id = options.longs === String ? "0" : 0;
+                object.publicKey = options.bytes === String ? "" : [];
+                object.sign = options.bytes === String ? "" : [];
+                object.requester = null;
+                object.target = null;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.created = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.created = options.longs === String ? "0" : 0;
+                object.resolved = false;
+            }
+            if (message.id != null && message.hasOwnProperty("id"))
+                if (typeof message.id === "number")
+                    object.id = options.longs === String ? String(message.id) : message.id;
+                else
+                    object.id = options.longs === String ? $util.Long.prototype.toString.call(message.id) : options.longs === Number ? new $util.LongBits(message.id.low >>> 0, message.id.high >>> 0).toNumber(true) : message.id;
+            if (message.publicKey != null && message.hasOwnProperty("publicKey"))
+                object.publicKey = options.bytes === String ? $util.base64.encode(message.publicKey, 0, message.publicKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.publicKey) : message.publicKey;
+            if (message.sign != null && message.hasOwnProperty("sign"))
+                object.sign = options.bytes === String ? $util.base64.encode(message.sign, 0, message.sign.length) : options.bytes === Array ? Array.prototype.slice.call(message.sign) : message.sign;
+            if (message.requester != null && message.hasOwnProperty("requester"))
+                object.requester = $root.types.IdentityKeyID.toObject(message.requester, options);
+            if (message.target != null && message.hasOwnProperty("target"))
+                object.target = $root.types.IdentityKeyID.toObject(message.target, options);
+            if (message.created != null && message.hasOwnProperty("created"))
+                if (typeof message.created === "number")
+                    object.created = options.longs === String ? String(message.created) : message.created;
+                else
+                    object.created = options.longs === String ? $util.Long.prototype.toString.call(message.created) : options.longs === Number ? new $util.LongBits(message.created.low >>> 0, message.created.high >>> 0).toNumber() : message.created;
+            if (message.resolved != null && message.hasOwnProperty("resolved"))
+                object.resolved = message.resolved;
+            return object;
+        };
+
+        /**
+         * Converts this DelegatedAccess to JSON.
+         * @function toJSON
+         * @memberof types.DelegatedAccess
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        DelegatedAccess.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return DelegatedAccess;
+    })();
+
+    types.DelegatedAccessListResponse = (function() {
+
+        /**
+         * Properties of a DelegatedAccessListResponse.
+         * @memberof types
+         * @interface IDelegatedAccessListResponse
+         * @property {Array.<types.IDelegatedAccess>|null} [accesses] DelegatedAccessListResponse accesses
+         */
+
+        /**
+         * Constructs a new DelegatedAccessListResponse.
+         * @memberof types
+         * @classdesc Represents a DelegatedAccessListResponse.
+         * @implements IDelegatedAccessListResponse
+         * @constructor
+         * @param {types.IDelegatedAccessListResponse=} [properties] Properties to set
+         */
+        function DelegatedAccessListResponse(properties) {
+            this.accesses = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * DelegatedAccessListResponse accesses.
+         * @member {Array.<types.IDelegatedAccess>} accesses
+         * @memberof types.DelegatedAccessListResponse
+         * @instance
+         */
+        DelegatedAccessListResponse.prototype.accesses = $util.emptyArray;
+
+        /**
+         * Creates a new DelegatedAccessListResponse instance using the specified properties.
+         * @function create
+         * @memberof types.DelegatedAccessListResponse
+         * @static
+         * @param {types.IDelegatedAccessListResponse=} [properties] Properties to set
+         * @returns {types.DelegatedAccessListResponse} DelegatedAccessListResponse instance
+         */
+        DelegatedAccessListResponse.create = function create(properties) {
+            return new DelegatedAccessListResponse(properties);
+        };
+
+        /**
+         * Encodes the specified DelegatedAccessListResponse message. Does not implicitly {@link types.DelegatedAccessListResponse.verify|verify} messages.
+         * @function encode
+         * @memberof types.DelegatedAccessListResponse
+         * @static
+         * @param {types.IDelegatedAccessListResponse} message DelegatedAccessListResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        DelegatedAccessListResponse.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.accesses != null && message.accesses.length)
+                for (var i = 0; i < message.accesses.length; ++i)
+                    $root.types.DelegatedAccess.encode(message.accesses[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified DelegatedAccessListResponse message, length delimited. Does not implicitly {@link types.DelegatedAccessListResponse.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof types.DelegatedAccessListResponse
+         * @static
+         * @param {types.IDelegatedAccessListResponse} message DelegatedAccessListResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        DelegatedAccessListResponse.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a DelegatedAccessListResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof types.DelegatedAccessListResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {types.DelegatedAccessListResponse} DelegatedAccessListResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        DelegatedAccessListResponse.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.types.DelegatedAccessListResponse();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    if (!(message.accesses && message.accesses.length))
+                        message.accesses = [];
+                    message.accesses.push($root.types.DelegatedAccess.decode(reader, reader.uint32()));
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a DelegatedAccessListResponse message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof types.DelegatedAccessListResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {types.DelegatedAccessListResponse} DelegatedAccessListResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        DelegatedAccessListResponse.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a DelegatedAccessListResponse message.
+         * @function verify
+         * @memberof types.DelegatedAccessListResponse
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        DelegatedAccessListResponse.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.accesses != null && message.hasOwnProperty("accesses")) {
+                if (!Array.isArray(message.accesses))
+                    return "accesses: array expected";
+                for (var i = 0; i < message.accesses.length; ++i) {
+                    var error = $root.types.DelegatedAccess.verify(message.accesses[i]);
+                    if (error)
+                        return "accesses." + error;
+                }
+            }
+            return null;
+        };
+
+        /**
+         * Creates a DelegatedAccessListResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof types.DelegatedAccessListResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {types.DelegatedAccessListResponse} DelegatedAccessListResponse
+         */
+        DelegatedAccessListResponse.fromObject = function fromObject(object) {
+            if (object instanceof $root.types.DelegatedAccessListResponse)
+                return object;
+            var message = new $root.types.DelegatedAccessListResponse();
+            if (object.accesses) {
+                if (!Array.isArray(object.accesses))
+                    throw TypeError(".types.DelegatedAccessListResponse.accesses: array expected");
+                message.accesses = [];
+                for (var i = 0; i < object.accesses.length; ++i) {
+                    if (typeof object.accesses[i] !== "object")
+                        throw TypeError(".types.DelegatedAccessListResponse.accesses: object expected");
+                    message.accesses[i] = $root.types.DelegatedAccess.fromObject(object.accesses[i]);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a DelegatedAccessListResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof types.DelegatedAccessListResponse
+         * @static
+         * @param {types.DelegatedAccessListResponse} message DelegatedAccessListResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        DelegatedAccessListResponse.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.arrays || options.defaults)
+                object.accesses = [];
+            if (message.accesses && message.accesses.length) {
+                object.accesses = [];
+                for (var j = 0; j < message.accesses.length; ++j)
+                    object.accesses[j] = $root.types.DelegatedAccess.toObject(message.accesses[j], options);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this DelegatedAccessListResponse to JSON.
+         * @function toJSON
+         * @memberof types.DelegatedAccessListResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        DelegatedAccessListResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return DelegatedAccessListResponse;
+    })();
+
     /**
      * RegisterTokenStatus enum.
      * @name types.RegisterTokenStatus

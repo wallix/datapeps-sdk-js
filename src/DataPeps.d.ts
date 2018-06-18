@@ -105,6 +105,7 @@ export declare function sendRegisterLink(email: string): Promise<void>;
  * Type of identitfier of DataPeps objects.
  */
 export declare type ID = Long | number;
+export declare function compareID(a: ID, b: ID): number;
 /**
  * Specify how the sdk request should be authenticated by the DataPeps service.
  * - "RAND" means that the service generates a fresh salt for each request `n` which is used to sign request `n+1`. It is the most secure kind of salt, but implies that all requests MUST be done sequentially.
@@ -181,6 +182,36 @@ export interface AccessRequestResolver {
      * i.e. the corresponding AccessRequest could use a session authenticated with the identity of the given login.
      */
     resolve(login: string): Promise<void>;
+}
+export interface DelegatedAccess {
+    /**
+     * The identifier of the delegated access.
+     */
+    id: ID;
+    /**
+     * The public key used by the resolver to encrypt the keys.
+     */
+    publicKey: Uint8Array;
+    /**
+     * The signature of the requester.
+     */
+    sign: Uint8Array;
+    /**
+     * The identity that request the delegated access.
+     */
+    requester: IdentityPublicKeyID;
+    /**
+     * The identity target of the delegated access.
+     */
+    target: IdentityPublicKeyID;
+    /**
+     * The date of creation of the delegated access.
+     */
+    created: Date;
+    /**
+     * Indicates if the delegated access request has been resolved.
+     */
+    resolved: boolean;
 }
 /**
  * A Session is used to perform authenticated requests to the DataPeps service and allows access to the authenticated API of the DataPeps service.
@@ -270,6 +301,14 @@ export interface Session {
      * Get the secret token of an identity.
      */
     getSecretToken(login: string): Promise<string>;
+    /**
+     * List the requests of DelegatedAccess that the given identity has requested.
+     */
+    listDelegatedAccess(login: string, options?: {
+        limit?: number;
+        maxID?: ID;
+        sinceID?: ID;
+    }): Promise<DelegatedAccess[]>;
     /**
      * Do an authenticated request.
      * @param request

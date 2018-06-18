@@ -232,6 +232,11 @@ export async function sendRegisterLink(email: string): Promise<void> {
  */
 export type ID = Long | number
 
+export function compareID(a: ID, b: ID): number {
+    if (Long.isLong(a)) return (a as Long).compare(b)
+    return new Long(a as number).compare(b);
+}
+
 /////////////////////////////////////////////////
 // Session
 /////////////////////////////////////////////////
@@ -350,6 +355,42 @@ export interface AccessRequestResolver {
     resolve(login: string): Promise<void>
 }
 
+export interface DelegatedAccess {
+    /**
+     * The identifier of the delegated access.
+     */
+    id: ID
+
+    /**
+     * The public key used by the resolver to encrypt the keys.
+     */
+    publicKey: Uint8Array
+
+    /**
+     * The signature of the requester.
+     */
+    sign: Uint8Array
+
+    /**
+     * The identity that request the delegated access.
+     */
+    requester: IdentityPublicKeyID
+
+    /**
+     * The identity target of the delegated access.
+     */
+    target: IdentityPublicKeyID
+
+    /**
+     * The date of creation of the delegated access.
+     */
+    created: Date
+
+    /**
+     * Indicates if the delegated access request has been resolved.
+     */
+    resolved: boolean
+}
 
 /**
  * A Session is used to perform authenticated requests to the DataPeps service and allows access to the authenticated API of the DataPeps service.
@@ -456,6 +497,15 @@ export interface Session {
      * Get the secret token of an identity.
      */
     getSecretToken(login: string): Promise<string>
+
+    /**
+     * List the requests of DelegatedAccess that the given identity has requested.
+     */
+    listDelegatedAccess(login: string, options?: {
+        limit?: number,
+        maxID?: ID,
+        sinceID?: ID,
+    }): Promise<DelegatedAccess[]>
 
     /**
      * Do an authenticated request.

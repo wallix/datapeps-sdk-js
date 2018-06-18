@@ -296,6 +296,12 @@ function sendRegisterLink(email) {
     });
 }
 exports.sendRegisterLink = sendRegisterLink;
+function compareID(a, b) {
+    if (Long.isLong(a))
+        return a.compare(b);
+    return new Long(a).compare(b);
+}
+exports.compareID = compareID;
 /**
  * Create a new session.
  * @param login The login of the identity to login with.

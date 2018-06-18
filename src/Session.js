@@ -372,6 +372,25 @@ var SessionImpl = /** @class */ (function () {
             });
         });
     };
+    SessionImpl.prototype.listDelegatedAccess = function (login, options) {
+        return __awaiter(this, void 0, void 0, function () {
+            var accesses;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.doProtoRequest({
+                            method: "GET", code: 200,
+                            path: "/api/v4/delegatedAccesses",
+                            response: proto_1.types.DelegatedAccessListResponse.decode,
+                            assume: { login: login, kind: DataPeps_1.IdentityAccessKind.READ },
+                            params: options,
+                        })];
+                    case 1:
+                        accesses = (_a.sent()).accesses;
+                        return [2 /*return*/, accesses.map(function (access) { return (__assign({}, access, { resolved: access.resolved, created: new Date(access.created * 1000) })); })];
+                }
+            });
+        });
+    };
     SessionImpl.prototype.sign = function (message) {
         return this.encryption.sign(message);
     };

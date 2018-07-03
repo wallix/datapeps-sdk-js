@@ -207,6 +207,7 @@ $root.errors = (function() {
                 case 22:
                 case 23:
                 case 24:
+                case 25:
                     break;
                 }
             if (message.payload != null && message.hasOwnProperty("payload")) {
@@ -328,6 +329,10 @@ $root.errors = (function() {
             case 24:
                 message.kind = 24;
                 break;
+            case "InvalidToken":
+            case 25:
+                message.kind = 25;
+                break;
             }
             if (object.payload != null) {
                 if (typeof object.payload !== "object")
@@ -406,6 +411,7 @@ $root.errors = (function() {
      * @property {number} RegisterTokenNotFound=22 RegisterTokenNotFound value
      * @property {number} ChannelNotFound=23 ChannelNotFound value
      * @property {number} DelegatedAccessNotFound=24 DelegatedAccessNotFound value
+     * @property {number} InvalidToken=25 InvalidToken value
      */
     errors.PepsErrorKind = (function() {
         var valuesById = {}, values = Object.create(valuesById);
@@ -433,6 +439,7 @@ $root.errors = (function() {
         values[valuesById[22] = "RegisterTokenNotFound"] = 22;
         values[valuesById[23] = "ChannelNotFound"] = 23;
         values[valuesById[24] = "DelegatedAccessNotFound"] = 24;
+        values[valuesById[25] = "InvalidToken"] = 25;
         return values;
     })();
 
@@ -4171,6 +4178,196 @@ $root.errors = (function() {
         return PayloadDelegatedAccessNotFound;
     })();
 
+    errors.PayloadInvalidToken = (function() {
+
+        /**
+         * Properties of a PayloadInvalidToken.
+         * @memberof errors
+         * @interface IPayloadInvalidToken
+         * @property {Uint8Array|null} [token] PayloadInvalidToken token
+         */
+
+        /**
+         * Constructs a new PayloadInvalidToken.
+         * @memberof errors
+         * @classdesc Represents a PayloadInvalidToken.
+         * @implements IPayloadInvalidToken
+         * @constructor
+         * @param {errors.IPayloadInvalidToken=} [properties] Properties to set
+         */
+        function PayloadInvalidToken(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * PayloadInvalidToken token.
+         * @member {Uint8Array} token
+         * @memberof errors.PayloadInvalidToken
+         * @instance
+         */
+        PayloadInvalidToken.prototype.token = $util.newBuffer([]);
+
+        /**
+         * Creates a new PayloadInvalidToken instance using the specified properties.
+         * @function create
+         * @memberof errors.PayloadInvalidToken
+         * @static
+         * @param {errors.IPayloadInvalidToken=} [properties] Properties to set
+         * @returns {errors.PayloadInvalidToken} PayloadInvalidToken instance
+         */
+        PayloadInvalidToken.create = function create(properties) {
+            return new PayloadInvalidToken(properties);
+        };
+
+        /**
+         * Encodes the specified PayloadInvalidToken message. Does not implicitly {@link errors.PayloadInvalidToken.verify|verify} messages.
+         * @function encode
+         * @memberof errors.PayloadInvalidToken
+         * @static
+         * @param {errors.IPayloadInvalidToken} message PayloadInvalidToken message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        PayloadInvalidToken.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.token != null && message.hasOwnProperty("token"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.token);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified PayloadInvalidToken message, length delimited. Does not implicitly {@link errors.PayloadInvalidToken.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof errors.PayloadInvalidToken
+         * @static
+         * @param {errors.IPayloadInvalidToken} message PayloadInvalidToken message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        PayloadInvalidToken.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a PayloadInvalidToken message from the specified reader or buffer.
+         * @function decode
+         * @memberof errors.PayloadInvalidToken
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {errors.PayloadInvalidToken} PayloadInvalidToken
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        PayloadInvalidToken.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.errors.PayloadInvalidToken();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.token = reader.bytes();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a PayloadInvalidToken message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof errors.PayloadInvalidToken
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {errors.PayloadInvalidToken} PayloadInvalidToken
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        PayloadInvalidToken.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a PayloadInvalidToken message.
+         * @function verify
+         * @memberof errors.PayloadInvalidToken
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        PayloadInvalidToken.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.token != null && message.hasOwnProperty("token"))
+                if (!(message.token && typeof message.token.length === "number" || $util.isString(message.token)))
+                    return "token: buffer expected";
+            return null;
+        };
+
+        /**
+         * Creates a PayloadInvalidToken message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof errors.PayloadInvalidToken
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {errors.PayloadInvalidToken} PayloadInvalidToken
+         */
+        PayloadInvalidToken.fromObject = function fromObject(object) {
+            if (object instanceof $root.errors.PayloadInvalidToken)
+                return object;
+            var message = new $root.errors.PayloadInvalidToken();
+            if (object.token != null)
+                if (typeof object.token === "string")
+                    $util.base64.decode(object.token, message.token = $util.newBuffer($util.base64.length(object.token)), 0);
+                else if (object.token.length)
+                    message.token = object.token;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a PayloadInvalidToken message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof errors.PayloadInvalidToken
+         * @static
+         * @param {errors.PayloadInvalidToken} message PayloadInvalidToken
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        PayloadInvalidToken.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults)
+                object.token = options.bytes === String ? "" : [];
+            if (message.token != null && message.hasOwnProperty("token"))
+                object.token = options.bytes === String ? $util.base64.encode(message.token, 0, message.token.length) : options.bytes === Array ? Array.prototype.slice.call(message.token) : message.token;
+            return object;
+        };
+
+        /**
+         * Converts this PayloadInvalidToken to JSON.
+         * @function toJSON
+         * @memberof errors.PayloadInvalidToken
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        PayloadInvalidToken.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return PayloadInvalidToken;
+    })();
+
     return errors;
 })();
 
@@ -5727,6 +5924,235 @@ $root.types = (function() {
         return IdentityPublicKey;
     })();
 
+    types.IdentityPublicKeyWithMetadata = (function() {
+
+        /**
+         * Properties of an IdentityPublicKeyWithMetadata.
+         * @memberof types
+         * @interface IIdentityPublicKeyWithMetadata
+         * @property {types.IIdentityPublicKey|null} [publicKey] IdentityPublicKeyWithMetadata publicKey
+         * @property {number|Long|null} [created] IdentityPublicKeyWithMetadata created
+         */
+
+        /**
+         * Constructs a new IdentityPublicKeyWithMetadata.
+         * @memberof types
+         * @classdesc Represents an IdentityPublicKeyWithMetadata.
+         * @implements IIdentityPublicKeyWithMetadata
+         * @constructor
+         * @param {types.IIdentityPublicKeyWithMetadata=} [properties] Properties to set
+         */
+        function IdentityPublicKeyWithMetadata(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * IdentityPublicKeyWithMetadata publicKey.
+         * @member {types.IIdentityPublicKey|null|undefined} publicKey
+         * @memberof types.IdentityPublicKeyWithMetadata
+         * @instance
+         */
+        IdentityPublicKeyWithMetadata.prototype.publicKey = null;
+
+        /**
+         * IdentityPublicKeyWithMetadata created.
+         * @member {number|Long} created
+         * @memberof types.IdentityPublicKeyWithMetadata
+         * @instance
+         */
+        IdentityPublicKeyWithMetadata.prototype.created = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * Creates a new IdentityPublicKeyWithMetadata instance using the specified properties.
+         * @function create
+         * @memberof types.IdentityPublicKeyWithMetadata
+         * @static
+         * @param {types.IIdentityPublicKeyWithMetadata=} [properties] Properties to set
+         * @returns {types.IdentityPublicKeyWithMetadata} IdentityPublicKeyWithMetadata instance
+         */
+        IdentityPublicKeyWithMetadata.create = function create(properties) {
+            return new IdentityPublicKeyWithMetadata(properties);
+        };
+
+        /**
+         * Encodes the specified IdentityPublicKeyWithMetadata message. Does not implicitly {@link types.IdentityPublicKeyWithMetadata.verify|verify} messages.
+         * @function encode
+         * @memberof types.IdentityPublicKeyWithMetadata
+         * @static
+         * @param {types.IIdentityPublicKeyWithMetadata} message IdentityPublicKeyWithMetadata message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        IdentityPublicKeyWithMetadata.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.publicKey != null && message.hasOwnProperty("publicKey"))
+                $root.types.IdentityPublicKey.encode(message.publicKey, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            if (message.created != null && message.hasOwnProperty("created"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int64(message.created);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified IdentityPublicKeyWithMetadata message, length delimited. Does not implicitly {@link types.IdentityPublicKeyWithMetadata.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof types.IdentityPublicKeyWithMetadata
+         * @static
+         * @param {types.IIdentityPublicKeyWithMetadata} message IdentityPublicKeyWithMetadata message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        IdentityPublicKeyWithMetadata.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an IdentityPublicKeyWithMetadata message from the specified reader or buffer.
+         * @function decode
+         * @memberof types.IdentityPublicKeyWithMetadata
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {types.IdentityPublicKeyWithMetadata} IdentityPublicKeyWithMetadata
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        IdentityPublicKeyWithMetadata.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.types.IdentityPublicKeyWithMetadata();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.publicKey = $root.types.IdentityPublicKey.decode(reader, reader.uint32());
+                    break;
+                case 2:
+                    message.created = reader.int64();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an IdentityPublicKeyWithMetadata message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof types.IdentityPublicKeyWithMetadata
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {types.IdentityPublicKeyWithMetadata} IdentityPublicKeyWithMetadata
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        IdentityPublicKeyWithMetadata.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an IdentityPublicKeyWithMetadata message.
+         * @function verify
+         * @memberof types.IdentityPublicKeyWithMetadata
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        IdentityPublicKeyWithMetadata.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.publicKey != null && message.hasOwnProperty("publicKey")) {
+                var error = $root.types.IdentityPublicKey.verify(message.publicKey);
+                if (error)
+                    return "publicKey." + error;
+            }
+            if (message.created != null && message.hasOwnProperty("created"))
+                if (!$util.isInteger(message.created) && !(message.created && $util.isInteger(message.created.low) && $util.isInteger(message.created.high)))
+                    return "created: integer|Long expected";
+            return null;
+        };
+
+        /**
+         * Creates an IdentityPublicKeyWithMetadata message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof types.IdentityPublicKeyWithMetadata
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {types.IdentityPublicKeyWithMetadata} IdentityPublicKeyWithMetadata
+         */
+        IdentityPublicKeyWithMetadata.fromObject = function fromObject(object) {
+            if (object instanceof $root.types.IdentityPublicKeyWithMetadata)
+                return object;
+            var message = new $root.types.IdentityPublicKeyWithMetadata();
+            if (object.publicKey != null) {
+                if (typeof object.publicKey !== "object")
+                    throw TypeError(".types.IdentityPublicKeyWithMetadata.publicKey: object expected");
+                message.publicKey = $root.types.IdentityPublicKey.fromObject(object.publicKey);
+            }
+            if (object.created != null)
+                if ($util.Long)
+                    (message.created = $util.Long.fromValue(object.created)).unsigned = false;
+                else if (typeof object.created === "string")
+                    message.created = parseInt(object.created, 10);
+                else if (typeof object.created === "number")
+                    message.created = object.created;
+                else if (typeof object.created === "object")
+                    message.created = new $util.LongBits(object.created.low >>> 0, object.created.high >>> 0).toNumber();
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an IdentityPublicKeyWithMetadata message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof types.IdentityPublicKeyWithMetadata
+         * @static
+         * @param {types.IdentityPublicKeyWithMetadata} message IdentityPublicKeyWithMetadata
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        IdentityPublicKeyWithMetadata.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.publicKey = null;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.created = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.created = options.longs === String ? "0" : 0;
+            }
+            if (message.publicKey != null && message.hasOwnProperty("publicKey"))
+                object.publicKey = $root.types.IdentityPublicKey.toObject(message.publicKey, options);
+            if (message.created != null && message.hasOwnProperty("created"))
+                if (typeof message.created === "number")
+                    object.created = options.longs === String ? String(message.created) : message.created;
+                else
+                    object.created = options.longs === String ? $util.Long.prototype.toString.call(message.created) : options.longs === Number ? new $util.LongBits(message.created.low >>> 0, message.created.high >>> 0).toNumber() : message.created;
+            return object;
+        };
+
+        /**
+         * Converts this IdentityPublicKeyWithMetadata to JSON.
+         * @function toJSON
+         * @memberof types.IdentityPublicKeyWithMetadata
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        IdentityPublicKeyWithMetadata.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return IdentityPublicKeyWithMetadata;
+    })();
+
     types.IdentityPublicChain = (function() {
 
         /**
@@ -5988,6 +6414,7 @@ $root.types = (function() {
              * @property {Uint8Array|null} [box] Elt box
              * @property {Uint8Array|null} [chain] Elt chain
              * @property {types.IIdentityKeyID|null} [mandate] Elt mandate
+             * @property {number|null} [version] Elt version
              */
 
             /**
@@ -6038,6 +6465,14 @@ $root.types = (function() {
             Elt.prototype.mandate = null;
 
             /**
+             * Elt version.
+             * @member {number} version
+             * @memberof types.IdentityPublicChain.Elt
+             * @instance
+             */
+            Elt.prototype.version = 0;
+
+            /**
              * Creates a new Elt instance using the specified properties.
              * @function create
              * @memberof types.IdentityPublicChain.Elt
@@ -6069,6 +6504,8 @@ $root.types = (function() {
                     writer.uint32(/* id 3, wireType 2 =*/26).bytes(message.chain);
                 if (message.mandate != null && message.hasOwnProperty("mandate"))
                     $root.types.IdentityKeyID.encode(message.mandate, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+                if (message.version != null && message.hasOwnProperty("version"))
+                    writer.uint32(/* id 5, wireType 0 =*/40).uint32(message.version);
                 return writer;
             };
 
@@ -6114,6 +6551,9 @@ $root.types = (function() {
                         break;
                     case 4:
                         message.mandate = $root.types.IdentityKeyID.decode(reader, reader.uint32());
+                        break;
+                    case 5:
+                        message.version = reader.uint32();
                         break;
                     default:
                         reader.skipType(tag & 7);
@@ -6164,6 +6604,9 @@ $root.types = (function() {
                     if (error)
                         return "mandate." + error;
                 }
+                if (message.version != null && message.hasOwnProperty("version"))
+                    if (!$util.isInteger(message.version))
+                        return "version: integer expected";
                 return null;
             };
 
@@ -6199,6 +6642,8 @@ $root.types = (function() {
                         throw TypeError(".types.IdentityPublicChain.Elt.mandate: object expected");
                     message.mandate = $root.types.IdentityKeyID.fromObject(object.mandate);
                 }
+                if (object.version != null)
+                    message.version = object.version >>> 0;
                 return message;
             };
 
@@ -6220,6 +6665,7 @@ $root.types = (function() {
                     object.box = options.bytes === String ? "" : [];
                     object.chain = options.bytes === String ? "" : [];
                     object.mandate = null;
+                    object.version = 0;
                 }
                 if (message.sign != null && message.hasOwnProperty("sign"))
                     object.sign = options.bytes === String ? $util.base64.encode(message.sign, 0, message.sign.length) : options.bytes === Array ? Array.prototype.slice.call(message.sign) : message.sign;
@@ -6229,6 +6675,8 @@ $root.types = (function() {
                     object.chain = options.bytes === String ? $util.base64.encode(message.chain, 0, message.chain.length) : options.bytes === Array ? Array.prototype.slice.call(message.chain) : message.chain;
                 if (message.mandate != null && message.hasOwnProperty("mandate"))
                     object.mandate = $root.types.IdentityKeyID.toObject(message.mandate, options);
+                if (message.version != null && message.hasOwnProperty("version"))
+                    object.version = message.version;
                 return object;
             };
 
@@ -14111,6 +14559,704 @@ $root.types = (function() {
         return IdentityToggleActiveStatusRequest;
     })();
 
+    types.IdentityGetLockedVersionsResponse = (function() {
+
+        /**
+         * Properties of an IdentityGetLockedVersionsResponse.
+         * @memberof types
+         * @interface IIdentityGetLockedVersionsResponse
+         * @property {Array.<types.IdentityGetLockedVersionsResponse.ILockedVersion>|null} [lockedVersions] IdentityGetLockedVersionsResponse lockedVersions
+         */
+
+        /**
+         * Constructs a new IdentityGetLockedVersionsResponse.
+         * @memberof types
+         * @classdesc Represents an IdentityGetLockedVersionsResponse.
+         * @implements IIdentityGetLockedVersionsResponse
+         * @constructor
+         * @param {types.IIdentityGetLockedVersionsResponse=} [properties] Properties to set
+         */
+        function IdentityGetLockedVersionsResponse(properties) {
+            this.lockedVersions = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * IdentityGetLockedVersionsResponse lockedVersions.
+         * @member {Array.<types.IdentityGetLockedVersionsResponse.ILockedVersion>} lockedVersions
+         * @memberof types.IdentityGetLockedVersionsResponse
+         * @instance
+         */
+        IdentityGetLockedVersionsResponse.prototype.lockedVersions = $util.emptyArray;
+
+        /**
+         * Creates a new IdentityGetLockedVersionsResponse instance using the specified properties.
+         * @function create
+         * @memberof types.IdentityGetLockedVersionsResponse
+         * @static
+         * @param {types.IIdentityGetLockedVersionsResponse=} [properties] Properties to set
+         * @returns {types.IdentityGetLockedVersionsResponse} IdentityGetLockedVersionsResponse instance
+         */
+        IdentityGetLockedVersionsResponse.create = function create(properties) {
+            return new IdentityGetLockedVersionsResponse(properties);
+        };
+
+        /**
+         * Encodes the specified IdentityGetLockedVersionsResponse message. Does not implicitly {@link types.IdentityGetLockedVersionsResponse.verify|verify} messages.
+         * @function encode
+         * @memberof types.IdentityGetLockedVersionsResponse
+         * @static
+         * @param {types.IIdentityGetLockedVersionsResponse} message IdentityGetLockedVersionsResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        IdentityGetLockedVersionsResponse.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.lockedVersions != null && message.lockedVersions.length)
+                for (var i = 0; i < message.lockedVersions.length; ++i)
+                    $root.types.IdentityGetLockedVersionsResponse.LockedVersion.encode(message.lockedVersions[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified IdentityGetLockedVersionsResponse message, length delimited. Does not implicitly {@link types.IdentityGetLockedVersionsResponse.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof types.IdentityGetLockedVersionsResponse
+         * @static
+         * @param {types.IIdentityGetLockedVersionsResponse} message IdentityGetLockedVersionsResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        IdentityGetLockedVersionsResponse.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an IdentityGetLockedVersionsResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof types.IdentityGetLockedVersionsResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {types.IdentityGetLockedVersionsResponse} IdentityGetLockedVersionsResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        IdentityGetLockedVersionsResponse.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.types.IdentityGetLockedVersionsResponse();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    if (!(message.lockedVersions && message.lockedVersions.length))
+                        message.lockedVersions = [];
+                    message.lockedVersions.push($root.types.IdentityGetLockedVersionsResponse.LockedVersion.decode(reader, reader.uint32()));
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an IdentityGetLockedVersionsResponse message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof types.IdentityGetLockedVersionsResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {types.IdentityGetLockedVersionsResponse} IdentityGetLockedVersionsResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        IdentityGetLockedVersionsResponse.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an IdentityGetLockedVersionsResponse message.
+         * @function verify
+         * @memberof types.IdentityGetLockedVersionsResponse
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        IdentityGetLockedVersionsResponse.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.lockedVersions != null && message.hasOwnProperty("lockedVersions")) {
+                if (!Array.isArray(message.lockedVersions))
+                    return "lockedVersions: array expected";
+                for (var i = 0; i < message.lockedVersions.length; ++i) {
+                    var error = $root.types.IdentityGetLockedVersionsResponse.LockedVersion.verify(message.lockedVersions[i]);
+                    if (error)
+                        return "lockedVersions." + error;
+                }
+            }
+            return null;
+        };
+
+        /**
+         * Creates an IdentityGetLockedVersionsResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof types.IdentityGetLockedVersionsResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {types.IdentityGetLockedVersionsResponse} IdentityGetLockedVersionsResponse
+         */
+        IdentityGetLockedVersionsResponse.fromObject = function fromObject(object) {
+            if (object instanceof $root.types.IdentityGetLockedVersionsResponse)
+                return object;
+            var message = new $root.types.IdentityGetLockedVersionsResponse();
+            if (object.lockedVersions) {
+                if (!Array.isArray(object.lockedVersions))
+                    throw TypeError(".types.IdentityGetLockedVersionsResponse.lockedVersions: array expected");
+                message.lockedVersions = [];
+                for (var i = 0; i < object.lockedVersions.length; ++i) {
+                    if (typeof object.lockedVersions[i] !== "object")
+                        throw TypeError(".types.IdentityGetLockedVersionsResponse.lockedVersions: object expected");
+                    message.lockedVersions[i] = $root.types.IdentityGetLockedVersionsResponse.LockedVersion.fromObject(object.lockedVersions[i]);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an IdentityGetLockedVersionsResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof types.IdentityGetLockedVersionsResponse
+         * @static
+         * @param {types.IdentityGetLockedVersionsResponse} message IdentityGetLockedVersionsResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        IdentityGetLockedVersionsResponse.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.arrays || options.defaults)
+                object.lockedVersions = [];
+            if (message.lockedVersions && message.lockedVersions.length) {
+                object.lockedVersions = [];
+                for (var j = 0; j < message.lockedVersions.length; ++j)
+                    object.lockedVersions[j] = $root.types.IdentityGetLockedVersionsResponse.LockedVersion.toObject(message.lockedVersions[j], options);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this IdentityGetLockedVersionsResponse to JSON.
+         * @function toJSON
+         * @memberof types.IdentityGetLockedVersionsResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        IdentityGetLockedVersionsResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        IdentityGetLockedVersionsResponse.IdentityChallenge = (function() {
+
+            /**
+             * Properties of an IdentityChallenge.
+             * @memberof types.IdentityGetLockedVersionsResponse
+             * @interface IIdentityChallenge
+             * @property {Uint8Array|null} [salt] IdentityChallenge salt
+             * @property {Uint8Array|null} [token] IdentityChallenge token
+             * @property {types.IIdentityEncryption|null} [encryption] IdentityChallenge encryption
+             * @property {types.IIdentityPublicKey|null} [creator] IdentityChallenge creator
+             */
+
+            /**
+             * Constructs a new IdentityChallenge.
+             * @memberof types.IdentityGetLockedVersionsResponse
+             * @classdesc Represents an IdentityChallenge.
+             * @implements IIdentityChallenge
+             * @constructor
+             * @param {types.IdentityGetLockedVersionsResponse.IIdentityChallenge=} [properties] Properties to set
+             */
+            function IdentityChallenge(properties) {
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * IdentityChallenge salt.
+             * @member {Uint8Array} salt
+             * @memberof types.IdentityGetLockedVersionsResponse.IdentityChallenge
+             * @instance
+             */
+            IdentityChallenge.prototype.salt = $util.newBuffer([]);
+
+            /**
+             * IdentityChallenge token.
+             * @member {Uint8Array} token
+             * @memberof types.IdentityGetLockedVersionsResponse.IdentityChallenge
+             * @instance
+             */
+            IdentityChallenge.prototype.token = $util.newBuffer([]);
+
+            /**
+             * IdentityChallenge encryption.
+             * @member {types.IIdentityEncryption|null|undefined} encryption
+             * @memberof types.IdentityGetLockedVersionsResponse.IdentityChallenge
+             * @instance
+             */
+            IdentityChallenge.prototype.encryption = null;
+
+            /**
+             * IdentityChallenge creator.
+             * @member {types.IIdentityPublicKey|null|undefined} creator
+             * @memberof types.IdentityGetLockedVersionsResponse.IdentityChallenge
+             * @instance
+             */
+            IdentityChallenge.prototype.creator = null;
+
+            /**
+             * Creates a new IdentityChallenge instance using the specified properties.
+             * @function create
+             * @memberof types.IdentityGetLockedVersionsResponse.IdentityChallenge
+             * @static
+             * @param {types.IdentityGetLockedVersionsResponse.IIdentityChallenge=} [properties] Properties to set
+             * @returns {types.IdentityGetLockedVersionsResponse.IdentityChallenge} IdentityChallenge instance
+             */
+            IdentityChallenge.create = function create(properties) {
+                return new IdentityChallenge(properties);
+            };
+
+            /**
+             * Encodes the specified IdentityChallenge message. Does not implicitly {@link types.IdentityGetLockedVersionsResponse.IdentityChallenge.verify|verify} messages.
+             * @function encode
+             * @memberof types.IdentityGetLockedVersionsResponse.IdentityChallenge
+             * @static
+             * @param {types.IdentityGetLockedVersionsResponse.IIdentityChallenge} message IdentityChallenge message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            IdentityChallenge.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.salt != null && message.hasOwnProperty("salt"))
+                    writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.salt);
+                if (message.token != null && message.hasOwnProperty("token"))
+                    writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.token);
+                if (message.encryption != null && message.hasOwnProperty("encryption"))
+                    $root.types.IdentityEncryption.encode(message.encryption, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+                if (message.creator != null && message.hasOwnProperty("creator"))
+                    $root.types.IdentityPublicKey.encode(message.creator, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+                return writer;
+            };
+
+            /**
+             * Encodes the specified IdentityChallenge message, length delimited. Does not implicitly {@link types.IdentityGetLockedVersionsResponse.IdentityChallenge.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof types.IdentityGetLockedVersionsResponse.IdentityChallenge
+             * @static
+             * @param {types.IdentityGetLockedVersionsResponse.IIdentityChallenge} message IdentityChallenge message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            IdentityChallenge.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes an IdentityChallenge message from the specified reader or buffer.
+             * @function decode
+             * @memberof types.IdentityGetLockedVersionsResponse.IdentityChallenge
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {types.IdentityGetLockedVersionsResponse.IdentityChallenge} IdentityChallenge
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            IdentityChallenge.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.types.IdentityGetLockedVersionsResponse.IdentityChallenge();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1:
+                        message.salt = reader.bytes();
+                        break;
+                    case 2:
+                        message.token = reader.bytes();
+                        break;
+                    case 3:
+                        message.encryption = $root.types.IdentityEncryption.decode(reader, reader.uint32());
+                        break;
+                    case 4:
+                        message.creator = $root.types.IdentityPublicKey.decode(reader, reader.uint32());
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes an IdentityChallenge message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof types.IdentityGetLockedVersionsResponse.IdentityChallenge
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {types.IdentityGetLockedVersionsResponse.IdentityChallenge} IdentityChallenge
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            IdentityChallenge.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies an IdentityChallenge message.
+             * @function verify
+             * @memberof types.IdentityGetLockedVersionsResponse.IdentityChallenge
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            IdentityChallenge.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.salt != null && message.hasOwnProperty("salt"))
+                    if (!(message.salt && typeof message.salt.length === "number" || $util.isString(message.salt)))
+                        return "salt: buffer expected";
+                if (message.token != null && message.hasOwnProperty("token"))
+                    if (!(message.token && typeof message.token.length === "number" || $util.isString(message.token)))
+                        return "token: buffer expected";
+                if (message.encryption != null && message.hasOwnProperty("encryption")) {
+                    var error = $root.types.IdentityEncryption.verify(message.encryption);
+                    if (error)
+                        return "encryption." + error;
+                }
+                if (message.creator != null && message.hasOwnProperty("creator")) {
+                    var error = $root.types.IdentityPublicKey.verify(message.creator);
+                    if (error)
+                        return "creator." + error;
+                }
+                return null;
+            };
+
+            /**
+             * Creates an IdentityChallenge message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof types.IdentityGetLockedVersionsResponse.IdentityChallenge
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {types.IdentityGetLockedVersionsResponse.IdentityChallenge} IdentityChallenge
+             */
+            IdentityChallenge.fromObject = function fromObject(object) {
+                if (object instanceof $root.types.IdentityGetLockedVersionsResponse.IdentityChallenge)
+                    return object;
+                var message = new $root.types.IdentityGetLockedVersionsResponse.IdentityChallenge();
+                if (object.salt != null)
+                    if (typeof object.salt === "string")
+                        $util.base64.decode(object.salt, message.salt = $util.newBuffer($util.base64.length(object.salt)), 0);
+                    else if (object.salt.length)
+                        message.salt = object.salt;
+                if (object.token != null)
+                    if (typeof object.token === "string")
+                        $util.base64.decode(object.token, message.token = $util.newBuffer($util.base64.length(object.token)), 0);
+                    else if (object.token.length)
+                        message.token = object.token;
+                if (object.encryption != null) {
+                    if (typeof object.encryption !== "object")
+                        throw TypeError(".types.IdentityGetLockedVersionsResponse.IdentityChallenge.encryption: object expected");
+                    message.encryption = $root.types.IdentityEncryption.fromObject(object.encryption);
+                }
+                if (object.creator != null) {
+                    if (typeof object.creator !== "object")
+                        throw TypeError(".types.IdentityGetLockedVersionsResponse.IdentityChallenge.creator: object expected");
+                    message.creator = $root.types.IdentityPublicKey.fromObject(object.creator);
+                }
+                return message;
+            };
+
+            /**
+             * Creates a plain object from an IdentityChallenge message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof types.IdentityGetLockedVersionsResponse.IdentityChallenge
+             * @static
+             * @param {types.IdentityGetLockedVersionsResponse.IdentityChallenge} message IdentityChallenge
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            IdentityChallenge.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                var object = {};
+                if (options.defaults) {
+                    object.salt = options.bytes === String ? "" : [];
+                    object.token = options.bytes === String ? "" : [];
+                    object.encryption = null;
+                    object.creator = null;
+                }
+                if (message.salt != null && message.hasOwnProperty("salt"))
+                    object.salt = options.bytes === String ? $util.base64.encode(message.salt, 0, message.salt.length) : options.bytes === Array ? Array.prototype.slice.call(message.salt) : message.salt;
+                if (message.token != null && message.hasOwnProperty("token"))
+                    object.token = options.bytes === String ? $util.base64.encode(message.token, 0, message.token.length) : options.bytes === Array ? Array.prototype.slice.call(message.token) : message.token;
+                if (message.encryption != null && message.hasOwnProperty("encryption"))
+                    object.encryption = $root.types.IdentityEncryption.toObject(message.encryption, options);
+                if (message.creator != null && message.hasOwnProperty("creator"))
+                    object.creator = $root.types.IdentityPublicKey.toObject(message.creator, options);
+                return object;
+            };
+
+            /**
+             * Converts this IdentityChallenge to JSON.
+             * @function toJSON
+             * @memberof types.IdentityGetLockedVersionsResponse.IdentityChallenge
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            IdentityChallenge.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            return IdentityChallenge;
+        })();
+
+        IdentityGetLockedVersionsResponse.LockedVersion = (function() {
+
+            /**
+             * Properties of a LockedVersion.
+             * @memberof types.IdentityGetLockedVersionsResponse
+             * @interface ILockedVersion
+             * @property {types.IIdentityPublicKeyWithMetadata|null} [publicKey] LockedVersion publicKey
+             * @property {types.IdentityGetLockedVersionsResponse.IIdentityChallenge|null} [challenge] LockedVersion challenge
+             */
+
+            /**
+             * Constructs a new LockedVersion.
+             * @memberof types.IdentityGetLockedVersionsResponse
+             * @classdesc Represents a LockedVersion.
+             * @implements ILockedVersion
+             * @constructor
+             * @param {types.IdentityGetLockedVersionsResponse.ILockedVersion=} [properties] Properties to set
+             */
+            function LockedVersion(properties) {
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * LockedVersion publicKey.
+             * @member {types.IIdentityPublicKeyWithMetadata|null|undefined} publicKey
+             * @memberof types.IdentityGetLockedVersionsResponse.LockedVersion
+             * @instance
+             */
+            LockedVersion.prototype.publicKey = null;
+
+            /**
+             * LockedVersion challenge.
+             * @member {types.IdentityGetLockedVersionsResponse.IIdentityChallenge|null|undefined} challenge
+             * @memberof types.IdentityGetLockedVersionsResponse.LockedVersion
+             * @instance
+             */
+            LockedVersion.prototype.challenge = null;
+
+            /**
+             * Creates a new LockedVersion instance using the specified properties.
+             * @function create
+             * @memberof types.IdentityGetLockedVersionsResponse.LockedVersion
+             * @static
+             * @param {types.IdentityGetLockedVersionsResponse.ILockedVersion=} [properties] Properties to set
+             * @returns {types.IdentityGetLockedVersionsResponse.LockedVersion} LockedVersion instance
+             */
+            LockedVersion.create = function create(properties) {
+                return new LockedVersion(properties);
+            };
+
+            /**
+             * Encodes the specified LockedVersion message. Does not implicitly {@link types.IdentityGetLockedVersionsResponse.LockedVersion.verify|verify} messages.
+             * @function encode
+             * @memberof types.IdentityGetLockedVersionsResponse.LockedVersion
+             * @static
+             * @param {types.IdentityGetLockedVersionsResponse.ILockedVersion} message LockedVersion message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            LockedVersion.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.publicKey != null && message.hasOwnProperty("publicKey"))
+                    $root.types.IdentityPublicKeyWithMetadata.encode(message.publicKey, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                if (message.challenge != null && message.hasOwnProperty("challenge"))
+                    $root.types.IdentityGetLockedVersionsResponse.IdentityChallenge.encode(message.challenge, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                return writer;
+            };
+
+            /**
+             * Encodes the specified LockedVersion message, length delimited. Does not implicitly {@link types.IdentityGetLockedVersionsResponse.LockedVersion.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof types.IdentityGetLockedVersionsResponse.LockedVersion
+             * @static
+             * @param {types.IdentityGetLockedVersionsResponse.ILockedVersion} message LockedVersion message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            LockedVersion.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a LockedVersion message from the specified reader or buffer.
+             * @function decode
+             * @memberof types.IdentityGetLockedVersionsResponse.LockedVersion
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {types.IdentityGetLockedVersionsResponse.LockedVersion} LockedVersion
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            LockedVersion.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.types.IdentityGetLockedVersionsResponse.LockedVersion();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1:
+                        message.publicKey = $root.types.IdentityPublicKeyWithMetadata.decode(reader, reader.uint32());
+                        break;
+                    case 2:
+                        message.challenge = $root.types.IdentityGetLockedVersionsResponse.IdentityChallenge.decode(reader, reader.uint32());
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a LockedVersion message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof types.IdentityGetLockedVersionsResponse.LockedVersion
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {types.IdentityGetLockedVersionsResponse.LockedVersion} LockedVersion
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            LockedVersion.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a LockedVersion message.
+             * @function verify
+             * @memberof types.IdentityGetLockedVersionsResponse.LockedVersion
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            LockedVersion.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.publicKey != null && message.hasOwnProperty("publicKey")) {
+                    var error = $root.types.IdentityPublicKeyWithMetadata.verify(message.publicKey);
+                    if (error)
+                        return "publicKey." + error;
+                }
+                if (message.challenge != null && message.hasOwnProperty("challenge")) {
+                    var error = $root.types.IdentityGetLockedVersionsResponse.IdentityChallenge.verify(message.challenge);
+                    if (error)
+                        return "challenge." + error;
+                }
+                return null;
+            };
+
+            /**
+             * Creates a LockedVersion message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof types.IdentityGetLockedVersionsResponse.LockedVersion
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {types.IdentityGetLockedVersionsResponse.LockedVersion} LockedVersion
+             */
+            LockedVersion.fromObject = function fromObject(object) {
+                if (object instanceof $root.types.IdentityGetLockedVersionsResponse.LockedVersion)
+                    return object;
+                var message = new $root.types.IdentityGetLockedVersionsResponse.LockedVersion();
+                if (object.publicKey != null) {
+                    if (typeof object.publicKey !== "object")
+                        throw TypeError(".types.IdentityGetLockedVersionsResponse.LockedVersion.publicKey: object expected");
+                    message.publicKey = $root.types.IdentityPublicKeyWithMetadata.fromObject(object.publicKey);
+                }
+                if (object.challenge != null) {
+                    if (typeof object.challenge !== "object")
+                        throw TypeError(".types.IdentityGetLockedVersionsResponse.LockedVersion.challenge: object expected");
+                    message.challenge = $root.types.IdentityGetLockedVersionsResponse.IdentityChallenge.fromObject(object.challenge);
+                }
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a LockedVersion message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof types.IdentityGetLockedVersionsResponse.LockedVersion
+             * @static
+             * @param {types.IdentityGetLockedVersionsResponse.LockedVersion} message LockedVersion
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            LockedVersion.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                var object = {};
+                if (options.defaults) {
+                    object.publicKey = null;
+                    object.challenge = null;
+                }
+                if (message.publicKey != null && message.hasOwnProperty("publicKey"))
+                    object.publicKey = $root.types.IdentityPublicKeyWithMetadata.toObject(message.publicKey, options);
+                if (message.challenge != null && message.hasOwnProperty("challenge"))
+                    object.challenge = $root.types.IdentityGetLockedVersionsResponse.IdentityChallenge.toObject(message.challenge, options);
+                return object;
+            };
+
+            /**
+             * Converts this LockedVersion to JSON.
+             * @function toJSON
+             * @memberof types.IdentityGetLockedVersionsResponse.LockedVersion
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            LockedVersion.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            return LockedVersion;
+        })();
+
+        return IdentityGetLockedVersionsResponse;
+    })();
+
     /**
      * SessionSaltKind enum.
      * @name types.SessionSaltKind
@@ -15105,6 +16251,457 @@ $root.types = (function() {
         };
 
         return SessionResolveChallengeResponse;
+    })();
+
+    types.UnlockVersionsRequest = (function() {
+
+        /**
+         * Properties of an UnlockVersionsRequest.
+         * @memberof types
+         * @interface IUnlockVersionsRequest
+         * @property {string|null} [login] UnlockVersionsRequest login
+         * @property {Array.<types.UnlockVersionsRequest.IUnlockedVersion>|null} [unlockedVersions] UnlockVersionsRequest unlockedVersions
+         */
+
+        /**
+         * Constructs a new UnlockVersionsRequest.
+         * @memberof types
+         * @classdesc Represents an UnlockVersionsRequest.
+         * @implements IUnlockVersionsRequest
+         * @constructor
+         * @param {types.IUnlockVersionsRequest=} [properties] Properties to set
+         */
+        function UnlockVersionsRequest(properties) {
+            this.unlockedVersions = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * UnlockVersionsRequest login.
+         * @member {string} login
+         * @memberof types.UnlockVersionsRequest
+         * @instance
+         */
+        UnlockVersionsRequest.prototype.login = "";
+
+        /**
+         * UnlockVersionsRequest unlockedVersions.
+         * @member {Array.<types.UnlockVersionsRequest.IUnlockedVersion>} unlockedVersions
+         * @memberof types.UnlockVersionsRequest
+         * @instance
+         */
+        UnlockVersionsRequest.prototype.unlockedVersions = $util.emptyArray;
+
+        /**
+         * Creates a new UnlockVersionsRequest instance using the specified properties.
+         * @function create
+         * @memberof types.UnlockVersionsRequest
+         * @static
+         * @param {types.IUnlockVersionsRequest=} [properties] Properties to set
+         * @returns {types.UnlockVersionsRequest} UnlockVersionsRequest instance
+         */
+        UnlockVersionsRequest.create = function create(properties) {
+            return new UnlockVersionsRequest(properties);
+        };
+
+        /**
+         * Encodes the specified UnlockVersionsRequest message. Does not implicitly {@link types.UnlockVersionsRequest.verify|verify} messages.
+         * @function encode
+         * @memberof types.UnlockVersionsRequest
+         * @static
+         * @param {types.IUnlockVersionsRequest} message UnlockVersionsRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        UnlockVersionsRequest.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.login != null && message.hasOwnProperty("login"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.login);
+            if (message.unlockedVersions != null && message.unlockedVersions.length)
+                for (var i = 0; i < message.unlockedVersions.length; ++i)
+                    $root.types.UnlockVersionsRequest.UnlockedVersion.encode(message.unlockedVersions[i], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified UnlockVersionsRequest message, length delimited. Does not implicitly {@link types.UnlockVersionsRequest.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof types.UnlockVersionsRequest
+         * @static
+         * @param {types.IUnlockVersionsRequest} message UnlockVersionsRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        UnlockVersionsRequest.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an UnlockVersionsRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof types.UnlockVersionsRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {types.UnlockVersionsRequest} UnlockVersionsRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        UnlockVersionsRequest.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.types.UnlockVersionsRequest();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.login = reader.string();
+                    break;
+                case 2:
+                    if (!(message.unlockedVersions && message.unlockedVersions.length))
+                        message.unlockedVersions = [];
+                    message.unlockedVersions.push($root.types.UnlockVersionsRequest.UnlockedVersion.decode(reader, reader.uint32()));
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an UnlockVersionsRequest message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof types.UnlockVersionsRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {types.UnlockVersionsRequest} UnlockVersionsRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        UnlockVersionsRequest.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an UnlockVersionsRequest message.
+         * @function verify
+         * @memberof types.UnlockVersionsRequest
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        UnlockVersionsRequest.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.login != null && message.hasOwnProperty("login"))
+                if (!$util.isString(message.login))
+                    return "login: string expected";
+            if (message.unlockedVersions != null && message.hasOwnProperty("unlockedVersions")) {
+                if (!Array.isArray(message.unlockedVersions))
+                    return "unlockedVersions: array expected";
+                for (var i = 0; i < message.unlockedVersions.length; ++i) {
+                    var error = $root.types.UnlockVersionsRequest.UnlockedVersion.verify(message.unlockedVersions[i]);
+                    if (error)
+                        return "unlockedVersions." + error;
+                }
+            }
+            return null;
+        };
+
+        /**
+         * Creates an UnlockVersionsRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof types.UnlockVersionsRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {types.UnlockVersionsRequest} UnlockVersionsRequest
+         */
+        UnlockVersionsRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.types.UnlockVersionsRequest)
+                return object;
+            var message = new $root.types.UnlockVersionsRequest();
+            if (object.login != null)
+                message.login = String(object.login);
+            if (object.unlockedVersions) {
+                if (!Array.isArray(object.unlockedVersions))
+                    throw TypeError(".types.UnlockVersionsRequest.unlockedVersions: array expected");
+                message.unlockedVersions = [];
+                for (var i = 0; i < object.unlockedVersions.length; ++i) {
+                    if (typeof object.unlockedVersions[i] !== "object")
+                        throw TypeError(".types.UnlockVersionsRequest.unlockedVersions: object expected");
+                    message.unlockedVersions[i] = $root.types.UnlockVersionsRequest.UnlockedVersion.fromObject(object.unlockedVersions[i]);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an UnlockVersionsRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof types.UnlockVersionsRequest
+         * @static
+         * @param {types.UnlockVersionsRequest} message UnlockVersionsRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        UnlockVersionsRequest.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.arrays || options.defaults)
+                object.unlockedVersions = [];
+            if (options.defaults)
+                object.login = "";
+            if (message.login != null && message.hasOwnProperty("login"))
+                object.login = message.login;
+            if (message.unlockedVersions && message.unlockedVersions.length) {
+                object.unlockedVersions = [];
+                for (var j = 0; j < message.unlockedVersions.length; ++j)
+                    object.unlockedVersions[j] = $root.types.UnlockVersionsRequest.UnlockedVersion.toObject(message.unlockedVersions[j], options);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this UnlockVersionsRequest to JSON.
+         * @function toJSON
+         * @memberof types.UnlockVersionsRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        UnlockVersionsRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        UnlockVersionsRequest.UnlockedVersion = (function() {
+
+            /**
+             * Properties of an UnlockedVersion.
+             * @memberof types.UnlockVersionsRequest
+             * @interface IUnlockedVersion
+             * @property {types.ISessionResolveChallengeRequest|null} [resolvedChallenge] UnlockedVersion resolvedChallenge
+             * @property {types.IIdentityBackwardKey|null} [backward] UnlockedVersion backward
+             */
+
+            /**
+             * Constructs a new UnlockedVersion.
+             * @memberof types.UnlockVersionsRequest
+             * @classdesc Represents an UnlockedVersion.
+             * @implements IUnlockedVersion
+             * @constructor
+             * @param {types.UnlockVersionsRequest.IUnlockedVersion=} [properties] Properties to set
+             */
+            function UnlockedVersion(properties) {
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * UnlockedVersion resolvedChallenge.
+             * @member {types.ISessionResolveChallengeRequest|null|undefined} resolvedChallenge
+             * @memberof types.UnlockVersionsRequest.UnlockedVersion
+             * @instance
+             */
+            UnlockedVersion.prototype.resolvedChallenge = null;
+
+            /**
+             * UnlockedVersion backward.
+             * @member {types.IIdentityBackwardKey|null|undefined} backward
+             * @memberof types.UnlockVersionsRequest.UnlockedVersion
+             * @instance
+             */
+            UnlockedVersion.prototype.backward = null;
+
+            /**
+             * Creates a new UnlockedVersion instance using the specified properties.
+             * @function create
+             * @memberof types.UnlockVersionsRequest.UnlockedVersion
+             * @static
+             * @param {types.UnlockVersionsRequest.IUnlockedVersion=} [properties] Properties to set
+             * @returns {types.UnlockVersionsRequest.UnlockedVersion} UnlockedVersion instance
+             */
+            UnlockedVersion.create = function create(properties) {
+                return new UnlockedVersion(properties);
+            };
+
+            /**
+             * Encodes the specified UnlockedVersion message. Does not implicitly {@link types.UnlockVersionsRequest.UnlockedVersion.verify|verify} messages.
+             * @function encode
+             * @memberof types.UnlockVersionsRequest.UnlockedVersion
+             * @static
+             * @param {types.UnlockVersionsRequest.IUnlockedVersion} message UnlockedVersion message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            UnlockedVersion.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.resolvedChallenge != null && message.hasOwnProperty("resolvedChallenge"))
+                    $root.types.SessionResolveChallengeRequest.encode(message.resolvedChallenge, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                if (message.backward != null && message.hasOwnProperty("backward"))
+                    $root.types.IdentityBackwardKey.encode(message.backward, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                return writer;
+            };
+
+            /**
+             * Encodes the specified UnlockedVersion message, length delimited. Does not implicitly {@link types.UnlockVersionsRequest.UnlockedVersion.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof types.UnlockVersionsRequest.UnlockedVersion
+             * @static
+             * @param {types.UnlockVersionsRequest.IUnlockedVersion} message UnlockedVersion message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            UnlockedVersion.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes an UnlockedVersion message from the specified reader or buffer.
+             * @function decode
+             * @memberof types.UnlockVersionsRequest.UnlockedVersion
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {types.UnlockVersionsRequest.UnlockedVersion} UnlockedVersion
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            UnlockedVersion.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.types.UnlockVersionsRequest.UnlockedVersion();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1:
+                        message.resolvedChallenge = $root.types.SessionResolveChallengeRequest.decode(reader, reader.uint32());
+                        break;
+                    case 2:
+                        message.backward = $root.types.IdentityBackwardKey.decode(reader, reader.uint32());
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes an UnlockedVersion message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof types.UnlockVersionsRequest.UnlockedVersion
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {types.UnlockVersionsRequest.UnlockedVersion} UnlockedVersion
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            UnlockedVersion.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies an UnlockedVersion message.
+             * @function verify
+             * @memberof types.UnlockVersionsRequest.UnlockedVersion
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            UnlockedVersion.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.resolvedChallenge != null && message.hasOwnProperty("resolvedChallenge")) {
+                    var error = $root.types.SessionResolveChallengeRequest.verify(message.resolvedChallenge);
+                    if (error)
+                        return "resolvedChallenge." + error;
+                }
+                if (message.backward != null && message.hasOwnProperty("backward")) {
+                    var error = $root.types.IdentityBackwardKey.verify(message.backward);
+                    if (error)
+                        return "backward." + error;
+                }
+                return null;
+            };
+
+            /**
+             * Creates an UnlockedVersion message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof types.UnlockVersionsRequest.UnlockedVersion
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {types.UnlockVersionsRequest.UnlockedVersion} UnlockedVersion
+             */
+            UnlockedVersion.fromObject = function fromObject(object) {
+                if (object instanceof $root.types.UnlockVersionsRequest.UnlockedVersion)
+                    return object;
+                var message = new $root.types.UnlockVersionsRequest.UnlockedVersion();
+                if (object.resolvedChallenge != null) {
+                    if (typeof object.resolvedChallenge !== "object")
+                        throw TypeError(".types.UnlockVersionsRequest.UnlockedVersion.resolvedChallenge: object expected");
+                    message.resolvedChallenge = $root.types.SessionResolveChallengeRequest.fromObject(object.resolvedChallenge);
+                }
+                if (object.backward != null) {
+                    if (typeof object.backward !== "object")
+                        throw TypeError(".types.UnlockVersionsRequest.UnlockedVersion.backward: object expected");
+                    message.backward = $root.types.IdentityBackwardKey.fromObject(object.backward);
+                }
+                return message;
+            };
+
+            /**
+             * Creates a plain object from an UnlockedVersion message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof types.UnlockVersionsRequest.UnlockedVersion
+             * @static
+             * @param {types.UnlockVersionsRequest.UnlockedVersion} message UnlockedVersion
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            UnlockedVersion.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                var object = {};
+                if (options.defaults) {
+                    object.resolvedChallenge = null;
+                    object.backward = null;
+                }
+                if (message.resolvedChallenge != null && message.hasOwnProperty("resolvedChallenge"))
+                    object.resolvedChallenge = $root.types.SessionResolveChallengeRequest.toObject(message.resolvedChallenge, options);
+                if (message.backward != null && message.hasOwnProperty("backward"))
+                    object.backward = $root.types.IdentityBackwardKey.toObject(message.backward, options);
+                return object;
+            };
+
+            /**
+             * Converts this UnlockedVersion to JSON.
+             * @function toJSON
+             * @memberof types.UnlockVersionsRequest.UnlockedVersion
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            UnlockedVersion.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            return UnlockedVersion;
+        })();
+
+        return UnlockVersionsRequest;
     })();
 
     types.SessionSetSecretRequest = (function() {

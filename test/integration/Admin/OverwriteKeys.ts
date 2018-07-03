@@ -83,11 +83,13 @@ describe('Admin.overwriteKeys', () => {
         let accessGroup = await aliceSession.Identity.getAccessGroup(alice.login);
         expect(accessGroup.length).to.be.equal(2);
 
-        let delegateEl = accessGroup[0];
+        let delegateEl = accessGroup.filter(el => el.id.login == aliceDelegate.login)[0];
+        expect(delegateEl).to.exist;
         expect(delegateEl.id.login).to.be.equal(aliceDelegate.login);
         expect(delegateEl.id.version).to.be.equal(1);
 
-        let groupEl = accessGroup[1];
+        let groupEl = accessGroup.filter(el => el.id.login == group.login)[0];
+        expect(groupEl).to.exist;
         expect(groupEl.id.login).to.be.equal(group.login);
         expect(groupEl.id.version).to.be.equal(1);
     })
@@ -137,10 +139,12 @@ describe('Admin.overwriteKeys', () => {
         expect(accessGroup.length).to.be.equal(2);
 
         let delegateEl = accessGroup.filter(el => el.id.login == aliceDelegate.login)[0];
+        expect(delegateEl).to.exist;
         expect(delegateEl.id.version).to.be.equal(2);
         expect(delegateEl.locked).to.be.equal(false);
 
         let groupEl = accessGroup.filter(el => el.id.login == group.login)[0];
+        expect(groupEl).to.exist;
         expect(groupEl.id.version).to.be.equal(1);
         expect(groupEl.locked).to.be.equal(true);
 

@@ -130,7 +130,8 @@ export namespace errors {
         RegisterInvalidEmail = 21,
         RegisterTokenNotFound = 22,
         ChannelNotFound = 23,
-        DelegatedAccessNotFound = 24
+        DelegatedAccessNotFound = 24,
+        InvalidToken = 25
     }
 
     /** Properties of a PayloadServerInternalError. */
@@ -1872,6 +1873,96 @@ export namespace errors {
          */
         public toJSON(): { [k: string]: any };
     }
+
+    /** Properties of a PayloadInvalidToken. */
+    interface IPayloadInvalidToken {
+
+        /** PayloadInvalidToken token */
+        token?: (Uint8Array|null);
+    }
+
+    /** Represents a PayloadInvalidToken. */
+    class PayloadInvalidToken implements IPayloadInvalidToken {
+
+        /**
+         * Constructs a new PayloadInvalidToken.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: errors.IPayloadInvalidToken);
+
+        /** PayloadInvalidToken token. */
+        public token: Uint8Array;
+
+        /**
+         * Creates a new PayloadInvalidToken instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PayloadInvalidToken instance
+         */
+        public static create(properties?: errors.IPayloadInvalidToken): errors.PayloadInvalidToken;
+
+        /**
+         * Encodes the specified PayloadInvalidToken message. Does not implicitly {@link errors.PayloadInvalidToken.verify|verify} messages.
+         * @param message PayloadInvalidToken message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: errors.IPayloadInvalidToken, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PayloadInvalidToken message, length delimited. Does not implicitly {@link errors.PayloadInvalidToken.verify|verify} messages.
+         * @param message PayloadInvalidToken message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: errors.IPayloadInvalidToken, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PayloadInvalidToken message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PayloadInvalidToken
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): errors.PayloadInvalidToken;
+
+        /**
+         * Decodes a PayloadInvalidToken message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PayloadInvalidToken
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): errors.PayloadInvalidToken;
+
+        /**
+         * Verifies a PayloadInvalidToken message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PayloadInvalidToken message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PayloadInvalidToken
+         */
+        public static fromObject(object: { [k: string]: any }): errors.PayloadInvalidToken;
+
+        /**
+         * Creates a plain object from a PayloadInvalidToken message. Also converts values to other types if specified.
+         * @param message PayloadInvalidToken
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: errors.PayloadInvalidToken, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PayloadInvalidToken to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
 }
 
 /** Namespace google. */
@@ -2521,6 +2612,102 @@ export namespace types {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of an IdentityPublicKeyWithMetadata. */
+    interface IIdentityPublicKeyWithMetadata {
+
+        /** IdentityPublicKeyWithMetadata publicKey */
+        publicKey?: (types.IIdentityPublicKey|null);
+
+        /** IdentityPublicKeyWithMetadata created */
+        created?: (number|Long|null);
+    }
+
+    /** Represents an IdentityPublicKeyWithMetadata. */
+    class IdentityPublicKeyWithMetadata implements IIdentityPublicKeyWithMetadata {
+
+        /**
+         * Constructs a new IdentityPublicKeyWithMetadata.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: types.IIdentityPublicKeyWithMetadata);
+
+        /** IdentityPublicKeyWithMetadata publicKey. */
+        public publicKey?: (types.IIdentityPublicKey|null);
+
+        /** IdentityPublicKeyWithMetadata created. */
+        public created: (number|Long);
+
+        /**
+         * Creates a new IdentityPublicKeyWithMetadata instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns IdentityPublicKeyWithMetadata instance
+         */
+        public static create(properties?: types.IIdentityPublicKeyWithMetadata): types.IdentityPublicKeyWithMetadata;
+
+        /**
+         * Encodes the specified IdentityPublicKeyWithMetadata message. Does not implicitly {@link types.IdentityPublicKeyWithMetadata.verify|verify} messages.
+         * @param message IdentityPublicKeyWithMetadata message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: types.IIdentityPublicKeyWithMetadata, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified IdentityPublicKeyWithMetadata message, length delimited. Does not implicitly {@link types.IdentityPublicKeyWithMetadata.verify|verify} messages.
+         * @param message IdentityPublicKeyWithMetadata message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: types.IIdentityPublicKeyWithMetadata, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an IdentityPublicKeyWithMetadata message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns IdentityPublicKeyWithMetadata
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): types.IdentityPublicKeyWithMetadata;
+
+        /**
+         * Decodes an IdentityPublicKeyWithMetadata message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns IdentityPublicKeyWithMetadata
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): types.IdentityPublicKeyWithMetadata;
+
+        /**
+         * Verifies an IdentityPublicKeyWithMetadata message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an IdentityPublicKeyWithMetadata message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns IdentityPublicKeyWithMetadata
+         */
+        public static fromObject(object: { [k: string]: any }): types.IdentityPublicKeyWithMetadata;
+
+        /**
+         * Creates a plain object from an IdentityPublicKeyWithMetadata message. Also converts values to other types if specified.
+         * @param message IdentityPublicKeyWithMetadata
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: types.IdentityPublicKeyWithMetadata, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this IdentityPublicKeyWithMetadata to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of an IdentityPublicChain. */
     interface IIdentityPublicChain {
 
@@ -2639,6 +2826,9 @@ export namespace types {
 
             /** Elt mandate */
             mandate?: (types.IIdentityKeyID|null);
+
+            /** Elt version */
+            version?: (number|null);
         }
 
         /** Represents an Elt. */
@@ -2661,6 +2851,9 @@ export namespace types {
 
             /** Elt mandate. */
             public mandate?: (types.IIdentityKeyID|null);
+
+            /** Elt version. */
+            public version: number;
 
             /**
              * Creates a new Elt instance using the specified properties.
@@ -5956,6 +6149,303 @@ export namespace types {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of an IdentityGetLockedVersionsResponse. */
+    interface IIdentityGetLockedVersionsResponse {
+
+        /** IdentityGetLockedVersionsResponse lockedVersions */
+        lockedVersions?: (types.IdentityGetLockedVersionsResponse.ILockedVersion[]|null);
+    }
+
+    /** Represents an IdentityGetLockedVersionsResponse. */
+    class IdentityGetLockedVersionsResponse implements IIdentityGetLockedVersionsResponse {
+
+        /**
+         * Constructs a new IdentityGetLockedVersionsResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: types.IIdentityGetLockedVersionsResponse);
+
+        /** IdentityGetLockedVersionsResponse lockedVersions. */
+        public lockedVersions: types.IdentityGetLockedVersionsResponse.ILockedVersion[];
+
+        /**
+         * Creates a new IdentityGetLockedVersionsResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns IdentityGetLockedVersionsResponse instance
+         */
+        public static create(properties?: types.IIdentityGetLockedVersionsResponse): types.IdentityGetLockedVersionsResponse;
+
+        /**
+         * Encodes the specified IdentityGetLockedVersionsResponse message. Does not implicitly {@link types.IdentityGetLockedVersionsResponse.verify|verify} messages.
+         * @param message IdentityGetLockedVersionsResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: types.IIdentityGetLockedVersionsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified IdentityGetLockedVersionsResponse message, length delimited. Does not implicitly {@link types.IdentityGetLockedVersionsResponse.verify|verify} messages.
+         * @param message IdentityGetLockedVersionsResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: types.IIdentityGetLockedVersionsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an IdentityGetLockedVersionsResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns IdentityGetLockedVersionsResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): types.IdentityGetLockedVersionsResponse;
+
+        /**
+         * Decodes an IdentityGetLockedVersionsResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns IdentityGetLockedVersionsResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): types.IdentityGetLockedVersionsResponse;
+
+        /**
+         * Verifies an IdentityGetLockedVersionsResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an IdentityGetLockedVersionsResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns IdentityGetLockedVersionsResponse
+         */
+        public static fromObject(object: { [k: string]: any }): types.IdentityGetLockedVersionsResponse;
+
+        /**
+         * Creates a plain object from an IdentityGetLockedVersionsResponse message. Also converts values to other types if specified.
+         * @param message IdentityGetLockedVersionsResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: types.IdentityGetLockedVersionsResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this IdentityGetLockedVersionsResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace IdentityGetLockedVersionsResponse {
+
+        /** Properties of an IdentityChallenge. */
+        interface IIdentityChallenge {
+
+            /** IdentityChallenge salt */
+            salt?: (Uint8Array|null);
+
+            /** IdentityChallenge token */
+            token?: (Uint8Array|null);
+
+            /** IdentityChallenge encryption */
+            encryption?: (types.IIdentityEncryption|null);
+
+            /** IdentityChallenge creator */
+            creator?: (types.IIdentityPublicKey|null);
+        }
+
+        /** Represents an IdentityChallenge. */
+        class IdentityChallenge implements IIdentityChallenge {
+
+            /**
+             * Constructs a new IdentityChallenge.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: types.IdentityGetLockedVersionsResponse.IIdentityChallenge);
+
+            /** IdentityChallenge salt. */
+            public salt: Uint8Array;
+
+            /** IdentityChallenge token. */
+            public token: Uint8Array;
+
+            /** IdentityChallenge encryption. */
+            public encryption?: (types.IIdentityEncryption|null);
+
+            /** IdentityChallenge creator. */
+            public creator?: (types.IIdentityPublicKey|null);
+
+            /**
+             * Creates a new IdentityChallenge instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns IdentityChallenge instance
+             */
+            public static create(properties?: types.IdentityGetLockedVersionsResponse.IIdentityChallenge): types.IdentityGetLockedVersionsResponse.IdentityChallenge;
+
+            /**
+             * Encodes the specified IdentityChallenge message. Does not implicitly {@link types.IdentityGetLockedVersionsResponse.IdentityChallenge.verify|verify} messages.
+             * @param message IdentityChallenge message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: types.IdentityGetLockedVersionsResponse.IIdentityChallenge, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified IdentityChallenge message, length delimited. Does not implicitly {@link types.IdentityGetLockedVersionsResponse.IdentityChallenge.verify|verify} messages.
+             * @param message IdentityChallenge message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: types.IdentityGetLockedVersionsResponse.IIdentityChallenge, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes an IdentityChallenge message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns IdentityChallenge
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): types.IdentityGetLockedVersionsResponse.IdentityChallenge;
+
+            /**
+             * Decodes an IdentityChallenge message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns IdentityChallenge
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): types.IdentityGetLockedVersionsResponse.IdentityChallenge;
+
+            /**
+             * Verifies an IdentityChallenge message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates an IdentityChallenge message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns IdentityChallenge
+             */
+            public static fromObject(object: { [k: string]: any }): types.IdentityGetLockedVersionsResponse.IdentityChallenge;
+
+            /**
+             * Creates a plain object from an IdentityChallenge message. Also converts values to other types if specified.
+             * @param message IdentityChallenge
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: types.IdentityGetLockedVersionsResponse.IdentityChallenge, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this IdentityChallenge to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+        }
+
+        /** Properties of a LockedVersion. */
+        interface ILockedVersion {
+
+            /** LockedVersion publicKey */
+            publicKey?: (types.IIdentityPublicKeyWithMetadata|null);
+
+            /** LockedVersion challenge */
+            challenge?: (types.IdentityGetLockedVersionsResponse.IIdentityChallenge|null);
+        }
+
+        /** Represents a LockedVersion. */
+        class LockedVersion implements ILockedVersion {
+
+            /**
+             * Constructs a new LockedVersion.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: types.IdentityGetLockedVersionsResponse.ILockedVersion);
+
+            /** LockedVersion publicKey. */
+            public publicKey?: (types.IIdentityPublicKeyWithMetadata|null);
+
+            /** LockedVersion challenge. */
+            public challenge?: (types.IdentityGetLockedVersionsResponse.IIdentityChallenge|null);
+
+            /**
+             * Creates a new LockedVersion instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns LockedVersion instance
+             */
+            public static create(properties?: types.IdentityGetLockedVersionsResponse.ILockedVersion): types.IdentityGetLockedVersionsResponse.LockedVersion;
+
+            /**
+             * Encodes the specified LockedVersion message. Does not implicitly {@link types.IdentityGetLockedVersionsResponse.LockedVersion.verify|verify} messages.
+             * @param message LockedVersion message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: types.IdentityGetLockedVersionsResponse.ILockedVersion, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified LockedVersion message, length delimited. Does not implicitly {@link types.IdentityGetLockedVersionsResponse.LockedVersion.verify|verify} messages.
+             * @param message LockedVersion message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: types.IdentityGetLockedVersionsResponse.ILockedVersion, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a LockedVersion message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns LockedVersion
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): types.IdentityGetLockedVersionsResponse.LockedVersion;
+
+            /**
+             * Decodes a LockedVersion message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns LockedVersion
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): types.IdentityGetLockedVersionsResponse.LockedVersion;
+
+            /**
+             * Verifies a LockedVersion message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a LockedVersion message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns LockedVersion
+             */
+            public static fromObject(object: { [k: string]: any }): types.IdentityGetLockedVersionsResponse.LockedVersion;
+
+            /**
+             * Creates a plain object from a LockedVersion message. Also converts values to other types if specified.
+             * @param message LockedVersion
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: types.IdentityGetLockedVersionsResponse.LockedVersion, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this LockedVersion to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+        }
+    }
+
     /** SessionSaltKind enum. */
     enum SessionSaltKind {
         TIME = 0,
@@ -6368,6 +6858,201 @@ export namespace types {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an UnlockVersionsRequest. */
+    interface IUnlockVersionsRequest {
+
+        /** UnlockVersionsRequest login */
+        login?: (string|null);
+
+        /** UnlockVersionsRequest unlockedVersions */
+        unlockedVersions?: (types.UnlockVersionsRequest.IUnlockedVersion[]|null);
+    }
+
+    /** Represents an UnlockVersionsRequest. */
+    class UnlockVersionsRequest implements IUnlockVersionsRequest {
+
+        /**
+         * Constructs a new UnlockVersionsRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: types.IUnlockVersionsRequest);
+
+        /** UnlockVersionsRequest login. */
+        public login: string;
+
+        /** UnlockVersionsRequest unlockedVersions. */
+        public unlockedVersions: types.UnlockVersionsRequest.IUnlockedVersion[];
+
+        /**
+         * Creates a new UnlockVersionsRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns UnlockVersionsRequest instance
+         */
+        public static create(properties?: types.IUnlockVersionsRequest): types.UnlockVersionsRequest;
+
+        /**
+         * Encodes the specified UnlockVersionsRequest message. Does not implicitly {@link types.UnlockVersionsRequest.verify|verify} messages.
+         * @param message UnlockVersionsRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: types.IUnlockVersionsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified UnlockVersionsRequest message, length delimited. Does not implicitly {@link types.UnlockVersionsRequest.verify|verify} messages.
+         * @param message UnlockVersionsRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: types.IUnlockVersionsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an UnlockVersionsRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns UnlockVersionsRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): types.UnlockVersionsRequest;
+
+        /**
+         * Decodes an UnlockVersionsRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns UnlockVersionsRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): types.UnlockVersionsRequest;
+
+        /**
+         * Verifies an UnlockVersionsRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an UnlockVersionsRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns UnlockVersionsRequest
+         */
+        public static fromObject(object: { [k: string]: any }): types.UnlockVersionsRequest;
+
+        /**
+         * Creates a plain object from an UnlockVersionsRequest message. Also converts values to other types if specified.
+         * @param message UnlockVersionsRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: types.UnlockVersionsRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this UnlockVersionsRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace UnlockVersionsRequest {
+
+        /** Properties of an UnlockedVersion. */
+        interface IUnlockedVersion {
+
+            /** UnlockedVersion resolvedChallenge */
+            resolvedChallenge?: (types.ISessionResolveChallengeRequest|null);
+
+            /** UnlockedVersion backward */
+            backward?: (types.IIdentityBackwardKey|null);
+        }
+
+        /** Represents an UnlockedVersion. */
+        class UnlockedVersion implements IUnlockedVersion {
+
+            /**
+             * Constructs a new UnlockedVersion.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: types.UnlockVersionsRequest.IUnlockedVersion);
+
+            /** UnlockedVersion resolvedChallenge. */
+            public resolvedChallenge?: (types.ISessionResolveChallengeRequest|null);
+
+            /** UnlockedVersion backward. */
+            public backward?: (types.IIdentityBackwardKey|null);
+
+            /**
+             * Creates a new UnlockedVersion instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns UnlockedVersion instance
+             */
+            public static create(properties?: types.UnlockVersionsRequest.IUnlockedVersion): types.UnlockVersionsRequest.UnlockedVersion;
+
+            /**
+             * Encodes the specified UnlockedVersion message. Does not implicitly {@link types.UnlockVersionsRequest.UnlockedVersion.verify|verify} messages.
+             * @param message UnlockedVersion message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: types.UnlockVersionsRequest.IUnlockedVersion, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified UnlockedVersion message, length delimited. Does not implicitly {@link types.UnlockVersionsRequest.UnlockedVersion.verify|verify} messages.
+             * @param message UnlockedVersion message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: types.UnlockVersionsRequest.IUnlockedVersion, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes an UnlockedVersion message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns UnlockedVersion
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): types.UnlockVersionsRequest.UnlockedVersion;
+
+            /**
+             * Decodes an UnlockedVersion message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns UnlockedVersion
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): types.UnlockVersionsRequest.UnlockedVersion;
+
+            /**
+             * Verifies an UnlockedVersion message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates an UnlockedVersion message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns UnlockedVersion
+             */
+            public static fromObject(object: { [k: string]: any }): types.UnlockVersionsRequest.UnlockedVersion;
+
+            /**
+             * Creates a plain object from an UnlockedVersion message. Also converts values to other types if specified.
+             * @param message UnlockedVersion
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: types.UnlockVersionsRequest.UnlockedVersion, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this UnlockedVersion to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+        }
     }
 
     /** Properties of a SessionSetSecretRequest. */

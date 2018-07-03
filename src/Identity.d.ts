@@ -1,5 +1,5 @@
 import { types } from './proto';
-import { IdentityAPI, Identity, IdentityShareLink, IdentityFields } from './DataPeps';
+import { IdentityAPI, Identity, IdentityPublicKey, IdentityPublicKeyWithMetadata, IdentityShareLink, IdentityFields } from './DataPeps';
 import { SessionImpl } from './Session';
 export declare class IdentityImpl implements IdentityAPI {
     private session;
@@ -21,6 +21,14 @@ export declare class IdentityImpl implements IdentityAPI {
     getSharingGroup(login: string): Promise<IdentityShareLink[]>;
     getAccessGroup(login: string): Promise<IdentityShareLink[]>;
     renewKeys(login: string, secret?: string | Uint8Array): Promise<void>;
+    getPublicKeyHistory(login: string): Promise<IdentityPublicKey[]>;
+    getLockedVersions(login: string, options?: {
+        withChallenge?: boolean;
+    }): Promise<{
+        publicKey: IdentityPublicKeyWithMetadata;
+        challenge?: types.IdentityGetLockedVersionsResponse.IIdentityChallenge;
+    }[]>;
+    unlockVersions(login: string, secret: string | Uint8Array): Promise<IdentityPublicKeyWithMetadata[]>;
     extendSharingGroup(login: string, sharingGroup: string[]): Promise<void>;
     replaceSharingGroup(login: string, sharingGroup: string[]): Promise<void>;
     editSharingGraph(login: string, options?: {

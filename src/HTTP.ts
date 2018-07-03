@@ -1,5 +1,6 @@
 import { errors } from './proto'
 import { SDKKind, Error } from './Error';
+import { debug } from './DataPeps'; 
 
 export interface Request<T> {
     method: string; path: string; code: number,
@@ -19,7 +20,6 @@ export class Client {
     constructor(host: string, wsHost: string) {
         this.host = host
         this.wsHost = wsHost
-        this.debug = true
     }
 
     doRequest<T>(r: Request<T>): Promise<T> {
@@ -34,8 +34,8 @@ export class Client {
                 if (xmlhttp.readyState != 4 || xmlhttp.status == 0) {
                     return
                 }
-                if (this.debug) {
-                    console.log("response(" + r.method + "," + host + r.path + "): ", xmlhttp.status)
+                if (debug) {
+                    console.debug("response(" + r.method + "," + host + r.path + "): ", xmlhttp.status)
                 }
                 if (xmlhttp.status != r.code) {
                     if (xmlhttp.response == null || xmlhttp.response.byteLength == 0) {
@@ -68,7 +68,7 @@ export class Client {
                 }
                 if (r.response == null) {
                     if (xmlhttp.response == null || xmlhttp.response.length == 0) {
-                        console.log("WARNING: response is not used", xmlhttp.response)
+                        console.debug("WARNING: response is not used", xmlhttp.response)
                     }
                     return resolve()
                 }
@@ -90,13 +90,13 @@ export class Client {
                 }))
             }
             let body: Uint8Array = null
-            if (this.debug) {
-                console.log("request(" + r.method + "," + host + r.path + ")")
-            }
-            if (r.request != null) {
-                body = r.request()
+            if (debug) {
+                console.debug("request(" + r.method + "," + host + r.path + ")")
             }
             try {
+                if (r.request != null) {
+                    body = r.request()
+                }
                 if (r.before != null) {
                     r.before(xmlhttp, body)
                 }

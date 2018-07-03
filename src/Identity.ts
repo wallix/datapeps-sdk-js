@@ -1,6 +1,6 @@
 import * as nacl from 'tweetnacl';
 import { types } from './proto';
-import { IdentityAPI, Identity, IdentityPublicKey, IdentityShareLink, IdentityAccessKind, IdentityFields } from './DataPeps';
+import { IdentityAPI, Identity, IdentityPublicKey, IdentityPublicKeyWithMetadata, IdentityShareLink, IdentityAccessKind, IdentityFields, SessionSaltKind, LockedVersion } from './DataPeps';
 import { Error, SDKKind } from './Error';
 import { Encryption } from './CryptoFuncs';
 import { SessionImpl } from './Session';
@@ -134,6 +134,111 @@ export class IdentityImpl implements IdentityAPI {
         })
         this.session.clearAssumeParams(login)
     }
+
+    async getPublicKeyHistory(login: string): Promise<IdentityPublicKey[]> {
+        let { chains } = await this.session.doProtoRequest({
+            method: "POST", code: 200,
+            path: "/api/v4/identities/latestPublicChains",
+            request: () => types.IdentityGetLatestPublicChainsRequest.encode({
+                ids: [{ login, since: 0 }],
+            }).finish(),
+            response: types.IdentityGetLatestPublicChainsResponse.decode,
+        })
+        if (chains.length != 1 || chains[0].login !== login) {
+            throw new Error({
+                kind: SDKKind.SDKInternalError,
+                payload: { login, hint: "unexpected chain in public key history" }
+            })
+        }
+        let chain = chains[0]
+
+        return chain.chains.map(chainElt => {
+            return { login: chain.login, version: chainElt.version, sign: chainElt.sign, box: chainElt.box }
+        })
+    }
+
+
+    async getLockedVersions(login: string,
+        options?: {
+            withChallenge?: boolean,
+        }
+    ) {
+        options = options != null ? options : {};
+        return await this.session.doProtoRequest({
+            method: "GET", code: 200,
+            path: "/api/v4/identity/" + encodeURI(login) + "/lockedVersions",
+            params: options,
+            assume: login == this.session.login ? null : { login, kind: IdentityAccessKind.READ },
+            response: r => {
+                return types.IdentityGetLockedVersionsResponse.decode(r).lockedVersions.map(lockedVersion => {
+                    return ({
+                        ...lockedVersion,
+                        publicKey: {
+                            ...lockedVersion.publicKey.publicKey,
+                            created: new Date(lockedVersion.publicKey.created as number * 1000),
+                        } as IdentityPublicKeyWithMetadata
+                    })
+                })
+            }
+        })
+    }
+
+    async unlockVersions(login: string, secret: string | Uint8Array): Promise<IdentityPublicKeyWithMetadata[]> {
+        let lockedVersions = await this.getLockedVersions(login, { withChallenge: true })
+        let unlockedVersions: IdentityPublicKeyWithMetadata[] = [];
+        let resolvedChallengesWithEncryptedKeys: types.UnlockVersionsRequest.UnlockedVersion[] = [];
+        let publicKey: Uint8Array
+        if (login == this.session.login) {
+            publicKey = this.session.encryption.getPublic().boxEncrypted.publicKey
+        } else {
+            // TODO: possible race condition between the assumed version here and when sending the request
+            publicKey = (await this.session.getLatestPublicKey(login)).box
+        }
+        lockedVersions.forEach(locked => {
+            if (locked.challenge == null) {
+                throw new Error({
+                    kind: SDKKind.SDKInternalError,
+                    payload: { version: locked.publicKey.version, hint: "missing challenge to resolve in locked version" }
+                });
+            }
+            let encryption = new Encryption(types.IdentityEncryption.create(locked.challenge.encryption));
+            try {
+                encryption.recover(Uint8Tool.convert(secret), types.IdentityPublicKey.create(locked.challenge.creator));
+                unlockedVersions.push(locked.publicKey);
+
+                // the current version of session identity is signed by the unlocked one (as keys are accessible by current session)
+                let { message, nonce } = encryption.encryptKey(
+                    types.IdentityShareKind.SHARING,
+                    encryption,
+                    publicKey,
+                )
+                let backward = { nonce, encryptedKey: message }
+
+                resolvedChallengesWithEncryptedKeys.push(new types.UnlockVersionsRequest.UnlockedVersion({
+                    resolvedChallenge: {
+                        token: locked.challenge.token,
+                        salt: locked.challenge.salt,
+                        signature: encryption.sign(locked.challenge.salt),
+                    },
+                    backward,
+                }));
+            }
+            catch (e) {
+                return
+            }
+        })
+        if (unlockedVersions.length > 0) {
+            await this.session.doProtoRequest({
+                method: "POST", code: 200,
+                assume: login == this.session.login ? null : { login, kind: IdentityAccessKind.WRITE },
+                path: "/api/v4/identity/" + encodeURI(login) + "/unlockVersions",
+                request: () => types.UnlockVersionsRequest.encode({ unlockedVersions: resolvedChallengesWithEncryptedKeys }).finish(),
+                response: types.SessionResolveChallengeResponse.decode,
+            })
+        }
+        return unlockedVersions;
+    }
+
 
     async extendSharingGroup(login: string, sharingGroup: string[]): Promise<void> {
         this.session.clearAssumeParams(login)

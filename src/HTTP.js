@@ -2,11 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var proto_1 = require("./proto");
 var Error_1 = require("./Error");
+var DataPeps_1 = require("./DataPeps");
 var Client = /** @class */ (function () {
     function Client(host, wsHost) {
         this.host = host;
         this.wsHost = wsHost;
-        this.debug = true;
     }
     Client.prototype.doRequest = function (r) {
         var _this = this;
@@ -21,8 +21,8 @@ var Client = /** @class */ (function () {
                 if (xmlhttp.readyState != 4 || xmlhttp.status == 0) {
                     return;
                 }
-                if (_this.debug) {
-                    console.log("response(" + r.method + "," + host + r.path + "): ", xmlhttp.status);
+                if (DataPeps_1.debug) {
+                    console.debug("response(" + r.method + "," + host + r.path + "): ", xmlhttp.status);
                 }
                 if (xmlhttp.status != r.code) {
                     if (xmlhttp.response == null || xmlhttp.response.byteLength == 0) {
@@ -56,7 +56,7 @@ var Client = /** @class */ (function () {
                 }
                 if (r.response == null) {
                     if (xmlhttp.response == null || xmlhttp.response.length == 0) {
-                        console.log("WARNING: response is not used", xmlhttp.response);
+                        console.debug("WARNING: response is not used", xmlhttp.response);
                     }
                     return resolve();
                 }
@@ -79,13 +79,13 @@ var Client = /** @class */ (function () {
                 }));
             };
             var body = null;
-            if (_this.debug) {
-                console.log("request(" + r.method + "," + host + r.path + ")");
-            }
-            if (r.request != null) {
-                body = r.request();
+            if (DataPeps_1.debug) {
+                console.debug("request(" + r.method + "," + host + r.path + ")");
             }
             try {
+                if (r.request != null) {
+                    body = r.request();
+                }
                 if (r.before != null) {
                     r.before(xmlhttp, body);
                 }

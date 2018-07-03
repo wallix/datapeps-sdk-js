@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>TrustPolicy | datapeps-sdk</title>
+	<title>IdentityPublicKeyWithMetadata | datapeps-sdk</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -55,10 +55,10 @@
 					<a href="../modules/_datapeps_.html">&quot;DataPeps&quot;</a>
 				</li>
 				<li>
-					<a href="_datapeps_.trustpolicy.html">TrustPolicy</a>
+					<a href="_datapeps_.identitypublickeywithmetadata.html">IdentityPublicKeyWithMetadata</a>
 				</li>
 			</ul>
-			<h1>Interface TrustPolicy</h1>
+			<h1>Interface IdentityPublicKeyWithMetadata</h1>
 		</div>
 	</div>
 </header>
@@ -68,8 +68,7 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Unknown keys are fetched from the DataPeps service.
-						To mitigate MitM or Operator attacks the client must validate the keys by a side-channel, that could be a hand-check, a tier-service check or whatever...</p>
+						<p>an identity public key with its creation date</p>
 					</div>
 				</div>
 			</section>
@@ -77,7 +76,12 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">TrustPolicy</span>
+						<a href="_datapeps_.identitypublickey.html" class="tsd-signature-type">IdentityPublicKey</a>
+						<ul class="tsd-hierarchy">
+							<li>
+								<span class="target">IdentityPublicKeyWithMetadata</span>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</section>
@@ -86,41 +90,73 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
-							<h3>Methods</h3>
+							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_datapeps_.trustpolicy.html#trust" class="tsd-kind-icon">trust</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_datapeps_.identitypublickeywithmetadata.html#box" class="tsd-kind-icon">box</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_datapeps_.identitypublickeywithmetadata.html#created" class="tsd-kind-icon">created</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_datapeps_.identitypublickeywithmetadata.html#login" class="tsd-kind-icon">login</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_datapeps_.identitypublickeywithmetadata.html#sign" class="tsd-kind-icon">sign</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_datapeps_.identitypublickeywithmetadata.html#version" class="tsd-kind-icon">version</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="trust" class="tsd-anchor"></a>
-					<h3>trust</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">trust<span class="tsd-signature-symbol">(</span>pk<span class="tsd-signature-symbol">: </span><a href="_datapeps_.identitypublickey.html" class="tsd-signature-type">IdentityPublicKey</a>, mandate<span class="tsd-signature-symbol">?: </span><a href="_datapeps_.identitypublickeyid.html" class="tsd-signature-type">IdentityPublicKeyID</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L341">DataPeps.ts:341</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>pk: <a href="_datapeps_.identitypublickey.html" class="tsd-signature-type">IdentityPublicKey</a></h5>
-								</li>
-								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> mandate: <a href="_datapeps_.identitypublickeyid.html" class="tsd-signature-type">IdentityPublicKeyID</a></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
-						</li>
-					</ul>
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="box" class="tsd-anchor"></a>
+					<h3>box</h3>
+					<div class="tsd-signature tsd-kind-icon">box<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Uint8Array</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_datapeps_.identitypublickey.html">IdentityPublicKey</a>.<a href="_datapeps_.identitypublickey.html#box">box</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L545">DataPeps.ts:545</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="created" class="tsd-anchor"></a>
+					<h3>created</h3>
+					<div class="tsd-signature tsd-kind-icon">created<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Date</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L552">DataPeps.ts:552</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="login" class="tsd-anchor"></a>
+					<h3>login</h3>
+					<div class="tsd-signature tsd-kind-icon">login<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_datapeps_.identitypublickeyid.html">IdentityPublicKeyID</a>.<a href="_datapeps_.identitypublickeyid.html#login">login</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L528">DataPeps.ts:528</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="sign" class="tsd-anchor"></a>
+					<h3>sign</h3>
+					<div class="tsd-signature tsd-kind-icon">sign<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Uint8Array</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_datapeps_.identitypublickey.html">IdentityPublicKey</a>.<a href="_datapeps_.identitypublickey.html#sign">sign</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L544">DataPeps.ts:544</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="version" class="tsd-anchor"></a>
+					<h3>version</h3>
+					<div class="tsd-signature tsd-kind-icon">version<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_datapeps_.identitypublickeyid.html">IdentityPublicKeyID</a>.<a href="_datapeps_.identitypublickeyid.html#version">version</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L529">DataPeps.ts:529</a></li>
+						</ul>
+					</aside>
 				</section>
 			</section>
 		</div>
@@ -140,10 +176,22 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_datapeps_.trustpolicy.html" class="tsd-kind-icon">Trust<wbr>Policy</a>
+						<a href="_datapeps_.identitypublickeywithmetadata.html" class="tsd-kind-icon">Identity<wbr>Public<wbr>Key<wbr>With<wbr>Metadata</a>
 						<ul>
-							<li class=" tsd-kind-method tsd-parent-kind-interface">
-								<a href="_datapeps_.trustpolicy.html#trust" class="tsd-kind-icon">trust</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_datapeps_.identitypublickeywithmetadata.html#box" class="tsd-kind-icon">box</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_datapeps_.identitypublickeywithmetadata.html#created" class="tsd-kind-icon">created</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_datapeps_.identitypublickeywithmetadata.html#login" class="tsd-kind-icon">login</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_datapeps_.identitypublickeywithmetadata.html#sign" class="tsd-kind-icon">sign</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_datapeps_.identitypublickeywithmetadata.html#version" class="tsd-kind-icon">version</a>
 							</li>
 						</ul>
 					</li>

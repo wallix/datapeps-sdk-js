@@ -46,6 +46,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var nacl = require("tweetnacl");
 var proto_1 = require("./proto");
 var DataPeps_1 = require("./DataPeps");
+var DataPeps_2 = require("./DataPeps");
 var Error_1 = require("./Error");
 var Tools_1 = require("./Tools");
 var CryptoFuncs_1 = require("./CryptoFuncs");
@@ -85,13 +86,17 @@ var TrustOnFirstUse = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         if (pk.version == 1) {
-                            console.log("TrustFirstUse", pk.login, Tools_1.Base64.encode(pk.sign), Tools_1.Base64.encode(pk.box), " mandate by ", mandate);
+                            if (DataPeps_1.debug) {
+                                console.log("TrustFirstUse", pk.login, Tools_1.Base64.encode(pk.sign), Tools_1.Base64.encode(pk.box), " mandate by ", mandate);
+                            }
                             return [2 /*return*/, Promise.resolve()];
                         }
                         return [4 /*yield*/, this.session.getPublicKey(mandate)];
                     case 1:
                         _a.sent();
-                        console.log("TrustByMandate", pk.login, pk.version, Tools_1.Base64.encode(pk.sign), Tools_1.Base64.encode(pk.box), " mandate by ", mandate);
+                        if (DataPeps_1.debug) {
+                            console.log("TrustByMandate", pk.login, pk.version, Tools_1.Base64.encode(pk.sign), Tools_1.Base64.encode(pk.box), " mandate by ", mandate);
+                        }
                         return [2 /*return*/, Promise.resolve()];
                 }
             });
@@ -115,15 +120,11 @@ function loginWithKeys(client, keys) {
 }
 function _login(client, login, recover, options) {
     return __awaiter(this, void 0, void 0, function () {
-        var saltKind, challengeRequest, createResponse, creator, encryption, token, salt, resolveResponse;
+        var saltKind, createResponse, encryption, token, salt, resolveResponse;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     saltKind = options != null && options.saltKind != null ? options.saltKind : proto_1.types.SessionSaltKind.TIME;
-                    challengeRequest = proto_1.types.SessionCreateChallengeRequest.create({
-                        login: login,
-                        saltKind: saltKind
-                    });
                     return [4 /*yield*/, client.doRequest({
                             method: "POST", code: 201,
                             path: "/api/v4/session/challenge/create",
@@ -136,7 +137,6 @@ function _login(client, login, recover, options) {
                         })];
                 case 1:
                     createResponse = _a.sent();
-                    creator = proto_1.types.IdentityPublicKey.create(createResponse.creator);
                     encryption = recover(proto_1.types.IdentityEncryption.create(createResponse.encryption), proto_1.types.IdentityPublicKey.create(createResponse.creator));
                     token = createResponse.token;
                     salt = createResponse.salt;
@@ -381,7 +381,7 @@ var SessionImpl = /** @class */ (function () {
                             method: "GET", code: 200,
                             path: "/api/v4/delegatedAccesses",
                             response: proto_1.types.DelegatedAccessListResponse.decode,
-                            assume: { login: login, kind: DataPeps_1.IdentityAccessKind.READ },
+                            assume: { login: login, kind: DataPeps_2.IdentityAccessKind.READ },
                             params: options,
                         })];
                     case 1:
@@ -443,7 +443,10 @@ var SessionImpl = /** @class */ (function () {
                         this.clearAssumeParams(r.assume.login);
                         return [2 /*return*/, this.doRequest(r)];
                     case 10:
-                        this.afterRequest(xhr);
+                        if (xhr != null) {
+                            // Ensure that request was done before validating salt
+                            this.afterRequest(xhr);
+                        }
                         throw err_1;
                     case 11: return [2 /*return*/];
                 }
@@ -483,6 +486,8 @@ var SessionImpl = /** @class */ (function () {
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
+                        // work on a duplicate of the chains parameter as shift() change the object
+                        chains = chains.slice();
                         firstVersion = version - chains.length;
                         if (firstVersion < 0) {
                             throw new Error_1.Error({
@@ -579,7 +584,7 @@ var SessionImpl = /** @class */ (function () {
         }
         request.setRequestHeader("x-peps-assume-access", assume.kind.toString());
         request.setRequestHeader("x-peps-assume-identity", assume.key.login + "/" + assume.key.version);
-        var key = assume.kind == DataPeps_1.IdentityAccessKind.READ ? assume.key.readKey : assume.key.signKey;
+        var key = assume.kind == DataPeps_2.IdentityAccessKind.READ ? assume.key.readKey : assume.key.signKey;
         request.setRequestHeader("x-peps-assume-signature", Tools_1.Base64.encode(nacl.sign.detached(tosign, key)));
     };
     SessionImpl.prototype.getSalt = function () {

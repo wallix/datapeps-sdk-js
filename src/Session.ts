@@ -1,7 +1,7 @@
 import * as nacl from 'tweetnacl';
 import * as Long from 'long';
 import { types, events } from './proto';
-import { ID, Session, SessionRequest, PublicKeysCache, TrustPolicy, AccessRequestResolver, DelegatedAccess } from './DataPeps';
+import { ID, Session, SessionRequest, PublicKeysCache, TrustPolicy, AccessRequestResolver, DelegatedAccess, debug, IdentityPublicKeyWithMetadata } from './DataPeps';
 import { IdentityPublicKey, IdentityPublicKeyID, IdentityAccessKind } from './DataPeps';
 import { AccessRequest } from './DataPeps';
 import { Resource } from './DataPeps';
@@ -51,11 +51,15 @@ class TrustOnFirstUse implements TrustPolicy {
 
     async trust(pk: IdentityPublicKey, mandate?: IdentityPublicKeyID): Promise<void> {
         if (pk.version == 1) {
-            console.log("TrustFirstUse", pk.login, Base64.encode(pk.sign), Base64.encode(pk.box), " mandate by ", mandate)
+            if (debug) {
+                console.log("TrustFirstUse", pk.login, Base64.encode(pk.sign), Base64.encode(pk.box), " mandate by ", mandate)
+            }
             return Promise.resolve()
         }
         await this.session.getPublicKey(mandate)
-        console.log("TrustByMandate", pk.login, pk.version, Base64.encode(pk.sign), Base64.encode(pk.box), " mandate by ", mandate)
+        if (debug) {
+            console.log("TrustByMandate", pk.login, pk.version, Base64.encode(pk.sign), Base64.encode(pk.box), " mandate by ", mandate)
+        }
         return Promise.resolve()
     }
 }
@@ -75,10 +79,6 @@ export async function _login(
     options?: { saltKind?: types.SessionSaltKind }
 ): Promise<Session> {
     let saltKind = options != null && options.saltKind != null ? options.saltKind : types.SessionSaltKind.TIME
-    let challengeRequest = types.SessionCreateChallengeRequest.create({
-        login: login,
-        saltKind: saltKind
-    })
     let createResponse = await client.doRequest({
         method: "POST", code: 201,
         path: "/api/v4/session/challenge/create",
@@ -89,7 +89,6 @@ export async function _login(
         response: types.SessionCreateChallengeResponse.decode,
         before: (x, b) => x.setRequestHeader("content-type", "application/x-protobuf")
     })
-    let creator = types.IdentityPublicKey.create(createResponse.creator)
     let encryption = recover(
         types.IdentityEncryption.create(createResponse.encryption),
         types.IdentityPublicKey.create(createResponse.creator),
@@ -330,7 +329,10 @@ export class SessionImpl implements Session {
                     this.clearAssumeParams(r.assume.login)
                     return this.doRequest(r)
             }
-            this.afterRequest(xhr)
+            if (xhr != null) {
+                // Ensure that request was done before validating salt
+                this.afterRequest(xhr)
+            }
             throw err
         }
     }
@@ -351,6 +353,8 @@ export class SessionImpl implements Session {
     }
 
     private async validateChain({ login, version, chains }: types.IIdentityPublicChain) {
+        // work on a duplicate of the chains parameter as shift() change the object
+        chains = chains.slice()
         let firstVersion = version - chains.length
         if (firstVersion < 0) {
             throw new Error({

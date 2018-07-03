@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>TrustPolicy | datapeps-sdk</title>
+	<title>LockedVersion | datapeps-sdk</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -55,10 +55,10 @@
 					<a href="../modules/_datapeps_.html">&quot;DataPeps&quot;</a>
 				</li>
 				<li>
-					<a href="_datapeps_.trustpolicy.html">TrustPolicy</a>
+					<a href="_datapeps_.lockedversion.html">LockedVersion</a>
 				</li>
 			</ul>
-			<h1>Interface TrustPolicy</h1>
+			<h1>Interface LockedVersion</h1>
 		</div>
 	</div>
 </header>
@@ -68,8 +68,7 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Unknown keys are fetched from the DataPeps service.
-						To mitigate MitM or Operator attacks the client must validate the keys by a side-channel, that could be a hand-check, a tier-service check or whatever...</p>
+						<p>An object containing a locked key</p>
 					</div>
 				</div>
 			</section>
@@ -77,7 +76,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">TrustPolicy</span>
+						<span class="target">LockedVersion</span>
 					</li>
 				</ul>
 			</section>
@@ -86,41 +85,30 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
-							<h3>Methods</h3>
+							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_datapeps_.trustpolicy.html#trust" class="tsd-kind-icon">trust</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_datapeps_.lockedversion.html#publickey" class="tsd-kind-icon">public<wbr>Key</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="trust" class="tsd-anchor"></a>
-					<h3>trust</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">trust<span class="tsd-signature-symbol">(</span>pk<span class="tsd-signature-symbol">: </span><a href="_datapeps_.identitypublickey.html" class="tsd-signature-type">IdentityPublicKey</a>, mandate<span class="tsd-signature-symbol">?: </span><a href="_datapeps_.identitypublickeyid.html" class="tsd-signature-type">IdentityPublicKeyID</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L341">DataPeps.ts:341</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>pk: <a href="_datapeps_.identitypublickey.html" class="tsd-signature-type">IdentityPublicKey</a></h5>
-								</li>
-								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> mandate: <a href="_datapeps_.identitypublickeyid.html" class="tsd-signature-type">IdentityPublicKeyID</a></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
-						</li>
-					</ul>
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="publickey" class="tsd-anchor"></a>
+					<h3>public<wbr>Key</h3>
+					<div class="tsd-signature tsd-kind-icon">public<wbr>Key<span class="tsd-signature-symbol">:</span> <a href="_datapeps_.identitypublickeywithmetadata.html" class="tsd-signature-type">IdentityPublicKeyWithMetadata</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L537">DataPeps.ts:537</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The publicKey of the locked key</p>
+						</div>
+					</div>
 				</section>
 			</section>
 		</div>
@@ -140,10 +128,10 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_datapeps_.trustpolicy.html" class="tsd-kind-icon">Trust<wbr>Policy</a>
+						<a href="_datapeps_.lockedversion.html" class="tsd-kind-icon">Locked<wbr>Version</a>
 						<ul>
-							<li class=" tsd-kind-method tsd-parent-kind-interface">
-								<a href="_datapeps_.trustpolicy.html#trust" class="tsd-kind-icon">trust</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_datapeps_.lockedversion.html#publickey" class="tsd-kind-icon">public<wbr>Key</a>
 							</li>
 						</ul>
 					</li>

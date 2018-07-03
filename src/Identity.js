@@ -223,6 +223,119 @@ var IdentityImpl = /** @class */ (function () {
             });
         });
     };
+    IdentityImpl.prototype.getPublicKeyHistory = function (login) {
+        return __awaiter(this, void 0, void 0, function () {
+            var chains, chain;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.session.doProtoRequest({
+                            method: "POST", code: 200,
+                            path: "/api/v4/identities/latestPublicChains",
+                            request: function () { return proto_1.types.IdentityGetLatestPublicChainsRequest.encode({
+                                ids: [{ login: login, since: 0 }],
+                            }).finish(); },
+                            response: proto_1.types.IdentityGetLatestPublicChainsResponse.decode,
+                        })];
+                    case 1:
+                        chains = (_a.sent()).chains;
+                        if (chains.length != 1 || chains[0].login !== login) {
+                            throw new Error_1.Error({
+                                kind: Error_1.SDKKind.SDKInternalError,
+                                payload: { login: login, hint: "unexpected chain in public key history" }
+                            });
+                        }
+                        chain = chains[0];
+                        return [2 /*return*/, chain.chains.map(function (chainElt) {
+                                return { login: chain.login, version: chainElt.version, sign: chainElt.sign, box: chainElt.box };
+                            })];
+                }
+            });
+        });
+    };
+    IdentityImpl.prototype.getLockedVersions = function (login, options) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        options = options != null ? options : {};
+                        return [4 /*yield*/, this.session.doProtoRequest({
+                                method: "GET", code: 200,
+                                path: "/api/v4/identity/" + encodeURI(login) + "/lockedVersions",
+                                params: options,
+                                assume: login == this.session.login ? null : { login: login, kind: DataPeps_1.IdentityAccessKind.READ },
+                                response: function (r) {
+                                    return proto_1.types.IdentityGetLockedVersionsResponse.decode(r).lockedVersions.map(function (lockedVersion) {
+                                        return (__assign({}, lockedVersion, { publicKey: __assign({}, lockedVersion.publicKey.publicKey, { created: new Date(lockedVersion.publicKey.created * 1000) }) }));
+                                    });
+                                }
+                            })];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
+    IdentityImpl.prototype.unlockVersions = function (login, secret) {
+        return __awaiter(this, void 0, void 0, function () {
+            var lockedVersions, unlockedVersions, resolvedChallengesWithEncryptedKeys, publicKey;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.getLockedVersions(login, { withChallenge: true })];
+                    case 1:
+                        lockedVersions = _a.sent();
+                        unlockedVersions = [];
+                        resolvedChallengesWithEncryptedKeys = [];
+                        if (!(login == this.session.login)) return [3 /*break*/, 2];
+                        publicKey = this.session.encryption.getPublic().boxEncrypted.publicKey;
+                        return [3 /*break*/, 4];
+                    case 2: return [4 /*yield*/, this.session.getLatestPublicKey(login)];
+                    case 3:
+                        // TODO: possible race condition between the assumed version here and when sending the request
+                        publicKey = (_a.sent()).box;
+                        _a.label = 4;
+                    case 4:
+                        lockedVersions.forEach(function (locked) {
+                            if (locked.challenge == null) {
+                                throw new Error_1.Error({
+                                    kind: Error_1.SDKKind.SDKInternalError,
+                                    payload: { version: locked.publicKey.version, hint: "missing challenge to resolve in locked version" }
+                                });
+                            }
+                            var encryption = new CryptoFuncs_1.Encryption(proto_1.types.IdentityEncryption.create(locked.challenge.encryption));
+                            try {
+                                encryption.recover(Tools_1.Uint8Tool.convert(secret), proto_1.types.IdentityPublicKey.create(locked.challenge.creator));
+                                unlockedVersions.push(locked.publicKey);
+                                // the current version of session identity is signed by the unlocked one (as keys are accessible by current session)
+                                var _a = encryption.encryptKey(proto_1.types.IdentityShareKind.SHARING, encryption, publicKey), message = _a.message, nonce = _a.nonce;
+                                var backward = { nonce: nonce, encryptedKey: message };
+                                resolvedChallengesWithEncryptedKeys.push(new proto_1.types.UnlockVersionsRequest.UnlockedVersion({
+                                    resolvedChallenge: {
+                                        token: locked.challenge.token,
+                                        salt: locked.challenge.salt,
+                                        signature: encryption.sign(locked.challenge.salt),
+                                    },
+                                    backward: backward,
+                                }));
+                            }
+                            catch (e) {
+                                return;
+                            }
+                        });
+                        if (!(unlockedVersions.length > 0)) return [3 /*break*/, 6];
+                        return [4 /*yield*/, this.session.doProtoRequest({
+                                method: "POST", code: 200,
+                                assume: login == this.session.login ? null : { login: login, kind: DataPeps_1.IdentityAccessKind.WRITE },
+                                path: "/api/v4/identity/" + encodeURI(login) + "/unlockVersions",
+                                request: function () { return proto_1.types.UnlockVersionsRequest.encode({ unlockedVersions: resolvedChallengesWithEncryptedKeys }).finish(); },
+                                response: proto_1.types.SessionResolveChallengeResponse.decode,
+                            })];
+                    case 5:
+                        _a.sent();
+                        _a.label = 6;
+                    case 6: return [2 /*return*/, unlockedVersions];
+                }
+            });
+        });
+    };
     IdentityImpl.prototype.extendSharingGroup = function (login, sharingGroup) {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;

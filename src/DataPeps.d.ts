@@ -6,6 +6,7 @@ import { Resource } from './Resource';
 export { Error, ErrorKind, ServerKind as ServerError, SDKKind as SDKError } from './Error';
 export declare type RegisterTokenStatus = types.RegisterTokenStatus;
 export declare const RegisterTokenStatus: typeof types.RegisterTokenStatus;
+export declare var debug: boolean;
 /**
  * Configure the endpoint of the SDK.
  * @param APIUrl The url of the DataPeps service.
@@ -323,11 +324,24 @@ export interface IdentityPublicKeyID {
     version: number;
 }
 /**
+ * An object containing a locked key
+ */
+export interface LockedVersion {
+    /** The publicKey of the locked key */
+    publicKey: IdentityPublicKeyWithMetadata;
+}
+/**
  * An {@Identity} owns several keys, this refers to the unique version of an identity public key.
  */
 export interface IdentityPublicKey extends IdentityPublicKeyID {
     sign: Uint8Array;
     box: Uint8Array;
+}
+/**
+ * an identity public key with its creation date
+ */
+export interface IdentityPublicKeyWithMetadata extends IdentityPublicKey {
+    created: Date;
 }
 /**
  * The description of the fields of an identity.
@@ -468,6 +482,31 @@ export interface IdentityAPI {
      * - `IdentityNotFound` if the identity cannot be accessed.
      */
     getAccessGroup(login: string): Promise<IdentityShareLink[]>;
+    /**
+    * Get all history of public keys of the given identity login.
+    * WARNING: These keys are not trusted, i.e. the chain of trust is not validated
+    * @param login The login of identity to get the key history.
+    * @return(p) On success the promise will be resolved with the history of public keys of `login`.
+    * On error the promise will be rejected with an {@link Error} with kind
+    * - `IdentityNotFound` if the identity is not found.
+    */
+    getPublicKeyHistory(login: string): Promise<IdentityPublicKey[]>;
+    /**
+     * Get the keys of the versions of an identity that are locked. A version of an identity is locked if it is not accessible
+     * by the current version of the identity
+     * @param login The login of the identity to get the sharing group.
+     * @param options A collection of initialization options that control the sessions:
+     * @return(p) On success the promise will be resolved with a list of the public keys identity that are locked.
+     * On error the promise will be rejected with an {@link Error} with kind
+     * - `IdentityNotFound` if the identity cannot be accessed.
+     */
+    getLockedVersions(login: string): Promise<LockedVersion[]>;
+    /**
+     * Try to unlock the locked versions with the secret passed as parameter.
+     * @param secret A secret used to unlock previous versions of the current identity
+     * @return(p) On success the promise will be resolved with the list of unlocked identities.
+     */
+    unlockVersions(login: string, secret: string | Uint8Array): Promise<IdentityPublicKeyWithMetadata[]>;
 }
 /**
  * The list the cryptographic schemes of a {@link Resource}

@@ -57,6 +57,7 @@ var defaultAPIURL = "https://api.datapeps.com";
 var defaultWSURL = "https://ws.datapeps.com";
 var client = new HTTP_1.Client(defaultAPIURL, defaultWSURL);
 var webSocketURL = defaultWSURL;
+exports.debug = false;
 /**
  * Configure the endpoint of the SDK.
  * @param APIUrl The url of the DataPeps service.

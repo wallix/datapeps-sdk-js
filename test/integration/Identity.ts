@@ -107,7 +107,7 @@ describe('Identity.Main', () => {
         expect(deviceASession).to.be.not.null
     })
 
-    it('alice share its identity with its device', async () => {
+    it('alice shares its identity with its device', async () => {
         await aliceSession.Identity.extendSharingGroup(alice.login, [deviceA.login])
     })
 
@@ -253,5 +253,4 @@ describe('Identity.Main', () => {
         bobSession = await sdk.login(bob.login, bobSecret)
         expect(bobSession).to.be.not.null
     })
-
 })

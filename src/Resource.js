@@ -121,8 +121,8 @@ var ResourceImpl = /** @class */ (function () {
                 switch (_b.label) {
                     case 0:
                         options = options == null ? {} : options;
-                        encryptFunc = this.session.encryption.encrypt(proto_1.types.ResourceType.SES);
-                        type = proto_1.types.ResourceType.ANONYMOUS;
+                        encryptFunc = this.session.encryption.encrypt(proto_1.api.ResourceType.SES);
+                        type = proto_1.api.ResourceType.ANONYMOUS;
                         creator = this.session.getSessionPublicKey();
                         return [4 /*yield*/, this._createBodyRequest(payload, sharingGroup, encryptFunc, options)];
                     case 1:
@@ -130,8 +130,8 @@ var ResourceImpl = /** @class */ (function () {
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "POST", code: 201,
                                 path: "/api/v4/resources",
-                                request: function () { return proto_1.types.ResourcePostRequest.encode(__assign({}, body, { type: type, kind: kind })).finish(); },
-                                response: proto_1.types.ResourcePostResponse.decode
+                                request: function () { return proto_1.api.ResourcePostRequest.encode(__assign({}, body, { type: type, kind: kind })).finish(); },
+                                response: proto_1.api.ResourcePostResponse.decode
                             })];
                     case 2:
                         id = (_b.sent()).id;
@@ -155,7 +155,7 @@ var ResourceImpl = /** @class */ (function () {
                                 path: "/api/v4/resources",
                                 assume: { login: assume, kind: DataPeps_1.IdentityAccessKind.READ },
                                 params: params,
-                                response: function (r) { return proto_1.types.ResourceListResponse.decode(r).resources; }
+                                response: function (r) { return proto_1.api.ResourceListResponse.decode(r).resources; }
                             }).then(function (resources) { return makeResourcesFromResponses(resources, _this.session, options.parse); })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
@@ -176,11 +176,11 @@ var ResourceImpl = /** @class */ (function () {
                                 path: "/api/v4/resource/" + id,
                                 assume: { login: assume, kind: DataPeps_1.IdentityAccessKind.READ },
                                 params: params,
-                                response: function (r) { return proto_1.types.ResourceGetResponse.decode(r); },
+                                response: function (r) { return proto_1.api.ResourceGetResponse.decode(r); },
                             })];
                     case 1:
                         response = _a.sent();
-                        return [2 /*return*/, makeResourceFromResponse(response, proto_1.types.ResourceType.SES, this.session, options.parse, assume)];
+                        return [2 /*return*/, makeResourceFromResponse(response, proto_1.api.ResourceType.SES, this.session, options.parse, assume)];
                 }
             });
         });
@@ -216,17 +216,17 @@ var ResourceImpl = /** @class */ (function () {
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "GET", code: 200,
                                 path: "/api/v4/resource/" + id + "/key",
-                                response: proto_1.types.ResourceGetKeyResponse.decode,
+                                response: proto_1.api.ResourceGetKeyResponse.decode,
                             })];
                     case 1:
                         _a = _b.sent(), encryptedKey = _a.encryptedKey, type = _a.type;
                         return [4 /*yield*/, this.session.getAssumeParams({ login: assume, kind: DataPeps_1.IdentityAccessKind.READ })];
                     case 2:
                         key = (_b.sent()).key;
-                        return [4 /*yield*/, this.session.decryptCipherList(proto_1.types.ResourceType.SES, encryptedKey, key.boxKey)];
+                        return [4 /*yield*/, this.session.decryptCipherList(proto_1.api.ResourceType.SES, encryptedKey, key.boxKey)];
                     case 3:
                         secretKey = _b.sent();
-                        encryptFunc = this.session.encryption.encrypt(proto_1.types.ResourceType.SES);
+                        encryptFunc = this.session.encryption.encrypt(proto_1.api.ResourceType.SES);
                         return [4 /*yield*/, this.encryptForSharingGroup(secretKey, sharingGroup, encryptFunc)];
                     case 4:
                         encryptedSharingGroup = _b.sent();
@@ -234,7 +234,7 @@ var ResourceImpl = /** @class */ (function () {
                                 method: "PATCH", code: 201,
                                 path: "/api/v4/resource/" + id + "/sharingGroup",
                                 assume: { login: assume, kind: DataPeps_1.IdentityAccessKind.WRITE },
-                                request: function () { return proto_1.types.ResourceExtendSharingGroupRequest.encode({
+                                request: function () { return proto_1.api.ResourceExtendSharingGroupRequest.encode({
                                     sharingGroup: encryptedSharingGroup
                                 }).finish(); }
                             })];
@@ -255,7 +255,7 @@ var ResourceImpl = /** @class */ (function () {
                                 method: "GET", code: 200,
                                 path: "/api/v4/resource/" + id + "/sharingGroup",
                                 assume: { login: assume, kind: DataPeps_1.IdentityAccessKind.READ },
-                                response: function (r) { return proto_1.types.ResourceGetSharingGroupResponse.decode(r).sharingGroup; }
+                                response: function (r) { return proto_1.api.ResourceGetSharingGroupResponse.decode(r).sharingGroup; }
                             })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
@@ -293,8 +293,8 @@ var ResourceImpl = /** @class */ (function () {
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "POST", code: 200,
                                 path: "/api/v4/resources/accessLogs",
-                                request: function () { return proto_1.types.ResourceGetAccessLogsRequest.encode(options).finish(); },
-                                response: proto_1.types.ResourceGetAccessLogsResponse.decode,
+                                request: function () { return proto_1.api.ResourceGetAccessLogsRequest.encode(options).finish(); },
+                                response: proto_1.api.ResourceGetAccessLogsResponse.decode,
                                 assume: {
                                     login: assume,
                                     kind: DataPeps_1.IdentityAccessKind.READ,
@@ -322,7 +322,7 @@ function makeResourceFromResponse(_a, typeOfKey, session, parse, assume) {
                 case 1:
                     key = (_b.sent()).key;
                     secretKeyCipher = encryptedKey.pop();
-                    return [4 /*yield*/, session.decryptCipherList(proto_1.types.ResourceType.SES, encryptedKey, key.boxKey)];
+                    return [4 /*yield*/, session.decryptCipherList(proto_1.api.ResourceType.SES, encryptedKey, key.boxKey)];
                 case 2:
                     accessKey = _b.sent();
                     return [4 /*yield*/, makeResource({ resource: resource, encryptedKey: secretKeyCipher, creator: creator }, typeOfKey, session, accessKey, parse)];
@@ -348,7 +348,7 @@ function makeResource(_a, typeOfKey, session, boxKey, parse) {
                     return [3 /*break*/, 4];
                 case 2:
                     _c = parse;
-                    return [4 /*yield*/, session.decryptCipherList(proto_1.types.ResourceType.SES, [{
+                    return [4 /*yield*/, session.decryptCipherList(proto_1.api.ResourceType.SES, [{
                                 message: resource.payload,
                                 nonce: resource.nonce,
                                 sign: creator
@@ -418,7 +418,7 @@ function makeResourcesFromResponses(resources, session, parse) {
                         }
                     }
                     _b = (_a = resolvedResources).push;
-                    return [4 /*yield*/, makeResource(resource, proto_1.types.ResourceType.SES, session, keys != undefined ? keys.boxKey : undefined, parse)];
+                    return [4 /*yield*/, makeResource(resource, proto_1.api.ResourceType.SES, session, keys != undefined ? keys.boxKey : undefined, parse)];
                 case 6:
                     _b.apply(_a, [_c.sent()]);
                     _c.label = 7;

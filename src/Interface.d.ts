@@ -1,6 +1,6 @@
 /// <reference types="long" />
 import * as Long from 'long';
-import { types } from './proto';
+import { api } from './proto';
 import { Request } from './HTTP';
 /**
  * Type of identitfier of DataPeps objects.
@@ -188,7 +188,7 @@ export interface Identity<T> {
 /**
  * IdentityKeyKind indicates which kind of keys is shared has between two identities.
  */
-export declare type IdentityKeyKind = types.IdentityShareKind;
+export declare type IdentityKeyKind = api.IdentityShareKind;
 /**
  * IdentityShareLink describes a share link between two identities.
  */
@@ -413,5 +413,5 @@ export interface AdminAPI {
         offset?: number;
         limit?: number;
         domain?: string;
-    }): Promise<types.IRegisterEmailValidationToken[]>;
+    }): Promise<api.IRegisterEmailValidationToken[]>;
 }

@@ -47,7 +47,7 @@ var AdminImpl = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "POST", code: 200,
                             path: "/api/v4/identity/" + encodeURIComponent(login) + "/promote",
-                            request: function () { return proto_1.types.IdentityPromoteRequest.encode({
+                            request: function () { return proto_1.api.IdentityPromoteRequest.encode({
                                 admin: admin
                             }).finish(); }
                         })];
@@ -63,7 +63,7 @@ var AdminImpl = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "POST", code: 200,
                             path: "/api/v4/identity/" + encodeURI(login) + "/active",
-                            request: function () { return proto_1.types.IdentityToggleActiveStatusRequest.encode({
+                            request: function () { return proto_1.api.IdentityToggleActiveStatusRequest.encode({
                                 login: login, active: active,
                             }).finish(); }
                         })];
@@ -93,7 +93,7 @@ var AdminImpl = /** @class */ (function () {
                             method: "GET", code: 200,
                             path: "/api/v4/register/links",
                             params: options,
-                            response: proto_1.types.LinksGetResponse.decode
+                            response: proto_1.api.LinksGetResponse.decode
                         })];
                     case 1:
                         links = (_a.sent()).links;

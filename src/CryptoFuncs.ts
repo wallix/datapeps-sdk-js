@@ -1,5 +1,5 @@
 import * as nacl from 'tweetnacl';
-import { types } from './proto';
+import { api } from './proto';
 import { IdentityPublicKey, IdentityKeyKind } from './DataPeps';
 import { Error, SDKKind } from './Error';
 import { Uint8Tool, Crypto } from './Tools';
@@ -19,7 +19,7 @@ export interface DecryptFuncs {
     decryptList(ciphers: ResolvedCipher[]): Uint8Array
 }
 
-export class Encryption extends types.IdentityEncryption {
+export class Encryption extends api.IdentityEncryption {
 
     // Master encryption material
     secret: Uint8Array
@@ -32,25 +32,25 @@ export class Encryption extends types.IdentityEncryption {
     private signKeyPair: nacl.SignKeyPair
     private readKeyPair: nacl.SignKeyPair
 
-    constructor(properties?: types.IIdentityEncryption) {
+    constructor(properties?: api.IIdentityEncryption) {
         super(properties)
     }
 
-    encrypt(type: types.ResourceType): EncryptFuncs {
+    encrypt(type: api.ResourceType): EncryptFuncs {
         switch (type) {
-            case types.ResourceType.ANONYMOUS: return new EncryptAnonymous()
-            case types.ResourceType.SES: return new EncryptSES(this.boxKeyPair.secretKey, this.signKeyPair.secretKey)
+            case api.ResourceType.ANONYMOUS: return new EncryptAnonymous()
+            case api.ResourceType.SES: return new EncryptSES(this.boxKeyPair.secretKey, this.signKeyPair.secretKey)
         }
     }
 
-    decrypt(type: types.ResourceType, secretKey = this.boxKeyPair.secretKey): DecryptFuncs {
+    decrypt(type: api.ResourceType, secretKey = this.boxKeyPair.secretKey): DecryptFuncs {
         switch (type) {
-            case types.ResourceType.ANONYMOUS: return new DecryptAnonymous(secretKey)
-            case types.ResourceType.SES: return new DecryptSES(secretKey)
+            case api.ResourceType.ANONYMOUS: return new DecryptAnonymous(secretKey)
+            case api.ResourceType.SES: return new DecryptSES(secretKey)
         }
     }
 
-    getPublic(): types.IdentityEncryption {
+    getPublic(): api.IdentityEncryption {
         return this
     }
 
@@ -70,7 +70,7 @@ export class Encryption extends types.IdentityEncryption {
         this.generate(null, creator)
     }
 
-    recoverWithKeys(keys: types.IDelegatedKeys, creator: IdentityPublicKey) {
+    recoverWithKeys(keys: api.IDelegatedKeys, creator: IdentityPublicKey) {
         this.version = keys.version
         this.sharingKeyPair = nacl.box.keyPair.fromSecretKey(keys.sharingKey)
         this.boxKeyPair = nacl.box.keyPair.fromSecretKey(keys.boxKey)
@@ -95,10 +95,10 @@ export class Encryption extends types.IdentityEncryption {
             throw err
         }
         // Recompute the encryption material
-        this.boxKeyPair = this.decryptKeyWithKey(types.IdentityShareKind.SHARING, this.boxEncrypted, creator)
+        this.boxKeyPair = this.decryptKeyWithKey(api.IdentityShareKind.SHARING, this.boxEncrypted, creator)
         // Recompute the signing material
-        this.signKeyPair = this.decryptKeyWithKey(types.IdentityShareKind.SHARING, this.signEncrypted, creator)
-        this.readKeyPair = this.decryptKeyWithKey(types.IdentityShareKind.BOX, this.readEncrypted, creator)
+        this.signKeyPair = this.decryptKeyWithKey(api.IdentityShareKind.SHARING, this.signEncrypted, creator)
+        this.readKeyPair = this.decryptKeyWithKey(api.IdentityShareKind.BOX, this.readEncrypted, creator)
     }
 
     private generateMasterSalt() {
@@ -124,9 +124,9 @@ export class Encryption extends types.IdentityEncryption {
         this.readKeyPair = nacl.sign.keyPair()
         // Encrypt the cryptographic material
         this.sharingEncrypted = this.encryptKeyForMasterKey(this.sharingKeyPair, creator)
-        this.boxEncrypted = this.encryptKeyForKey(types.IdentityShareKind.SHARING, this.boxKeyPair, creator)
-        this.signEncrypted = this.encryptKeyForKey(types.IdentityShareKind.SHARING, this.signKeyPair, creator)
-        this.readEncrypted = this.encryptKeyForKey(types.IdentityShareKind.BOX, this.readKeyPair, creator)
+        this.boxEncrypted = this.encryptKeyForKey(api.IdentityShareKind.SHARING, this.boxKeyPair, creator)
+        this.signEncrypted = this.encryptKeyForKey(api.IdentityShareKind.SHARING, this.signKeyPair, creator)
+        this.readEncrypted = this.encryptKeyForKey(api.IdentityShareKind.BOX, this.readKeyPair, creator)
     }
 
     sign(msg: Uint8Array) {
@@ -134,35 +134,35 @@ export class Encryption extends types.IdentityEncryption {
     }
 
     encryptKey(kind: IdentityKeyKind, encryption: Encryption, publicKey: Uint8Array) {
-        return encryption.encrypt(types.ResourceType.SES).encrypt(publicKey, this.getSecretKey(kind))
+        return encryption.encrypt(api.ResourceType.SES).encrypt(publicKey, this.getSecretKey(kind))
     }
 
     getPublicKey(kind: IdentityKeyKind): Uint8Array {
         switch (kind) {
-            case types.IdentityShareKind.BOX: return this.boxKeyPair.publicKey
-            case types.IdentityShareKind.SHARING: return this.sharingKeyPair.publicKey
+            case api.IdentityShareKind.BOX: return this.boxKeyPair.publicKey
+            case api.IdentityShareKind.SHARING: return this.sharingKeyPair.publicKey
         }
     }
 
     private getSecretKey(kind: IdentityKeyKind): Uint8Array {
         switch (kind) {
-            case types.IdentityShareKind.BOX: return this.boxKeyPair.secretKey
-            case types.IdentityShareKind.SHARING: return this.sharingKeyPair.secretKey
+            case api.IdentityShareKind.BOX: return this.boxKeyPair.secretKey
+            case api.IdentityShareKind.SHARING: return this.sharingKeyPair.secretKey
         }
     }
 
-    private encryptKeyForMasterKey({ publicKey, secretKey }: nacl.BoxKeyPair, creator: Encryption): types.IIdentityEncryptedKey {
+    private encryptKeyForMasterKey({ publicKey, secretKey }: nacl.BoxKeyPair, creator: Encryption): api.IIdentityEncryptedKey {
         if (this.masterKeyPair == null) {
             return { publicKey, nonce: null, encryptedKey: null }
         }
         creator = creator == null ? this : creator
         let { message, nonce } =
-            creator.encrypt(types.ResourceType.SES).encrypt(this.masterKeyPair.publicKey, secretKey)
+            creator.encrypt(api.ResourceType.SES).encrypt(this.masterKeyPair.publicKey, secretKey)
         return { nonce, publicKey, encryptedKey: message }
     }
 
     private decryptKeyWithMasterKey(
-        { nonce, publicKey, encryptedKey }: types.IIdentityEncryptedKey,
+        { nonce, publicKey, encryptedKey }: api.IIdentityEncryptedKey,
         creator: IdentityPublicKey
     ): nacl.BoxKeyPair {
         let cipher = {
@@ -170,20 +170,20 @@ export class Encryption extends types.IdentityEncryption {
         }
         return {
             publicKey,
-            secretKey: this.decrypt(types.ResourceType.SES, this.masterKeyPair.secretKey).decrypt(cipher)
+            secretKey: this.decrypt(api.ResourceType.SES, this.masterKeyPair.secretKey).decrypt(cipher)
         }
     }
 
-    private encryptKeyForKey(kind: IdentityKeyKind, { publicKey, secretKey }: nacl.BoxKeyPair, creator: Encryption): types.IIdentityEncryptedKey {
+    private encryptKeyForKey(kind: IdentityKeyKind, { publicKey, secretKey }: nacl.BoxKeyPair, creator: Encryption): api.IIdentityEncryptedKey {
         creator = creator == null ? this : creator
         let { message, nonce } =
-            creator.encrypt(types.ResourceType.SES).encrypt(this.getPublicKey(kind), secretKey)
+            creator.encrypt(api.ResourceType.SES).encrypt(this.getPublicKey(kind), secretKey)
         return { nonce, publicKey, encryptedKey: message }
     }
 
     private decryptKeyWithKey(
         kind: IdentityKeyKind,
-        { nonce, publicKey, encryptedKey }: types.IIdentityEncryptedKey,
+        { nonce, publicKey, encryptedKey }: api.IIdentityEncryptedKey,
         creator: IdentityPublicKey
     ): nacl.BoxKeyPair {
         let cipher = {
@@ -191,7 +191,7 @@ export class Encryption extends types.IdentityEncryption {
         }
         return {
             publicKey,
-            secretKey: this.decrypt(types.ResourceType.SES, this.getSecretKey(kind)).decrypt(cipher)
+            secretKey: this.decrypt(api.ResourceType.SES, this.getSecretKey(kind)).decrypt(cipher)
         }
     }
 }

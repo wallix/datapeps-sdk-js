@@ -1,6 +1,6 @@
 import * as nacl from 'tweetnacl';
 import * as Long from 'long';
-import { types, events } from './proto';
+import { api } from './proto';
 import { ID, Session, SessionRequest, PublicKeysCache, TrustPolicy, AccessRequestResolver, DelegatedAccess, debug, IdentityPublicKeyWithMetadata } from './DataPeps';
 import { IdentityPublicKey, IdentityPublicKeyID, IdentityAccessKind } from './DataPeps';
 import { AccessRequest } from './DataPeps';
@@ -15,7 +15,7 @@ import { ResourceImpl, makeResourceFromResponse } from './Resource';
 import { AdminImpl } from './Admin';
 
 export interface AssumeParams {
-    key: types.IDelegatedKeys
+    key: api.IDelegatedKeys
     kind: IdentityAccessKind
 }
 
@@ -64,7 +64,7 @@ class TrustOnFirstUse implements TrustPolicy {
     }
 }
 
-async function loginWithKeys(client, keys: types.IDelegatedKeys) {
+async function loginWithKeys(client, keys: api.IDelegatedKeys) {
     return await _login(client, keys.login, (e, c) => {
         let encryption = new Encryption(e)
         encryption.recoverWithKeys(keys, c)
@@ -75,34 +75,34 @@ async function loginWithKeys(client, keys: types.IDelegatedKeys) {
 export async function _login(
     client: Client,
     login: string,
-    recover: (e: types.IdentityEncryption, c: types.IdentityPublicKey) => Encryption,
-    options?: { saltKind?: types.SessionSaltKind }
+    recover: (e: api.IdentityEncryption, c: api.IdentityPublicKey) => Encryption,
+    options?: { saltKind?: api.SessionSaltKind }
 ): Promise<Session> {
-    let saltKind = options != null && options.saltKind != null ? options.saltKind : types.SessionSaltKind.TIME
+    let saltKind = options != null && options.saltKind != null ? options.saltKind : api.SessionSaltKind.TIME
     let createResponse = await client.doRequest({
         method: "POST", code: 201,
         path: "/api/v4/session/challenge/create",
-        request: () => types.SessionCreateChallengeRequest.encode({
+        request: () => api.SessionCreateChallengeRequest.encode({
             login: login,
             saltKind: saltKind,
         }).finish(),
-        response: types.SessionCreateChallengeResponse.decode,
+        response: api.SessionCreateChallengeResponse.decode,
         before: (x, b) => x.setRequestHeader("content-type", "application/x-protobuf")
     })
     let encryption = recover(
-        types.IdentityEncryption.create(createResponse.encryption),
-        types.IdentityPublicKey.create(createResponse.creator),
+        api.IdentityEncryption.create(createResponse.encryption),
+        api.IdentityPublicKey.create(createResponse.creator),
     )
     let token = createResponse.token
     let salt = createResponse.salt
     let resolveResponse = await client.doRequest({
         method: "POST", code: 200,
         path: "/api/v4/session/challenge/resolve",
-        request: () => types.SessionResolveChallengeRequest.encode({
+        request: () => api.SessionResolveChallengeRequest.encode({
             token, salt,
             signature: encryption.sign(salt),
         }).finish(),
-        response: types.SessionResolveChallengeResponse.decode,
+        response: api.SessionResolveChallengeResponse.decode,
         before: (x, b) => x.setRequestHeader("content-type", "application/x-protobuf")
     })
     saltKind = createResponse.saltKind
@@ -121,15 +121,15 @@ export class SessionImpl implements Session {
     client: Client
     token: string // base64 encoded
     private salt: Uint8Array
-    private saltKind: types.SessionSaltKind
+    private saltKind: api.SessionSaltKind
     private deltaSaltTime: number
 
     private pkCache: PublicKeysCache
     private trustPolicy: TrustPolicy
-    private assumeKeyCache: { [login: string]: types.IDelegatedKeys }
+    private assumeKeyCache: { [login: string]: api.IDelegatedKeys }
 
     constructor(
-        login: string, token: Uint8Array, salt: Uint8Array, saltKind: types.SessionSaltKind,
+        login: string, token: Uint8Array, salt: Uint8Array, saltKind: api.SessionSaltKind,
         encryption: Encryption, client: Client
     ) {
         this.encryption = encryption
@@ -184,13 +184,13 @@ export class SessionImpl implements Session {
         let { chains } = await this.doProtoRequest({
             method: "POST", code: 200,
             path: "/api/v4/identities/latestPublicChains",
-            request: () => types.IdentityGetLatestPublicChainsRequest.encode({
+            request: () => api.IdentityGetLatestPublicChainsRequest.encode({
                 ids: logins.map(login => {
                     let pk = this.pkCache.latest(login)
                     return { login, since: pk == null ? 0 : pk.version }
                 })
             }).finish(),
-            response: types.IdentityGetLatestPublicChainsResponse.decode,
+            response: api.IdentityGetLatestPublicChainsResponse.decode,
         })
         await this.validateChains(chains)
         return logins.map(login => this.pkCache.latest(login))
@@ -219,7 +219,7 @@ export class SessionImpl implements Session {
         let { chains } = await this.doProtoRequest({
             method: "POST", code: 200,
             path: "/api/v4/identities/publicChains",
-            request: () => types.IdentityGetPublicChainsRequest.encode({
+            request: () => api.IdentityGetPublicChainsRequest.encode({
                 ids: Object.keys(requestIds).map(login => {
                     let pk = this.pkCache.latest(login)
                     let since = pk == null ? 0 : pk.version
@@ -227,7 +227,7 @@ export class SessionImpl implements Session {
                     return { id: { login, version }, since }
                 })
             }).finish(),
-            response: types.IdentityGetPublicChainsResponse.decode
+            response: api.IdentityGetPublicChainsResponse.decode
         })
         await this.validateChains(chains)
         return ids.map(id => this.pkCache.get(id))
@@ -237,9 +237,9 @@ export class SessionImpl implements Session {
         let { sign, resource } = await this.doProtoRequest({
             method: "GET", code: 200,
             path: "/api/v4/delegatedAccess/" + requestId.toString(),
-            response: types.DelegatedGetResponse.decode,
+            response: api.DelegatedGetResponse.decode,
         })
-        let r = await makeResourceFromResponse<null>(resource, types.ResourceType.ANONYMOUS, this, null, null)
+        let r = await makeResourceFromResponse<null>(resource, api.ResourceType.ANONYMOUS, this, null, null)
         // Verify requester's signature
         let msg = Uint8Tool.concat(
             new TextEncoder().encode(this.login),
@@ -281,7 +281,7 @@ export class SessionImpl implements Session {
         let { accesses } = await this.doProtoRequest({
             method: "GET", code: 200,
             path: "/api/v4/delegatedAccesses",
-            response: types.DelegatedAccessListResponse.decode,
+            response: api.DelegatedAccessListResponse.decode,
             assume: { login, kind: IdentityAccessKind.READ },
             params: options,
         })
@@ -348,11 +348,11 @@ export class SessionImpl implements Session {
         })
     }
 
-    private async validateChains(chains: types.IIdentityPublicChain[]) {
+    private async validateChains(chains: api.IIdentityPublicChain[]) {
         await Promise.all(chains.map(chain => this.validateChain(chain)))
     }
 
-    private async validateChain({ login, version, chains }: types.IIdentityPublicChain) {
+    private async validateChain({ login, version, chains }: api.IIdentityPublicChain) {
         // work on a duplicate of the chains parameter as shift() change the object
         chains = chains.slice()
         let firstVersion = version - chains.length
@@ -437,8 +437,8 @@ export class SessionImpl implements Session {
 
     getSalt(): Uint8Array {
         switch (this.saltKind) {
-            case types.SessionSaltKind.RAND: return this.salt
-            case types.SessionSaltKind.TIME:
+            case api.SessionSaltKind.RAND: return this.salt
+            case api.SessionSaltKind.TIME:
                 let seconds = Math.floor(Date.now() / 1000) + this.deltaSaltTime
                 let salt = new Uint8Array(4)
                 salt[0] = (seconds >>> 24) & 0xFF
@@ -453,7 +453,7 @@ export class SessionImpl implements Session {
         return this.doProtoRequest({
             method: "PUT", code: 200,
             path: "/api/v4/session/unStale",
-            response: types.SessionUnStaleResponse.decode,
+            response: api.SessionUnStaleResponse.decode,
         }).then(({ encryption, creator }) => {
             this.clearAssumeParams(this.login)
             let e = new Encryption(encryption)
@@ -462,7 +462,7 @@ export class SessionImpl implements Session {
         })
     }
 
-    async resolveCipherList(ciphers: types.ICipher[]): Promise<ResolvedCipher[]> {
+    async resolveCipherList(ciphers: api.ICipher[]): Promise<ResolvedCipher[]> {
         let signs = ciphers.map((cipher) => cipher.sign)
         let publicKeys = await this.getPublicKeys(signs as IdentityPublicKeyID[])
         return ciphers.map(({ message, nonce, sign }) => {
@@ -477,7 +477,7 @@ export class SessionImpl implements Session {
         })
     }
 
-    async decryptCipherList(type: types.ResourceType, ciphers: types.ICipher[], secretKey?: Uint8Array): Promise<Uint8Array> {
+    async decryptCipherList(type: api.ResourceType, ciphers: api.ICipher[], secretKey?: Uint8Array): Promise<Uint8Array> {
         let resolvedCiphers = await this.resolveCipherList(ciphers)
         return this.encryption.decrypt(type, secretKey).decryptList(resolvedCiphers)
     }
@@ -490,7 +490,7 @@ export class SessionImpl implements Session {
         return { key, kind: assume.kind }
     }
 
-    private async getKeys(login: string): Promise<types.IDelegatedKeys> {
+    private async getKeys(login: string): Promise<api.IDelegatedKeys> {
         let key = this.assumeKeyCache[login]
         if (key != null) {
             return key
@@ -500,7 +500,7 @@ export class SessionImpl implements Session {
         return keys
     }
 
-    async fetchKeys(login: string, version?: number): Promise<types.IDelegatedKeys> {
+    async fetchKeys(login: string, version?: number): Promise<api.IDelegatedKeys> {
         if (this.login == login && (version == undefined || this.encryption.version == version)) {
             let sharingKey = (this.encryption as any).sharingKeyPair.secretKey
             let signKey = (this.encryption as any).signKeyPair.secretKey
@@ -517,15 +517,15 @@ export class SessionImpl implements Session {
             method: "GET",
             path: "/api/v4/identity/" + encodeURI(login) + "/keys",
             code: 200,
-            response: types.IdentityGetKeysResponse.decode,
+            response: api.IdentityGetKeysResponse.decode,
             params,
         })
-        let decryptedSharingKey = await this.decryptCipherList(types.ResourceType.SES, sharingKey)
+        let decryptedSharingKey = await this.decryptCipherList(api.ResourceType.SES, sharingKey)
         let [cipherSignkey, cipherBoxKey, cipherReadKey] =
             await this.resolveCipherList([signKey, boxKey, readKey])
-        let decryptedSignKey = this.encryption.decrypt(types.ResourceType.SES, decryptedSharingKey).decrypt(cipherSignkey)
-        let decryptedBoxKey = this.encryption.decrypt(types.ResourceType.SES, decryptedSharingKey).decrypt(cipherBoxKey)
-        let decryptedReadKey = this.encryption.decrypt(types.ResourceType.SES, decryptedBoxKey).decrypt(cipherReadKey)
+        let decryptedSignKey = this.encryption.decrypt(api.ResourceType.SES, decryptedSharingKey).decrypt(cipherSignkey)
+        let decryptedBoxKey = this.encryption.decrypt(api.ResourceType.SES, decryptedSharingKey).decrypt(cipherBoxKey)
+        let decryptedReadKey = this.encryption.decrypt(api.ResourceType.SES, decryptedBoxKey).decrypt(cipherReadKey)
         return {
             sharingKey: decryptedSharingKey,
             signKey: decryptedSignKey,
@@ -546,7 +546,7 @@ export class AccessRequestImpl implements AccessRequest {
     id: ID
     login: string
 
-    private keys: types.IDelegatedKeys
+    private keys: api.IDelegatedKeys
     private reason: any
     private client: Client
     private resource: Resource<null>
@@ -568,10 +568,10 @@ export class AccessRequestImpl implements AccessRequest {
             let { keys } = await this.client.doRequest({
                 method: "GET", code: 200,
                 path: "/api/v4/delegatedAccess/" + this.id.toString() + "/keys",
-                response: types.DelegatedGetKeysResponse.decode,
+                response: api.DelegatedGetKeysResponse.decode,
                 before: (x, b) => x.setRequestHeader("content-type", "application/x-protobuf")
             })
-            this.keys = types.DelegatedKeys.decode(this.resource.decrypt(keys))
+            this.keys = api.DelegatedKeys.decode(this.resource.decrypt(keys))
             this.resolve()
         } catch (e) {
             this.reason = e
@@ -637,9 +637,9 @@ class AccessRequestResolverImpl implements AccessRequestResolver {
         await this.session.doProtoRequest({
             method: "PUT", code: 200,
             path: "/api/v4/delegatedAccess/" + this.id.toString() + "/keys",
-            request: () => types.DelegatedPostKeysRequest.encode({
+            request: () => api.DelegatedPostKeysRequest.encode({
                 keys: this.resource.encrypt(
-                    types.DelegatedKeys.encode(keys).finish()
+                    api.DelegatedKeys.encode(keys).finish()
                 )
             }).finish()
         })

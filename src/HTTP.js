@@ -33,10 +33,10 @@ var Client = /** @class */ (function () {
                     }
                     var r_1;
                     try {
-                        var err = proto_1.errors.ProtoError.decode(new Uint8Array(xmlhttp.response));
+                        var err = proto_1.api.ProtoError.decode(new Uint8Array(xmlhttp.response));
                         var payload = void 0;
                         if (err.payload != null) {
-                            var X = proto_1.errors[err.payload.type_url.split('.').pop()];
+                            var X = proto_1.api[err.payload.type_url.split('.').pop()];
                             payload = X.decode(err.payload.value);
                         }
                         r_1 = new Error_1.Error({

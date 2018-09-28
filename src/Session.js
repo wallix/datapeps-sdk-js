@@ -124,30 +124,30 @@ function _login(client, login, recover, options) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    saltKind = options != null && options.saltKind != null ? options.saltKind : proto_1.types.SessionSaltKind.TIME;
+                    saltKind = options != null && options.saltKind != null ? options.saltKind : proto_1.api.SessionSaltKind.TIME;
                     return [4 /*yield*/, client.doRequest({
                             method: "POST", code: 201,
                             path: "/api/v4/session/challenge/create",
-                            request: function () { return proto_1.types.SessionCreateChallengeRequest.encode({
+                            request: function () { return proto_1.api.SessionCreateChallengeRequest.encode({
                                 login: login,
                                 saltKind: saltKind,
                             }).finish(); },
-                            response: proto_1.types.SessionCreateChallengeResponse.decode,
+                            response: proto_1.api.SessionCreateChallengeResponse.decode,
                             before: function (x, b) { return x.setRequestHeader("content-type", "application/x-protobuf"); }
                         })];
                 case 1:
                     createResponse = _a.sent();
-                    encryption = recover(proto_1.types.IdentityEncryption.create(createResponse.encryption), proto_1.types.IdentityPublicKey.create(createResponse.creator));
+                    encryption = recover(proto_1.api.IdentityEncryption.create(createResponse.encryption), proto_1.api.IdentityPublicKey.create(createResponse.creator));
                     token = createResponse.token;
                     salt = createResponse.salt;
                     return [4 /*yield*/, client.doRequest({
                             method: "POST", code: 200,
                             path: "/api/v4/session/challenge/resolve",
-                            request: function () { return proto_1.types.SessionResolveChallengeRequest.encode({
+                            request: function () { return proto_1.api.SessionResolveChallengeRequest.encode({
                                 token: token, salt: salt,
                                 signature: encryption.sign(salt),
                             }).finish(); },
-                            response: proto_1.types.SessionResolveChallengeResponse.decode,
+                            response: proto_1.api.SessionResolveChallengeResponse.decode,
                             before: function (x, b) { return x.setRequestHeader("content-type", "application/x-protobuf"); }
                         })];
                 case 2:
@@ -235,13 +235,13 @@ var SessionImpl = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.doProtoRequest({
                             method: "POST", code: 200,
                             path: "/api/v4/identities/latestPublicChains",
-                            request: function () { return proto_1.types.IdentityGetLatestPublicChainsRequest.encode({
+                            request: function () { return proto_1.api.IdentityGetLatestPublicChainsRequest.encode({
                                 ids: logins.map(function (login) {
                                     var pk = _this.pkCache.latest(login);
                                     return { login: login, since: pk == null ? 0 : pk.version };
                                 })
                             }).finish(); },
-                            response: proto_1.types.IdentityGetLatestPublicChainsResponse.decode,
+                            response: proto_1.api.IdentityGetLatestPublicChainsResponse.decode,
                         })];
                     case 1:
                         chains = (_a.sent()).chains;
@@ -290,7 +290,7 @@ var SessionImpl = /** @class */ (function () {
                         return [4 /*yield*/, this.doProtoRequest({
                                 method: "POST", code: 200,
                                 path: "/api/v4/identities/publicChains",
-                                request: function () { return proto_1.types.IdentityGetPublicChainsRequest.encode({
+                                request: function () { return proto_1.api.IdentityGetPublicChainsRequest.encode({
                                     ids: Object.keys(requestIds).map(function (login) {
                                         var pk = _this.pkCache.latest(login);
                                         var since = pk == null ? 0 : pk.version;
@@ -298,7 +298,7 @@ var SessionImpl = /** @class */ (function () {
                                         return { id: { login: login, version: version }, since: since };
                                     })
                                 }).finish(); },
-                                response: proto_1.types.IdentityGetPublicChainsResponse.decode
+                                response: proto_1.api.IdentityGetPublicChainsResponse.decode
                             })];
                     case 1:
                         chains = (_a.sent()).chains;
@@ -318,11 +318,11 @@ var SessionImpl = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.doProtoRequest({
                             method: "GET", code: 200,
                             path: "/api/v4/delegatedAccess/" + requestId.toString(),
-                            response: proto_1.types.DelegatedGetResponse.decode,
+                            response: proto_1.api.DelegatedGetResponse.decode,
                         })];
                     case 1:
                         _a = _b.sent(), sign = _a.sign, resource = _a.resource;
-                        return [4 /*yield*/, Resource_1.makeResourceFromResponse(resource, proto_1.types.ResourceType.ANONYMOUS, this, null, null)
+                        return [4 /*yield*/, Resource_1.makeResourceFromResponse(resource, proto_1.api.ResourceType.ANONYMOUS, this, null, null)
                             // Verify requester's signature
                         ];
                     case 2:
@@ -380,7 +380,7 @@ var SessionImpl = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.doProtoRequest({
                             method: "GET", code: 200,
                             path: "/api/v4/delegatedAccesses",
-                            response: proto_1.types.DelegatedAccessListResponse.decode,
+                            response: proto_1.api.DelegatedAccessListResponse.decode,
                             assume: { login: login, kind: DataPeps_2.IdentityAccessKind.READ },
                             params: options,
                         })];
@@ -589,8 +589,8 @@ var SessionImpl = /** @class */ (function () {
     };
     SessionImpl.prototype.getSalt = function () {
         switch (this.saltKind) {
-            case proto_1.types.SessionSaltKind.RAND: return this.salt;
-            case proto_1.types.SessionSaltKind.TIME:
+            case proto_1.api.SessionSaltKind.RAND: return this.salt;
+            case proto_1.api.SessionSaltKind.TIME:
                 var seconds = Math.floor(Date.now() / 1000) + this.deltaSaltTime;
                 var salt = new Uint8Array(4);
                 salt[0] = (seconds >>> 24) & 0xFF;
@@ -605,7 +605,7 @@ var SessionImpl = /** @class */ (function () {
         return this.doProtoRequest({
             method: "PUT", code: 200,
             path: "/api/v4/session/unStale",
-            response: proto_1.types.SessionUnStaleResponse.decode,
+            response: proto_1.api.SessionUnStaleResponse.decode,
         }).then(function (_a) {
             var encryption = _a.encryption, creator = _a.creator;
             _this.clearAssumeParams(_this.login);
@@ -708,20 +708,20 @@ var SessionImpl = /** @class */ (function () {
                                 method: "GET",
                                 path: "/api/v4/identity/" + encodeURI(login) + "/keys",
                                 code: 200,
-                                response: proto_1.types.IdentityGetKeysResponse.decode,
+                                response: proto_1.api.IdentityGetKeysResponse.decode,
                                 params: params,
                             })];
                     case 1:
                         _a = _c.sent(), sharingKey = _a.sharingKey, signKey = _a.signKey, boxKey = _a.boxKey, readKey = _a.readKey, identityVersion = _a.version;
-                        return [4 /*yield*/, this.decryptCipherList(proto_1.types.ResourceType.SES, sharingKey)];
+                        return [4 /*yield*/, this.decryptCipherList(proto_1.api.ResourceType.SES, sharingKey)];
                     case 2:
                         decryptedSharingKey = _c.sent();
                         return [4 /*yield*/, this.resolveCipherList([signKey, boxKey, readKey])];
                     case 3:
                         _b = _c.sent(), cipherSignkey = _b[0], cipherBoxKey = _b[1], cipherReadKey = _b[2];
-                        decryptedSignKey = this.encryption.decrypt(proto_1.types.ResourceType.SES, decryptedSharingKey).decrypt(cipherSignkey);
-                        decryptedBoxKey = this.encryption.decrypt(proto_1.types.ResourceType.SES, decryptedSharingKey).decrypt(cipherBoxKey);
-                        decryptedReadKey = this.encryption.decrypt(proto_1.types.ResourceType.SES, decryptedBoxKey).decrypt(cipherReadKey);
+                        decryptedSignKey = this.encryption.decrypt(proto_1.api.ResourceType.SES, decryptedSharingKey).decrypt(cipherSignkey);
+                        decryptedBoxKey = this.encryption.decrypt(proto_1.api.ResourceType.SES, decryptedSharingKey).decrypt(cipherBoxKey);
+                        decryptedReadKey = this.encryption.decrypt(proto_1.api.ResourceType.SES, decryptedBoxKey).decrypt(cipherReadKey);
                         return [2 /*return*/, {
                                 sharingKey: decryptedSharingKey,
                                 signKey: decryptedSignKey,
@@ -759,12 +759,12 @@ var AccessRequestImpl = /** @class */ (function () {
                         return [4 /*yield*/, this.client.doRequest({
                                 method: "GET", code: 200,
                                 path: "/api/v4/delegatedAccess/" + this.id.toString() + "/keys",
-                                response: proto_1.types.DelegatedGetKeysResponse.decode,
+                                response: proto_1.api.DelegatedGetKeysResponse.decode,
                                 before: function (x, b) { return x.setRequestHeader("content-type", "application/x-protobuf"); }
                             })];
                     case 1:
                         keys = (_a.sent()).keys;
-                        this.keys = proto_1.types.DelegatedKeys.decode(this.resource.decrypt(keys));
+                        this.keys = proto_1.api.DelegatedKeys.decode(this.resource.decrypt(keys));
                         this.resolve();
                         return [3 /*break*/, 3];
                     case 2:
@@ -842,8 +842,8 @@ var AccessRequestResolverImpl = /** @class */ (function () {
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "PUT", code: 200,
                                 path: "/api/v4/delegatedAccess/" + this.id.toString() + "/keys",
-                                request: function () { return proto_1.types.DelegatedPostKeysRequest.encode({
-                                    keys: _this.resource.encrypt(proto_1.types.DelegatedKeys.encode(keys).finish())
+                                request: function () { return proto_1.api.DelegatedPostKeysRequest.encode({
+                                    keys: _this.resource.encrypt(proto_1.api.DelegatedKeys.encode(keys).finish())
                                 }).finish(); }
                             })];
                     case 2:

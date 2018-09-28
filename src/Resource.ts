@@ -1,5 +1,5 @@
 import * as nacl from 'tweetnacl';
-import { types } from './proto';
+import { api } from './proto';
 import { ID, IdentityPublicKey, ResourceAPI, IdentityAccessKind, IdentityPublicKeyID, Error, SDKError, ResourceShareLink, ResourceAccessLog } from './DataPeps';
 import { EncryptFuncs } from './CryptoFuncs';
 import { SessionImpl } from './Session';
@@ -87,18 +87,18 @@ export class ResourceImpl implements ResourceAPI {
     }): Promise<Resource<T>> {
         options = options == null ? {} : options
         // keys and payload are always encrypted with SES
-        let encryptFunc = this.session.encryption.encrypt(types.ResourceType.SES)
+        let encryptFunc = this.session.encryption.encrypt(api.ResourceType.SES)
         // resource only support ANONYMOUS for now (i.e. the data encrypted by the resource)
-        let type = types.ResourceType.ANONYMOUS
+        let type = api.ResourceType.ANONYMOUS
         let creator = this.session.getSessionPublicKey()
         let { body, keypair } = await this._createBodyRequest(payload, sharingGroup, encryptFunc, options)
         let { id } = await this.session.doProtoRequest({
             method: "POST", code: 201,
             path: "/api/v4/resources",
-            request: () => types.ResourcePostRequest.encode({
+            request: () => api.ResourcePostRequest.encode({
                 ...body, type, kind,
             }).finish(),
-            response: types.ResourcePostResponse.decode
+            response: api.ResourcePostResponse.decode
         })
         return new Resource(id, kind, payload, keypair, creator)
     }
@@ -118,7 +118,7 @@ export class ResourceImpl implements ResourceAPI {
             path: "/api/v4/resources",
             assume: { login: assume, kind: IdentityAccessKind.READ },
             params,
-            response: r => types.ResourceListResponse.decode(r).resources as types.IResourceWithKey[]
+            response: r => api.ResourceListResponse.decode(r).resources as api.IResourceWithKey[]
         }).then(
             resources => makeResourcesFromResponses<T>(resources, this.session, options.parse)
         );
@@ -137,9 +137,9 @@ export class ResourceImpl implements ResourceAPI {
             path: "/api/v4/resource/" + id,
             assume: { login: assume, kind: IdentityAccessKind.READ },
             params,
-            response: r => types.ResourceGetResponse.decode(r),
+            response: r => api.ResourceGetResponse.decode(r),
         })
-        return makeResourceFromResponse<T>(response, types.ResourceType.SES, this.session, options.parse, assume)
+        return makeResourceFromResponse<T>(response, api.ResourceType.SES, this.session, options.parse, assume)
     }
 
     async delete(id: ID, options?: {
@@ -165,17 +165,17 @@ export class ResourceImpl implements ResourceAPI {
         let { encryptedKey, type } = await this.session.doProtoRequest({
             method: "GET", code: 200,
             path: "/api/v4/resource/" + id + "/key",
-            response: types.ResourceGetKeyResponse.decode,
+            response: api.ResourceGetKeyResponse.decode,
         })
         let { key } = await this.session.getAssumeParams({ login: assume, kind: IdentityAccessKind.READ })
-        let secretKey = await this.session.decryptCipherList(types.ResourceType.SES, encryptedKey, key.boxKey)
-        let encryptFunc = this.session.encryption.encrypt(types.ResourceType.SES)
+        let secretKey = await this.session.decryptCipherList(api.ResourceType.SES, encryptedKey, key.boxKey)
+        let encryptFunc = this.session.encryption.encrypt(api.ResourceType.SES)
         let encryptedSharingGroup = await this.encryptForSharingGroup(secretKey, sharingGroup, encryptFunc)
         return await this.session.doProtoRequest<void>({
             method: "PATCH", code: 201,
             path: "/api/v4/resource/" + id + "/sharingGroup",
             assume: { login: assume, kind: IdentityAccessKind.WRITE },
-            request: () => types.ResourceExtendSharingGroupRequest.encode({
+            request: () => api.ResourceExtendSharingGroupRequest.encode({
                 sharingGroup: encryptedSharingGroup
             }).finish()
         })
@@ -190,7 +190,7 @@ export class ResourceImpl implements ResourceAPI {
             method: "GET", code: 200,
             path: "/api/v4/resource/" + id + "/sharingGroup",
             assume: { login: assume, kind: IdentityAccessKind.READ },
-            response: r => types.ResourceGetSharingGroupResponse.decode(r).sharingGroup as ResourceShareLink[]
+            response: r => api.ResourceGetSharingGroupResponse.decode(r).sharingGroup as ResourceShareLink[]
         })
     }
 
@@ -216,8 +216,8 @@ export class ResourceImpl implements ResourceAPI {
         let { logs } = await this.session.doProtoRequest({
             method: "POST", code: 200,
             path: "/api/v4/resources/accessLogs",
-            request: () => types.ResourceGetAccessLogsRequest.encode(options).finish(),
-            response: types.ResourceGetAccessLogsResponse.decode,
+            request: () => api.ResourceGetAccessLogsRequest.encode(options).finish(),
+            response: api.ResourceGetAccessLogsResponse.decode,
             assume: {
                 login: assume,
                 kind: IdentityAccessKind.READ,
@@ -228,15 +228,15 @@ export class ResourceImpl implements ResourceAPI {
 }
 
 export async function makeResourceFromResponse<T>(
-    { resource, encryptedKey, creator }: types.IResourceGetResponse,
-    typeOfKey: types.ResourceType,
+    { resource, encryptedKey, creator }: api.IResourceGetResponse,
+    typeOfKey: api.ResourceType,
     session: SessionImpl,
     parse?, assume?) {
 
     assume = assume != null ? assume : session.login
     let { key } = await session.getAssumeParams({ login: assume, kind: IdentityAccessKind.READ })
     let secretKeyCipher = encryptedKey.pop()
-    let accessKey = await session.decryptCipherList(types.ResourceType.SES, encryptedKey, key.boxKey)
+    let accessKey = await session.decryptCipherList(api.ResourceType.SES, encryptedKey, key.boxKey)
     return await makeResource<T>(
         { resource, encryptedKey: secretKeyCipher, creator: creator },
         typeOfKey, session, accessKey, parse
@@ -244,8 +244,8 @@ export async function makeResourceFromResponse<T>(
 }
 
 async function makeResource<T>(
-    { resource, encryptedKey, creator }: types.IResourceWithKey,
-    typeOfKey: types.ResourceType,
+    { resource, encryptedKey, creator }: api.IResourceWithKey,
+    typeOfKey: api.ResourceType,
     session: SessionImpl,
     boxKey?: Uint8Array, parse?) {
 
@@ -253,7 +253,7 @@ async function makeResource<T>(
     let keypair = nacl.box.keyPair.fromSecretKey(secretKey);
 
     parse = parse != null ? parse : u => JSON.parse(new TextDecoder().decode(u))
-    let payload = resource.payload.length == 0 ? null : parse(await session.decryptCipherList(types.ResourceType.SES, [{
+    let payload = resource.payload.length == 0 ? null : parse(await session.decryptCipherList(api.ResourceType.SES, [{
         message: resource.payload,
         nonce: resource.nonce,
         sign: creator
@@ -262,8 +262,8 @@ async function makeResource<T>(
     return new Resource<T>(resource.id, resource.kind, payload, keypair, rcreator);
 }
 
-async function makeResourcesFromResponses<T>(resources: types.IResourceWithKey[], session: SessionImpl, parse?) {
-    let owners: types.IIdentityKeyID[] = []
+async function makeResourcesFromResponses<T>(resources: api.IResourceWithKey[], session: SessionImpl, parse?) {
+    let owners: api.IIdentityKeyID[] = []
     resources.forEach(resource => {
         if (resource.owner != undefined) {
             if (owners.find((id) => id.login == resource.owner.login && id.version == resource.owner.version) == undefined) {
@@ -279,7 +279,7 @@ async function makeResourcesFromResponses<T>(resources: types.IResourceWithKey[]
             })
         }
     })
-    let ownersKeys: types.IDelegatedKeys[] = [];
+    let ownersKeys: api.IDelegatedKeys[] = [];
     for (let i = 0; i < owners.length; i++) {
         let owner = owners[i]
         if (owner.login != undefined && owner.version != undefined) {
@@ -290,13 +290,13 @@ async function makeResourcesFromResponses<T>(resources: types.IResourceWithKey[]
     let resolvedResources: Resource<T>[] = [];
     for (let i = 0; i < resources.length; i++) {
         let resource = resources[i];
-        let keys: types.IDelegatedKeys;
+        let keys: api.IDelegatedKeys;
         for (let j = 0; j < owners.length; j++) {
             if (resource.owner.login == owners[j].login && resource.owner.version == owners[j].version) {
                 keys = ownersKeys[j]
             }
         }
-        resolvedResources.push(await makeResource<T>(resource, types.ResourceType.SES, session, keys != undefined ? keys.boxKey : undefined, parse));
+        resolvedResources.push(await makeResource<T>(resource, api.ResourceType.SES, session, keys != undefined ? keys.boxKey : undefined, parse));
     }
     return resolvedResources
 }

@@ -1,7 +1,7 @@
 import * as nacl from 'tweetnacl';
 import * as Long from 'long';
 import * as protobufjs from 'protobufjs';
-import { types, errors, events } from './proto';
+import { api } from './proto';
 import { Base64, Uint8Tool } from './Tools';
 import { Encryption, EncryptAnonymous } from './CryptoFuncs';
 import { Client, Request } from './HTTP';
@@ -11,8 +11,8 @@ import { Resource } from './Resource';
 import { Error, SDKKind } from './Error';
 import { Constants } from './Constants';
 export { Error, ErrorKind, ServerKind as ServerError, SDKKind as SDKError } from './Error';
-export type RegisterTokenStatus = types.RegisterTokenStatus
-export const RegisterTokenStatus = types.RegisterTokenStatus
+export type RegisterTokenStatus = api.RegisterTokenStatus
+export const RegisterTokenStatus = api.RegisterTokenStatus
 
 protobufjs.util.Long = Long
 protobufjs.configure()
@@ -96,7 +96,7 @@ export async function register(
 ): Promise<void> {
     return await _register(
         "/api/v4/register", identity, secret,
-        r => types.IdentityRegisterRequest.encode(r).finish()
+        r => api.IdentityRegisterRequest.encode(r).finish()
     )
 }
 
@@ -118,7 +118,7 @@ export async function registerWithToken(
     let btoken = token instanceof Uint8Array ? Base64.encode(token) : token
     return await _register(
         "/api/v4/register/link/" + encodeURIComponent(btoken), identity, secret,
-        r => types.RegisterPostLinkTokenRequest.encode(r).finish()
+        r => api.RegisterPostLinkTokenRequest.encode(r).finish()
     )
 }
 
@@ -126,7 +126,7 @@ async function _register(
     path: string,
     identity: IdentityFields,
     secret: string | Uint8Array,
-    request: (r: { identity: types.IIdentityFields, encryption: types.IIdentityEncryption }) => Uint8Array
+    request: (r: { identity: api.IIdentityFields, encryption: api.IIdentityEncryption }) => Uint8Array
 ): Promise<void> {
     let encryption = new Encryption()
     encryption.generate(Uint8Tool.convert(secret), null)
@@ -158,7 +158,7 @@ export async function requestDelegatedAccess(
     let { id } = await client.doRequest({
         method: "POST", code: 201,
         path: "/api/v4/delegatedAccess",
-        request: () => types.DelegatedPostRequest.encode({
+        request: () => api.DelegatedPostRequest.encode({
             publicKey: keypair.publicKey,
             sign: signResult.sign,
             requester: signResult.requester,
@@ -168,7 +168,7 @@ export async function requestDelegatedAccess(
                 login, version
             },
         }).finish(),
-        response: types.DelegatedPostResponse.decode,
+        response: api.DelegatedPostResponse.decode,
         before(x, b) {
             x.setRequestHeader("content-type", "application/x-protobuf")
         }
@@ -188,8 +188,8 @@ export async function getLatestPublicKeys(logins: string[]): Promise<IdentityPub
     let { publicKeys } = await client.doRequest({
         method: "POST", code: 200,
         path: "/api/v4/identities/latestPublicKeys",
-        request: () => types.IdentityGetLatestPublicKeysRequest.encode({ logins }).finish(),
-        response: types.IdentityGetLatestPublicKeysResponse.decode,
+        request: () => api.IdentityGetLatestPublicKeysRequest.encode({ logins }).finish(),
+        response: api.IdentityGetLatestPublicKeysResponse.decode,
         before(x, b) {
             x.setRequestHeader("content-type", "application/x-protobuf")
         }
@@ -222,7 +222,7 @@ export async function sendRegisterLink(email: string): Promise<void> {
     return await client.doRequest<void>({
         method: "POST", code: 201,
         path: "/api/v4/register/link",
-        request: () => types.RegisterLinkRequest.encode({
+        request: () => api.RegisterLinkRequest.encode({
             email
         }).finish(),
         before: (x, b) => x.setRequestHeader("content-type", "application/x-protobuf")
@@ -248,7 +248,7 @@ export function compareID(a: ID, b: ID): number {
  * - "RAND" means that the service generates a fresh salt for each request `n` which is used to sign request `n+1`. It is the most secure kind of salt, but implies that all requests MUST be done sequentially.
  * - "TIME" means that the service generates a salt based on a timestamp, so a signed request can be authenticated within a time window.
  */
-export type SessionSaltKind = types.SessionSaltKind
+export type SessionSaltKind = api.SessionSaltKind
 
 /**
  * Create a new session.
@@ -589,7 +589,7 @@ export interface Identity<T> {
 /**
  * IdentityKeyKind indicates which kind of keys is shared has between two identities.
  */
-export type IdentityKeyKind = types.IdentityShareKind
+export type IdentityKeyKind = api.IdentityShareKind
 
 /**
  * IdentityShareLink describes a share link between two identities. 
@@ -754,7 +754,7 @@ export enum ResourceType {
 /**
  * ResourceShareLink describes a share of a resource to an identity.
  */
-export type ResourceShareLink = types.ResourceShareLink
+export type ResourceShareLink = api.ResourceShareLink
 
 /**
  * A DataPeps Resource is a sharable object that handles the basic function encrypt/decrypt.
@@ -787,8 +787,8 @@ export interface Resource<T> {
      */
     decrypt(cipher: Uint8Array): Uint8Array
 }
-export type ResourceAccessReason = types.ResourceAccessReason
-export const ResourceAccessReason = types.ResourceAccessReason
+export type ResourceAccessReason = api.ResourceAccessReason
+export const ResourceAccessReason = api.ResourceAccessReason
 
 export interface ResourceAccessLog {
     /**
@@ -977,5 +977,5 @@ export interface AdminAPI {
      *  - domain: Filter on a specific domain.
      * @return(p) On success the promise will be resolved with a list.
      */
-    listRegisterTokens(options?: { offset?: number, limit?: number, domain?: string }): Promise<types.IRegisterEmailValidationToken[]>
+    listRegisterTokens(options?: { offset?: number, limit?: number, domain?: string }): Promise<api.IRegisterEmailValidationToken[]>
 }

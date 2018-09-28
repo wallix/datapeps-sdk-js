@@ -1,11 +1,11 @@
 /// <reference types="long" />
 import * as Long from 'long';
-import { types } from './proto';
+import { api } from './proto';
 import { Request } from './HTTP';
 import { Resource } from './Resource';
 export { Error, ErrorKind, ServerKind as ServerError, SDKKind as SDKError } from './Error';
-export declare type RegisterTokenStatus = types.RegisterTokenStatus;
-export declare const RegisterTokenStatus: typeof types.RegisterTokenStatus;
+export declare type RegisterTokenStatus = api.RegisterTokenStatus;
+export declare const RegisterTokenStatus: typeof api.RegisterTokenStatus;
 export declare var debug: boolean;
 /**
  * Configure the endpoint of the SDK.
@@ -112,7 +112,7 @@ export declare function compareID(a: ID, b: ID): number;
  * - "RAND" means that the service generates a fresh salt for each request `n` which is used to sign request `n+1`. It is the most secure kind of salt, but implies that all requests MUST be done sequentially.
  * - "TIME" means that the service generates a salt based on a timestamp, so a signed request can be authenticated within a time window.
  */
-export declare type SessionSaltKind = types.SessionSaltKind;
+export declare type SessionSaltKind = api.SessionSaltKind;
 /**
  * Create a new session.
  * @param login The login of the identity to login with.
@@ -378,7 +378,7 @@ export interface Identity<T> {
 /**
  * IdentityKeyKind indicates which kind of keys is shared has between two identities.
  */
-export declare type IdentityKeyKind = types.IdentityShareKind;
+export declare type IdentityKeyKind = api.IdentityShareKind;
 /**
  * IdentityShareLink describes a share link between two identities.
  */
@@ -517,7 +517,7 @@ export declare enum ResourceType {
 /**
  * ResourceShareLink describes a share of a resource to an identity.
  */
-export declare type ResourceShareLink = types.ResourceShareLink;
+export declare type ResourceShareLink = api.ResourceShareLink;
 /**
  * A DataPeps Resource is a sharable object that handles the basic function encrypt/decrypt.
  */
@@ -535,8 +535,8 @@ export interface Resource<T> {
      */
     decrypt(cipher: Uint8Array): Uint8Array;
 }
-export declare type ResourceAccessReason = types.ResourceAccessReason;
-export declare const ResourceAccessReason: typeof types.ResourceAccessReason;
+export declare type ResourceAccessReason = api.ResourceAccessReason;
+export declare const ResourceAccessReason: typeof api.ResourceAccessReason;
 export interface ResourceAccessLog {
     /**
      * The ID of the resource that has been accessed.
@@ -706,5 +706,5 @@ export interface AdminAPI {
         offset?: number;
         limit?: number;
         domain?: string;
-    }): Promise<types.IRegisterEmailValidationToken[]>;
+    }): Promise<api.IRegisterEmailValidationToken[]>;
 }

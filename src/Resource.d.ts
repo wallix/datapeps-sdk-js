@@ -1,5 +1,5 @@
 import * as nacl from 'tweetnacl';
-import { types } from './proto';
+import { api } from './proto';
 import { ID, IdentityPublicKey, ResourceAPI, ResourceShareLink, ResourceAccessLog } from './DataPeps';
 import { EncryptFuncs } from './CryptoFuncs';
 import { SessionImpl } from './Session';
@@ -70,4 +70,4 @@ export declare class ResourceImpl implements ResourceAPI {
         assume?: string;
     }): Promise<ResourceAccessLog[]>;
 }
-export declare function makeResourceFromResponse<T>({resource, encryptedKey, creator}: types.IResourceGetResponse, typeOfKey: types.ResourceType, session: SessionImpl, parse?: any, assume?: any): Promise<Resource<T>>;
+export declare function makeResourceFromResponse<T>({resource, encryptedKey, creator}: api.IResourceGetResponse, typeOfKey: api.ResourceType, session: SessionImpl, parse?: any, assume?: any): Promise<Resource<T>>;

@@ -60,7 +60,7 @@ var IdentityImpl = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "GET", code: 200,
                             path: "/api/v4/identity/" + encodeURI(login),
-                            response: function (r) { return IdentityX.fromTypes(proto_1.types.Identity.decode(r)); },
+                            response: function (r) { return IdentityX.fromapi(proto_1.api.Identity.decode(r)); },
                         })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
@@ -83,7 +83,7 @@ var IdentityImpl = /** @class */ (function () {
                         publicKeys = _a.sent();
                         sharingGroup = publicKeys.map(function (_a) {
                             var login = _a.login, version = _a.version, box = _a.box, sign = _a.sign;
-                            var kind = proto_1.types.IdentityShareKind.SHARING;
+                            var kind = proto_1.api.IdentityShareKind.SHARING;
                             var _b = encryption.encryptKey(kind, _this.session.encryption, box), message = _b.message, nonce = _b.nonce;
                             return {
                                 login: login, version: version, nonce: nonce, kind: kind,
@@ -94,7 +94,7 @@ var IdentityImpl = /** @class */ (function () {
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "POST", code: 201,
                                 path: "/api/v4/identity",
-                                request: function () { return proto_1.types.IdentityCreateRequest.encode({
+                                request: function () { return proto_1.api.IdentityCreateRequest.encode({
                                     identity: identity, sharingGroup: sharingGroup, encryption: encryption, email: options.email,
                                     signChain: _this.session.encryption.sign(Tools_1.Uint8Tool.concat(epub.boxEncrypted.publicKey, epub.signEncrypted.publicKey)),
                                 }).finish(); },
@@ -111,7 +111,7 @@ var IdentityImpl = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "PUT", code: 200,
                             path: "/api/v4/identity/" + encodeURI(identity.login),
-                            request: function () { return proto_1.types.IdentityFields.encode(identity).finish(); },
+                            request: function () { return proto_1.api.IdentityFields.encode(identity).finish(); },
                         })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
@@ -127,8 +127,8 @@ var IdentityImpl = /** @class */ (function () {
                             path: "/api/v4/identities/list",
                             params: options,
                             response: function (r) {
-                                var identities = proto_1.types.IdentityListResponse.decode(r).identities;
-                                return identities.map(IdentityX.fromTypes);
+                                var identities = proto_1.api.IdentityListResponse.decode(r).identities;
+                                return identities.map(IdentityX.fromapi);
                             }
                         })];
                     case 1: return [2 /*return*/, _a.sent()];
@@ -143,7 +143,7 @@ var IdentityImpl = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "GET", code: 200,
                             path: "/api/v4/identity/" + encodeURIComponent(login) + "/sharingGroup",
-                            response: function (r) { return proto_1.types.IdentityGetSharingGroupResponse.decode(r).sharingGroup; }
+                            response: function (r) { return proto_1.api.IdentityGetSharingGroupResponse.decode(r).sharingGroup; }
                         })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
@@ -157,7 +157,7 @@ var IdentityImpl = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "GET", code: 200,
                             path: "/api/v4/identity/" + encodeURIComponent(login) + "/accessGroup",
-                            response: function (r) { return proto_1.types.IdentityGetAccessGroupResponse.decode(r).accessGroup; }
+                            response: function (r) { return proto_1.api.IdentityGetAccessGroupResponse.decode(r).accessGroup; }
                         })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
@@ -171,12 +171,12 @@ var IdentityImpl = /** @class */ (function () {
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        kind = proto_1.types.IdentityShareKind.SHARING;
+                        kind = proto_1.api.IdentityShareKind.SHARING;
                         assume = { login: login, kind: DataPeps_1.IdentityAccessKind.WRITE };
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "GET", code: 200,
                                 path: "/api/v4/identity/" + encodeURIComponent(login) + "/keysToRenew",
-                                response: proto_1.types.IdentityGetKeysToRenewResponse.decode,
+                                response: proto_1.api.IdentityGetKeysToRenewResponse.decode,
                                 assume: assume,
                             })];
                     case 1:
@@ -197,12 +197,12 @@ var IdentityImpl = /** @class */ (function () {
                         }
                         next.version = key.version + 1;
                         epub = next.getPublic();
-                        _b = this.session.encryption.encrypt(proto_1.types.ResourceType.SES).encrypt(epub.boxEncrypted.publicKey, key.sharingKey), message = _b.message, nonce = _b.nonce;
+                        _b = this.session.encryption.encrypt(proto_1.api.ResourceType.SES).encrypt(epub.boxEncrypted.publicKey, key.sharingKey), message = _b.message, nonce = _b.nonce;
                         backward = { nonce: nonce, encryptedKey: message };
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "POST", code: 201,
                                 path: "/api/v4/identity/" + encodeURIComponent(login) + "/keysToRenew",
-                                request: function () { return proto_1.types.IdentityPostKeysToRenewRequest.encode({
+                                request: function () { return proto_1.api.IdentityPostKeysToRenewRequest.encode({
                                     encryption: epub, backward: backward,
                                     signChain: nacl.sign.detached(Tools_1.Uint8Tool.concat(epub.boxEncrypted.publicKey, epub.signEncrypted.publicKey), key.signKey),
                                     sharingGroup: sharingGroup.map(function (_a) {
@@ -231,10 +231,10 @@ var IdentityImpl = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "POST", code: 200,
                             path: "/api/v4/identities/latestPublicChains",
-                            request: function () { return proto_1.types.IdentityGetLatestPublicChainsRequest.encode({
+                            request: function () { return proto_1.api.IdentityGetLatestPublicChainsRequest.encode({
                                 ids: [{ login: login, since: 0 }],
                             }).finish(); },
-                            response: proto_1.types.IdentityGetLatestPublicChainsResponse.decode,
+                            response: proto_1.api.IdentityGetLatestPublicChainsResponse.decode,
                         })];
                     case 1:
                         chains = (_a.sent()).chains;
@@ -264,7 +264,7 @@ var IdentityImpl = /** @class */ (function () {
                                 params: options,
                                 assume: login == this.session.login ? null : { login: login, kind: DataPeps_1.IdentityAccessKind.READ },
                                 response: function (r) {
-                                    return proto_1.types.IdentityGetLockedVersionsResponse.decode(r).lockedVersions.map(function (lockedVersion) {
+                                    return proto_1.api.IdentityGetLockedVersionsResponse.decode(r).lockedVersions.map(function (lockedVersion) {
                                         return (__assign({}, lockedVersion, { publicKey: __assign({}, lockedVersion.publicKey.publicKey, { created: new Date(lockedVersion.publicKey.created * 1000) }) }));
                                     });
                                 }
@@ -300,14 +300,14 @@ var IdentityImpl = /** @class */ (function () {
                                     payload: { version: locked.publicKey.version, hint: "missing challenge to resolve in locked version" }
                                 });
                             }
-                            var encryption = new CryptoFuncs_1.Encryption(proto_1.types.IdentityEncryption.create(locked.challenge.encryption));
+                            var encryption = new CryptoFuncs_1.Encryption(proto_1.api.IdentityEncryption.create(locked.challenge.encryption));
                             try {
-                                encryption.recover(Tools_1.Uint8Tool.convert(secret), proto_1.types.IdentityPublicKey.create(locked.challenge.creator));
+                                encryption.recover(Tools_1.Uint8Tool.convert(secret), proto_1.api.IdentityPublicKey.create(locked.challenge.creator));
                                 unlockedVersions.push(locked.publicKey);
                                 // the current version of session identity is signed by the unlocked one (as keys are accessible by current session)
-                                var _a = encryption.encryptKey(proto_1.types.IdentityShareKind.SHARING, encryption, publicKey), message = _a.message, nonce = _a.nonce;
+                                var _a = encryption.encryptKey(proto_1.api.IdentityShareKind.SHARING, encryption, publicKey), message = _a.message, nonce = _a.nonce;
                                 var backward = { nonce: nonce, encryptedKey: message };
-                                resolvedChallengesWithEncryptedKeys.push(new proto_1.types.UnlockVersionsRequest.UnlockedVersion({
+                                resolvedChallengesWithEncryptedKeys.push(new proto_1.api.UnlockVersionsRequest.UnlockedVersion({
                                     resolvedChallenge: {
                                         token: locked.challenge.token,
                                         salt: locked.challenge.salt,
@@ -325,8 +325,8 @@ var IdentityImpl = /** @class */ (function () {
                                 method: "POST", code: 200,
                                 assume: login == this.session.login ? null : { login: login, kind: DataPeps_1.IdentityAccessKind.WRITE },
                                 path: "/api/v4/identity/" + encodeURI(login) + "/unlockVersions",
-                                request: function () { return proto_1.types.UnlockVersionsRequest.encode({ unlockedVersions: resolvedChallengesWithEncryptedKeys }).finish(); },
-                                response: proto_1.types.SessionResolveChallengeResponse.decode,
+                                request: function () { return proto_1.api.UnlockVersionsRequest.encode({ unlockedVersions: resolvedChallengesWithEncryptedKeys }).finish(); },
+                                response: proto_1.api.SessionResolveChallengeResponse.decode,
                             })];
                     case 5:
                         _a.sent();
@@ -354,12 +354,12 @@ var IdentityImpl = /** @class */ (function () {
                                 method: "PATCH", code: 201,
                                 path: "/api/v4/identity/" + encodeURI(login) + "/sharingGroup",
                                 assume: { login: login, kind: DataPeps_1.IdentityAccessKind.WRITE },
-                                request: function () { return proto_1.types.IdentityShareRequest.encode({
+                                request: function () { return proto_1.api.IdentityShareRequest.encode({
                                     version: key.version,
                                     sharingGroup: publicKeys.map(function (_a) {
                                         var login = _a.login, version = _a.version, box = _a.box, sign = _a.sign;
-                                        var kind = proto_1.types.IdentityShareKind.SHARING;
-                                        var _b = _this.session.encryption.encrypt(proto_1.types.ResourceType.SES).encrypt(box, key.sharingKey), message = _b.message, nonce = _b.nonce;
+                                        var kind = proto_1.api.IdentityShareKind.SHARING;
+                                        var _b = _this.session.encryption.encrypt(proto_1.api.ResourceType.SES).encrypt(box, key.sharingKey), message = _b.message, nonce = _b.nonce;
                                         return {
                                             login: login, version: version, nonce: nonce, kind: kind,
                                             encryptedKey: message
@@ -429,7 +429,7 @@ var IdentityImpl = /** @class */ (function () {
                             encryption.version = elt.version + 1;
                             newBoxPublicKeys.set(elt.login, {
                                 login: login, sign: null,
-                                box: encryption.getPublicKey(proto_1.types.IdentityShareKind.BOX),
+                                box: encryption.getPublicKey(proto_1.api.IdentityShareKind.BOX),
                                 version: encryption.version,
                             });
                             return { elt: elt, encryption: encryption };
@@ -444,7 +444,7 @@ var IdentityImpl = /** @class */ (function () {
                             }
                             else {
                                 // the new version of identity is signed by the previous one (as keys are accessible by current session)
-                                var _b = _this.session.encryption.encrypt(proto_1.types.ResourceType.SES).encrypt(epub.boxEncrypted.publicKey, elt.sharingKey), message = _b.message, nonce = _b.nonce;
+                                var _b = _this.session.encryption.encrypt(proto_1.api.ResourceType.SES).encrypt(epub.boxEncrypted.publicKey, elt.sharingKey), message = _b.message, nonce = _b.nonce;
                                 backward = { nonce: nonce, encryptedKey: message };
                                 signChain = nacl.sign.detached(Tools_1.Uint8Tool.concat(epub.boxEncrypted.publicKey, epub.signEncrypted.publicKey), elt.signKey);
                             }
@@ -454,7 +454,7 @@ var IdentityImpl = /** @class */ (function () {
                                 encryption: epub,
                                 signChain: signChain,
                                 sharingGroup: elt.sharingGroup.map(function (pk) {
-                                    var kind = proto_1.types.IdentityShareKind.SHARING;
+                                    var kind = proto_1.api.IdentityShareKind.SHARING;
                                     var newPk = newBoxPublicKeys.get(pk.login);
                                     pk = newPk != null ? newPk : pk;
                                     var _a = encryption.encryptKey(kind, _this.session.encryption, pk.box), message = _a.message, nonce = _a.nonce;
@@ -472,7 +472,7 @@ var IdentityImpl = /** @class */ (function () {
                                 method: "POST", code: 201,
                                 path: "/api/v4/identity/" + encodeURIComponent(login) + "/sharingGraph",
                                 assume: options.overwriteKeys != null ? undefined : { login: login, kind: DataPeps_1.IdentityAccessKind.WRITE },
-                                request: function () { return proto_1.types.IdentityPostSharingGraphRequest.encode({
+                                request: function () { return proto_1.api.IdentityPostSharingGraphRequest.encode({
                                     graph: encryptedGraph,
                                 }).finish(); }
                             })];
@@ -494,7 +494,7 @@ var IdentityImpl = /** @class */ (function () {
                                 method: "GET", code: 200,
                                 path: "/api/v4/identity/" + encodeURIComponent(login) + "/sharingGraph",
                                 assume: withKeys ? { login: login, kind: DataPeps_1.IdentityAccessKind.WRITE } : null,
-                                response: proto_1.types.IdentityGetSharingGraphResponse.decode,
+                                response: proto_1.api.IdentityGetSharingGraphResponse.decode,
                             })];
                     case 1:
                         graph = (_a.sent()).graph;
@@ -532,10 +532,10 @@ var IdentityImpl = /** @class */ (function () {
                             }
                             else {
                                 var boxkey = boxKeys[elt.sharedFrom.login + elt.sharedFrom.version];
-                                sharingKey = _this.session.encryption.decrypt(proto_1.types.ResourceType.SES, boxkey).decrypt(elt.sharingKey);
+                                sharingKey = _this.session.encryption.decrypt(proto_1.api.ResourceType.SES, boxkey).decrypt(elt.sharingKey);
                             }
-                            var boxKey = _this.session.encryption.decrypt(proto_1.types.ResourceType.SES, sharingKey).decrypt(elt.boxKey);
-                            var signKey = _this.session.encryption.decrypt(proto_1.types.ResourceType.SES, sharingKey).decrypt(elt.signKey);
+                            var boxKey = _this.session.encryption.decrypt(proto_1.api.ResourceType.SES, sharingKey).decrypt(elt.boxKey);
+                            var signKey = _this.session.encryption.decrypt(proto_1.api.ResourceType.SES, sharingKey).decrypt(elt.signKey);
                             boxKeys[elt.login + elt.version] = boxKey;
                             return __assign({}, elt, { sharingKey: sharingKey, boxKey: boxKey, signKey: signKey });
                         });
@@ -550,11 +550,11 @@ exports.IdentityImpl = IdentityImpl;
 var IdentityX = /** @class */ (function () {
     function IdentityX() {
     }
-    IdentityX.fromTypes = function (t) {
-        var x = proto_1.types.Identity.create(t);
+    IdentityX.fromapi = function (t) {
+        var x = proto_1.api.Identity.create(t);
         return __assign({}, x, { created: new Date(t.created * 1000) });
     };
-    IdentityX.toTypes = function (i) {
+    IdentityX.toapi = function (i) {
         return __assign({}, i, { created: null });
     };
     return IdentityX;

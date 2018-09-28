@@ -1,8 +1,8 @@
-import { errors } from './proto'
+import { api } from './proto'
 
 export type ErrorKind = ServerKind | SDKKind
-export const ServerKind = errors.PepsErrorKind
-export type ServerKind = errors.PepsErrorKind
+export const ServerKind = api.PepsErrorKind
+export type ServerKind = api.PepsErrorKind
 export enum SDKKind {
     BadStatusCode = -1,
     BadResponse = -2,
@@ -33,7 +33,7 @@ export class Error {
         // var err = new global.Error();
         // console.log("stack", err.stack)
         this.name = "DataPepsError"
-        let kname = errors.PepsErrorKind[properties.kind]
+        let kname = api.PepsErrorKind[properties.kind]
         if (kname == null) {
             kname = SDKKind[properties.kind]
         }

@@ -50,7 +50,7 @@ var Error_2 = require("./Error");
 exports.Error = Error_2.Error;
 exports.ServerError = Error_2.ServerKind;
 exports.SDKError = Error_2.SDKKind;
-exports.RegisterTokenStatus = proto_1.types.RegisterTokenStatus;
+exports.RegisterTokenStatus = proto_1.api.RegisterTokenStatus;
 protobufjs.util.Long = Long;
 protobufjs.configure();
 var defaultAPIURL = "https://api.datapeps.com";
@@ -124,7 +124,7 @@ function register(identity, secret) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, _register("/api/v4/register", identity, secret, function (r) { return proto_1.types.IdentityRegisterRequest.encode(r).finish(); })];
+                case 0: return [4 /*yield*/, _register("/api/v4/register", identity, secret, function (r) { return proto_1.api.IdentityRegisterRequest.encode(r).finish(); })];
                 case 1: return [2 /*return*/, _a.sent()];
             }
         });
@@ -148,7 +148,7 @@ function registerWithToken(token, identity, secret) {
             switch (_a.label) {
                 case 0:
                     btoken = token instanceof Uint8Array ? Tools_1.Base64.encode(token) : token;
-                    return [4 /*yield*/, _register("/api/v4/register/link/" + encodeURIComponent(btoken), identity, secret, function (r) { return proto_1.types.RegisterPostLinkTokenRequest.encode(r).finish(); })];
+                    return [4 /*yield*/, _register("/api/v4/register/link/" + encodeURIComponent(btoken), identity, secret, function (r) { return proto_1.api.RegisterPostLinkTokenRequest.encode(r).finish(); })];
                 case 1: return [2 /*return*/, _a.sent()];
             }
         });
@@ -196,7 +196,7 @@ function requestDelegatedAccess(login, sign) {
                     return [4 /*yield*/, client.doRequest({
                             method: "POST", code: 201,
                             path: "/api/v4/delegatedAccess",
-                            request: function () { return proto_1.types.DelegatedPostRequest.encode({
+                            request: function () { return proto_1.api.DelegatedPostRequest.encode({
                                 publicKey: keypair.publicKey,
                                 sign: signResult.sign,
                                 requester: signResult.requester,
@@ -206,7 +206,7 @@ function requestDelegatedAccess(login, sign) {
                                     login: login, version: version
                                 },
                             }).finish(); },
-                            response: proto_1.types.DelegatedPostResponse.decode,
+                            response: proto_1.api.DelegatedPostResponse.decode,
                             before: function (x, b) {
                                 x.setRequestHeader("content-type", "application/x-protobuf");
                             }
@@ -235,8 +235,8 @@ function getLatestPublicKeys(logins) {
                 case 0: return [4 /*yield*/, client.doRequest({
                         method: "POST", code: 200,
                         path: "/api/v4/identities/latestPublicKeys",
-                        request: function () { return proto_1.types.IdentityGetLatestPublicKeysRequest.encode({ logins: logins }).finish(); },
-                        response: proto_1.types.IdentityGetLatestPublicKeysResponse.decode,
+                        request: function () { return proto_1.api.IdentityGetLatestPublicKeysRequest.encode({ logins: logins }).finish(); },
+                        response: proto_1.api.IdentityGetLatestPublicKeysResponse.decode,
                         before: function (x, b) {
                             x.setRequestHeader("content-type", "application/x-protobuf");
                         }
@@ -286,7 +286,7 @@ function sendRegisterLink(email) {
                 case 0: return [4 /*yield*/, client.doRequest({
                         method: "POST", code: 201,
                         path: "/api/v4/register/link",
-                        request: function () { return proto_1.types.RegisterLinkRequest.encode({
+                        request: function () { return proto_1.api.RegisterLinkRequest.encode({
                             email: email
                         }).finish(); },
                         before: function (x, b) { return x.setRequestHeader("content-type", "application/x-protobuf"); }
@@ -364,5 +364,5 @@ var ResourceType;
 (function (ResourceType) {
     ResourceType[ResourceType["ANONYMOUS"] = 0] = "ANONYMOUS";
 })(ResourceType = exports.ResourceType || (exports.ResourceType = {}));
-exports.ResourceAccessReason = proto_1.types.ResourceAccessReason;
+exports.ResourceAccessReason = proto_1.api.ResourceAccessReason;
 //# sourceMappingURL=DataPeps.js.map

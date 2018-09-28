@@ -1,5 +1,5 @@
 import * as nacl from 'tweetnacl';
-import { types } from './proto';
+import { api } from './proto';
 import { AdminAPI } from './DataPeps';
 import { SessionImpl } from './Session';
 import { Encryption } from './CryptoFuncs';
@@ -17,7 +17,7 @@ export class AdminImpl implements AdminAPI {
         return await this.session.doProtoRequest<void>({
             method: "POST", code: 200,
             path: "/api/v4/identity/" + encodeURIComponent(login) + "/promote",
-            request: () => types.IdentityPromoteRequest.encode({
+            request: () => api.IdentityPromoteRequest.encode({
                 admin
             }).finish()
         })
@@ -27,7 +27,7 @@ export class AdminImpl implements AdminAPI {
         return await this.session.doProtoRequest<void>({
             method: "POST", code: 200,
             path: "/api/v4/identity/" + encodeURI(login) + "/active",
-            request: () => types.IdentityToggleActiveStatusRequest.encode({
+            request: () => api.IdentityToggleActiveStatusRequest.encode({
                 login, active,
             }).finish()
         })
@@ -37,12 +37,12 @@ export class AdminImpl implements AdminAPI {
         await this.session.Identity.editSharingGraph(login, { overwriteKeys: { secret } });
     }
 
-    async listRegisterTokens(options?: { offset?: number, limit?: number, domain?: string }): Promise<types.IRegisterEmailValidationToken[]> {
+    async listRegisterTokens(options?: { offset?: number, limit?: number, domain?: string }): Promise<api.IRegisterEmailValidationToken[]> {
         let { links } = await this.session.doProtoRequest({
             method: "GET", code: 200,
             path: "/api/v4/register/links",
             params: options,
-            response: types.LinksGetResponse.decode
+            response: api.LinksGetResponse.decode
         })
         return links
     }

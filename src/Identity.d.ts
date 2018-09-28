@@ -1,4 +1,4 @@
-import { types } from './proto';
+import { api } from './proto';
 import { IdentityAPI, Identity, IdentityPublicKey, IdentityPublicKeyWithMetadata, IdentityShareLink, IdentityFields } from './DataPeps';
 import { SessionImpl } from './Session';
 export declare class IdentityImpl implements IdentityAPI {
@@ -26,7 +26,7 @@ export declare class IdentityImpl implements IdentityAPI {
         withChallenge?: boolean;
     }): Promise<{
         publicKey: IdentityPublicKeyWithMetadata;
-        challenge?: types.IdentityGetLockedVersionsResponse.IIdentityChallenge;
+        challenge?: api.IdentityGetLockedVersionsResponse.IIdentityChallenge;
     }[]>;
     unlockVersions(login: string, secret: string | Uint8Array): Promise<IdentityPublicKeyWithMetadata[]>;
     extendSharingGroup(login: string, sharingGroup: string[]): Promise<void>;
@@ -40,6 +40,6 @@ export declare class IdentityImpl implements IdentityAPI {
     private getSharingGraph(login, options?);
 }
 export declare class IdentityX {
-    static fromTypes(t: types.IIdentity): Identity<Uint8Array>;
-    static toTypes(i: Identity<Uint8Array>): types.IIdentity;
+    static fromapi(t: api.IIdentity): Identity<Uint8Array>;
+    static toapi(i: Identity<Uint8Array>): api.IIdentity;
 }

@@ -1,5 +1,5 @@
 import * as nacl from 'tweetnacl';
-import { types } from './proto';
+import { api } from './proto';
 import { IdentityAPI, Identity, IdentityPublicKey, IdentityPublicKeyWithMetadata, IdentityShareLink, IdentityAccessKind, IdentityFields, SessionSaltKind, LockedVersion } from './DataPeps';
 import { Error, SDKKind } from './Error';
 import { Encryption } from './CryptoFuncs';
@@ -17,7 +17,7 @@ export class IdentityImpl implements IdentityAPI {
         return await this.session.doProtoRequest({
             method: "GET", code: 200,
             path: "/api/v4/identity/" + encodeURI(login),
-            response: r => IdentityX.fromTypes(types.Identity.decode(r)),
+            response: r => IdentityX.fromapi(api.Identity.decode(r)),
         })
     }
 
@@ -34,7 +34,7 @@ export class IdentityImpl implements IdentityAPI {
         encryption.generate(Uint8Tool.convert(options.secret), this.session.encryption)
         let publicKeys = await this.session.getLatestPublicKeys(osharingGroup)
         let sharingGroup = publicKeys.map(({ login, version, box, sign }) => {
-            let kind = types.IdentityShareKind.SHARING
+            let kind = api.IdentityShareKind.SHARING
             let { message, nonce } = encryption.encryptKey(kind, this.session.encryption, box)
             return {
                 login, version, nonce, kind,
@@ -45,7 +45,7 @@ export class IdentityImpl implements IdentityAPI {
         return await this.session.doProtoRequest<void>({
             method: "POST", code: 201,
             path: "/api/v4/identity",
-            request: () => types.IdentityCreateRequest.encode({
+            request: () => api.IdentityCreateRequest.encode({
                 identity, sharingGroup, encryption, email: options.email,
                 signChain: this.session.encryption.sign(Uint8Tool.concat(epub.boxEncrypted.publicKey, epub.signEncrypted.publicKey)),
             }).finish(),
@@ -56,7 +56,7 @@ export class IdentityImpl implements IdentityAPI {
         return await this.session.doProtoRequest<void>({
             method: "PUT", code: 200,
             path: "/api/v4/identity/" + encodeURI(identity.login),
-            request: () => types.IdentityFields.encode(identity).finish(),
+            request: () => api.IdentityFields.encode(identity).finish(),
         })
     }
 
@@ -72,8 +72,8 @@ export class IdentityImpl implements IdentityAPI {
             path: "/api/v4/identities/list",
             params: options,
             response: r => {
-                let { identities } = types.IdentityListResponse.decode(r)
-                return identities.map(IdentityX.fromTypes)
+                let { identities } = api.IdentityListResponse.decode(r)
+                return identities.map(IdentityX.fromapi)
             }
         })
     }
@@ -82,7 +82,7 @@ export class IdentityImpl implements IdentityAPI {
         return await this.session.doProtoRequest({
             method: "GET", code: 200,
             path: "/api/v4/identity/" + encodeURIComponent(login) + "/sharingGroup",
-            response: r => types.IdentityGetSharingGroupResponse.decode(r).sharingGroup as IdentityShareLink[]
+            response: r => api.IdentityGetSharingGroupResponse.decode(r).sharingGroup as IdentityShareLink[]
         })
     }
 
@@ -90,17 +90,17 @@ export class IdentityImpl implements IdentityAPI {
         return await this.session.doProtoRequest({
             method: "GET", code: 200,
             path: "/api/v4/identity/" + encodeURIComponent(login) + "/accessGroup",
-            response: r => types.IdentityGetAccessGroupResponse.decode(r).accessGroup as IdentityShareLink[]
+            response: r => api.IdentityGetAccessGroupResponse.decode(r).accessGroup as IdentityShareLink[]
         })
     }
 
     async renewKeys(login: string, secret?: string | Uint8Array): Promise<void> {
-        let kind = types.IdentityShareKind.SHARING
+        let kind = api.IdentityShareKind.SHARING
         let assume = { login, kind: IdentityAccessKind.WRITE }
         let { encryption, creator, sharingGroup } = await this.session.doProtoRequest({
             method: "GET", code: 200,
             path: "/api/v4/identity/" + encodeURIComponent(login) + "/keysToRenew",
-            response: types.IdentityGetKeysToRenewResponse.decode,
+            response: api.IdentityGetKeysToRenewResponse.decode,
             assume,
         })
         let { key } = await this.session.getAssumeParams({
@@ -115,12 +115,12 @@ export class IdentityImpl implements IdentityAPI {
         }
         next.version = key.version + 1
         let epub = next.getPublic()
-        let { message, nonce } = this.session.encryption.encrypt(types.ResourceType.SES).encrypt(epub.boxEncrypted.publicKey, key.sharingKey)
+        let { message, nonce } = this.session.encryption.encrypt(api.ResourceType.SES).encrypt(epub.boxEncrypted.publicKey, key.sharingKey)
         let backward = { nonce, encryptedKey: message }
         await this.session.doProtoRequest({
             method: "POST", code: 201,
             path: "/api/v4/identity/" + encodeURIComponent(login) + "/keysToRenew",
-            request: () => types.IdentityPostKeysToRenewRequest.encode({
+            request: () => api.IdentityPostKeysToRenewRequest.encode({
                 encryption: epub, backward,
                 signChain: nacl.sign.detached(Uint8Tool.concat(epub.boxEncrypted.publicKey, epub.signEncrypted.publicKey), key.signKey),
                 sharingGroup: sharingGroup.map(({ login, version, box, sign }) => {
@@ -139,10 +139,10 @@ export class IdentityImpl implements IdentityAPI {
         let { chains } = await this.session.doProtoRequest({
             method: "POST", code: 200,
             path: "/api/v4/identities/latestPublicChains",
-            request: () => types.IdentityGetLatestPublicChainsRequest.encode({
+            request: () => api.IdentityGetLatestPublicChainsRequest.encode({
                 ids: [{ login, since: 0 }],
             }).finish(),
-            response: types.IdentityGetLatestPublicChainsResponse.decode,
+            response: api.IdentityGetLatestPublicChainsResponse.decode,
         })
         if (chains.length != 1 || chains[0].login !== login) {
             throw new Error({
@@ -170,7 +170,7 @@ export class IdentityImpl implements IdentityAPI {
             params: options,
             assume: login == this.session.login ? null : { login, kind: IdentityAccessKind.READ },
             response: r => {
-                return types.IdentityGetLockedVersionsResponse.decode(r).lockedVersions.map(lockedVersion => {
+                return api.IdentityGetLockedVersionsResponse.decode(r).lockedVersions.map(lockedVersion => {
                     return ({
                         ...lockedVersion,
                         publicKey: {
@@ -186,7 +186,7 @@ export class IdentityImpl implements IdentityAPI {
     async unlockVersions(login: string, secret: string | Uint8Array): Promise<IdentityPublicKeyWithMetadata[]> {
         let lockedVersions = await this.getLockedVersions(login, { withChallenge: true })
         let unlockedVersions: IdentityPublicKeyWithMetadata[] = [];
-        let resolvedChallengesWithEncryptedKeys: types.UnlockVersionsRequest.UnlockedVersion[] = [];
+        let resolvedChallengesWithEncryptedKeys: api.UnlockVersionsRequest.UnlockedVersion[] = [];
         let publicKey: Uint8Array
         if (login == this.session.login) {
             publicKey = this.session.encryption.getPublic().boxEncrypted.publicKey
@@ -201,20 +201,20 @@ export class IdentityImpl implements IdentityAPI {
                     payload: { version: locked.publicKey.version, hint: "missing challenge to resolve in locked version" }
                 });
             }
-            let encryption = new Encryption(types.IdentityEncryption.create(locked.challenge.encryption));
+            let encryption = new Encryption(api.IdentityEncryption.create(locked.challenge.encryption));
             try {
-                encryption.recover(Uint8Tool.convert(secret), types.IdentityPublicKey.create(locked.challenge.creator));
+                encryption.recover(Uint8Tool.convert(secret), api.IdentityPublicKey.create(locked.challenge.creator));
                 unlockedVersions.push(locked.publicKey);
 
                 // the current version of session identity is signed by the unlocked one (as keys are accessible by current session)
                 let { message, nonce } = encryption.encryptKey(
-                    types.IdentityShareKind.SHARING,
+                    api.IdentityShareKind.SHARING,
                     encryption,
                     publicKey,
                 )
                 let backward = { nonce, encryptedKey: message }
 
-                resolvedChallengesWithEncryptedKeys.push(new types.UnlockVersionsRequest.UnlockedVersion({
+                resolvedChallengesWithEncryptedKeys.push(new api.UnlockVersionsRequest.UnlockedVersion({
                     resolvedChallenge: {
                         token: locked.challenge.token,
                         salt: locked.challenge.salt,
@@ -232,8 +232,8 @@ export class IdentityImpl implements IdentityAPI {
                 method: "POST", code: 200,
                 assume: login == this.session.login ? null : { login, kind: IdentityAccessKind.WRITE },
                 path: "/api/v4/identity/" + encodeURI(login) + "/unlockVersions",
-                request: () => types.UnlockVersionsRequest.encode({ unlockedVersions: resolvedChallengesWithEncryptedKeys }).finish(),
-                response: types.SessionResolveChallengeResponse.decode,
+                request: () => api.UnlockVersionsRequest.encode({ unlockedVersions: resolvedChallengesWithEncryptedKeys }).finish(),
+                response: api.SessionResolveChallengeResponse.decode,
             })
         }
         return unlockedVersions;
@@ -248,11 +248,11 @@ export class IdentityImpl implements IdentityAPI {
             method: "PATCH", code: 201,
             path: "/api/v4/identity/" + encodeURI(login) + "/sharingGroup",
             assume: { login, kind: IdentityAccessKind.WRITE },
-            request: () => types.IdentityShareRequest.encode({
+            request: () => api.IdentityShareRequest.encode({
                 version: key.version,
                 sharingGroup: publicKeys.map(({ login, version, box, sign }) => {
-                    let kind = types.IdentityShareKind.SHARING
-                    let { message, nonce } = this.session.encryption.encrypt(types.ResourceType.SES).encrypt(box, key.sharingKey)
+                    let kind = api.IdentityShareKind.SHARING
+                    let { message, nonce } = this.session.encryption.encrypt(api.ResourceType.SES).encrypt(box, key.sharingKey)
                     return {
                         login, version, nonce, kind,
                         encryptedKey: message
@@ -309,7 +309,7 @@ export class IdentityImpl implements IdentityAPI {
                 encryption.version = elt.version + 1
                 newBoxPublicKeys.set(elt.login, {
                     login, sign: null,
-                    box: encryption.getPublicKey(types.IdentityShareKind.BOX),
+                    box: encryption.getPublicKey(api.IdentityShareKind.BOX),
                     version: encryption.version,
                 })
                 return { elt, encryption }
@@ -323,7 +323,7 @@ export class IdentityImpl implements IdentityAPI {
                 signChain = this.session.encryption.sign(Uint8Tool.concat(epub.boxEncrypted.publicKey, epub.signEncrypted.publicKey))
             } else {
                 // the new version of identity is signed by the previous one (as keys are accessible by current session)
-                let { message, nonce } = this.session.encryption.encrypt(types.ResourceType.SES).encrypt(epub.boxEncrypted.publicKey, elt.sharingKey)
+                let { message, nonce } = this.session.encryption.encrypt(api.ResourceType.SES).encrypt(epub.boxEncrypted.publicKey, elt.sharingKey)
                 backward = { nonce, encryptedKey: message }
                 signChain = nacl.sign.detached(Uint8Tool.concat(epub.boxEncrypted.publicKey, epub.signEncrypted.publicKey), elt.signKey)
             }
@@ -334,7 +334,7 @@ export class IdentityImpl implements IdentityAPI {
                 signChain,
                 sharingGroup: elt.sharingGroup.map(
                     pk => {
-                        let kind = types.IdentityShareKind.SHARING
+                        let kind = api.IdentityShareKind.SHARING
                         let newPk = newBoxPublicKeys.get(pk.login)
                         pk = newPk != null ? newPk : pk
                         let { message, nonce } = encryption.encryptKey(kind, this.session.encryption, pk.box)
@@ -353,7 +353,7 @@ export class IdentityImpl implements IdentityAPI {
             method: "POST", code: 201,
             path: "/api/v4/identity/" + encodeURIComponent(login) + "/sharingGraph",
             assume: options.overwriteKeys != null ? undefined : { login, kind: IdentityAccessKind.WRITE },
-            request: () => types.IdentityPostSharingGraphRequest.encode({
+            request: () => api.IdentityPostSharingGraphRequest.encode({
                 graph: encryptedGraph,
             }).finish()
         })
@@ -366,13 +366,13 @@ export class IdentityImpl implements IdentityAPI {
             method: "GET", code: 200,
             path: "/api/v4/identity/" + encodeURIComponent(login) + "/sharingGraph",
             assume: withKeys ? { login, kind: IdentityAccessKind.WRITE } : null,
-            response: types.IdentityGetSharingGraphResponse.decode,
+            response: api.IdentityGetSharingGraphResponse.decode,
         })
         if (!withKeys) {
             return graph as IdentitySharingElt[];
         }
         // Resolve ciphers in graph
-        let ciphers: types.ICipher[] = []
+        let ciphers: api.ICipher[] = []
         graph.forEach((elt, i) => {
             if (i != 0) {
                 ciphers.push(graph[i].sharingKey)
@@ -397,10 +397,10 @@ export class IdentityImpl implements IdentityAPI {
                 sharingKey = firstSharingKey
             } else {
                 let boxkey = boxKeys[elt.sharedFrom.login + elt.sharedFrom.version]
-                sharingKey = this.session.encryption.decrypt(types.ResourceType.SES, boxkey).decrypt(elt.sharingKey)
+                sharingKey = this.session.encryption.decrypt(api.ResourceType.SES, boxkey).decrypt(elt.sharingKey)
             }
-            let boxKey = this.session.encryption.decrypt(types.ResourceType.SES, sharingKey).decrypt(elt.boxKey)
-            let signKey = this.session.encryption.decrypt(types.ResourceType.SES, sharingKey).decrypt(elt.signKey)
+            let boxKey = this.session.encryption.decrypt(api.ResourceType.SES, sharingKey).decrypt(elt.boxKey)
+            let signKey = this.session.encryption.decrypt(api.ResourceType.SES, sharingKey).decrypt(elt.signKey)
             boxKeys[elt.login + elt.version] = boxKey
             return { ...elt, sharingKey, boxKey, signKey }
         }) as IdentitySharingElt[]
@@ -420,15 +420,15 @@ interface IdentitySharingElt {
 }
 
 export class IdentityX {
-    static fromTypes(t: types.IIdentity): Identity<Uint8Array> {
-        let x = types.Identity.create(t)
+    static fromapi(t: api.IIdentity): Identity<Uint8Array> {
+        let x = api.Identity.create(t)
         return {
             ...x,
             created: new Date(t.created as number * 1000),
         }
     }
 
-    static toTypes(i: Identity<Uint8Array>): types.IIdentity {
+    static toapi(i: Identity<Uint8Array>): api.IIdentity {
         return {
             ...i,
             created: null,

@@ -1,4 +1,4 @@
-import { errors } from './proto'
+import { api } from './proto'
 import { SDKKind, Error } from './Error';
 import { debug } from './DataPeps'; 
 
@@ -46,10 +46,10 @@ export class Client {
                     }
                     let r
                     try {
-                        let err = errors.ProtoError.decode(new Uint8Array(xmlhttp.response))
+                        let err = api.ProtoError.decode(new Uint8Array(xmlhttp.response))
                         let payload
                         if (err.payload != null) {
-                            let X = errors[err.payload.type_url.split('.').pop()]
+                            let X = api[err.payload.type_url.split('.').pop()]
                             payload = X.decode(err.payload.value)
                         }
                         r = new Error({

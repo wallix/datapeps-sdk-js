@@ -1,6 +1,6 @@
 import * as Long from 'long'
 
-import { types } from './proto'
+import { api } from './proto'
 import { Request } from './HTTP'
 
 /**
@@ -228,7 +228,7 @@ export interface Identity<T> {
 /**
  * IdentityKeyKind indicates which kind of keys is shared has between two identities.
  */
-export type IdentityKeyKind = types.IdentityShareKind
+export type IdentityKeyKind = api.IdentityShareKind
 
 /**
  * IdentityShareLink describes a share link between two identities. 
@@ -497,5 +497,5 @@ export interface AdminAPI {
      *  - domain: Filter on a specific domain.
      * @return(p) On success the promise will be resolved with a list.
      */
-    listRegisterTokens(options?: { offset?: number, limit?: number, domain?: string }): Promise<types.IRegisterEmailValidationToken[]>
+    listRegisterTokens(options?: { offset?: number, limit?: number, domain?: string }): Promise<api.IRegisterEmailValidationToken[]>
 }

@@ -1,7 +1,7 @@
 import * as Config from '../../Config';
 import * as DataPeps from '../../../src/DataPeps';
 import { Encryption } from '../../../src/CryptoFuncs';
-import { types } from '../../../src/proto';
+import { api } from '../../../src/proto';
 import * as nacl from 'tweetnacl';
 import { expect } from 'chai';
 import { Uint8Tool, Base64 } from '../../../src/Tools';

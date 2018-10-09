@@ -8,6 +8,7 @@ import { ResolvedCipher, Encryption } from './CryptoFuncs';
 import { IdentityImpl } from './Identity';
 import { ResourceImpl } from './Resource';
 import { AdminImpl } from './Admin';
+import { Kval, KvalDelegates } from './Kval';
 export interface AssumeParams {
     key: api.IDelegatedKeys;
     kind: IdentityAccessKind;
@@ -32,6 +33,8 @@ export declare class SessionImpl implements Session {
     Identity: IdentityImpl;
     Resource: ResourceImpl;
     Admin: AdminImpl;
+    Kval: Kval;
+    KvalDelegates: KvalDelegates;
     close(): Promise<void>;
     renewKeys(secret?: string | Uint8Array): Promise<void>;
     getSessionPublicKey(): IdentityPublicKey;

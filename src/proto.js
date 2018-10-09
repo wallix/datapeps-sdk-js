@@ -21987,9 +21987,8 @@ $root.api = (function() {
          * @property {Uint8Array|null} [value] KvalGetResponse value
          * @property {string|null} [namespace] KvalGetResponse namespace
          * @property {Uint8Array|null} [signature] KvalGetResponse signature
-         * @property {string|null} [signedBy] KvalGetResponse signedBy
-         * @property {number|null} [version] KvalGetResponse version
          * @property {number|Long|null} [created] KvalGetResponse created
+         * @property {api.IIdentityKeyID|null} [signedBy] KvalGetResponse signedBy
          */
 
         /**
@@ -22040,28 +22039,20 @@ $root.api = (function() {
         KvalGetResponse.prototype.signature = $util.newBuffer([]);
 
         /**
-         * KvalGetResponse signedBy.
-         * @member {string} signedBy
-         * @memberof api.KvalGetResponse
-         * @instance
-         */
-        KvalGetResponse.prototype.signedBy = "";
-
-        /**
-         * KvalGetResponse version.
-         * @member {number} version
-         * @memberof api.KvalGetResponse
-         * @instance
-         */
-        KvalGetResponse.prototype.version = 0;
-
-        /**
          * KvalGetResponse created.
          * @member {number|Long} created
          * @memberof api.KvalGetResponse
          * @instance
          */
         KvalGetResponse.prototype.created = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * KvalGetResponse signedBy.
+         * @member {api.IIdentityKeyID|null|undefined} signedBy
+         * @memberof api.KvalGetResponse
+         * @instance
+         */
+        KvalGetResponse.prototype.signedBy = null;
 
         /**
          * Creates a new KvalGetResponse instance using the specified properties.
@@ -22095,12 +22086,10 @@ $root.api = (function() {
                 writer.uint32(/* id 3, wireType 2 =*/26).string(message.namespace);
             if (message.signature != null && message.hasOwnProperty("signature"))
                 writer.uint32(/* id 4, wireType 2 =*/34).bytes(message.signature);
-            if (message.signedBy != null && message.hasOwnProperty("signedBy"))
-                writer.uint32(/* id 5, wireType 2 =*/42).string(message.signedBy);
-            if (message.version != null && message.hasOwnProperty("version"))
-                writer.uint32(/* id 6, wireType 0 =*/48).uint32(message.version);
             if (message.created != null && message.hasOwnProperty("created"))
-                writer.uint32(/* id 7, wireType 0 =*/56).int64(message.created);
+                writer.uint32(/* id 5, wireType 0 =*/40).int64(message.created);
+            if (message.signedBy != null && message.hasOwnProperty("signedBy"))
+                $root.api.IdentityKeyID.encode(message.signedBy, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
             return writer;
         };
 
@@ -22148,13 +22137,10 @@ $root.api = (function() {
                     message.signature = reader.bytes();
                     break;
                 case 5:
-                    message.signedBy = reader.string();
+                    message.created = reader.int64();
                     break;
                 case 6:
-                    message.version = reader.uint32();
-                    break;
-                case 7:
-                    message.created = reader.int64();
+                    message.signedBy = $root.api.IdentityKeyID.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -22203,15 +22189,14 @@ $root.api = (function() {
             if (message.signature != null && message.hasOwnProperty("signature"))
                 if (!(message.signature && typeof message.signature.length === "number" || $util.isString(message.signature)))
                     return "signature: buffer expected";
-            if (message.signedBy != null && message.hasOwnProperty("signedBy"))
-                if (!$util.isString(message.signedBy))
-                    return "signedBy: string expected";
-            if (message.version != null && message.hasOwnProperty("version"))
-                if (!$util.isInteger(message.version))
-                    return "version: integer expected";
             if (message.created != null && message.hasOwnProperty("created"))
                 if (!$util.isInteger(message.created) && !(message.created && $util.isInteger(message.created.low) && $util.isInteger(message.created.high)))
                     return "created: integer|Long expected";
+            if (message.signedBy != null && message.hasOwnProperty("signedBy")) {
+                var error = $root.api.IdentityKeyID.verify(message.signedBy);
+                if (error)
+                    return "signedBy." + error;
+            }
             return null;
         };
 
@@ -22244,10 +22229,6 @@ $root.api = (function() {
                     $util.base64.decode(object.signature, message.signature = $util.newBuffer($util.base64.length(object.signature)), 0);
                 else if (object.signature.length)
                     message.signature = object.signature;
-            if (object.signedBy != null)
-                message.signedBy = String(object.signedBy);
-            if (object.version != null)
-                message.version = object.version >>> 0;
             if (object.created != null)
                 if ($util.Long)
                     (message.created = $util.Long.fromValue(object.created)).unsigned = false;
@@ -22257,6 +22238,11 @@ $root.api = (function() {
                     message.created = object.created;
                 else if (typeof object.created === "object")
                     message.created = new $util.LongBits(object.created.low >>> 0, object.created.high >>> 0).toNumber();
+            if (object.signedBy != null) {
+                if (typeof object.signedBy !== "object")
+                    throw TypeError(".api.KvalGetResponse.signedBy: object expected");
+                message.signedBy = $root.api.IdentityKeyID.fromObject(object.signedBy);
+            }
             return message;
         };
 
@@ -22278,13 +22264,12 @@ $root.api = (function() {
                 object.value = options.bytes === String ? "" : [];
                 object.namespace = "";
                 object.signature = options.bytes === String ? "" : [];
-                object.signedBy = "";
-                object.version = 0;
                 if ($util.Long) {
                     var long = new $util.Long(0, 0, false);
                     object.created = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
                 } else
                     object.created = options.longs === String ? "0" : 0;
+                object.signedBy = null;
             }
             if (message.key != null && message.hasOwnProperty("key"))
                 object.key = options.bytes === String ? $util.base64.encode(message.key, 0, message.key.length) : options.bytes === Array ? Array.prototype.slice.call(message.key) : message.key;
@@ -22294,15 +22279,13 @@ $root.api = (function() {
                 object.namespace = message.namespace;
             if (message.signature != null && message.hasOwnProperty("signature"))
                 object.signature = options.bytes === String ? $util.base64.encode(message.signature, 0, message.signature.length) : options.bytes === Array ? Array.prototype.slice.call(message.signature) : message.signature;
-            if (message.signedBy != null && message.hasOwnProperty("signedBy"))
-                object.signedBy = message.signedBy;
-            if (message.version != null && message.hasOwnProperty("version"))
-                object.version = message.version;
             if (message.created != null && message.hasOwnProperty("created"))
                 if (typeof message.created === "number")
                     object.created = options.longs === String ? String(message.created) : message.created;
                 else
                     object.created = options.longs === String ? $util.Long.prototype.toString.call(message.created) : options.longs === Number ? new $util.LongBits(message.created.low >>> 0, message.created.high >>> 0).toNumber() : message.created;
+            if (message.signedBy != null && message.hasOwnProperty("signedBy"))
+                object.signedBy = $root.api.IdentityKeyID.toObject(message.signedBy, options);
             return object;
         };
 
@@ -22330,8 +22313,6 @@ $root.api = (function() {
          * @property {Uint8Array|null} [value] KvalPutRequest value
          * @property {string|null} [namespace] KvalPutRequest namespace
          * @property {Uint8Array|null} [signature] KvalPutRequest signature
-         * @property {number|null} [signedBy] KvalPutRequest signedBy
-         * @property {number|null} [version] KvalPutRequest version
          * @property {number|Long|null} [created] KvalPutRequest created
          */
 
@@ -22383,22 +22364,6 @@ $root.api = (function() {
         KvalPutRequest.prototype.signature = $util.newBuffer([]);
 
         /**
-         * KvalPutRequest signedBy.
-         * @member {number} signedBy
-         * @memberof api.KvalPutRequest
-         * @instance
-         */
-        KvalPutRequest.prototype.signedBy = 0;
-
-        /**
-         * KvalPutRequest version.
-         * @member {number} version
-         * @memberof api.KvalPutRequest
-         * @instance
-         */
-        KvalPutRequest.prototype.version = 0;
-
-        /**
          * KvalPutRequest created.
          * @member {number|Long} created
          * @memberof api.KvalPutRequest
@@ -22438,12 +22403,8 @@ $root.api = (function() {
                 writer.uint32(/* id 3, wireType 2 =*/26).string(message.namespace);
             if (message.signature != null && message.hasOwnProperty("signature"))
                 writer.uint32(/* id 4, wireType 2 =*/34).bytes(message.signature);
-            if (message.signedBy != null && message.hasOwnProperty("signedBy"))
-                writer.uint32(/* id 5, wireType 0 =*/40).uint32(message.signedBy);
-            if (message.version != null && message.hasOwnProperty("version"))
-                writer.uint32(/* id 6, wireType 0 =*/48).uint32(message.version);
             if (message.created != null && message.hasOwnProperty("created"))
-                writer.uint32(/* id 7, wireType 0 =*/56).int64(message.created);
+                writer.uint32(/* id 5, wireType 0 =*/40).int64(message.created);
             return writer;
         };
 
@@ -22491,12 +22452,6 @@ $root.api = (function() {
                     message.signature = reader.bytes();
                     break;
                 case 5:
-                    message.signedBy = reader.uint32();
-                    break;
-                case 6:
-                    message.version = reader.uint32();
-                    break;
-                case 7:
                     message.created = reader.int64();
                     break;
                 default:
@@ -22546,12 +22501,6 @@ $root.api = (function() {
             if (message.signature != null && message.hasOwnProperty("signature"))
                 if (!(message.signature && typeof message.signature.length === "number" || $util.isString(message.signature)))
                     return "signature: buffer expected";
-            if (message.signedBy != null && message.hasOwnProperty("signedBy"))
-                if (!$util.isInteger(message.signedBy))
-                    return "signedBy: integer expected";
-            if (message.version != null && message.hasOwnProperty("version"))
-                if (!$util.isInteger(message.version))
-                    return "version: integer expected";
             if (message.created != null && message.hasOwnProperty("created"))
                 if (!$util.isInteger(message.created) && !(message.created && $util.isInteger(message.created.low) && $util.isInteger(message.created.high)))
                     return "created: integer|Long expected";
@@ -22587,10 +22536,6 @@ $root.api = (function() {
                     $util.base64.decode(object.signature, message.signature = $util.newBuffer($util.base64.length(object.signature)), 0);
                 else if (object.signature.length)
                     message.signature = object.signature;
-            if (object.signedBy != null)
-                message.signedBy = object.signedBy >>> 0;
-            if (object.version != null)
-                message.version = object.version >>> 0;
             if (object.created != null)
                 if ($util.Long)
                     (message.created = $util.Long.fromValue(object.created)).unsigned = false;
@@ -22621,8 +22566,6 @@ $root.api = (function() {
                 object.value = options.bytes === String ? "" : [];
                 object.namespace = "";
                 object.signature = options.bytes === String ? "" : [];
-                object.signedBy = 0;
-                object.version = 0;
                 if ($util.Long) {
                     var long = new $util.Long(0, 0, false);
                     object.created = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
@@ -22637,10 +22580,6 @@ $root.api = (function() {
                 object.namespace = message.namespace;
             if (message.signature != null && message.hasOwnProperty("signature"))
                 object.signature = options.bytes === String ? $util.base64.encode(message.signature, 0, message.signature.length) : options.bytes === Array ? Array.prototype.slice.call(message.signature) : message.signature;
-            if (message.signedBy != null && message.hasOwnProperty("signedBy"))
-                object.signedBy = message.signedBy;
-            if (message.version != null && message.hasOwnProperty("version"))
-                object.version = message.version;
             if (message.created != null && message.hasOwnProperty("created"))
                 if (typeof message.created === "number")
                     object.created = options.longs === String ? String(message.created) : message.created;
@@ -22859,6 +22798,7 @@ $root.api = (function() {
                 case 29:
                 case 30:
                 case 31:
+                case 32:
                     break;
                 }
             if (message.payload != null && message.hasOwnProperty("payload")) {
@@ -23008,6 +22948,10 @@ $root.api = (function() {
             case 31:
                 message.kind = 31;
                 break;
+            case "KvalKeyInvalid":
+            case 32:
+                message.kind = 32;
+                break;
             }
             if (object.payload != null) {
                 if (typeof object.payload !== "object")
@@ -23093,6 +23037,7 @@ $root.api = (function() {
      * @property {number} InvalidToken=29 InvalidToken value
      * @property {number} KvalKeyAlreadyExists=30 KvalKeyAlreadyExists value
      * @property {number} KvalKeyNotFound=31 KvalKeyNotFound value
+     * @property {number} KvalKeyInvalid=32 KvalKeyInvalid value
      */
     api.PepsErrorKind = (function() {
         var valuesById = {}, values = Object.create(valuesById);
@@ -23127,6 +23072,7 @@ $root.api = (function() {
         values[valuesById[29] = "InvalidToken"] = 29;
         values[valuesById[30] = "KvalKeyAlreadyExists"] = 30;
         values[valuesById[31] = "KvalKeyNotFound"] = 31;
+        values[valuesById[32] = "KvalKeyInvalid"] = 32;
         return values;
     })();
 
@@ -28296,6 +28242,219 @@ $root.api = (function() {
         };
 
         return PayloadKvalKeyNotFound;
+    })();
+
+    api.PayloadKvalKeyInvalid = (function() {
+
+        /**
+         * Properties of a PayloadKvalKeyInvalid.
+         * @memberof api
+         * @interface IPayloadKvalKeyInvalid
+         * @property {string|null} [namespace] PayloadKvalKeyInvalid namespace
+         * @property {Uint8Array|null} [key] PayloadKvalKeyInvalid key
+         */
+
+        /**
+         * Constructs a new PayloadKvalKeyInvalid.
+         * @memberof api
+         * @classdesc Represents a PayloadKvalKeyInvalid.
+         * @implements IPayloadKvalKeyInvalid
+         * @constructor
+         * @param {api.IPayloadKvalKeyInvalid=} [properties] Properties to set
+         */
+        function PayloadKvalKeyInvalid(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * PayloadKvalKeyInvalid namespace.
+         * @member {string} namespace
+         * @memberof api.PayloadKvalKeyInvalid
+         * @instance
+         */
+        PayloadKvalKeyInvalid.prototype.namespace = "";
+
+        /**
+         * PayloadKvalKeyInvalid key.
+         * @member {Uint8Array} key
+         * @memberof api.PayloadKvalKeyInvalid
+         * @instance
+         */
+        PayloadKvalKeyInvalid.prototype.key = $util.newBuffer([]);
+
+        /**
+         * Creates a new PayloadKvalKeyInvalid instance using the specified properties.
+         * @function create
+         * @memberof api.PayloadKvalKeyInvalid
+         * @static
+         * @param {api.IPayloadKvalKeyInvalid=} [properties] Properties to set
+         * @returns {api.PayloadKvalKeyInvalid} PayloadKvalKeyInvalid instance
+         */
+        PayloadKvalKeyInvalid.create = function create(properties) {
+            return new PayloadKvalKeyInvalid(properties);
+        };
+
+        /**
+         * Encodes the specified PayloadKvalKeyInvalid message. Does not implicitly {@link api.PayloadKvalKeyInvalid.verify|verify} messages.
+         * @function encode
+         * @memberof api.PayloadKvalKeyInvalid
+         * @static
+         * @param {api.IPayloadKvalKeyInvalid} message PayloadKvalKeyInvalid message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        PayloadKvalKeyInvalid.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.namespace != null && message.hasOwnProperty("namespace"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.namespace);
+            if (message.key != null && message.hasOwnProperty("key"))
+                writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.key);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified PayloadKvalKeyInvalid message, length delimited. Does not implicitly {@link api.PayloadKvalKeyInvalid.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof api.PayloadKvalKeyInvalid
+         * @static
+         * @param {api.IPayloadKvalKeyInvalid} message PayloadKvalKeyInvalid message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        PayloadKvalKeyInvalid.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a PayloadKvalKeyInvalid message from the specified reader or buffer.
+         * @function decode
+         * @memberof api.PayloadKvalKeyInvalid
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {api.PayloadKvalKeyInvalid} PayloadKvalKeyInvalid
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        PayloadKvalKeyInvalid.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.PayloadKvalKeyInvalid();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.namespace = reader.string();
+                    break;
+                case 2:
+                    message.key = reader.bytes();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a PayloadKvalKeyInvalid message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof api.PayloadKvalKeyInvalid
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {api.PayloadKvalKeyInvalid} PayloadKvalKeyInvalid
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        PayloadKvalKeyInvalid.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a PayloadKvalKeyInvalid message.
+         * @function verify
+         * @memberof api.PayloadKvalKeyInvalid
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        PayloadKvalKeyInvalid.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.namespace != null && message.hasOwnProperty("namespace"))
+                if (!$util.isString(message.namespace))
+                    return "namespace: string expected";
+            if (message.key != null && message.hasOwnProperty("key"))
+                if (!(message.key && typeof message.key.length === "number" || $util.isString(message.key)))
+                    return "key: buffer expected";
+            return null;
+        };
+
+        /**
+         * Creates a PayloadKvalKeyInvalid message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof api.PayloadKvalKeyInvalid
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {api.PayloadKvalKeyInvalid} PayloadKvalKeyInvalid
+         */
+        PayloadKvalKeyInvalid.fromObject = function fromObject(object) {
+            if (object instanceof $root.api.PayloadKvalKeyInvalid)
+                return object;
+            var message = new $root.api.PayloadKvalKeyInvalid();
+            if (object.namespace != null)
+                message.namespace = String(object.namespace);
+            if (object.key != null)
+                if (typeof object.key === "string")
+                    $util.base64.decode(object.key, message.key = $util.newBuffer($util.base64.length(object.key)), 0);
+                else if (object.key.length)
+                    message.key = object.key;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a PayloadKvalKeyInvalid message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof api.PayloadKvalKeyInvalid
+         * @static
+         * @param {api.PayloadKvalKeyInvalid} message PayloadKvalKeyInvalid
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        PayloadKvalKeyInvalid.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.namespace = "";
+                object.key = options.bytes === String ? "" : [];
+            }
+            if (message.namespace != null && message.hasOwnProperty("namespace"))
+                object.namespace = message.namespace;
+            if (message.key != null && message.hasOwnProperty("key"))
+                object.key = options.bytes === String ? $util.base64.encode(message.key, 0, message.key.length) : options.bytes === Array ? Array.prototype.slice.call(message.key) : message.key;
+            return object;
+        };
+
+        /**
+         * Converts this PayloadKvalKeyInvalid to JSON.
+         * @function toJSON
+         * @memberof api.PayloadKvalKeyInvalid
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        PayloadKvalKeyInvalid.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return PayloadKvalKeyInvalid;
     })();
 
     return api;

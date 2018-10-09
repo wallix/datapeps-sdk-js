@@ -9096,14 +9096,11 @@ export namespace api {
         /** KvalGetResponse signature */
         signature?: (Uint8Array|null);
 
-        /** KvalGetResponse signedBy */
-        signedBy?: (string|null);
-
-        /** KvalGetResponse version */
-        version?: (number|null);
-
         /** KvalGetResponse created */
         created?: (number|Long|null);
+
+        /** KvalGetResponse signedBy */
+        signedBy?: (api.IIdentityKeyID|null);
     }
 
     /** Represents a KvalGetResponse. */
@@ -9127,14 +9124,11 @@ export namespace api {
         /** KvalGetResponse signature. */
         public signature: Uint8Array;
 
-        /** KvalGetResponse signedBy. */
-        public signedBy: string;
-
-        /** KvalGetResponse version. */
-        public version: number;
-
         /** KvalGetResponse created. */
         public created: (number|Long);
+
+        /** KvalGetResponse signedBy. */
+        public signedBy?: (api.IIdentityKeyID|null);
 
         /**
          * Creates a new KvalGetResponse instance using the specified properties.
@@ -9222,12 +9216,6 @@ export namespace api {
         /** KvalPutRequest signature */
         signature?: (Uint8Array|null);
 
-        /** KvalPutRequest signedBy */
-        signedBy?: (number|null);
-
-        /** KvalPutRequest version */
-        version?: (number|null);
-
         /** KvalPutRequest created */
         created?: (number|Long|null);
     }
@@ -9252,12 +9240,6 @@ export namespace api {
 
         /** KvalPutRequest signature. */
         public signature: Uint8Array;
-
-        /** KvalPutRequest signedBy. */
-        public signedBy: number;
-
-        /** KvalPutRequest version. */
-        public version: number;
 
         /** KvalPutRequest created. */
         public created: (number|Long);
@@ -9467,7 +9449,8 @@ export namespace api {
         DelegatedAccessNotFound = 28,
         InvalidToken = 29,
         KvalKeyAlreadyExists = 30,
-        KvalKeyNotFound = 31
+        KvalKeyNotFound = 31,
+        KvalKeyInvalid = 32
     }
 
     /** Properties of a PayloadServerInternalError. */
@@ -11865,6 +11848,102 @@ export namespace api {
 
         /**
          * Converts this PayloadKvalKeyNotFound to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a PayloadKvalKeyInvalid. */
+    interface IPayloadKvalKeyInvalid {
+
+        /** PayloadKvalKeyInvalid namespace */
+        namespace?: (string|null);
+
+        /** PayloadKvalKeyInvalid key */
+        key?: (Uint8Array|null);
+    }
+
+    /** Represents a PayloadKvalKeyInvalid. */
+    class PayloadKvalKeyInvalid implements IPayloadKvalKeyInvalid {
+
+        /**
+         * Constructs a new PayloadKvalKeyInvalid.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: api.IPayloadKvalKeyInvalid);
+
+        /** PayloadKvalKeyInvalid namespace. */
+        public namespace: string;
+
+        /** PayloadKvalKeyInvalid key. */
+        public key: Uint8Array;
+
+        /**
+         * Creates a new PayloadKvalKeyInvalid instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PayloadKvalKeyInvalid instance
+         */
+        public static create(properties?: api.IPayloadKvalKeyInvalid): api.PayloadKvalKeyInvalid;
+
+        /**
+         * Encodes the specified PayloadKvalKeyInvalid message. Does not implicitly {@link api.PayloadKvalKeyInvalid.verify|verify} messages.
+         * @param message PayloadKvalKeyInvalid message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: api.IPayloadKvalKeyInvalid, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PayloadKvalKeyInvalid message, length delimited. Does not implicitly {@link api.PayloadKvalKeyInvalid.verify|verify} messages.
+         * @param message PayloadKvalKeyInvalid message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: api.IPayloadKvalKeyInvalid, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PayloadKvalKeyInvalid message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PayloadKvalKeyInvalid
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.PayloadKvalKeyInvalid;
+
+        /**
+         * Decodes a PayloadKvalKeyInvalid message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PayloadKvalKeyInvalid
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.PayloadKvalKeyInvalid;
+
+        /**
+         * Verifies a PayloadKvalKeyInvalid message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PayloadKvalKeyInvalid message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PayloadKvalKeyInvalid
+         */
+        public static fromObject(object: { [k: string]: any }): api.PayloadKvalKeyInvalid;
+
+        /**
+         * Creates a plain object from a PayloadKvalKeyInvalid message. Also converts values to other types if specified.
+         * @param message PayloadKvalKeyInvalid
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: api.PayloadKvalKeyInvalid, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PayloadKvalKeyInvalid to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };

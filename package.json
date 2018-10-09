@@ -1,6 +1,6 @@
 {
   "name": "datapeps-sdk",
-  "version": "0.0.39-dev-06486c",
+  "version": "0.0.39-dev-500c40",
   "description": "DataPeps SDK enables safe end-to-end-encryption for any application",
   "main": "./src/DataPeps.js",
   "types": "./src/DataPeps.d.ts",
@@ -31,6 +31,7 @@
     "source-map-loader": "^0.2.2",
     "text-encoding": "^0.6.4",
     "ts-node": "^3.3.0",
+    "tslint": "^5.11.0",
     "typedoc": "^0.10.0",
     "typedoc-plugin-sourcefile-url": "^1.0.3",
     "typescript": "^2.8.1",

@@ -10,6 +10,7 @@ import { IdentityX } from './Identity';
 import { Resource } from './Resource';
 import { Error, SDKKind } from './Error';
 import { Constants } from './Constants';
+import { KvalDelegates } from './Kval';
 export { Error, ErrorKind, ServerKind as ServerError, SDKKind as SDKError } from './Error';
 export type RegisterTokenStatus = api.RegisterTokenStatus
 export const RegisterTokenStatus = api.RegisterTokenStatus
@@ -410,6 +411,12 @@ export interface Session {
 
     /** Access to the admin API.*/
     Admin: AdminAPI
+
+    /** Access to the Kval API */
+    Kval: KvalAPI;
+
+    /** Access to the KvalDelegates API */
+    KvalDelegates: KvalDelegatesAPI;
 
     /**
      * Close the session.
@@ -978,4 +985,24 @@ export interface AdminAPI {
      * @return(p) On success the promise will be resolved with a list.
      */
     listRegisterTokens(options?: { offset?: number, limit?: number, domain?: string }): Promise<api.IRegisterEmailValidationToken[]>
+}
+
+/////////////////////////////////////////////////
+// Kval APIs
+/////////////////////////////////////////////////
+
+export interface KvalAPI {
+
+    put(namespace: string, key: Uint8Array, value: Uint8Array): Promise<void>;
+
+    get(namespace: string, key: Uint8Array): Promise<{ value: Uint8Array, pk: IdentityPublicKeyID }>;
+
+}
+
+export interface KvalDelegatesAPI {
+
+    put(login: string, application: string, delegates: string[]): Promise<void>;
+
+    get(login: string, application: string): Promise<string[]>;
+
 }

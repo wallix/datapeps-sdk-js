@@ -13,6 +13,7 @@ import { ResolvedCipher, Encryption } from './CryptoFuncs';
 import { IdentityImpl } from './Identity';
 import { ResourceImpl, makeResourceFromResponse } from './Resource';
 import { AdminImpl } from './Admin';
+import { Kval, KvalDelegates } from './Kval';
 
 export interface AssumeParams {
     key: api.IDelegatedKeys
@@ -150,6 +151,10 @@ export class SessionImpl implements Session {
     Resource = new ResourceImpl(this)
 
     Admin = new AdminImpl(this)
+
+    Kval = new Kval(this);
+
+    KvalDelegates = new KvalDelegates(this.Kval);
 
     async close(): Promise<void> {
         return await this.doProtoRequest<void>({

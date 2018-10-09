@@ -6,7 +6,7 @@ import { expect, assert } from 'chai';
 /**
  * This test is about testing of the funtion DataPeps.login
  */
-describe('Session.Login', () => {
+describe('session.Login', () => {
     let seed = Math.floor(Math.random() * 99999)
 
     let aliceSecret = nacl.randomBytes(128)

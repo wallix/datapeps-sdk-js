@@ -1,6 +1,6 @@
 import * as Config from '../Config'
 
-describe('Init', () => {
+describe('setup', () => {
 
     it('init', async () => {
         await Config.init()

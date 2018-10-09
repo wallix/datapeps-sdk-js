@@ -28,7 +28,7 @@ function checkResourceNotFoundError(err,
         errorOccurred.isTrue = true
 }
 
-describe('Resource.delete', () => {
+describe('resource.delete', () => {
     let seed = Math.floor(Math.random() * 99999)
 
     let aliceSecret = nacl.randomBytes(128)

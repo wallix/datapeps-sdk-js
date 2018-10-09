@@ -8,7 +8,7 @@ import 'mocha';
 type TestResource =
     DataPeps.Resource<{ description: string; }>
 
-describe('Resource.getSharingGroup', () => {
+describe('resource.getSharingGroup', () => {
     let seed = Math.floor(Math.random() * 99999)
 
     let aliceSecret = nacl.randomBytes(128)

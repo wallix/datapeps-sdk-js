@@ -57,7 +57,7 @@ async function fetchAndCheckResource(
 }
 
 
-describe('Resource.extendSharingGroup', () => {
+describe('resource.extendSharingGroup', () => {
   let seed = Math.floor(Math.random() * 99999)
 
   let aliceSecret = nacl.randomBytes(128)

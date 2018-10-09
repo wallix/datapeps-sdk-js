@@ -4,7 +4,7 @@ import * as nacl from 'tweetnacl';
 import { expect } from 'chai';
 import 'mocha';
 
-describe('Resource.getAccessLogs', () => {
+describe('resource.getAccessLogs', () => {
     let seed = Math.floor(Math.random() * 99999)
 
     let aliceSecret = nacl.randomBytes(128)

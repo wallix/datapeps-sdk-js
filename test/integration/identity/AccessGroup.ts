@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * This test is about testing of the funtion DataPeps.IdentityAPI.getAccessGroup
  */
-describe('Identity.AccessGroup', () => {
+describe('identity.AccessGroup', () => {
     let seed = Math.floor(Math.random() * 99999)
 
     let aliceSecret = nacl.randomBytes(128)

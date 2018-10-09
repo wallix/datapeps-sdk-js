@@ -18,7 +18,7 @@ async function expectInaccessibleResource(session: DataPeps.Session, id: DataPep
     throw new Error('version ' + id.toString() + ' should not be accessible');
 }
 
-describe('Identity.UnlockVersions', () => {
+describe('identity.UnlockVersions', () => {
     let seed = Math.floor(Math.random() * 99999)
 
     let aliceSecret = nacl.randomBytes(128)

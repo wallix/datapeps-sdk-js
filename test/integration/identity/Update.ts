@@ -3,7 +3,7 @@ import * as DataPeps from '../../../src/DataPeps';
 import * as nacl from 'tweetnacl';
 import { expect } from 'chai';
 
-describe('Identity.Update', () => {
+describe('identity.Update', () => {
     let seed = Math.floor(Math.random() * 99999)
 
     let aliceSecret = nacl.randomBytes(128)

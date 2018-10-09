@@ -6,7 +6,7 @@ import * as nacl from 'tweetnacl';
 import { expect } from 'chai';
 import { Uint8Tool, Base64 } from '../../../src/Tools';
 
-describe('Identity.LockedVersions', () => {
+describe('identity.LockedVersions', () => {
     let seed = Math.floor(Math.random() * 99999)
 
     let aliceSecret = nacl.randomBytes(128)

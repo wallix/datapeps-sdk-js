@@ -4,7 +4,7 @@ import * as nacl from 'tweetnacl'
 import { expect } from 'chai'
 
 
-describe('Identity.Main', () => {
+describe('identity.main', () => {
     let seed = Math.floor(Math.random() * 99999)
     let deviceASecret = nacl.randomBytes(128)
     let deviceA: DataPeps.IdentityFields = {

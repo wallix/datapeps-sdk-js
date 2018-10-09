@@ -4,7 +4,7 @@ import * as DataPeps from '../../../src/DataPeps'
 import * as nacl from 'tweetnacl'
 import { expect } from 'chai'
 
-describe('Session.listDelegatedAccess', () => {
+describe('session.listDelegatedAccess', () => {
     let seed = Math.floor(Math.random() * 99999)
     let aliceSecret = nacl.randomBytes(128)
     let alice: DataPeps.IdentityFields = {

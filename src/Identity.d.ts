@@ -1,6 +1,6 @@
-import { api } from './proto';
-import { IdentityAPI, Identity, IdentityPublicKey, IdentityPublicKeyWithMetadata, IdentityShareLink, IdentityFields } from './DataPeps';
-import { SessionImpl } from './Session';
+import { api } from "./proto";
+import { IdentityAPI, Identity, IdentityPublicKey, IdentityPublicKeyWithMetadata, IdentityShareLink, IdentityFields } from "./DataPeps";
+import { SessionImpl } from "./Session";
 export declare class IdentityImpl implements IdentityAPI {
     private session;
     constructor(session: SessionImpl);

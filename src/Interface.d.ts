@@ -1,7 +1,7 @@
 /// <reference types="long" />
-import * as Long from 'long';
-import { api } from './proto';
-import { Request } from './HTTP';
+import * as Long from "long";
+import { api } from "./proto";
+import { Request } from "./HTTP";
 /**
  * Type of identitfier of DataPeps objects.
  */

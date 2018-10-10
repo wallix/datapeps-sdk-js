@@ -45,11 +45,14 @@ var AdminImpl = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
-                            method: "POST", code: 200,
+                            method: "POST",
+                            code: 200,
                             path: "/api/v4/identity/" + encodeURIComponent(login) + "/promote",
-                            request: function () { return proto_1.api.IdentityPromoteRequest.encode({
-                                admin: admin
-                            }).finish(); }
+                            request: function () {
+                                return proto_1.api.IdentityPromoteRequest.encode({
+                                    admin: admin
+                                }).finish();
+                            }
                         })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
@@ -61,11 +64,15 @@ var AdminImpl = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
-                            method: "POST", code: 200,
+                            method: "POST",
+                            code: 200,
                             path: "/api/v4/identity/" + encodeURI(login) + "/active",
-                            request: function () { return proto_1.api.IdentityToggleActiveStatusRequest.encode({
-                                login: login, active: active,
-                            }).finish(); }
+                            request: function () {
+                                return proto_1.api.IdentityToggleActiveStatusRequest.encode({
+                                    login: login,
+                                    active: active
+                                }).finish();
+                            }
                         })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
@@ -76,7 +83,9 @@ var AdminImpl = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.session.Identity.editSharingGraph(login, { overwriteKeys: { secret: secret } })];
+                    case 0: return [4 /*yield*/, this.session.Identity.editSharingGraph(login, {
+                            overwriteKeys: { secret: secret }
+                        })];
                     case 1:
                         _a.sent();
                         return [2 /*return*/];
@@ -90,7 +99,8 @@ var AdminImpl = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
-                            method: "GET", code: 200,
+                            method: "GET",
+                            code: 200,
                             path: "/api/v4/register/links",
                             params: options,
                             response: proto_1.api.LinksGetResponse.decode

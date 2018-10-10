@@ -15,7 +15,7 @@ var Client = /** @class */ (function () {
             var xmlhttp = new XMLHttpRequest();
             var uri = host + _this.uri_query(r.path, r.params);
             xmlhttp.open(r.method, uri, true);
-            xmlhttp.responseType = 'arraybuffer';
+            xmlhttp.responseType = "arraybuffer";
             xmlhttp.setRequestHeader("Cache-Control", "no-cache");
             xmlhttp.onreadystatechange = function (e) {
                 if (xmlhttp.readyState != 4 || xmlhttp.status == 0) {
@@ -36,7 +36,7 @@ var Client = /** @class */ (function () {
                         var err = proto_1.api.ProtoError.decode(new Uint8Array(xmlhttp.response));
                         var payload = void 0;
                         if (err.payload != null) {
-                            var X = proto_1.api[err.payload.type_url.split('.').pop()];
+                            var X = proto_1.api[err.payload.type_url.split(".").pop()];
                             payload = X.decode(err.payload.value);
                         }
                         r_1 = new Error_1.Error({
@@ -93,7 +93,7 @@ var Client = /** @class */ (function () {
             catch (e) {
                 return reject(new Error_1.Error({
                     kind: Error_1.SDKKind.SDKInternalError,
-                    payload: { error: e },
+                    payload: { error: e }
                 }));
             }
             xmlhttp.send(body);
@@ -103,12 +103,14 @@ var Client = /** @class */ (function () {
         if (params == null) {
             return url;
         }
-        var uriParams = Object.keys(params).map(function (key) {
+        var uriParams = Object.keys(params)
+            .map(function (key) {
             var x = key + "=";
-            return ((params[key].constructor === Array) ?
-                x + params[key].map(encodeURIComponent).join("&" + x) :
-                x + encodeURIComponent(params[key]));
-        }).join("&");
+            return params[key].constructor === Array
+                ? x + params[key].map(encodeURIComponent).join("&" + x)
+                : x + encodeURIComponent(params[key]);
+        })
+            .join("&");
         if (uriParams.length == 0) {
             return url;
         }

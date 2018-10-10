@@ -1,14 +1,14 @@
-import { api } from './proto';
-import { ID, Session, SessionRequest, PublicKeysCache, TrustPolicy, AccessRequestResolver, DelegatedAccess } from './DataPeps';
-import { IdentityPublicKey, IdentityPublicKeyID, IdentityAccessKind } from './DataPeps';
-import { AccessRequest } from './DataPeps';
-import { Resource } from './DataPeps';
-import { Client } from './HTTP';
-import { ResolvedCipher, Encryption } from './CryptoFuncs';
-import { IdentityImpl } from './Identity';
-import { ResourceImpl } from './Resource';
-import { AdminImpl } from './Admin';
-import { Kval, KvalDelegates } from './Kval';
+import { api } from "./proto";
+import { ID, Session, SessionRequest, PublicKeysCache, TrustPolicy, AccessRequestResolver, DelegatedAccess } from "./DataPeps";
+import { IdentityPublicKey, IdentityPublicKeyID, IdentityAccessKind } from "./DataPeps";
+import { AccessRequest } from "./DataPeps";
+import { Resource } from "./DataPeps";
+import { Client } from "./HTTP";
+import { ResolvedCipher, Encryption } from "./CryptoFuncs";
+import { IdentityImpl } from "./Identity";
+import { ResourceImpl } from "./Resource";
+import { AdminImpl } from "./Admin";
+import { Kval, KvalDelegates } from "./Kval";
 export interface AssumeParams {
     key: api.IDelegatedKeys;
     kind: IdentityAccessKind;

@@ -1,9 +1,9 @@
 /// <reference types="long" />
-import * as Long from 'long';
-import { api } from './proto';
-import { Request } from './HTTP';
-import { Resource } from './Resource';
-export { Error, ErrorKind, ServerKind as ServerError, SDKKind as SDKError } from './Error';
+import * as Long from "long";
+import { api } from "./proto";
+import { Request } from "./HTTP";
+import { Resource } from "./Resource";
+export { Error, ErrorKind, ServerKind as ServerError, SDKKind as SDKError } from "./Error";
 export declare type RegisterTokenStatus = api.RegisterTokenStatus;
 export declare const RegisterTokenStatus: typeof api.RegisterTokenStatus;
 export declare var debug: boolean;
@@ -374,7 +374,6 @@ export interface Identity<T> {
     created: Date;
     /** Indicates if the identity is an admin. */
     admin: boolean;
-    /** Indicates if the identity is active. */
     active: boolean;
     /** A payload to have a more structured description of the identity. */
     payload: T;
@@ -487,13 +486,13 @@ export interface IdentityAPI {
      */
     getAccessGroup(login: string): Promise<IdentityShareLink[]>;
     /**
-    * Get all history of public keys of the given identity login.
-    * WARNING: These keys are not trusted, i.e. the chain of trust is not validated
-    * @param login The login of identity to get the key history.
-    * @return(p) On success the promise will be resolved with the history of public keys of `login`.
-    * On error the promise will be rejected with an {@link Error} with kind
-    * - `IdentityNotFound` if the identity is not found.
-    */
+     * Get all history of public keys of the given identity login.
+     * WARNING: These keys are not trusted, i.e. the chain of trust is not validated
+     * @param login The login of identity to get the key history.
+     * @return(p) On success the promise will be resolved with the history of public keys of `login`.
+     * On error the promise will be rejected with an {@link Error} with kind
+     * - `IdentityNotFound` if the identity is not found.
+     */
     getPublicKeyHistory(login: string): Promise<IdentityPublicKey[]>;
     /**
      * Get the keys of the versions of an identity that are locked. A version of an identity is locked if it is not accessible

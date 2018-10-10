@@ -1,8 +1,8 @@
-import * as nacl from 'tweetnacl';
-import { api } from './proto';
-import { ID, IdentityPublicKey, ResourceAPI, ResourceShareLink, ResourceAccessLog } from './DataPeps';
-import { EncryptFuncs } from './CryptoFuncs';
-import { SessionImpl } from './Session';
+import * as nacl from "tweetnacl";
+import { api } from "./proto";
+import { ID, IdentityPublicKey, ResourceAPI, ResourceShareLink, ResourceAccessLog } from "./DataPeps";
+import { EncryptFuncs } from "./CryptoFuncs";
+import { SessionImpl } from "./Session";
 export declare enum ResourceType {
     ANONYMOUS = 0,
 }

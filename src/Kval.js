@@ -49,14 +49,17 @@ var Kval = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         r = {
-                            namespace: namespace, key: key, value: value,
-                            created: (new Date()).getTime(),
+                            namespace: namespace,
+                            key: key,
+                            value: value,
+                            created: new Date().getTime()
                         };
                         this.sign(r);
                         return [4 /*yield*/, this.session.doProtoRequest({
-                                method: "PUT", code: 201,
+                                method: "PUT",
+                                code: 201,
                                 path: "/api/v4/kval/" + namespace,
-                                request: function () { return proto_1.api.KvalPutRequest.encode(r).finish(); },
+                                request: function () { return proto_1.api.KvalPutRequest.encode(r).finish(); }
                             })];
                     case 1:
                         _a.sent();
@@ -71,10 +74,11 @@ var Kval = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
-                            method: "POST", code: 200,
+                            method: "POST",
+                            code: 200,
                             path: "/api/v4/kval/" + namespace,
                             request: function () { return proto_1.api.KvalGetRequest.encode({ key: key }).finish(); },
-                            response: proto_1.api.KvalGetResponse.decode,
+                            response: proto_1.api.KvalGetResponse.decode
                         })];
                     case 1:
                         response = _a.sent();
@@ -119,15 +123,15 @@ var Kval = /** @class */ (function () {
         offset += ns.byteLength;
         var created = Long.fromValue(_.created);
         var high = created.getHighBits();
-        b[offset++] = (high >>> 24) & 0xFF;
-        b[offset++] = (high >>> 16) & 0xFF;
-        b[offset++] = (high >>> 8) & 0xFF;
-        b[offset++] = high & 0xFF;
+        b[offset++] = (high >>> 24) & 0xff;
+        b[offset++] = (high >>> 16) & 0xff;
+        b[offset++] = (high >>> 8) & 0xff;
+        b[offset++] = high & 0xff;
         var low = created.getLowBits();
-        b[offset++] = (low >>> 24) & 0xFF;
-        b[offset++] = (low >>> 16) & 0xFF;
-        b[offset++] = (low >>> 8) & 0xFF;
-        b[offset++] = low & 0xFF;
+        b[offset++] = (low >>> 24) & 0xff;
+        b[offset++] = (low >>> 16) & 0xff;
+        b[offset++] = (low >>> 8) & 0xff;
+        b[offset++] = low & 0xff;
         return b;
     };
     return Kval;

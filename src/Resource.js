@@ -95,8 +95,9 @@ var ResourceImpl = /** @class */ (function () {
                 switch (_b.label) {
                     case 0:
                         options = options != null ? options : {};
-                        serialize = options.serialize != null ? options.serialize :
-                            function (p) { return new TextEncoder().encode(JSON.stringify(p)); };
+                        serialize = options.serialize != null
+                            ? options.serialize
+                            : function (p) { return new TextEncoder().encode(JSON.stringify(p)); };
                         keypair = nacl.box.keyPair();
                         return [4 /*yield*/, this.encryptForSharingGroup(keypair.secretKey, sharingGroup, crypto)];
                     case 1:
@@ -105,9 +106,10 @@ var ResourceImpl = /** @class */ (function () {
                         return [2 /*return*/, {
                                 keypair: keypair,
                                 body: {
-                                    payload: message, nonce: nonce,
+                                    payload: message,
+                                    nonce: nonce,
                                     publicKey: keypair.publicKey,
-                                    sharingGroup: encryptedSharingGroup,
+                                    sharingGroup: encryptedSharingGroup
                                 }
                             }];
                 }
@@ -128,9 +130,13 @@ var ResourceImpl = /** @class */ (function () {
                     case 1:
                         _a = _b.sent(), body = _a.body, keypair = _a.keypair;
                         return [4 /*yield*/, this.session.doProtoRequest({
-                                method: "POST", code: 201,
+                                method: "POST",
+                                code: 201,
                                 path: "/api/v4/resources",
-                                request: function () { return proto_1.api.ResourcePostRequest.encode(__assign({}, body, { type: type, kind: kind })).finish(); },
+                                request: function () {
+                                    return proto_1.api.ResourcePostRequest.encode(__assign({}, body, { type: type,
+                                        kind: kind })).finish();
+                                },
                                 response: proto_1.api.ResourcePostResponse.decode
                             })];
                     case 2:
@@ -149,14 +155,22 @@ var ResourceImpl = /** @class */ (function () {
                     case 0:
                         options = options != null ? options : {};
                         assume = options.assume != null ? options.assume : this.session.login;
-                        params = options.reason != null ? __assign({}, options, { access_reason: options.reason }) : options;
-                        return [4 /*yield*/, this.session.doProtoRequest({
-                                method: "GET", code: 200,
+                        params = options.reason != null
+                            ? __assign({}, options, { access_reason: options.reason }) : options;
+                        return [4 /*yield*/, this.session
+                                .doProtoRequest({
+                                method: "GET",
+                                code: 200,
                                 path: "/api/v4/resources",
                                 assume: { login: assume, kind: DataPeps_1.IdentityAccessKind.READ },
                                 params: params,
-                                response: function (r) { return proto_1.api.ResourceListResponse.decode(r).resources; }
-                            }).then(function (resources) { return makeResourcesFromResponses(resources, _this.session, options.parse); })];
+                                response: function (r) {
+                                    return proto_1.api.ResourceListResponse.decode(r).resources;
+                                }
+                            })
+                                .then(function (resources) {
+                                return makeResourcesFromResponses(resources, _this.session, options.parse);
+                            })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });
@@ -172,11 +186,12 @@ var ResourceImpl = /** @class */ (function () {
                         assume = options.assume != null ? options.assume : this.session.login;
                         params = options.reason != null ? { access_reason: options.reason } : undefined;
                         return [4 /*yield*/, this.session.doProtoRequest({
-                                method: "GET", code: 200,
+                                method: "GET",
+                                code: 200,
                                 path: "/api/v4/resource/" + id,
                                 assume: { login: assume, kind: DataPeps_1.IdentityAccessKind.READ },
                                 params: params,
-                                response: function (r) { return proto_1.api.ResourceGetResponse.decode(r); },
+                                response: function (r) { return proto_1.api.ResourceGetResponse.decode(r); }
                             })];
                     case 1:
                         response = _a.sent();
@@ -195,10 +210,11 @@ var ResourceImpl = /** @class */ (function () {
                         soft = options.soft != null ? options.soft : false;
                         assume = options.assume != null ? options.assume : this.session.login;
                         return [4 /*yield*/, this.session.doProtoRequest({
-                                method: "DELETE", code: 200,
+                                method: "DELETE",
+                                code: 200,
                                 path: "/api/v4/resource/" + id,
                                 assume: { login: assume, kind: DataPeps_1.IdentityAccessKind.WRITE },
-                                params: { soft: soft },
+                                params: { soft: soft }
                             })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
@@ -214,13 +230,17 @@ var ResourceImpl = /** @class */ (function () {
                         options = options != null ? options : {};
                         assume = options.assume != null ? options.assume : this.session.login;
                         return [4 /*yield*/, this.session.doProtoRequest({
-                                method: "GET", code: 200,
+                                method: "GET",
+                                code: 200,
                                 path: "/api/v4/resource/" + id + "/key",
-                                response: proto_1.api.ResourceGetKeyResponse.decode,
+                                response: proto_1.api.ResourceGetKeyResponse.decode
                             })];
                     case 1:
                         _a = _b.sent(), encryptedKey = _a.encryptedKey, type = _a.type;
-                        return [4 /*yield*/, this.session.getAssumeParams({ login: assume, kind: DataPeps_1.IdentityAccessKind.READ })];
+                        return [4 /*yield*/, this.session.getAssumeParams({
+                                login: assume,
+                                kind: DataPeps_1.IdentityAccessKind.READ
+                            })];
                     case 2:
                         key = (_b.sent()).key;
                         return [4 /*yield*/, this.session.decryptCipherList(proto_1.api.ResourceType.SES, encryptedKey, key.boxKey)];
@@ -231,12 +251,15 @@ var ResourceImpl = /** @class */ (function () {
                     case 4:
                         encryptedSharingGroup = _b.sent();
                         return [4 /*yield*/, this.session.doProtoRequest({
-                                method: "PATCH", code: 201,
+                                method: "PATCH",
+                                code: 201,
                                 path: "/api/v4/resource/" + id + "/sharingGroup",
                                 assume: { login: assume, kind: DataPeps_1.IdentityAccessKind.WRITE },
-                                request: function () { return proto_1.api.ResourceExtendSharingGroupRequest.encode({
-                                    sharingGroup: encryptedSharingGroup
-                                }).finish(); }
+                                request: function () {
+                                    return proto_1.api.ResourceExtendSharingGroupRequest.encode({
+                                        sharingGroup: encryptedSharingGroup
+                                    }).finish();
+                                }
                             })];
                     case 5: return [2 /*return*/, _b.sent()];
                 }
@@ -252,10 +275,14 @@ var ResourceImpl = /** @class */ (function () {
                         options = options != null ? options : {};
                         assume = options.assume != null ? options.assume : this.session.login;
                         return [4 /*yield*/, this.session.doProtoRequest({
-                                method: "GET", code: 200,
+                                method: "GET",
+                                code: 200,
                                 path: "/api/v4/resource/" + id + "/sharingGroup",
                                 assume: { login: assume, kind: DataPeps_1.IdentityAccessKind.READ },
-                                response: function (r) { return proto_1.api.ResourceGetSharingGroupResponse.decode(r).sharingGroup; }
+                                response: function (r) {
+                                    return proto_1.api.ResourceGetSharingGroupResponse.decode(r)
+                                        .sharingGroup;
+                                }
                             })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
@@ -274,7 +301,9 @@ var ResourceImpl = /** @class */ (function () {
                                 var login = _a.login, version = _a.version, box = _a.box, sign = _a.sign;
                                 var _b = crypto.encrypt(box, text), message = _b.message, nonce = _b.nonce;
                                 return {
-                                    login: login, version: version, nonce: nonce,
+                                    login: login,
+                                    version: version,
+                                    nonce: nonce,
                                     encryptedKey: message
                                 };
                             })];
@@ -291,18 +320,21 @@ var ResourceImpl = /** @class */ (function () {
                         options = options != null ? options : {};
                         assume = options.assume != null ? options.assume : this.session.login;
                         return [4 /*yield*/, this.session.doProtoRequest({
-                                method: "POST", code: 200,
+                                method: "POST",
+                                code: 200,
                                 path: "/api/v4/resources/accessLogs",
                                 request: function () { return proto_1.api.ResourceGetAccessLogsRequest.encode(options).finish(); },
                                 response: proto_1.api.ResourceGetAccessLogsResponse.decode,
                                 assume: {
                                     login: assume,
-                                    kind: DataPeps_1.IdentityAccessKind.READ,
-                                },
+                                    kind: DataPeps_1.IdentityAccessKind.READ
+                                }
                             })];
                     case 1:
                         logs = (_a.sent()).logs;
-                        return [2 /*return*/, logs.map(function (log) { return (__assign({}, log, { timestamp: new Date(log.timestamp / 1000000) })); })];
+                        return [2 /*return*/, logs.map(function (log) {
+                                return (__assign({}, log, { timestamp: new Date(log.timestamp / 1000000) }));
+                            })];
                 }
             });
         });
@@ -318,7 +350,10 @@ function makeResourceFromResponse(_a, typeOfKey, session, parse, assume) {
             switch (_b.label) {
                 case 0:
                     assume = assume != null ? assume : session.login;
-                    return [4 /*yield*/, session.getAssumeParams({ login: assume, kind: DataPeps_1.IdentityAccessKind.READ })];
+                    return [4 /*yield*/, session.getAssumeParams({
+                            login: assume,
+                            kind: DataPeps_1.IdentityAccessKind.READ
+                        })];
                 case 1:
                     key = (_b.sent()).key;
                     secretKeyCipher = encryptedKey.pop();
@@ -348,11 +383,13 @@ function makeResource(_a, typeOfKey, session, boxKey, parse) {
                     return [3 /*break*/, 4];
                 case 2:
                     _c = parse;
-                    return [4 /*yield*/, session.decryptCipherList(proto_1.api.ResourceType.SES, [{
+                    return [4 /*yield*/, session.decryptCipherList(proto_1.api.ResourceType.SES, [
+                            {
                                 message: resource.payload,
                                 nonce: resource.nonce,
                                 sign: creator
-                            }], keypair.secretKey)];
+                            }
+                        ], keypair.secretKey)];
                 case 3:
                     _b = _c.apply(void 0, [_d.sent()]);
                     _d.label = 4;
@@ -375,7 +412,10 @@ function makeResourcesFromResponses(resources, session, parse) {
                     owners = [];
                     resources.forEach(function (resource) {
                         if (resource.owner != undefined) {
-                            if (owners.find(function (id) { return id.login == resource.owner.login && id.version == resource.owner.version; }) == undefined) {
+                            if (owners.find(function (id) {
+                                return id.login == resource.owner.login &&
+                                    id.version == resource.owner.version;
+                            }) == undefined) {
                                 owners.push(resource.owner);
                             }
                         }
@@ -384,7 +424,7 @@ function makeResourcesFromResponses(resources, session, parse) {
                                 kind: DataPeps_1.SDKError.SDKInternalError,
                                 payload: {
                                     message: "Missing owner field",
-                                    resource: resource.resource.id,
+                                    resource: resource.resource.id
                                 }
                             });
                         }
@@ -413,7 +453,8 @@ function makeResourcesFromResponses(resources, session, parse) {
                     resource = resources[i];
                     keys = void 0;
                     for (j = 0; j < owners.length; j++) {
-                        if (resource.owner.login == owners[j].login && resource.owner.version == owners[j].version) {
+                        if (resource.owner.login == owners[j].login &&
+                            resource.owner.version == owners[j].version) {
                             keys = ownersKeys[j];
                         }
                     }

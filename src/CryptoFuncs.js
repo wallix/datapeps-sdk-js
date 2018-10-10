@@ -21,15 +21,19 @@ var Encryption = /** @class */ (function (_super) {
     }
     Encryption.prototype.encrypt = function (type) {
         switch (type) {
-            case proto_1.api.ResourceType.ANONYMOUS: return new EncryptAnonymous();
-            case proto_1.api.ResourceType.SES: return new EncryptSES(this.boxKeyPair.secretKey, this.signKeyPair.secretKey);
+            case proto_1.api.ResourceType.ANONYMOUS:
+                return new EncryptAnonymous();
+            case proto_1.api.ResourceType.SES:
+                return new EncryptSES(this.boxKeyPair.secretKey, this.signKeyPair.secretKey);
         }
     };
     Encryption.prototype.decrypt = function (type, secretKey) {
         if (secretKey === void 0) { secretKey = this.boxKeyPair.secretKey; }
         switch (type) {
-            case proto_1.api.ResourceType.ANONYMOUS: return new DecryptAnonymous(secretKey);
-            case proto_1.api.ResourceType.SES: return new DecryptSES(secretKey);
+            case proto_1.api.ResourceType.ANONYMOUS:
+                return new DecryptAnonymous(secretKey);
+            case proto_1.api.ResourceType.SES:
+                return new DecryptSES(secretKey);
         }
     };
     Encryption.prototype.getPublic = function () {
@@ -108,18 +112,24 @@ var Encryption = /** @class */ (function (_super) {
         return nacl.sign.detached(msg, this.signKeyPair.secretKey);
     };
     Encryption.prototype.encryptKey = function (kind, encryption, publicKey) {
-        return encryption.encrypt(proto_1.api.ResourceType.SES).encrypt(publicKey, this.getSecretKey(kind));
+        return encryption
+            .encrypt(proto_1.api.ResourceType.SES)
+            .encrypt(publicKey, this.getSecretKey(kind));
     };
     Encryption.prototype.getPublicKey = function (kind) {
         switch (kind) {
-            case proto_1.api.IdentityShareKind.BOX: return this.boxKeyPair.publicKey;
-            case proto_1.api.IdentityShareKind.SHARING: return this.sharingKeyPair.publicKey;
+            case proto_1.api.IdentityShareKind.BOX:
+                return this.boxKeyPair.publicKey;
+            case proto_1.api.IdentityShareKind.SHARING:
+                return this.sharingKeyPair.publicKey;
         }
     };
     Encryption.prototype.getSecretKey = function (kind) {
         switch (kind) {
-            case proto_1.api.IdentityShareKind.BOX: return this.boxKeyPair.secretKey;
-            case proto_1.api.IdentityShareKind.SHARING: return this.sharingKeyPair.secretKey;
+            case proto_1.api.IdentityShareKind.BOX:
+                return this.boxKeyPair.secretKey;
+            case proto_1.api.IdentityShareKind.SHARING:
+                return this.sharingKeyPair.secretKey;
         }
     };
     Encryption.prototype.encryptKeyForMasterKey = function (_a, creator) {
@@ -128,13 +138,17 @@ var Encryption = /** @class */ (function (_super) {
             return { publicKey: publicKey, nonce: null, encryptedKey: null };
         }
         creator = creator == null ? this : creator;
-        var _b = creator.encrypt(proto_1.api.ResourceType.SES).encrypt(this.masterKeyPair.publicKey, secretKey), message = _b.message, nonce = _b.nonce;
+        var _b = creator
+            .encrypt(proto_1.api.ResourceType.SES)
+            .encrypt(this.masterKeyPair.publicKey, secretKey), message = _b.message, nonce = _b.nonce;
         return { nonce: nonce, publicKey: publicKey, encryptedKey: message };
     };
     Encryption.prototype.decryptKeyWithMasterKey = function (_a, creator) {
         var nonce = _a.nonce, publicKey = _a.publicKey, encryptedKey = _a.encryptedKey;
         var cipher = {
-            nonce: nonce, sign: creator, message: encryptedKey
+            nonce: nonce,
+            sign: creator,
+            message: encryptedKey
         };
         return {
             publicKey: publicKey,
@@ -144,13 +158,17 @@ var Encryption = /** @class */ (function (_super) {
     Encryption.prototype.encryptKeyForKey = function (kind, _a, creator) {
         var publicKey = _a.publicKey, secretKey = _a.secretKey;
         creator = creator == null ? this : creator;
-        var _b = creator.encrypt(proto_1.api.ResourceType.SES).encrypt(this.getPublicKey(kind), secretKey), message = _b.message, nonce = _b.nonce;
+        var _b = creator
+            .encrypt(proto_1.api.ResourceType.SES)
+            .encrypt(this.getPublicKey(kind), secretKey), message = _b.message, nonce = _b.nonce;
         return { nonce: nonce, publicKey: publicKey, encryptedKey: message };
     };
     Encryption.prototype.decryptKeyWithKey = function (kind, _a, creator) {
         var nonce = _a.nonce, publicKey = _a.publicKey, encryptedKey = _a.encryptedKey;
         var cipher = {
-            nonce: nonce, sign: creator, message: encryptedKey
+            nonce: nonce,
+            sign: creator,
+            message: encryptedKey
         };
         return {
             publicKey: publicKey,

@@ -1,4 +1,4 @@
-import { api } from './proto';
+import { api } from "./proto";
 export declare type ErrorKind = ServerKind | SDKKind;
 export declare const ServerKind: typeof api.PepsErrorKind;
 export declare type ServerKind = api.PepsErrorKind;

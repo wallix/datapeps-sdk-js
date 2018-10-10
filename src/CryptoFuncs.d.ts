@@ -1,5 +1,5 @@
-import { api } from './proto';
-import { IdentityPublicKey, IdentityKeyKind } from './DataPeps';
+import { api } from "./proto";
+import { IdentityPublicKey, IdentityKeyKind } from "./DataPeps";
 export interface ResolvedCipher {
     message: Uint8Array;
     nonce: Uint8Array;

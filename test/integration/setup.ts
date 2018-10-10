@@ -1,9 +1,7 @@
-import * as Config from '../Config'
+import * as Config from "../Config";
 
-describe('setup', () => {
-
-    it('init', async () => {
-        await Config.init()
-    })
-
-})
+describe("setup", () => {
+  it("init", async () => {
+    await Config.init();
+  });
+});

@@ -75,8 +75,8 @@ function configureAccessRequestResolver(params) {
     Session_1.AccessRequestImpl.prototype._openConfigured = params.open;
 }
 exports.configureAccessRequestResolver = configureAccessRequestResolver;
-var bs58 = require('bs58');
-var sha = require('sha.js');
+var bs58 = require("bs58");
+var sha = require("sha.js");
 /**
  * Returns the hash of an IdentityPublicKey.
  * The hash is computed thanks a sha2156 of the concat of box and sign key.
@@ -124,7 +124,9 @@ function register(identity, secret) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, _register("/api/v4/register", identity, secret, function (r) { return proto_1.api.IdentityRegisterRequest.encode(r).finish(); })];
+                case 0: return [4 /*yield*/, _register("/api/v4/register", identity, secret, function (r) {
+                        return proto_1.api.IdentityRegisterRequest.encode(r).finish();
+                    })];
                 case 1: return [2 /*return*/, _a.sent()];
             }
         });
@@ -162,9 +164,13 @@ function _register(path, identity, secret, request) {
             encryption = new CryptoFuncs_1.Encryption();
             encryption.generate(Tools_1.Uint8Tool.convert(secret), null);
             return [2 /*return*/, client.doRequest({
-                    method: "POST", code: 201, path: path,
+                    method: "POST",
+                    code: 201,
+                    path: path,
                     request: function () { return request({ identity: identity, encryption: encryption }); },
-                    before: function (x, b) { return x.setRequestHeader("content-type", "application/x-protobuf"); }
+                    before: function (x, b) {
+                        return x.setRequestHeader("content-type", "application/x-protobuf");
+                    }
                 })];
         });
     });
@@ -190,22 +196,29 @@ function requestDelegatedAccess(login, sign) {
                 case 1:
                     _a = _b.sent(), box = _a.box, version = _a.version;
                     encryptedKey = encrypt.encrypt(box, keypair.secretKey);
-                    return [4 /*yield*/, sign({ login: login, publicKey: keypair.publicKey })];
+                    return [4 /*yield*/, sign({
+                            login: login,
+                            publicKey: keypair.publicKey
+                        })];
                 case 2:
                     signResult = _b.sent();
                     return [4 /*yield*/, client.doRequest({
-                            method: "POST", code: 201,
+                            method: "POST",
+                            code: 201,
                             path: "/api/v4/delegatedAccess",
-                            request: function () { return proto_1.api.DelegatedPostRequest.encode({
-                                publicKey: keypair.publicKey,
-                                sign: signResult.sign,
-                                requester: signResult.requester,
-                                sharing: {
-                                    encryptedKey: encryptedKey.message,
-                                    nonce: encryptedKey.nonce,
-                                    login: login, version: version
-                                },
-                            }).finish(); },
+                            request: function () {
+                                return proto_1.api.DelegatedPostRequest.encode({
+                                    publicKey: keypair.publicKey,
+                                    sign: signResult.sign,
+                                    requester: signResult.requester,
+                                    sharing: {
+                                        encryptedKey: encryptedKey.message,
+                                        nonce: encryptedKey.nonce,
+                                        login: login,
+                                        version: version
+                                    }
+                                }).finish();
+                            },
                             response: proto_1.api.DelegatedPostResponse.decode,
                             before: function (x, b) {
                                 x.setRequestHeader("content-type", "application/x-protobuf");
@@ -233,9 +246,12 @@ function getLatestPublicKeys(logins) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, client.doRequest({
-                        method: "POST", code: 200,
+                        method: "POST",
+                        code: 200,
                         path: "/api/v4/identities/latestPublicKeys",
-                        request: function () { return proto_1.api.IdentityGetLatestPublicKeysRequest.encode({ logins: logins }).finish(); },
+                        request: function () {
+                            return proto_1.api.IdentityGetLatestPublicKeysRequest.encode({ logins: logins }).finish();
+                        },
                         response: proto_1.api.IdentityGetLatestPublicKeysResponse.decode,
                         before: function (x, b) {
                             x.setRequestHeader("content-type", "application/x-protobuf");
@@ -284,12 +300,17 @@ function sendRegisterLink(email) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, client.doRequest({
-                        method: "POST", code: 201,
+                        method: "POST",
+                        code: 201,
                         path: "/api/v4/register/link",
-                        request: function () { return proto_1.api.RegisterLinkRequest.encode({
-                            email: email
-                        }).finish(); },
-                        before: function (x, b) { return x.setRequestHeader("content-type", "application/x-protobuf"); }
+                        request: function () {
+                            return proto_1.api.RegisterLinkRequest.encode({
+                                email: email
+                            }).finish();
+                        },
+                        before: function (x, b) {
+                            return x.setRequestHeader("content-type", "application/x-protobuf");
+                        }
                     })];
                 case 1: return [2 /*return*/, _a.sent()];
             }
@@ -338,8 +359,7 @@ var IdentityAccessKind;
 configureAccessRequestResolver({
     open: function (id, login) {
         // check if running in browser
-        if (typeof window == 'undefined'
-            || typeof window.document == 'undefined') {
+        if (typeof window == "undefined" || typeof window.document == "undefined") {
             throw new Error_1.Error({
                 kind: Error_1.SDKKind.SDKInternalError,
                 payload: {
@@ -348,11 +368,13 @@ configureAccessRequestResolver({
             });
         }
         var resolverUrl = Constants_1.Constants.Session.RESOLVER_URL +
-            "?id=" + encodeURIComponent(id.toString()) +
-            "&login=" + encodeURIComponent(login);
+            "?id=" +
+            encodeURIComponent(id.toString()) +
+            "&login=" +
+            encodeURIComponent(login);
         var features = Constants_1.Constants.Session.RESOLVER_WINDOW_DEFAULT_FEATURES;
         return window.open(resolverUrl, "", features);
-    },
+    }
 });
 /////////////////////////////////////////////////
 // Resource

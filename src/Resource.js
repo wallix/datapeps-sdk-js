@@ -202,19 +202,38 @@ var ResourceImpl = /** @class */ (function () {
     };
     ResourceImpl.prototype.delete = function (id, options) {
         return __awaiter(this, void 0, void 0, function () {
-            var soft, assume;
+            var assume;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         options = options != null ? options : {};
-                        soft = options.soft != null ? options.soft : false;
                         assume = options.assume != null ? options.assume : this.session.login;
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "DELETE",
                                 code: 200,
                                 path: "/api/v4/resource/" + id,
                                 assume: { login: assume, kind: DataPeps_1.IdentityAccessKind.WRITE },
-                                params: { soft: soft }
+                                params: { soft: false }
+                            })];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
+    ResourceImpl.prototype.unlink = function (id, options) {
+        return __awaiter(this, void 0, void 0, function () {
+            var assume;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        options = options != null ? options : {};
+                        assume = options.assume != null ? options.assume : this.session.login;
+                        return [4 /*yield*/, this.session.doProtoRequest({
+                                method: "DELETE",
+                                code: 200,
+                                path: "/api/v4/resource/" + id,
+                                assume: { login: assume, kind: DataPeps_1.IdentityAccessKind.WRITE },
+                                params: { soft: true }
                             })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }

@@ -169,7 +169,7 @@ describe('resource', () => {
     })
 
     it('bob deletes its copy of the alice resource', async () => {
-        await bobSession.Resource.delete(res.id, { soft: true })
+        await bobSession.Resource.unlink(res.id)
         let resource = await aliceSession.Resource.get(res.id)
         expect(resource).to.be.not.null
         let result = resource.decrypt(encrypted)

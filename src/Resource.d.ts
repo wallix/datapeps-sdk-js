@@ -53,7 +53,9 @@ export declare class ResourceImpl implements ResourceAPI {
         reason?: string;
     }): Promise<Resource<T>>;
     delete(id: ID, options?: {
-        soft?: boolean;
+        assume?: string;
+    }): Promise<void>;
+    unlink(id: ID, options?: {
         assume?: string;
     }): Promise<void>;
     extendSharingGroup(id: ID, sharingGroup: string[], options?: {

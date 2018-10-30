@@ -87,6 +87,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_datapeps_.resourceapi.html#getaccesslogs" class="tsd-kind-icon">get<wbr>Access<wbr>Logs</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_datapeps_.resourceapi.html#getsharinggroup" class="tsd-kind-icon">get<wbr>Sharing<wbr>Group</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter"><a href="_datapeps_.resourceapi.html#list" class="tsd-kind-icon">list</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_datapeps_.resourceapi.html#unlink" class="tsd-kind-icon">unlink</a></li>
 							</ul>
 						</section>
 					</div>
@@ -173,12 +174,12 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L935">DataPeps.ts:935</a></li>
+									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L949">DataPeps.ts:949</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Delete a resource thanks its identifier.</p>
+									<p>Hard-delete a resource thanks its identifier. It deletes the resource for all identities in its sharingGroup.</p>
 								</div>
 								<dl class="tsd-comment-tags">
 									<dt>return(p)</dt>
@@ -202,9 +203,6 @@
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <span class="tsd-signature-type">object</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>A collection of options:</p>
-										<ul>
-											<li>soft: If true delete only the copy, if false delete the resource for all identities in its sharingGroup.</li>
-										</ul>
 									</div>
 									<ul class="tsd-parameters">
 									</ul>
@@ -224,7 +222,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L953">DataPeps.ts:953</a></li>
+									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L966">DataPeps.ts:966</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -339,7 +337,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L971">DataPeps.ts:971</a></li>
+									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L984">DataPeps.ts:984</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -384,7 +382,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L986">DataPeps.ts:986</a></li>
+									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L999">DataPeps.ts:999</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -472,6 +470,54 @@
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="unlink" class="tsd-anchor"></a>
+					<h3>unlink</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">unlink<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><a href="../modules/_datapeps_.html#id" class="tsd-signature-type">ID</a>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L934">DataPeps.ts:934</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Soft-delete a resource thanks its identifier. It deletes only the copy.</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>return(p)</dt>
+									<dd><p>On success the promise will be resolved with void.
+										On error the promise will be rejected with an {@link Error} with kind:</p>
+										<ul>
+											<li><code>ResourceNotFound</code> if the resource does not exists.</li>
+										</ul>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>id: <a href="../modules/_datapeps_.html#id" class="tsd-signature-type">ID</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The identifier of the resource to delete.</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <span class="tsd-signature-type">object</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>A collection of options:</p>
+									</div>
+									<ul class="tsd-parameters">
+									</ul>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
 			</section>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -512,6 +558,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
 								<a href="_datapeps_.resourceapi.html#list" class="tsd-kind-icon">list</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="_datapeps_.resourceapi.html#unlink" class="tsd-kind-icon">unlink</a>
 							</li>
 						</ul>
 					</li>

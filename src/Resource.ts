@@ -202,19 +202,34 @@ export class ResourceImpl implements ResourceAPI {
   async delete(
     id: ID,
     options?: {
-      soft?: boolean;
       assume?: string;
     }
   ): Promise<void> {
     options = options != null ? options : {};
-    let soft = options.soft != null ? options.soft : false;
     let assume = options.assume != null ? options.assume : this.session.login;
     return await this.session.doProtoRequest<void>({
       method: "DELETE",
       code: 200,
       path: "/api/v4/resource/" + id,
       assume: { login: assume, kind: IdentityAccessKind.WRITE },
-      params: { soft }
+      params: { soft: false }
+    });
+  }
+
+  async unlink(
+    id: ID,
+    options?: {
+      assume?: string;
+    }
+  ): Promise<void> {
+    options = options != null ? options : {};
+    let assume = options.assume != null ? options.assume : this.session.login;
+    return await this.session.doProtoRequest<void>({
+      method: "DELETE",
+      code: 200,
+      path: "/api/v4/resource/" + id,
+      assume: { login: assume, kind: IdentityAccessKind.WRITE },
+      params: { soft: true }
     });
   }
 

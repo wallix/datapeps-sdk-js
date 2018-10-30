@@ -924,10 +924,24 @@ export interface ResourceAPI {
   ): Promise<Resource<T>>;
 
   /**
-   * Delete a resource thanks its identifier.
+   * Soft-delete a resource thanks its identifier. It deletes only the copy.
    * @param id The identifier of the resource to delete.
    * @param options A collection of options:
-   *  - soft: If true delete only the copy, if false delete the resource for all identities in its sharingGroup.
+   * @return(p) On success the promise will be resolved with void.
+   * On error the promise will be rejected with an {@link Error} with kind:
+   * - `ResourceNotFound` if the resource does not exists.
+   */
+  unlink(
+    id: ID,
+    options?: {
+      assume?: string;
+    }
+  ): Promise<void>;
+
+    /**
+   * Hard-delete a resource thanks its identifier. It deletes the resource for all identities in its sharingGroup.
+   * @param id The identifier of the resource to delete.
+   * @param options A collection of options:
    * @return(p) On success the promise will be resolved with void.
    * On error the promise will be rejected with an {@link Error} with kind:
    * - `ResourceNotFound` if the resource does not exists.
@@ -935,7 +949,6 @@ export interface ResourceAPI {
   delete(
     id: ID,
     options?: {
-      soft?: boolean;
       assume?: string;
     }
   ): Promise<void>;

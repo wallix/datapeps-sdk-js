@@ -71,20 +71,33 @@ describe('resource.getSharingGroup', () => {
         let aliceRes = await aliceSession.Resource.create("test/A", { description: "This is a test resource for Alice" }, [alice.login])
         let got = await aliceSession.Resource.getSharingGroup(aliceRes.id)
         expect(got.map(share => share.identityID.login)).to.be.deep.equal([aliceSession.login])
-        got = await deviceSession.Resource.getSharingGroup(aliceRes.id, {assume: aliceSession.login})
+        got = await deviceSession.Resource.getSharingGroup(
+          aliceRes.id,
+          { assume: aliceSession.login }
+        );
         expect(got.map(share => share.identityID.login)).to.be.deep.equal([aliceSession.login])
     })
 
     it('Check Alice sharers are in resource sharing group', async () => {
         let sharedRes = await aliceSession.Resource.create("test/A", { description: "This is a test resource for Alice and Bob" }, [alice.login, bob.login])
         let got = await aliceSession.Resource.getSharingGroup(sharedRes.id)
-        expect(got.map(share => share.identityID.login)).to.be.deep.equal([aliceSession.login, bobSession.login])
+        expect(got
+            .map(share => share.identityID.login)
+            .sort()).to.be.deep.equal([
+          aliceSession.login,
+          bobSession.login
+        ]);
     })
 
     it('Check Alice sharers have access to sharing group', async () => {
         let sharedRes = await aliceSession.Resource.create("test/A", { description: "This is a test resource for Alice and Bob" }, [alice.login, bob.login])
         let got = await bobSession.Resource.getSharingGroup(sharedRes.id)
-        expect(got.map(share => share.identityID.login)).to.be.deep.equal([aliceSession.login, bobSession.login])
+        expect(got
+            .map(share => share.identityID.login)
+            .sort()).to.be.deep.equal([
+          aliceSession.login,
+          bobSession.login
+        ]);
     })
 
     it('Check that the sharing group contains a new identity added with extendSharingGroup', async () => {
@@ -92,17 +105,28 @@ describe('resource.getSharingGroup', () => {
         await bobSession.Resource.extendSharingGroup(sharedRes.id, [charlie.login])
         let expectSharingGroup = [aliceSession.login, bobSession.login, charlieSession.login];
         let gotSharingGroup = await aliceSession.Resource.getSharingGroup(sharedRes.id)
-        expect(gotSharingGroup.map(share => share.identityID.login)).to.be.deep.equal(expectSharingGroup)
+        expect(gotSharingGroup
+            .map(share => share.identityID.login)
+            .sort()).to.be.deep.equal(expectSharingGroup);
         gotSharingGroup = await bobSession.Resource.getSharingGroup(sharedRes.id)
-        expect(gotSharingGroup.map(share => share.identityID.login)).to.be.deep.equal(expectSharingGroup)
+        expect(gotSharingGroup
+            .map(share => share.identityID.login)
+            .sort()).to.be.deep.equal(expectSharingGroup);
         gotSharingGroup = await charlieSession.Resource.getSharingGroup(sharedRes.id)
-        expect(gotSharingGroup.map(share => share.identityID.login)).to.be.deep.equal(expectSharingGroup)
+        expect(gotSharingGroup
+            .map(share => share.identityID.login)
+            .sort()).to.be.deep.equal(expectSharingGroup);
     })
 
     it('Check right identity version in sharing group after key renewal of sharers', async () => {
         await bobSession.renewKeys()
         let sharedRes = await aliceSession.Resource.create("test/A", { description: "This is a test resource for Alice and Bob" }, [alice.login, bob.login])
         let got = await aliceSession.Resource.getSharingGroup(sharedRes.id)
+
+        got.sort((a, b) => {
+          return a.identityID.login < b.identityID.login ? -1 : 1;
+        });
+
         expect(got.map(share => share.identityID.login)).to.be.deep.equal([aliceSession.login, bobSession.login])
         expect(got.map(share => share.identityID.version)).to.be.deep.equal([1, 2])
     })

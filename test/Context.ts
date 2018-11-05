@@ -58,7 +58,7 @@ export async function user(init: initCtx, name: string): Promise<userCtx> {
         firstname: name,
         lastname: "typescript",
         description: `${name} is a test identity from typescript integration test`
-      })
+      } as userPayload)
     )
   };
   await DataPeps.register(identity, secret);
@@ -90,6 +90,37 @@ export async function aliceBob(init: initCtx): Promise<aliceBobCtx> {
   let alice = await userAndSession(init, "alice");
   let bob = await userAndSession(init, "bob");
   return { alice, bob };
+}
+
+export interface aliceBobAndGroupCtx extends aliceBobCtx {
+  group: DataPeps.Identity<Uint8Array>;
+}
+
+export interface groupPayload {
+  description: string;
+}
+
+export async function aliceBobAndGroup(
+  init: initCtx
+): Promise<aliceBobAndGroupCtx> {
+  let abCtx = await aliceBob(init);
+  let groupFields = {
+    login: `aliceBob.${init.seed}`,
+    name: `Alice&Bob's`,
+    kind: "test/group",
+    payload: new TextEncoder().encode(
+      JSON.stringify({
+        description: `A group shared by alice & bob`
+      } as groupPayload)
+    )
+  };
+  await abCtx.alice.session.Identity.create(groupFields, {
+    sharingGroup: [abCtx.alice.identity.login, abCtx.bob.identity.login]
+  });
+  return {
+    ...abCtx,
+    group: { ...groupFields, created: new Date(), admin: false, active: true }
+  };
 }
 
 export interface devCtx {

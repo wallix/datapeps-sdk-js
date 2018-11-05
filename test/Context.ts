@@ -92,7 +92,9 @@ export async function aliceBob(init: initCtx): Promise<aliceBobCtx> {
   return { alice, bob };
 }
 
-export interface aliceBobAndGroupCtx extends aliceBobCtx {
+export interface aliceBobWithDeviceAndGroupCtx extends aliceBobCtx {
+  aliceDevice: userAndSessionCtx;
+  bobDevice: userAndSessionCtx;
   group: DataPeps.Identity<Uint8Array>;
 }
 
@@ -100,9 +102,31 @@ export interface groupPayload {
   description: string;
 }
 
-export async function aliceBobAndGroup(
+async function createDevice(
+  user: userAndSessionCtx
+): Promise<userAndSessionCtx> {
+  let device = {
+    login: `device.${user.identity.login}`,
+    name: `Phone of ${user.identity.name}`,
+    kind: "test/device",
+    payload: null
+  };
+  let secret = nacl.randomBytes(1024);
+  await user.session.Identity.create(device, { secret });
+  let session = await DataPeps.login(device.login, secret);
+  await user.session.Identity.extendSharingGroup(user.identity.login, [
+    device.login
+  ]);
+  return {
+    secret,
+    identity: { ...device, created: new Date(), admin: false, active: true },
+    session
+  };
+}
+
+export async function aliceBobWithDeviceAndGroup(
   init: initCtx
-): Promise<aliceBobAndGroupCtx> {
+): Promise<aliceBobWithDeviceAndGroupCtx> {
   let abCtx = await aliceBob(init);
   let groupFields = {
     login: `aliceBob.${init.seed}`,
@@ -117,8 +141,12 @@ export async function aliceBobAndGroup(
   await abCtx.alice.session.Identity.create(groupFields, {
     sharingGroup: [abCtx.alice.identity.login, abCtx.bob.identity.login]
   });
+  let aliceDevice = await createDevice(abCtx.alice);
+  let bobDevice = await createDevice(abCtx.bob);
   return {
     ...abCtx,
+    aliceDevice,
+    bobDevice,
     group: { ...groupFields, created: new Date(), admin: false, active: true }
   };
 }

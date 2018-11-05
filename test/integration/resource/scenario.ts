@@ -5,11 +5,11 @@ import * as nacl from "tweetnacl";
 import { expect } from "chai";
 
 describe("resource.scenario", () => {
-  let ctx: Context.aliceBobAndGroupCtx;
+  let ctx: Context.aliceBobWithDeviceAndGroupCtx;
   // Create alice, bob and a group
   before(async () => {
     let init = Context.init();
-    ctx = await Context.aliceBobAndGroup(init);
+    ctx = await Context.aliceBobWithDeviceAndGroup(init);
   });
 
   let res: DataPeps.Resource<any>;

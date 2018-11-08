@@ -67,6 +67,29 @@ function configure(APIUrl, WSUrl) {
     webSocketURL = WSUrl;
 }
 exports.configure = configure;
+function clipID(id, content) {
+    var encapsulated = new Uint8Array(8 + content.length);
+    var lid = Long.fromValue(id);
+    var high = lid.getHighBitsUnsigned();
+    encapsulated[0] = (high >>> 24) & 0xff;
+    encapsulated[1] = (high >>> 16) & 0xff;
+    encapsulated[2] = (high >>> 8) & 0xff;
+    encapsulated[3] = high & 0xff;
+    var low = lid.getLowBitsUnsigned();
+    encapsulated[4] = (low >>> 24) & 0xff;
+    encapsulated[5] = (low >>> 16) & 0xff;
+    encapsulated[6] = (low >>> 8) & 0xff;
+    encapsulated[7] = low & 0xff;
+    encapsulated.set(content, 8);
+    return encapsulated;
+}
+exports.clipID = clipID;
+function unclipID(content) {
+    var high = (content[0] << 24) + (content[1] << 16) + (content[2] << 8) + content[3];
+    var low = (content[4] << 24) + (content[5] << 16) + (content[6] << 8) + content[7];
+    return { id: new Long(low, high, true), content: content.slice(8) };
+}
+exports.unclipID = unclipID;
 /**
  * Redefine the AccessRequest.openResolver() default function
  * @param params An object containing the new AccessRequest.openResolver() function

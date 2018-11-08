@@ -81,6 +81,16 @@ var Resource = /** @class */ (function () {
         }
         return text;
     };
+    Resource.prototype.encryptString = function (clear) {
+        var uClear = new TextEncoder().encode(clear);
+        var uEncrypted = this.encrypt(uClear);
+        return Tools_1.Base64.encode(uEncrypted);
+    };
+    Resource.prototype.decryptString = function (cipher) {
+        var uEncrypted = Tools_1.Base64.decode(cipher);
+        var clear = this.decrypt(uEncrypted);
+        return new TextDecoder().decode(clear);
+    };
     return Resource;
 }());
 exports.Resource = Resource;

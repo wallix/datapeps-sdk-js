@@ -40,6 +40,31 @@ export function configure(APIUrl: string, WSUrl?: string) {
   webSocketURL = WSUrl;
 }
 
+export function clipID(id: ID, content: Uint8Array): Uint8Array {
+  let encapsulated = new Uint8Array(8 + content.length);
+  let lid = Long.fromValue(id);
+  let high: number = lid.getHighBitsUnsigned();
+  encapsulated[0] = (high >>> 24) & 0xff;
+  encapsulated[1] = (high >>> 16) & 0xff;
+  encapsulated[2] = (high >>> 8) & 0xff;
+  encapsulated[3] = high & 0xff;
+  let low: number = lid.getLowBitsUnsigned();
+  encapsulated[4] = (low >>> 24) & 0xff;
+  encapsulated[5] = (low >>> 16) & 0xff;
+  encapsulated[6] = (low >>> 8) & 0xff;
+  encapsulated[7] = low & 0xff;
+  encapsulated.set(content, 8);
+  return encapsulated;
+}
+
+export function unclipID(content: Uint8Array): { id: ID; content: Uint8Array } {
+  let high =
+    (content[0] << 24) + (content[1] << 16) + (content[2] << 8) + content[3];
+  let low =
+    (content[4] << 24) + (content[5] << 16) + (content[6] << 8) + content[7];
+  return { id: new Long(low, high, true), content: content.slice(8) };
+}
+
 /**
  * Redefine the AccessRequest.openResolver() default function
  * @param params An object containing the new AccessRequest.openResolver() function
@@ -826,12 +851,14 @@ export interface Resource<T> {
 
   // Encrypts a clear text to a cipher text that could be decrypted by the decrypt function of the resource.
   encrypt(clear: Uint8Array): Uint8Array;
+  encryptString(clear: string): string;
 
   /**
    * Decrypts a cipher text, that should be encrypted by the encrypt function of the resource, to the original clear text.
    * @throws DataPeps.Error with kind `DataPeps.SDKError.DecryptFail`
    */
   decrypt(cipher: Uint8Array): Uint8Array;
+  decryptString(cipher: string): string;
 }
 export type ResourceAccessReason = api.ResourceAccessReason;
 export const ResourceAccessReason = api.ResourceAccessReason;
@@ -938,7 +965,7 @@ export interface ResourceAPI {
     }
   ): Promise<void>;
 
-    /**
+  /**
    * Hard-delete a resource thanks its identifier. It deletes the resource for all identities in its sharingGroup.
    * @param id The identifier of the resource to delete.
    * @param options A collection of options:

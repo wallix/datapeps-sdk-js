@@ -17,6 +17,8 @@ export declare class Resource<T> {
     publicKey(): Uint8Array;
     encrypt(content: Uint8Array): Uint8Array;
     decrypt(message: Uint8Array): Uint8Array;
+    encryptString(clear: string): string;
+    decryptString(cipher: string): string;
 }
 export declare class ResourceImpl implements ResourceAPI {
     private session;

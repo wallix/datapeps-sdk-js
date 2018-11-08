@@ -12,6 +12,11 @@ export declare var debug: boolean;
  * @param APIUrl The url of the DataPeps service.
  */
 export declare function configure(APIUrl: string, WSUrl?: string): void;
+export declare function clipID(id: ID, content: Uint8Array): Uint8Array;
+export declare function unclipID(content: Uint8Array): {
+    id: ID;
+    content: Uint8Array;
+};
 /**
  * Redefine the AccessRequest.openResolver() default function
  * @param params An object containing the new AccessRequest.openResolver() function
@@ -532,11 +537,13 @@ export interface Resource<T> {
     creator: IdentityPublicKey;
     publicKey(): Uint8Array;
     encrypt(clear: Uint8Array): Uint8Array;
+    encryptString(clear: string): string;
     /**
      * Decrypts a cipher text, that should be encrypted by the encrypt function of the resource, to the original clear text.
      * @throws DataPeps.Error with kind `DataPeps.SDKError.DecryptFail`
      */
     decrypt(cipher: Uint8Array): Uint8Array;
+    decryptString(cipher: string): string;
 }
 export declare type ResourceAccessReason = api.ResourceAccessReason;
 export declare const ResourceAccessReason: typeof api.ResourceAccessReason;
@@ -623,13 +630,13 @@ export interface ResourceAPI {
         assume?: string;
     }): Promise<void>;
     /**
-   * Hard-delete a resource thanks its identifier. It deletes the resource for all identities in its sharingGroup.
-   * @param id The identifier of the resource to delete.
-   * @param options A collection of options:
-   * @return(p) On success the promise will be resolved with void.
-   * On error the promise will be rejected with an {@link Error} with kind:
-   * - `ResourceNotFound` if the resource does not exists.
-   */
+     * Hard-delete a resource thanks its identifier. It deletes the resource for all identities in its sharingGroup.
+     * @param id The identifier of the resource to delete.
+     * @param options A collection of options:
+     * @return(p) On success the promise will be resolved with void.
+     * On error the promise will be rejected with an {@link Error} with kind:
+     * - `ResourceNotFound` if the resource does not exists.
+     */
     delete(id: ID, options?: {
         assume?: string;
     }): Promise<void>;

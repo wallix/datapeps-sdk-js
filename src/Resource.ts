@@ -13,7 +13,7 @@ import {
 } from "./DataPeps";
 import { EncryptFuncs } from "./CryptoFuncs";
 import { SessionImpl } from "./Session";
-import { Uint8Tool } from "./Tools";
+import { Uint8Tool, Base64 } from "./Tools";
 
 export enum ResourceType {
   ANONYMOUS = 0
@@ -63,6 +63,18 @@ export class Resource<T> {
       });
     }
     return text;
+  }
+
+  encryptString(clear: string): string {
+    let uClear = new TextEncoder().encode(clear);
+    let uEncrypted = this.encrypt(uClear);
+    return Base64.encode(uEncrypted);
+  }
+
+  decryptString(cipher: string): string {
+    let uEncrypted = Base64.decode(cipher);
+    let clear = this.decrypt(uEncrypted);
+    return new TextDecoder().decode(clear);
   }
 }
 

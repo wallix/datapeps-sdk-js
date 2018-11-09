@@ -1,5 +1,5 @@
 import { api } from "./proto";
-import { ID, Session, SessionRequest, PublicKeysCache, TrustPolicy, AccessRequestResolver, DelegatedAccess } from "./DataPeps";
+import { ID, Session, SessionRequest, PublicKeysCache, TrustPolicy, AccessRequestResolver, DelegatedAccess, ApplicationAPI } from "./DataPeps";
 import { IdentityPublicKey, IdentityPublicKeyID, IdentityAccessKind } from "./DataPeps";
 import { AccessRequest } from "./DataPeps";
 import { Resource } from "./DataPeps";
@@ -23,6 +23,7 @@ export declare class SessionImpl implements Session {
     encryption: Encryption;
     client: Client;
     token: string;
+    Application: ApplicationAPI;
     private salt;
     private saltKind;
     private deltaSaltTime;

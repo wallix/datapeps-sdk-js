@@ -10,7 +10,8 @@ import {
   AccessRequestResolver,
   DelegatedAccess,
   debug,
-  IdentityPublicKeyWithMetadata
+  IdentityPublicKeyWithMetadata,
+  ApplicationAPI
 } from "./DataPeps";
 import {
   IdentityPublicKey,
@@ -28,6 +29,7 @@ import { IdentityImpl } from "./Identity";
 import { ResourceImpl, makeResourceFromResponse } from "./Resource";
 import { AdminImpl } from "./Admin";
 import { Kval, KvalDelegates } from "./Kval";
+import { ApplicationImpl } from "./Application";
 
 export interface AssumeParams {
   key: api.IDelegatedKeys;
@@ -168,6 +170,9 @@ export class SessionImpl implements Session {
 
   client: Client;
   token: string; // base64 encoded
+
+  Application: ApplicationAPI;
+
   private salt: Uint8Array;
   private saltKind: api.SessionSaltKind;
   private deltaSaltTime: number;
@@ -193,6 +198,7 @@ export class SessionImpl implements Session {
     this.client = client;
     this.pkCache = new MemoryPublicKeyCache();
     this.trustPolicy = new TrustOnFirstUse(this);
+    this.Application = new ApplicationImpl(this);
     this.assumeKeyCache = {};
     this.afterRequestHandleSalt();
   }

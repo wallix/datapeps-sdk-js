@@ -54,6 +54,7 @@ var Identity_1 = require("./Identity");
 var Resource_1 = require("./Resource");
 var Admin_1 = require("./Admin");
 var Kval_1 = require("./Kval");
+var Application_1 = require("./Application");
 var MemoryPublicKeyCache = /** @class */ (function () {
     function MemoryPublicKeyCache() {
         this.cache = {};
@@ -189,6 +190,7 @@ var SessionImpl = /** @class */ (function () {
         this.client = client;
         this.pkCache = new MemoryPublicKeyCache();
         this.trustPolicy = new TrustOnFirstUse(this);
+        this.Application = new Application_1.ApplicationImpl(this);
         this.assumeKeyCache = {};
         this.afterRequestHandleSalt();
     }

@@ -419,4 +419,16 @@ var ResourceType;
     ResourceType[ResourceType["ANONYMOUS"] = 0] = "ANONYMOUS";
 })(ResourceType = exports.ResourceType || (exports.ResourceType = {}));
 exports.ResourceAccessReason = proto_1.api.ResourceAccessReason;
+var ApplicationJwtAlgorithm;
+(function (ApplicationJwtAlgorithm) {
+    ApplicationJwtAlgorithm[ApplicationJwtAlgorithm["HS256"] = 0] = "HS256";
+    ApplicationJwtAlgorithm[ApplicationJwtAlgorithm["HS384"] = 1] = "HS384";
+    ApplicationJwtAlgorithm[ApplicationJwtAlgorithm["HS512"] = 2] = "HS512";
+    ApplicationJwtAlgorithm[ApplicationJwtAlgorithm["RS256"] = 3] = "RS256";
+    ApplicationJwtAlgorithm[ApplicationJwtAlgorithm["RS384"] = 4] = "RS384";
+    ApplicationJwtAlgorithm[ApplicationJwtAlgorithm["RS512"] = 5] = "RS512";
+    ApplicationJwtAlgorithm[ApplicationJwtAlgorithm["ES256"] = 6] = "ES256";
+    ApplicationJwtAlgorithm[ApplicationJwtAlgorithm["ES384"] = 7] = "ES384";
+    ApplicationJwtAlgorithm[ApplicationJwtAlgorithm["ES512"] = 8] = "ES512";
+})(ApplicationJwtAlgorithm = exports.ApplicationJwtAlgorithm || (exports.ApplicationJwtAlgorithm = {}));
 //# sourceMappingURL=DataPeps.js.map

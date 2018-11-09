@@ -1,6 +1,6 @@
 {
   "name": "datapeps-sdk",
-  "version": "0.0.39-dev-36b66c",
+  "version": "0.0.39-dev-7c53be",
   "description": "DataPeps SDK enables safe end-to-end-encryption for any application",
   "main": "./src/DataPeps.js",
   "types": "./src/DataPeps.d.ts",
@@ -26,7 +26,6 @@
     "awesome-typescript-loader": "^3.2.3",
     "btoa": "^1.1.2",
     "chai": "^4.1.0",
-    "husky": "^1.1.1",
     "mocha": "^3.5.0",
     "mochawesome": "^3.0.3",
     "precise-commits": "^1.0.2",

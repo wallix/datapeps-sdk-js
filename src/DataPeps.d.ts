@@ -235,6 +235,8 @@ export interface Session {
     Kval: KvalAPI;
     /** Access to the KvalDelegates API */
     KvalDelegates: KvalDelegatesAPI;
+    /** Access to the Application API */
+    Application: ApplicationAPI;
     /**
      * Close the session.
      * @return(p) On success the promise will be resolved with void.
@@ -324,6 +326,11 @@ export interface Session {
      * @param request
      */
     doRequest<T>(request: SessionRequest<T>): Promise<T>;
+    /**
+     * Do an authenticated proto request.
+     * @param request
+     */
+    doProtoRequest<T>(request: SessionRequest<T>): Promise<T>;
 }
 /**
  * An {@Identity} owns several keys, this is a reference to the unique version of an identity public key.
@@ -756,4 +763,24 @@ export interface KvalAPI {
 export interface KvalDelegatesAPI {
     put(login: string, application: string, delegates: string[]): Promise<void>;
     get(login: string, application: string): Promise<string[]>;
+}
+export declare enum ApplicationJwtAlgorithm {
+    HS256 = 0,
+    HS384 = 1,
+    HS512 = 2,
+    RS256 = 3,
+    RS384 = 4,
+    RS512 = 5,
+    ES256 = 6,
+    ES384 = 7,
+    ES512 = 8,
+}
+export declare type ApplicationJwtConfig = {
+    key: Uint8Array;
+    signAlgorithm?: ApplicationJwtAlgorithm;
+    claimForLogin?: string;
+};
+export interface ApplicationAPI {
+    putConfig(appID: string, configuration: ApplicationJwtConfig): Promise<void>;
+    getConfig(appID: string): Promise<ApplicationJwtConfig>;
 }

@@ -76,4 +76,4 @@ export declare class ResourceImpl implements ResourceAPI {
         assume?: string;
     }): Promise<ResourceAccessLog[]>;
 }
-export declare function makeResourceFromResponse<T>({resource, encryptedKey, creator}: api.IResourceGetResponse, typeOfKey: api.ResourceType, session: SessionImpl, parse?: any, assume?: any): Promise<Resource<T>>;
+export declare function makeResourceFromResponse<T>({resource, encryptedKey, creator}: api.IResourceGetResponse, typeOfKey: api.ResourceType, session: SessionImpl, parse?: any, assume?: string): Promise<Resource<T>>;

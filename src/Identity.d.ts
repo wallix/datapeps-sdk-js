@@ -1,5 +1,6 @@
 import { api } from "./proto";
-import { IdentityAPI, Identity, IdentityPublicKey, IdentityPublicKeyWithMetadata, IdentityShareLink, IdentityFields } from "./DataPeps";
+import { ID, IdentityAPI, Identity, IdentityPublicKey, IdentityPublicKeyWithMetadata, IdentityShareLink, IdentityFields } from "./DataPeps";
+import { Resource } from "./Resource";
 import { SessionImpl } from "./Session";
 export declare class IdentityImpl implements IdentityAPI {
     private session;
@@ -37,6 +38,10 @@ export declare class IdentityImpl implements IdentityAPI {
             secret: string | Uint8Array;
         };
     }): Promise<void>;
+    setNamedResource(login: string, resourceName: string, resourceID: ID): Promise<void>;
+    getNamedResource<T>(login: string, resourceName: string, options?: {
+        parse?: ((u: Uint8Array) => T);
+    }): Promise<Resource<T>>;
     private getSharingGraph(login, options?);
 }
 export declare class IdentityX {

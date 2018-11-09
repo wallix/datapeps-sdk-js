@@ -297,6 +297,7 @@ export async function sendRegisterLink(email: string): Promise<void> {
 /**
  * Type of identitfier of DataPeps objects.
  */
+
 export type ID = Long | number;
 
 export function compareID(a: ID, b: ID): number {
@@ -818,6 +819,37 @@ export interface IdentityAPI {
     login: string,
     secret: string | Uint8Array
   ): Promise<IdentityPublicKeyWithMetadata[]>;
+
+  /**
+   * Save a one-to-one association between a tuple <identityLogin, resourceName> and a resourceID.
+   * @param login The login of the identity involved in the association
+   * @param resourceName The desired resource name involved in the association
+   * @param resourceID The ID of the resource involved in the association
+   * @return(p) On success the promise will be resolved with void. On error the promise will be rejected with an {@link Error} with kind:
+   * - `DataPeps.ServerError.IdentityNotFound` if the identity cannot be assumed or if the identity does not exist.
+   * - `DataPeps.ServerError.ResourceNotFound` if the resource does not exist.
+   */
+  setNamedResource(
+    login: string,
+    resourceName: string,
+    resourceID: ID
+  ): Promise<void>;
+
+  /**
+   * Get the resource associated with the tuple <identityLogin, resourceName>.
+   * @param login The login of the identity involved in the association
+   * @param resourceName The resource name involved in the association
+   * @return(p) On success the promise will be resolved with resource associated with the tuple <identityLogin, resourceName>. On error the promise will be rejected with an {@link Error} with kind:
+   * - `DataPeps.ServerError.IdentityNotFound` if the identity cannot be assumed or if the identity does not exist.
+   * - `DataPeps.ServerError.NamedResourceNotFound` if the NamedResource does not exist.
+   */
+  getNamedResource<T>(
+    login: string,
+    resourceName: string,
+    options?: {
+      parse?: ((u: Uint8Array) => T);
+    }
+  ): Promise<Resource<T>>;
 }
 
 /////////////////////////////////////////////////

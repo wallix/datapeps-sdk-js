@@ -371,7 +371,7 @@ export async function makeResourceFromResponse<T>(
   typeOfKey: api.ResourceType,
   session: SessionImpl,
   parse?,
-  assume?
+  assume?: string
 ) {
   assume = assume != null ? assume : session.login;
   let { key } = await session.getAssumeParams({

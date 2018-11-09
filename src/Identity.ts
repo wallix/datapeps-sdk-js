@@ -1,6 +1,7 @@
 import * as nacl from "tweetnacl";
 import { api } from "./proto";
 import {
+  ID,
   IdentityAPI,
   Identity,
   IdentityPublicKey,
@@ -11,6 +12,7 @@ import {
   SessionSaltKind,
   LockedVersion
 } from "./DataPeps";
+import { Resource, makeResourceFromResponse } from "./Resource";
 import { Error, SDKKind } from "./Error";
 import { Encryption } from "./CryptoFuncs";
 import { SessionImpl } from "./Session";
@@ -219,7 +221,10 @@ export class IdentityImpl implements IdentityAPI {
     if (chains.length != 1 || chains[0].login !== login) {
       throw new Error({
         kind: SDKKind.SDKInternalError,
-        payload: { login, hint: "unexpected chain in public key history" }
+        payload: {
+          login,
+          hint: "unexpected chain in public key history"
+        }
       });
     }
     let chain = chains[0];
@@ -236,9 +241,7 @@ export class IdentityImpl implements IdentityAPI {
 
   async getLockedVersions(
     login: string,
-    options?: {
-      withChallenge?: boolean;
-    }
+    options?: { withChallenge?: boolean }
   ) {
     options = options != null ? options : {};
     return await this.session.doProtoRequest({
@@ -514,6 +517,56 @@ export class IdentityImpl implements IdentityAPI {
           graph: encryptedGraph
         }).finish()
     });
+  }
+
+  async setNamedResource(
+    login: string,
+    resourceName: string,
+    resourceID: ID
+  ): Promise<void> {
+    let assume = { login, kind: IdentityAccessKind.WRITE };
+    let res = await this.session.doProtoRequest<void>({
+      method: "PUT",
+      code: 200,
+      assume,
+      path: `/api/v4/identity/${encodeURI(login)}/resource/${encodeURIComponent(
+        resourceName
+      )}`,
+      request: () =>
+        api.IdentitySetNamedResourceRequest.encode({
+          resourceID
+        }).finish()
+    });
+    return res;
+  }
+
+  async getNamedResource<T>(
+    login: string,
+    resourceName: string,
+    options?: {
+      parse?: ((u: Uint8Array) => T);
+    }
+  ): Promise<Resource<T>> {
+    options = options != null ? options : {};
+    let assume = { login, kind: IdentityAccessKind.READ };
+    let resp = await this.session.doProtoRequest({
+      method: "GET",
+      code: 200,
+      assume,
+      path:
+        "/api/v4/identity/" +
+        encodeURIComponent(login) +
+        "/resource/" +
+        encodeURIComponent(resourceName),
+      response: r => api.IdentityGetNamedResourceResponse.decode(r)
+    });
+    return makeResourceFromResponse<T>(
+      resp.resource,
+      api.ResourceType.SES,
+      this.session,
+      options.parse,
+      assume.login
+    );
   }
 
   private async getSharingGraph(

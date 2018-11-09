@@ -46,6 +46,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var nacl = require("tweetnacl");
 var proto_1 = require("./proto");
 var DataPeps_1 = require("./DataPeps");
+var Resource_1 = require("./Resource");
 var Error_1 = require("./Error");
 var CryptoFuncs_1 = require("./CryptoFuncs");
 var Tools_1 = require("./Tools");
@@ -274,7 +275,10 @@ var IdentityImpl = /** @class */ (function () {
                         if (chains.length != 1 || chains[0].login !== login) {
                             throw new Error_1.Error({
                                 kind: Error_1.SDKKind.SDKInternalError,
-                                payload: { login: login, hint: "unexpected chain in public key history" }
+                                payload: {
+                                    login: login,
+                                    hint: "unexpected chain in public key history"
+                                }
                             });
                         }
                         chain = chains[0];
@@ -554,6 +558,56 @@ var IdentityImpl = /** @class */ (function () {
                                 }
                             })];
                     case 4: return [2 /*return*/, _b.sent()];
+                }
+            });
+        });
+    };
+    IdentityImpl.prototype.setNamedResource = function (login, resourceName, resourceID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var assume, res;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        assume = { login: login, kind: DataPeps_1.IdentityAccessKind.WRITE };
+                        return [4 /*yield*/, this.session.doProtoRequest({
+                                method: "PUT",
+                                code: 200,
+                                assume: assume,
+                                path: "/api/v4/identity/" + encodeURI(login) + "/resource/" + encodeURIComponent(resourceName),
+                                request: function () {
+                                    return proto_1.api.IdentitySetNamedResourceRequest.encode({
+                                        resourceID: resourceID
+                                    }).finish();
+                                }
+                            })];
+                    case 1:
+                        res = _a.sent();
+                        return [2 /*return*/, res];
+                }
+            });
+        });
+    };
+    IdentityImpl.prototype.getNamedResource = function (login, resourceName, options) {
+        return __awaiter(this, void 0, void 0, function () {
+            var assume, resp;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        options = options != null ? options : {};
+                        assume = { login: login, kind: DataPeps_1.IdentityAccessKind.READ };
+                        return [4 /*yield*/, this.session.doProtoRequest({
+                                method: "GET",
+                                code: 200,
+                                assume: assume,
+                                path: "/api/v4/identity/" +
+                                    encodeURIComponent(login) +
+                                    "/resource/" +
+                                    encodeURIComponent(resourceName),
+                                response: function (r) { return proto_1.api.IdentityGetNamedResourceResponse.decode(r); }
+                            })];
+                    case 1:
+                        resp = _a.sent();
+                        return [2 /*return*/, Resource_1.makeResourceFromResponse(resp.resource, proto_1.api.ResourceType.SES, this.session, options.parse, assume.login)];
                 }
             });
         });

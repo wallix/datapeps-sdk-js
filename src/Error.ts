@@ -35,7 +35,8 @@ export class Error {
     if (kname == null) {
       kname = SDKKind[properties.kind];
     }
-    this.message = "DataPepsError(" + kname + ")";
+    this.message =
+      "DataPepsError(" + kname + "):" + JSON.stringify(properties.payload);
     this.kind = properties.kind;
     this.payload = properties.payload;
     this.code = properties.code;

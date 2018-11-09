@@ -1,3 +1,6 @@
+import * as DataPeps from "../../src/DataPeps";
+import * as Long from "long";
+
 if (global["btoa"] === undefined) {
   global["btoa"] = require("btoa");
 }
@@ -15,4 +18,8 @@ if (global["XMLHttpRequest"] === undefined) {
 }
 if (global["WebSocket"] === undefined) {
   global["WebSocket"] = require("ws");
+}
+
+export function randomID(): DataPeps.ID {
+  return new Long(Math.random() * 0xffffffff, Math.random() * 0xffffffff, true);
 }

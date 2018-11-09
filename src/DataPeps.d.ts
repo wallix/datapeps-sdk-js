@@ -12,10 +12,10 @@ export declare var debug: boolean;
  * @param APIUrl The url of the DataPeps service.
  */
 export declare function configure(APIUrl: string, WSUrl?: string): void;
-export declare function clipID(id: ID, content: Uint8Array): Uint8Array;
-export declare function unclipID(content: Uint8Array): {
+export declare function clipID<T extends Uint8Array | string>(id: ID, data: T): T;
+export declare function unclipID<T extends Uint8Array | string>(data: T): {
     id: ID;
-    content: Uint8Array;
+    data: T;
 };
 /**
  * Redefine the AccessRequest.openResolver() default function
@@ -536,14 +536,12 @@ export interface Resource<T> {
     payload: T;
     creator: IdentityPublicKey;
     publicKey(): Uint8Array;
-    encrypt(clear: Uint8Array): Uint8Array;
-    encryptString(clear: string): string;
+    encrypt<T extends Uint8Array | string>(clear: T): T;
     /**
      * Decrypts a cipher text, that should be encrypted by the encrypt function of the resource, to the original clear text.
      * @throws DataPeps.Error with kind `DataPeps.SDKError.DecryptFail`
      */
-    decrypt(cipher: Uint8Array): Uint8Array;
-    decryptString(cipher: string): string;
+    decrypt<T extends Uint8Array | string>(cipher: T): T;
 }
 export declare type ResourceAccessReason = api.ResourceAccessReason;
 export declare const ResourceAccessReason: typeof api.ResourceAccessReason;

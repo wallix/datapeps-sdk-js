@@ -15,10 +15,12 @@ export declare class Resource<T> {
     private keypair;
     constructor(id: ID, kind: string, payload: T, keypair: nacl.BoxKeyPair, creator: IdentityPublicKey, type?: ResourceType);
     publicKey(): Uint8Array;
-    encrypt(content: Uint8Array): Uint8Array;
-    decrypt(message: Uint8Array): Uint8Array;
-    encryptString(clear: string): string;
-    decryptString(cipher: string): string;
+    encrypt<T extends Uint8Array | string>(content: T): T;
+    private encryptUint8Array(content);
+    private encryptString(clear);
+    decrypt<T extends Uint8Array | string>(message: T): T;
+    private decryptUint8Array(message);
+    private decryptString(cipher);
 }
 export declare class ResourceImpl implements ResourceAPI {
     private session;

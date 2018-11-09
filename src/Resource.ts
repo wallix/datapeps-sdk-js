@@ -46,13 +46,33 @@ export class Resource<T> {
     return this.keypair.publicKey;
   }
 
-  encrypt(content: Uint8Array): Uint8Array {
+  encrypt<T extends Uint8Array | string>(content: T): T {
+    if (content instanceof Uint8Array) {
+      return this.encryptUint8Array(content) as T;
+    }
+    return this.encryptString(content as string) as T;
+  }
+
+  private encryptUint8Array(content: Uint8Array): Uint8Array {
     let nonce = nacl.randomBytes(nacl.secretbox.nonceLength);
     let cipher = nacl.secretbox(content, nonce, this.keypair.secretKey);
     return Uint8Tool.concat(nonce, cipher);
   }
 
-  decrypt(message: Uint8Array) {
+  private encryptString(clear: string): string {
+    let uClear = new TextEncoder().encode(clear);
+    let uEncrypted = this.encryptUint8Array(uClear);
+    return Base64.encode(uEncrypted);
+  }
+
+  decrypt<T extends Uint8Array | string>(message: T): T {
+    if (message instanceof Uint8Array) {
+      return this.decryptUint8Array(message) as T;
+    }
+    return this.decryptString(message as string) as T;
+  }
+
+  private decryptUint8Array(message: Uint8Array): Uint8Array {
     let nonce = message.slice(0, nacl.secretbox.nonceLength);
     let cipher = message.slice(nacl.secretbox.nonceLength);
     let text = nacl.secretbox.open(cipher, nonce, this.keypair.secretKey);
@@ -65,15 +85,9 @@ export class Resource<T> {
     return text;
   }
 
-  encryptString(clear: string): string {
-    let uClear = new TextEncoder().encode(clear);
-    let uEncrypted = this.encrypt(uClear);
-    return Base64.encode(uEncrypted);
-  }
-
-  decryptString(cipher: string): string {
+  private decryptString(cipher: string): string {
     let uEncrypted = Base64.decode(cipher);
-    let clear = this.decrypt(uEncrypted);
+    let clear = this.decryptUint8Array(uEncrypted);
     return new TextDecoder().decode(clear);
   }
 }

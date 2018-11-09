@@ -13,12 +13,12 @@ describe("ut.resource", () => {
       nacl.box.keyPair(),
       null
     );
-    let clear = nacl.randomBytes(1024);
+    let clear = nacl.randomBytes(10);
     let encrypted = resource.encrypt(clear);
     expect(resource.decrypt(encrypted)).deep.equals(clear);
   });
 
-  it("encryptString/decryptString", () => {
+  it("encryptString/decrypt with string", () => {
     let resource: DataPeps.Resource<null> = new Resource(
       null,
       "somekind",
@@ -27,7 +27,7 @@ describe("ut.resource", () => {
       null
     );
     let clear = "Hello world";
-    let encrypted = resource.encryptString(clear);
-    expect(resource.decryptString(encrypted)).deep.equals(clear);
+    let encrypted = resource.encrypt(clear);
+    expect(resource.decrypt(encrypted)).deep.equals(clear);
   });
 });

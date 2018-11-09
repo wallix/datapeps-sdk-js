@@ -65,11 +65,28 @@ var Resource = /** @class */ (function () {
         return this.keypair.publicKey;
     };
     Resource.prototype.encrypt = function (content) {
+        if (content instanceof Uint8Array) {
+            return this.encryptUint8Array(content);
+        }
+        return this.encryptString(content);
+    };
+    Resource.prototype.encryptUint8Array = function (content) {
         var nonce = nacl.randomBytes(nacl.secretbox.nonceLength);
         var cipher = nacl.secretbox(content, nonce, this.keypair.secretKey);
         return Tools_1.Uint8Tool.concat(nonce, cipher);
     };
+    Resource.prototype.encryptString = function (clear) {
+        var uClear = new TextEncoder().encode(clear);
+        var uEncrypted = this.encryptUint8Array(uClear);
+        return Tools_1.Base64.encode(uEncrypted);
+    };
     Resource.prototype.decrypt = function (message) {
+        if (message instanceof Uint8Array) {
+            return this.decryptUint8Array(message);
+        }
+        return this.decryptString(message);
+    };
+    Resource.prototype.decryptUint8Array = function (message) {
         var nonce = message.slice(0, nacl.secretbox.nonceLength);
         var cipher = message.slice(nacl.secretbox.nonceLength);
         var text = nacl.secretbox.open(cipher, nonce, this.keypair.secretKey);
@@ -81,14 +98,9 @@ var Resource = /** @class */ (function () {
         }
         return text;
     };
-    Resource.prototype.encryptString = function (clear) {
-        var uClear = new TextEncoder().encode(clear);
-        var uEncrypted = this.encrypt(uClear);
-        return Tools_1.Base64.encode(uEncrypted);
-    };
     Resource.prototype.decryptString = function (cipher) {
         var uEncrypted = Tools_1.Base64.decode(cipher);
-        var clear = this.decrypt(uEncrypted);
+        var clear = this.decryptUint8Array(uEncrypted);
         return new TextDecoder().decode(clear);
     };
     return Resource;

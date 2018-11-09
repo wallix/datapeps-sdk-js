@@ -40,29 +40,38 @@ export function configure(APIUrl: string, WSUrl?: string) {
   webSocketURL = WSUrl;
 }
 
-export function clipID(id: ID, content: Uint8Array): Uint8Array {
-  let encapsulated = new Uint8Array(8 + content.length);
-  let lid = Long.fromValue(id);
-  let high: number = lid.getHighBitsUnsigned();
-  encapsulated[0] = (high >>> 24) & 0xff;
-  encapsulated[1] = (high >>> 16) & 0xff;
-  encapsulated[2] = (high >>> 8) & 0xff;
-  encapsulated[3] = high & 0xff;
-  let low: number = lid.getLowBitsUnsigned();
-  encapsulated[4] = (low >>> 24) & 0xff;
-  encapsulated[5] = (low >>> 16) & 0xff;
-  encapsulated[6] = (low >>> 8) & 0xff;
-  encapsulated[7] = low & 0xff;
-  encapsulated.set(content, 8);
-  return encapsulated;
+export function clipID<T extends Uint8Array | string>(id: ID, data: T): T {
+  if (data instanceof Uint8Array) {
+    let encapsulated = new Uint8Array(8 + data.length);
+    let lid = Long.fromValue(id);
+    let high: number = lid.getHighBitsUnsigned();
+    encapsulated[0] = (high >>> 24) & 0xff;
+    encapsulated[1] = (high >>> 16) & 0xff;
+    encapsulated[2] = (high >>> 8) & 0xff;
+    encapsulated[3] = high & 0xff;
+    let low: number = lid.getLowBitsUnsigned();
+    encapsulated[4] = (low >>> 24) & 0xff;
+    encapsulated[5] = (low >>> 16) & 0xff;
+    encapsulated[6] = (low >>> 8) & 0xff;
+    encapsulated[7] = low & 0xff;
+    encapsulated.set(data, 8);
+    return encapsulated as T;
+  }
+  return `${id.toString()}.${data}` as T;
 }
 
-export function unclipID(content: Uint8Array): { id: ID; content: Uint8Array } {
-  let high =
-    (content[0] << 24) + (content[1] << 16) + (content[2] << 8) + content[3];
-  let low =
-    (content[4] << 24) + (content[5] << 16) + (content[6] << 8) + content[7];
-  return { id: new Long(low, high, true), content: content.slice(8) };
+export function unclipID<T extends Uint8Array | string>(
+  data: T
+): { id: ID; data: T } {
+  if (data instanceof Uint8Array) {
+    let high = (data[0] << 24) + (data[1] << 16) + (data[2] << 8) + data[3];
+    let low = (data[4] << 24) + (data[5] << 16) + (data[6] << 8) + data[7];
+    return { id: new Long(low, high, true), data: data.slice(8) as T };
+  }
+  let i = (data as string).indexOf(".");
+  let strId = (data as string).slice(0, i);
+  let id = Long.fromString(strId, true);
+  return { id, data: data.slice(i + 1) as T };
 }
 
 /**
@@ -850,15 +859,12 @@ export interface Resource<T> {
   publicKey(): Uint8Array;
 
   // Encrypts a clear text to a cipher text that could be decrypted by the decrypt function of the resource.
-  encrypt(clear: Uint8Array): Uint8Array;
-  encryptString(clear: string): string;
-
+  encrypt<T extends Uint8Array | string>(clear: T): T;
   /**
    * Decrypts a cipher text, that should be encrypted by the encrypt function of the resource, to the original clear text.
    * @throws DataPeps.Error with kind `DataPeps.SDKError.DecryptFail`
    */
-  decrypt(cipher: Uint8Array): Uint8Array;
-  decryptString(cipher: string): string;
+  decrypt<T extends Uint8Array | string>(cipher: T): T;
 }
 export type ResourceAccessReason = api.ResourceAccessReason;
 export const ResourceAccessReason = api.ResourceAccessReason;

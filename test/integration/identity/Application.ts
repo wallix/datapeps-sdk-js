@@ -1,9 +1,12 @@
 import * as Config from "../../Config";
+import * as Application from "../../../src/Application";
 import * as DataPeps from "../../../src/DataPeps";
 import { init, dev } from "../../Context";
 import * as nacl from "tweetnacl";
 import { expect } from "chai";
 import { ApplicationImpl } from "../../../src/Application";
+import { Uint8Tool } from "../../../src/Tools";
+import * as jwt from "jsonwebtoken";
 
 describe("identity.ApplicationJwt", () => {
   let initCtx, devCtx;
@@ -137,5 +140,27 @@ describe("identity.ApplicationJwt", () => {
       expect(err.message).to.equal("DataPepsError(IdentityNotFound)");
       expect(err.code).to.equal(404);
     }
+  });
+
+  // Register external
+
+  it(`should create a new application then register user`, async () => {
+    const sub = "alice";
+    const key = "supersecurekey";
+    const config: DataPeps.ApplicationJwtConfig = {
+      key: Uint8Tool.convert("supersecurekey")
+    };
+    const token = jwt.sign({ sub }, key);
+
+    let appConfigurator = devCtx.dev.session.Application;
+    await appConfigurator.putConfig(devCtx.app.login, config);
+
+    let createUserResponse = await Application.createUser(
+      devCtx.app.login,
+      { jwt: { token } },
+      "passw0rd"
+    );
+
+    expect(createUserResponse.login).to.equal(`${sub}@${devCtx.app.login}`);
   });
 });

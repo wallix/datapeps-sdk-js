@@ -110,6 +110,35 @@ var ResourceImpl = /** @class */ (function () {
     function ResourceImpl(session) {
         this.session = session;
     }
+    ResourceImpl.createWithEncryption = function (kind, payload, encryption, options) {
+        options = options == null ? {} : options;
+        var serialize = options.serialize != null
+            ? options.serialize
+            : function (p) { return new TextEncoder().encode(JSON.stringify(p)); };
+        var encryptionPK = {
+            login: null,
+            version: null,
+            sign: encryption.signEncrypted.publicKey,
+            box: encryption.boxEncrypted.publicKey
+        };
+        var keyPair = nacl.box.keyPair();
+        var cryptoSES = encryption.encrypt(proto_1.api.ResourceType.SES);
+        var sharer = {};
+        var sharerSKEncrypted = cryptoSES.encrypt(encryptionPK.box, keyPair.secretKey);
+        sharer.nonce = sharerSKEncrypted.nonce;
+        sharer.encryptedKey = sharerSKEncrypted.message;
+        var payloadEncrypted = cryptoSES.encrypt(keyPair.publicKey, serialize(payload));
+        var body = {
+            kind: kind,
+            type: proto_1.api.ResourceType.ANONYMOUS,
+            payload: payloadEncrypted.message,
+            nonce: payloadEncrypted.nonce,
+            publicKey: keyPair.publicKey,
+            sharingGroup: [sharer]
+        };
+        var resource = new Resource(null, body.kind, payload, keyPair, encryptionPK);
+        return { resourceRequestBody: body, resource: resource };
+    };
     ResourceImpl.prototype._createBodyRequest = function (payload, sharingGroup, crypto, options) {
         return __awaiter(this, void 0, void 0, function () {
             var serialize, keypair, encryptedSharingGroup, _a, message, nonce;
@@ -341,12 +370,7 @@ var ResourceImpl = /** @class */ (function () {
                         return [2 /*return*/, publicKeys.map(function (_a) {
                                 var login = _a.login, version = _a.version, box = _a.box, sign = _a.sign;
                                 var _b = crypto.encrypt(box, text), message = _b.message, nonce = _b.nonce;
-                                return {
-                                    login: login,
-                                    version: version,
-                                    nonce: nonce,
-                                    encryptedKey: message
-                                };
+                                return { login: login, version: version, nonce: nonce, encryptedKey: message };
                             })];
                 }
             });

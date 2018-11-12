@@ -3017,6 +3017,892 @@ $root.api = (function() {
         return IdentityRegisterRequest;
     })();
 
+    api.RegisterExternalIdentityRequest = (function() {
+
+        /**
+         * Properties of a RegisterExternalIdentityRequest.
+         * @memberof api
+         * @interface IRegisterExternalIdentityRequest
+         * @property {string|null} [appID] RegisterExternalIdentityRequest appID
+         * @property {api.IIdentityFields|null} [identity] RegisterExternalIdentityRequest identity
+         * @property {api.IIdentityEncryption|null} [encryption] RegisterExternalIdentityRequest encryption
+         * @property {Object.<string,api.IResourcePostRequest>|null} [resources] RegisterExternalIdentityRequest resources
+         * @property {api.RegisterExternalIdentityRequest.IAuth|null} [auth] RegisterExternalIdentityRequest auth
+         */
+
+        /**
+         * Constructs a new RegisterExternalIdentityRequest.
+         * @memberof api
+         * @classdesc Represents a RegisterExternalIdentityRequest.
+         * @implements IRegisterExternalIdentityRequest
+         * @constructor
+         * @param {api.IRegisterExternalIdentityRequest=} [properties] Properties to set
+         */
+        function RegisterExternalIdentityRequest(properties) {
+            this.resources = {};
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * RegisterExternalIdentityRequest appID.
+         * @member {string} appID
+         * @memberof api.RegisterExternalIdentityRequest
+         * @instance
+         */
+        RegisterExternalIdentityRequest.prototype.appID = "";
+
+        /**
+         * RegisterExternalIdentityRequest identity.
+         * @member {api.IIdentityFields|null|undefined} identity
+         * @memberof api.RegisterExternalIdentityRequest
+         * @instance
+         */
+        RegisterExternalIdentityRequest.prototype.identity = null;
+
+        /**
+         * RegisterExternalIdentityRequest encryption.
+         * @member {api.IIdentityEncryption|null|undefined} encryption
+         * @memberof api.RegisterExternalIdentityRequest
+         * @instance
+         */
+        RegisterExternalIdentityRequest.prototype.encryption = null;
+
+        /**
+         * RegisterExternalIdentityRequest resources.
+         * @member {Object.<string,api.IResourcePostRequest>} resources
+         * @memberof api.RegisterExternalIdentityRequest
+         * @instance
+         */
+        RegisterExternalIdentityRequest.prototype.resources = $util.emptyObject;
+
+        /**
+         * RegisterExternalIdentityRequest auth.
+         * @member {api.RegisterExternalIdentityRequest.IAuth|null|undefined} auth
+         * @memberof api.RegisterExternalIdentityRequest
+         * @instance
+         */
+        RegisterExternalIdentityRequest.prototype.auth = null;
+
+        /**
+         * Creates a new RegisterExternalIdentityRequest instance using the specified properties.
+         * @function create
+         * @memberof api.RegisterExternalIdentityRequest
+         * @static
+         * @param {api.IRegisterExternalIdentityRequest=} [properties] Properties to set
+         * @returns {api.RegisterExternalIdentityRequest} RegisterExternalIdentityRequest instance
+         */
+        RegisterExternalIdentityRequest.create = function create(properties) {
+            return new RegisterExternalIdentityRequest(properties);
+        };
+
+        /**
+         * Encodes the specified RegisterExternalIdentityRequest message. Does not implicitly {@link api.RegisterExternalIdentityRequest.verify|verify} messages.
+         * @function encode
+         * @memberof api.RegisterExternalIdentityRequest
+         * @static
+         * @param {api.IRegisterExternalIdentityRequest} message RegisterExternalIdentityRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        RegisterExternalIdentityRequest.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.appID != null && message.hasOwnProperty("appID"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.appID);
+            if (message.identity != null && message.hasOwnProperty("identity"))
+                $root.api.IdentityFields.encode(message.identity, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+            if (message.encryption != null && message.hasOwnProperty("encryption"))
+                $root.api.IdentityEncryption.encode(message.encryption, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+            if (message.resources != null && message.hasOwnProperty("resources"))
+                for (var keys = Object.keys(message.resources), i = 0; i < keys.length; ++i) {
+                    writer.uint32(/* id 4, wireType 2 =*/34).fork().uint32(/* id 1, wireType 2 =*/10).string(keys[i]);
+                    $root.api.ResourcePostRequest.encode(message.resources[keys[i]], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim().ldelim();
+                }
+            if (message.auth != null && message.hasOwnProperty("auth"))
+                $root.api.RegisterExternalIdentityRequest.Auth.encode(message.auth, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified RegisterExternalIdentityRequest message, length delimited. Does not implicitly {@link api.RegisterExternalIdentityRequest.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof api.RegisterExternalIdentityRequest
+         * @static
+         * @param {api.IRegisterExternalIdentityRequest} message RegisterExternalIdentityRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        RegisterExternalIdentityRequest.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a RegisterExternalIdentityRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof api.RegisterExternalIdentityRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {api.RegisterExternalIdentityRequest} RegisterExternalIdentityRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        RegisterExternalIdentityRequest.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.RegisterExternalIdentityRequest(), key;
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.appID = reader.string();
+                    break;
+                case 2:
+                    message.identity = $root.api.IdentityFields.decode(reader, reader.uint32());
+                    break;
+                case 3:
+                    message.encryption = $root.api.IdentityEncryption.decode(reader, reader.uint32());
+                    break;
+                case 4:
+                    reader.skip().pos++;
+                    if (message.resources === $util.emptyObject)
+                        message.resources = {};
+                    key = reader.string();
+                    reader.pos++;
+                    message.resources[key] = $root.api.ResourcePostRequest.decode(reader, reader.uint32());
+                    break;
+                case 5:
+                    message.auth = $root.api.RegisterExternalIdentityRequest.Auth.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a RegisterExternalIdentityRequest message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof api.RegisterExternalIdentityRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {api.RegisterExternalIdentityRequest} RegisterExternalIdentityRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        RegisterExternalIdentityRequest.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a RegisterExternalIdentityRequest message.
+         * @function verify
+         * @memberof api.RegisterExternalIdentityRequest
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        RegisterExternalIdentityRequest.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.appID != null && message.hasOwnProperty("appID"))
+                if (!$util.isString(message.appID))
+                    return "appID: string expected";
+            if (message.identity != null && message.hasOwnProperty("identity")) {
+                var error = $root.api.IdentityFields.verify(message.identity);
+                if (error)
+                    return "identity." + error;
+            }
+            if (message.encryption != null && message.hasOwnProperty("encryption")) {
+                var error = $root.api.IdentityEncryption.verify(message.encryption);
+                if (error)
+                    return "encryption." + error;
+            }
+            if (message.resources != null && message.hasOwnProperty("resources")) {
+                if (!$util.isObject(message.resources))
+                    return "resources: object expected";
+                var key = Object.keys(message.resources);
+                for (var i = 0; i < key.length; ++i) {
+                    var error = $root.api.ResourcePostRequest.verify(message.resources[key[i]]);
+                    if (error)
+                        return "resources." + error;
+                }
+            }
+            if (message.auth != null && message.hasOwnProperty("auth")) {
+                var error = $root.api.RegisterExternalIdentityRequest.Auth.verify(message.auth);
+                if (error)
+                    return "auth." + error;
+            }
+            return null;
+        };
+
+        /**
+         * Creates a RegisterExternalIdentityRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof api.RegisterExternalIdentityRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {api.RegisterExternalIdentityRequest} RegisterExternalIdentityRequest
+         */
+        RegisterExternalIdentityRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.api.RegisterExternalIdentityRequest)
+                return object;
+            var message = new $root.api.RegisterExternalIdentityRequest();
+            if (object.appID != null)
+                message.appID = String(object.appID);
+            if (object.identity != null) {
+                if (typeof object.identity !== "object")
+                    throw TypeError(".api.RegisterExternalIdentityRequest.identity: object expected");
+                message.identity = $root.api.IdentityFields.fromObject(object.identity);
+            }
+            if (object.encryption != null) {
+                if (typeof object.encryption !== "object")
+                    throw TypeError(".api.RegisterExternalIdentityRequest.encryption: object expected");
+                message.encryption = $root.api.IdentityEncryption.fromObject(object.encryption);
+            }
+            if (object.resources) {
+                if (typeof object.resources !== "object")
+                    throw TypeError(".api.RegisterExternalIdentityRequest.resources: object expected");
+                message.resources = {};
+                for (var keys = Object.keys(object.resources), i = 0; i < keys.length; ++i) {
+                    if (typeof object.resources[keys[i]] !== "object")
+                        throw TypeError(".api.RegisterExternalIdentityRequest.resources: object expected");
+                    message.resources[keys[i]] = $root.api.ResourcePostRequest.fromObject(object.resources[keys[i]]);
+                }
+            }
+            if (object.auth != null) {
+                if (typeof object.auth !== "object")
+                    throw TypeError(".api.RegisterExternalIdentityRequest.auth: object expected");
+                message.auth = $root.api.RegisterExternalIdentityRequest.Auth.fromObject(object.auth);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a RegisterExternalIdentityRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof api.RegisterExternalIdentityRequest
+         * @static
+         * @param {api.RegisterExternalIdentityRequest} message RegisterExternalIdentityRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        RegisterExternalIdentityRequest.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.objects || options.defaults)
+                object.resources = {};
+            if (options.defaults) {
+                object.appID = "";
+                object.identity = null;
+                object.encryption = null;
+                object.auth = null;
+            }
+            if (message.appID != null && message.hasOwnProperty("appID"))
+                object.appID = message.appID;
+            if (message.identity != null && message.hasOwnProperty("identity"))
+                object.identity = $root.api.IdentityFields.toObject(message.identity, options);
+            if (message.encryption != null && message.hasOwnProperty("encryption"))
+                object.encryption = $root.api.IdentityEncryption.toObject(message.encryption, options);
+            var keys2;
+            if (message.resources && (keys2 = Object.keys(message.resources)).length) {
+                object.resources = {};
+                for (var j = 0; j < keys2.length; ++j)
+                    object.resources[keys2[j]] = $root.api.ResourcePostRequest.toObject(message.resources[keys2[j]], options);
+            }
+            if (message.auth != null && message.hasOwnProperty("auth"))
+                object.auth = $root.api.RegisterExternalIdentityRequest.Auth.toObject(message.auth, options);
+            return object;
+        };
+
+        /**
+         * Converts this RegisterExternalIdentityRequest to JSON.
+         * @function toJSON
+         * @memberof api.RegisterExternalIdentityRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        RegisterExternalIdentityRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        RegisterExternalIdentityRequest.Auth = (function() {
+
+            /**
+             * Properties of an Auth.
+             * @memberof api.RegisterExternalIdentityRequest
+             * @interface IAuth
+             * @property {api.RegisterExternalIdentityRequest.Auth.IJWT|null} [jwt] Auth jwt
+             */
+
+            /**
+             * Constructs a new Auth.
+             * @memberof api.RegisterExternalIdentityRequest
+             * @classdesc Represents an Auth.
+             * @implements IAuth
+             * @constructor
+             * @param {api.RegisterExternalIdentityRequest.IAuth=} [properties] Properties to set
+             */
+            function Auth(properties) {
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * Auth jwt.
+             * @member {api.RegisterExternalIdentityRequest.Auth.IJWT|null|undefined} jwt
+             * @memberof api.RegisterExternalIdentityRequest.Auth
+             * @instance
+             */
+            Auth.prototype.jwt = null;
+
+            /**
+             * Creates a new Auth instance using the specified properties.
+             * @function create
+             * @memberof api.RegisterExternalIdentityRequest.Auth
+             * @static
+             * @param {api.RegisterExternalIdentityRequest.IAuth=} [properties] Properties to set
+             * @returns {api.RegisterExternalIdentityRequest.Auth} Auth instance
+             */
+            Auth.create = function create(properties) {
+                return new Auth(properties);
+            };
+
+            /**
+             * Encodes the specified Auth message. Does not implicitly {@link api.RegisterExternalIdentityRequest.Auth.verify|verify} messages.
+             * @function encode
+             * @memberof api.RegisterExternalIdentityRequest.Auth
+             * @static
+             * @param {api.RegisterExternalIdentityRequest.IAuth} message Auth message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            Auth.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.jwt != null && message.hasOwnProperty("jwt"))
+                    $root.api.RegisterExternalIdentityRequest.Auth.JWT.encode(message.jwt, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                return writer;
+            };
+
+            /**
+             * Encodes the specified Auth message, length delimited. Does not implicitly {@link api.RegisterExternalIdentityRequest.Auth.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof api.RegisterExternalIdentityRequest.Auth
+             * @static
+             * @param {api.RegisterExternalIdentityRequest.IAuth} message Auth message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            Auth.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes an Auth message from the specified reader or buffer.
+             * @function decode
+             * @memberof api.RegisterExternalIdentityRequest.Auth
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {api.RegisterExternalIdentityRequest.Auth} Auth
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            Auth.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.RegisterExternalIdentityRequest.Auth();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1:
+                        message.jwt = $root.api.RegisterExternalIdentityRequest.Auth.JWT.decode(reader, reader.uint32());
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes an Auth message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof api.RegisterExternalIdentityRequest.Auth
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {api.RegisterExternalIdentityRequest.Auth} Auth
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            Auth.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies an Auth message.
+             * @function verify
+             * @memberof api.RegisterExternalIdentityRequest.Auth
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            Auth.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.jwt != null && message.hasOwnProperty("jwt")) {
+                    var error = $root.api.RegisterExternalIdentityRequest.Auth.JWT.verify(message.jwt);
+                    if (error)
+                        return "jwt." + error;
+                }
+                return null;
+            };
+
+            /**
+             * Creates an Auth message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof api.RegisterExternalIdentityRequest.Auth
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {api.RegisterExternalIdentityRequest.Auth} Auth
+             */
+            Auth.fromObject = function fromObject(object) {
+                if (object instanceof $root.api.RegisterExternalIdentityRequest.Auth)
+                    return object;
+                var message = new $root.api.RegisterExternalIdentityRequest.Auth();
+                if (object.jwt != null) {
+                    if (typeof object.jwt !== "object")
+                        throw TypeError(".api.RegisterExternalIdentityRequest.Auth.jwt: object expected");
+                    message.jwt = $root.api.RegisterExternalIdentityRequest.Auth.JWT.fromObject(object.jwt);
+                }
+                return message;
+            };
+
+            /**
+             * Creates a plain object from an Auth message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof api.RegisterExternalIdentityRequest.Auth
+             * @static
+             * @param {api.RegisterExternalIdentityRequest.Auth} message Auth
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            Auth.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                var object = {};
+                if (options.defaults)
+                    object.jwt = null;
+                if (message.jwt != null && message.hasOwnProperty("jwt"))
+                    object.jwt = $root.api.RegisterExternalIdentityRequest.Auth.JWT.toObject(message.jwt, options);
+                return object;
+            };
+
+            /**
+             * Converts this Auth to JSON.
+             * @function toJSON
+             * @memberof api.RegisterExternalIdentityRequest.Auth
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            Auth.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            Auth.JWT = (function() {
+
+                /**
+                 * Properties of a JWT.
+                 * @memberof api.RegisterExternalIdentityRequest.Auth
+                 * @interface IJWT
+                 * @property {string|null} [token] JWT token
+                 */
+
+                /**
+                 * Constructs a new JWT.
+                 * @memberof api.RegisterExternalIdentityRequest.Auth
+                 * @classdesc Represents a JWT.
+                 * @implements IJWT
+                 * @constructor
+                 * @param {api.RegisterExternalIdentityRequest.Auth.IJWT=} [properties] Properties to set
+                 */
+                function JWT(properties) {
+                    if (properties)
+                        for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                            if (properties[keys[i]] != null)
+                                this[keys[i]] = properties[keys[i]];
+                }
+
+                /**
+                 * JWT token.
+                 * @member {string} token
+                 * @memberof api.RegisterExternalIdentityRequest.Auth.JWT
+                 * @instance
+                 */
+                JWT.prototype.token = "";
+
+                /**
+                 * Creates a new JWT instance using the specified properties.
+                 * @function create
+                 * @memberof api.RegisterExternalIdentityRequest.Auth.JWT
+                 * @static
+                 * @param {api.RegisterExternalIdentityRequest.Auth.IJWT=} [properties] Properties to set
+                 * @returns {api.RegisterExternalIdentityRequest.Auth.JWT} JWT instance
+                 */
+                JWT.create = function create(properties) {
+                    return new JWT(properties);
+                };
+
+                /**
+                 * Encodes the specified JWT message. Does not implicitly {@link api.RegisterExternalIdentityRequest.Auth.JWT.verify|verify} messages.
+                 * @function encode
+                 * @memberof api.RegisterExternalIdentityRequest.Auth.JWT
+                 * @static
+                 * @param {api.RegisterExternalIdentityRequest.Auth.IJWT} message JWT message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                JWT.encode = function encode(message, writer) {
+                    if (!writer)
+                        writer = $Writer.create();
+                    if (message.token != null && message.hasOwnProperty("token"))
+                        writer.uint32(/* id 1, wireType 2 =*/10).string(message.token);
+                    return writer;
+                };
+
+                /**
+                 * Encodes the specified JWT message, length delimited. Does not implicitly {@link api.RegisterExternalIdentityRequest.Auth.JWT.verify|verify} messages.
+                 * @function encodeDelimited
+                 * @memberof api.RegisterExternalIdentityRequest.Auth.JWT
+                 * @static
+                 * @param {api.RegisterExternalIdentityRequest.Auth.IJWT} message JWT message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                JWT.encodeDelimited = function encodeDelimited(message, writer) {
+                    return this.encode(message, writer).ldelim();
+                };
+
+                /**
+                 * Decodes a JWT message from the specified reader or buffer.
+                 * @function decode
+                 * @memberof api.RegisterExternalIdentityRequest.Auth.JWT
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @param {number} [length] Message length if known beforehand
+                 * @returns {api.RegisterExternalIdentityRequest.Auth.JWT} JWT
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                JWT.decode = function decode(reader, length) {
+                    if (!(reader instanceof $Reader))
+                        reader = $Reader.create(reader);
+                    var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.RegisterExternalIdentityRequest.Auth.JWT();
+                    while (reader.pos < end) {
+                        var tag = reader.uint32();
+                        switch (tag >>> 3) {
+                        case 1:
+                            message.token = reader.string();
+                            break;
+                        default:
+                            reader.skipType(tag & 7);
+                            break;
+                        }
+                    }
+                    return message;
+                };
+
+                /**
+                 * Decodes a JWT message from the specified reader or buffer, length delimited.
+                 * @function decodeDelimited
+                 * @memberof api.RegisterExternalIdentityRequest.Auth.JWT
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @returns {api.RegisterExternalIdentityRequest.Auth.JWT} JWT
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                JWT.decodeDelimited = function decodeDelimited(reader) {
+                    if (!(reader instanceof $Reader))
+                        reader = new $Reader(reader);
+                    return this.decode(reader, reader.uint32());
+                };
+
+                /**
+                 * Verifies a JWT message.
+                 * @function verify
+                 * @memberof api.RegisterExternalIdentityRequest.Auth.JWT
+                 * @static
+                 * @param {Object.<string,*>} message Plain object to verify
+                 * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                 */
+                JWT.verify = function verify(message) {
+                    if (typeof message !== "object" || message === null)
+                        return "object expected";
+                    if (message.token != null && message.hasOwnProperty("token"))
+                        if (!$util.isString(message.token))
+                            return "token: string expected";
+                    return null;
+                };
+
+                /**
+                 * Creates a JWT message from a plain object. Also converts values to their respective internal types.
+                 * @function fromObject
+                 * @memberof api.RegisterExternalIdentityRequest.Auth.JWT
+                 * @static
+                 * @param {Object.<string,*>} object Plain object
+                 * @returns {api.RegisterExternalIdentityRequest.Auth.JWT} JWT
+                 */
+                JWT.fromObject = function fromObject(object) {
+                    if (object instanceof $root.api.RegisterExternalIdentityRequest.Auth.JWT)
+                        return object;
+                    var message = new $root.api.RegisterExternalIdentityRequest.Auth.JWT();
+                    if (object.token != null)
+                        message.token = String(object.token);
+                    return message;
+                };
+
+                /**
+                 * Creates a plain object from a JWT message. Also converts values to other types if specified.
+                 * @function toObject
+                 * @memberof api.RegisterExternalIdentityRequest.Auth.JWT
+                 * @static
+                 * @param {api.RegisterExternalIdentityRequest.Auth.JWT} message JWT
+                 * @param {$protobuf.IConversionOptions} [options] Conversion options
+                 * @returns {Object.<string,*>} Plain object
+                 */
+                JWT.toObject = function toObject(message, options) {
+                    if (!options)
+                        options = {};
+                    var object = {};
+                    if (options.defaults)
+                        object.token = "";
+                    if (message.token != null && message.hasOwnProperty("token"))
+                        object.token = message.token;
+                    return object;
+                };
+
+                /**
+                 * Converts this JWT to JSON.
+                 * @function toJSON
+                 * @memberof api.RegisterExternalIdentityRequest.Auth.JWT
+                 * @instance
+                 * @returns {Object.<string,*>} JSON object
+                 */
+                JWT.prototype.toJSON = function toJSON() {
+                    return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                };
+
+                return JWT;
+            })();
+
+            return Auth;
+        })();
+
+        return RegisterExternalIdentityRequest;
+    })();
+
+    api.RegisterExternalIdentityResponse = (function() {
+
+        /**
+         * Properties of a RegisterExternalIdentityResponse.
+         * @memberof api
+         * @interface IRegisterExternalIdentityResponse
+         * @property {string|null} [login] RegisterExternalIdentityResponse login
+         */
+
+        /**
+         * Constructs a new RegisterExternalIdentityResponse.
+         * @memberof api
+         * @classdesc Represents a RegisterExternalIdentityResponse.
+         * @implements IRegisterExternalIdentityResponse
+         * @constructor
+         * @param {api.IRegisterExternalIdentityResponse=} [properties] Properties to set
+         */
+        function RegisterExternalIdentityResponse(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * RegisterExternalIdentityResponse login.
+         * @member {string} login
+         * @memberof api.RegisterExternalIdentityResponse
+         * @instance
+         */
+        RegisterExternalIdentityResponse.prototype.login = "";
+
+        /**
+         * Creates a new RegisterExternalIdentityResponse instance using the specified properties.
+         * @function create
+         * @memberof api.RegisterExternalIdentityResponse
+         * @static
+         * @param {api.IRegisterExternalIdentityResponse=} [properties] Properties to set
+         * @returns {api.RegisterExternalIdentityResponse} RegisterExternalIdentityResponse instance
+         */
+        RegisterExternalIdentityResponse.create = function create(properties) {
+            return new RegisterExternalIdentityResponse(properties);
+        };
+
+        /**
+         * Encodes the specified RegisterExternalIdentityResponse message. Does not implicitly {@link api.RegisterExternalIdentityResponse.verify|verify} messages.
+         * @function encode
+         * @memberof api.RegisterExternalIdentityResponse
+         * @static
+         * @param {api.IRegisterExternalIdentityResponse} message RegisterExternalIdentityResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        RegisterExternalIdentityResponse.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.login != null && message.hasOwnProperty("login"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.login);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified RegisterExternalIdentityResponse message, length delimited. Does not implicitly {@link api.RegisterExternalIdentityResponse.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof api.RegisterExternalIdentityResponse
+         * @static
+         * @param {api.IRegisterExternalIdentityResponse} message RegisterExternalIdentityResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        RegisterExternalIdentityResponse.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a RegisterExternalIdentityResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof api.RegisterExternalIdentityResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {api.RegisterExternalIdentityResponse} RegisterExternalIdentityResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        RegisterExternalIdentityResponse.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.RegisterExternalIdentityResponse();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.login = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a RegisterExternalIdentityResponse message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof api.RegisterExternalIdentityResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {api.RegisterExternalIdentityResponse} RegisterExternalIdentityResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        RegisterExternalIdentityResponse.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a RegisterExternalIdentityResponse message.
+         * @function verify
+         * @memberof api.RegisterExternalIdentityResponse
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        RegisterExternalIdentityResponse.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.login != null && message.hasOwnProperty("login"))
+                if (!$util.isString(message.login))
+                    return "login: string expected";
+            return null;
+        };
+
+        /**
+         * Creates a RegisterExternalIdentityResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof api.RegisterExternalIdentityResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {api.RegisterExternalIdentityResponse} RegisterExternalIdentityResponse
+         */
+        RegisterExternalIdentityResponse.fromObject = function fromObject(object) {
+            if (object instanceof $root.api.RegisterExternalIdentityResponse)
+                return object;
+            var message = new $root.api.RegisterExternalIdentityResponse();
+            if (object.login != null)
+                message.login = String(object.login);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a RegisterExternalIdentityResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof api.RegisterExternalIdentityResponse
+         * @static
+         * @param {api.RegisterExternalIdentityResponse} message RegisterExternalIdentityResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        RegisterExternalIdentityResponse.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults)
+                object.login = "";
+            if (message.login != null && message.hasOwnProperty("login"))
+                object.login = message.login;
+            return object;
+        };
+
+        /**
+         * Converts this RegisterExternalIdentityResponse to JSON.
+         * @function toJSON
+         * @memberof api.RegisterExternalIdentityResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        RegisterExternalIdentityResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return RegisterExternalIdentityResponse;
+    })();
+
     api.IdentityCreateRequest = (function() {
 
         /**
@@ -24750,6 +25636,7 @@ $root.api = (function() {
                 case 33:
                 case 34:
                 case 35:
+                case 36:
                     break;
                 }
             if (message.payload != null && message.hasOwnProperty("payload")) {
@@ -24915,6 +25802,10 @@ $root.api = (function() {
             case 35:
                 message.kind = 35;
                 break;
+            case "ApplicationInvalidToken":
+            case 36:
+                message.kind = 36;
+                break;
             }
             if (object.payload != null) {
                 if (typeof object.payload !== "object")
@@ -25004,6 +25895,7 @@ $root.api = (function() {
      * @property {number} ApplicationConfigNotFound=33 ApplicationConfigNotFound value
      * @property {number} ApplicationConfigInvalid=34 ApplicationConfigInvalid value
      * @property {number} NamedResourceNotFound=35 NamedResourceNotFound value
+     * @property {number} ApplicationInvalidToken=36 ApplicationInvalidToken value
      */
     api.PepsErrorKind = (function() {
         var valuesById = {}, values = Object.create(valuesById);
@@ -25042,6 +25934,7 @@ $root.api = (function() {
         values[valuesById[33] = "ApplicationConfigNotFound"] = 33;
         values[valuesById[34] = "ApplicationConfigInvalid"] = 34;
         values[valuesById[35] = "NamedResourceNotFound"] = 35;
+        values[valuesById[36] = "ApplicationInvalidToken"] = 36;
         return values;
     })();
 
@@ -27186,193 +28079,6 @@ $root.api = (function() {
         };
 
         return PayloadIdentityNotFound;
-    })();
-
-    api.PayloadApplicationConfigNotFound = (function() {
-
-        /**
-         * Properties of a PayloadApplicationConfigNotFound.
-         * @memberof api
-         * @interface IPayloadApplicationConfigNotFound
-         * @property {string|null} [login] PayloadApplicationConfigNotFound login
-         */
-
-        /**
-         * Constructs a new PayloadApplicationConfigNotFound.
-         * @memberof api
-         * @classdesc Represents a PayloadApplicationConfigNotFound.
-         * @implements IPayloadApplicationConfigNotFound
-         * @constructor
-         * @param {api.IPayloadApplicationConfigNotFound=} [properties] Properties to set
-         */
-        function PayloadApplicationConfigNotFound(properties) {
-            if (properties)
-                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                    if (properties[keys[i]] != null)
-                        this[keys[i]] = properties[keys[i]];
-        }
-
-        /**
-         * PayloadApplicationConfigNotFound login.
-         * @member {string} login
-         * @memberof api.PayloadApplicationConfigNotFound
-         * @instance
-         */
-        PayloadApplicationConfigNotFound.prototype.login = "";
-
-        /**
-         * Creates a new PayloadApplicationConfigNotFound instance using the specified properties.
-         * @function create
-         * @memberof api.PayloadApplicationConfigNotFound
-         * @static
-         * @param {api.IPayloadApplicationConfigNotFound=} [properties] Properties to set
-         * @returns {api.PayloadApplicationConfigNotFound} PayloadApplicationConfigNotFound instance
-         */
-        PayloadApplicationConfigNotFound.create = function create(properties) {
-            return new PayloadApplicationConfigNotFound(properties);
-        };
-
-        /**
-         * Encodes the specified PayloadApplicationConfigNotFound message. Does not implicitly {@link api.PayloadApplicationConfigNotFound.verify|verify} messages.
-         * @function encode
-         * @memberof api.PayloadApplicationConfigNotFound
-         * @static
-         * @param {api.IPayloadApplicationConfigNotFound} message PayloadApplicationConfigNotFound message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        PayloadApplicationConfigNotFound.encode = function encode(message, writer) {
-            if (!writer)
-                writer = $Writer.create();
-            if (message.login != null && message.hasOwnProperty("login"))
-                writer.uint32(/* id 1, wireType 2 =*/10).string(message.login);
-            return writer;
-        };
-
-        /**
-         * Encodes the specified PayloadApplicationConfigNotFound message, length delimited. Does not implicitly {@link api.PayloadApplicationConfigNotFound.verify|verify} messages.
-         * @function encodeDelimited
-         * @memberof api.PayloadApplicationConfigNotFound
-         * @static
-         * @param {api.IPayloadApplicationConfigNotFound} message PayloadApplicationConfigNotFound message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        PayloadApplicationConfigNotFound.encodeDelimited = function encodeDelimited(message, writer) {
-            return this.encode(message, writer).ldelim();
-        };
-
-        /**
-         * Decodes a PayloadApplicationConfigNotFound message from the specified reader or buffer.
-         * @function decode
-         * @memberof api.PayloadApplicationConfigNotFound
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @param {number} [length] Message length if known beforehand
-         * @returns {api.PayloadApplicationConfigNotFound} PayloadApplicationConfigNotFound
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        PayloadApplicationConfigNotFound.decode = function decode(reader, length) {
-            if (!(reader instanceof $Reader))
-                reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.PayloadApplicationConfigNotFound();
-            while (reader.pos < end) {
-                var tag = reader.uint32();
-                switch (tag >>> 3) {
-                case 1:
-                    message.login = reader.string();
-                    break;
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-                }
-            }
-            return message;
-        };
-
-        /**
-         * Decodes a PayloadApplicationConfigNotFound message from the specified reader or buffer, length delimited.
-         * @function decodeDelimited
-         * @memberof api.PayloadApplicationConfigNotFound
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {api.PayloadApplicationConfigNotFound} PayloadApplicationConfigNotFound
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        PayloadApplicationConfigNotFound.decodeDelimited = function decodeDelimited(reader) {
-            if (!(reader instanceof $Reader))
-                reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
-        };
-
-        /**
-         * Verifies a PayloadApplicationConfigNotFound message.
-         * @function verify
-         * @memberof api.PayloadApplicationConfigNotFound
-         * @static
-         * @param {Object.<string,*>} message Plain object to verify
-         * @returns {string|null} `null` if valid, otherwise the reason why it is not
-         */
-        PayloadApplicationConfigNotFound.verify = function verify(message) {
-            if (typeof message !== "object" || message === null)
-                return "object expected";
-            if (message.login != null && message.hasOwnProperty("login"))
-                if (!$util.isString(message.login))
-                    return "login: string expected";
-            return null;
-        };
-
-        /**
-         * Creates a PayloadApplicationConfigNotFound message from a plain object. Also converts values to their respective internal types.
-         * @function fromObject
-         * @memberof api.PayloadApplicationConfigNotFound
-         * @static
-         * @param {Object.<string,*>} object Plain object
-         * @returns {api.PayloadApplicationConfigNotFound} PayloadApplicationConfigNotFound
-         */
-        PayloadApplicationConfigNotFound.fromObject = function fromObject(object) {
-            if (object instanceof $root.api.PayloadApplicationConfigNotFound)
-                return object;
-            var message = new $root.api.PayloadApplicationConfigNotFound();
-            if (object.login != null)
-                message.login = String(object.login);
-            return message;
-        };
-
-        /**
-         * Creates a plain object from a PayloadApplicationConfigNotFound message. Also converts values to other types if specified.
-         * @function toObject
-         * @memberof api.PayloadApplicationConfigNotFound
-         * @static
-         * @param {api.PayloadApplicationConfigNotFound} message PayloadApplicationConfigNotFound
-         * @param {$protobuf.IConversionOptions} [options] Conversion options
-         * @returns {Object.<string,*>} Plain object
-         */
-        PayloadApplicationConfigNotFound.toObject = function toObject(message, options) {
-            if (!options)
-                options = {};
-            var object = {};
-            if (options.defaults)
-                object.login = "";
-            if (message.login != null && message.hasOwnProperty("login"))
-                object.login = message.login;
-            return object;
-        };
-
-        /**
-         * Converts this PayloadApplicationConfigNotFound to JSON.
-         * @function toJSON
-         * @memberof api.PayloadApplicationConfigNotFound
-         * @instance
-         * @returns {Object.<string,*>} JSON object
-         */
-        PayloadApplicationConfigNotFound.prototype.toJSON = function toJSON() {
-            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-        };
-
-        return PayloadApplicationConfigNotFound;
     })();
 
     api.PayloadIdentityVersionMismatch = (function() {
@@ -30851,6 +31557,403 @@ $root.api = (function() {
         };
 
         return PayloadNamedResourceNotFound;
+    })();
+
+    api.PayloadApplicationConfigNotFound = (function() {
+
+        /**
+         * Properties of a PayloadApplicationConfigNotFound.
+         * @memberof api
+         * @interface IPayloadApplicationConfigNotFound
+         * @property {string|null} [login] PayloadApplicationConfigNotFound login
+         */
+
+        /**
+         * Constructs a new PayloadApplicationConfigNotFound.
+         * @memberof api
+         * @classdesc Represents a PayloadApplicationConfigNotFound.
+         * @implements IPayloadApplicationConfigNotFound
+         * @constructor
+         * @param {api.IPayloadApplicationConfigNotFound=} [properties] Properties to set
+         */
+        function PayloadApplicationConfigNotFound(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * PayloadApplicationConfigNotFound login.
+         * @member {string} login
+         * @memberof api.PayloadApplicationConfigNotFound
+         * @instance
+         */
+        PayloadApplicationConfigNotFound.prototype.login = "";
+
+        /**
+         * Creates a new PayloadApplicationConfigNotFound instance using the specified properties.
+         * @function create
+         * @memberof api.PayloadApplicationConfigNotFound
+         * @static
+         * @param {api.IPayloadApplicationConfigNotFound=} [properties] Properties to set
+         * @returns {api.PayloadApplicationConfigNotFound} PayloadApplicationConfigNotFound instance
+         */
+        PayloadApplicationConfigNotFound.create = function create(properties) {
+            return new PayloadApplicationConfigNotFound(properties);
+        };
+
+        /**
+         * Encodes the specified PayloadApplicationConfigNotFound message. Does not implicitly {@link api.PayloadApplicationConfigNotFound.verify|verify} messages.
+         * @function encode
+         * @memberof api.PayloadApplicationConfigNotFound
+         * @static
+         * @param {api.IPayloadApplicationConfigNotFound} message PayloadApplicationConfigNotFound message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        PayloadApplicationConfigNotFound.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.login != null && message.hasOwnProperty("login"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.login);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified PayloadApplicationConfigNotFound message, length delimited. Does not implicitly {@link api.PayloadApplicationConfigNotFound.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof api.PayloadApplicationConfigNotFound
+         * @static
+         * @param {api.IPayloadApplicationConfigNotFound} message PayloadApplicationConfigNotFound message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        PayloadApplicationConfigNotFound.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a PayloadApplicationConfigNotFound message from the specified reader or buffer.
+         * @function decode
+         * @memberof api.PayloadApplicationConfigNotFound
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {api.PayloadApplicationConfigNotFound} PayloadApplicationConfigNotFound
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        PayloadApplicationConfigNotFound.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.PayloadApplicationConfigNotFound();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.login = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a PayloadApplicationConfigNotFound message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof api.PayloadApplicationConfigNotFound
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {api.PayloadApplicationConfigNotFound} PayloadApplicationConfigNotFound
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        PayloadApplicationConfigNotFound.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a PayloadApplicationConfigNotFound message.
+         * @function verify
+         * @memberof api.PayloadApplicationConfigNotFound
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        PayloadApplicationConfigNotFound.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.login != null && message.hasOwnProperty("login"))
+                if (!$util.isString(message.login))
+                    return "login: string expected";
+            return null;
+        };
+
+        /**
+         * Creates a PayloadApplicationConfigNotFound message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof api.PayloadApplicationConfigNotFound
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {api.PayloadApplicationConfigNotFound} PayloadApplicationConfigNotFound
+         */
+        PayloadApplicationConfigNotFound.fromObject = function fromObject(object) {
+            if (object instanceof $root.api.PayloadApplicationConfigNotFound)
+                return object;
+            var message = new $root.api.PayloadApplicationConfigNotFound();
+            if (object.login != null)
+                message.login = String(object.login);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a PayloadApplicationConfigNotFound message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof api.PayloadApplicationConfigNotFound
+         * @static
+         * @param {api.PayloadApplicationConfigNotFound} message PayloadApplicationConfigNotFound
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        PayloadApplicationConfigNotFound.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults)
+                object.login = "";
+            if (message.login != null && message.hasOwnProperty("login"))
+                object.login = message.login;
+            return object;
+        };
+
+        /**
+         * Converts this PayloadApplicationConfigNotFound to JSON.
+         * @function toJSON
+         * @memberof api.PayloadApplicationConfigNotFound
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        PayloadApplicationConfigNotFound.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return PayloadApplicationConfigNotFound;
+    })();
+
+    api.PayloadApplicationInvalidToken = (function() {
+
+        /**
+         * Properties of a PayloadApplicationInvalidToken.
+         * @memberof api
+         * @interface IPayloadApplicationInvalidToken
+         * @property {string|null} [token] PayloadApplicationInvalidToken token
+         * @property {string|null} [hint] PayloadApplicationInvalidToken hint
+         */
+
+        /**
+         * Constructs a new PayloadApplicationInvalidToken.
+         * @memberof api
+         * @classdesc Represents a PayloadApplicationInvalidToken.
+         * @implements IPayloadApplicationInvalidToken
+         * @constructor
+         * @param {api.IPayloadApplicationInvalidToken=} [properties] Properties to set
+         */
+        function PayloadApplicationInvalidToken(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * PayloadApplicationInvalidToken token.
+         * @member {string} token
+         * @memberof api.PayloadApplicationInvalidToken
+         * @instance
+         */
+        PayloadApplicationInvalidToken.prototype.token = "";
+
+        /**
+         * PayloadApplicationInvalidToken hint.
+         * @member {string} hint
+         * @memberof api.PayloadApplicationInvalidToken
+         * @instance
+         */
+        PayloadApplicationInvalidToken.prototype.hint = "";
+
+        /**
+         * Creates a new PayloadApplicationInvalidToken instance using the specified properties.
+         * @function create
+         * @memberof api.PayloadApplicationInvalidToken
+         * @static
+         * @param {api.IPayloadApplicationInvalidToken=} [properties] Properties to set
+         * @returns {api.PayloadApplicationInvalidToken} PayloadApplicationInvalidToken instance
+         */
+        PayloadApplicationInvalidToken.create = function create(properties) {
+            return new PayloadApplicationInvalidToken(properties);
+        };
+
+        /**
+         * Encodes the specified PayloadApplicationInvalidToken message. Does not implicitly {@link api.PayloadApplicationInvalidToken.verify|verify} messages.
+         * @function encode
+         * @memberof api.PayloadApplicationInvalidToken
+         * @static
+         * @param {api.IPayloadApplicationInvalidToken} message PayloadApplicationInvalidToken message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        PayloadApplicationInvalidToken.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.token != null && message.hasOwnProperty("token"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.token);
+            if (message.hint != null && message.hasOwnProperty("hint"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.hint);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified PayloadApplicationInvalidToken message, length delimited. Does not implicitly {@link api.PayloadApplicationInvalidToken.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof api.PayloadApplicationInvalidToken
+         * @static
+         * @param {api.IPayloadApplicationInvalidToken} message PayloadApplicationInvalidToken message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        PayloadApplicationInvalidToken.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a PayloadApplicationInvalidToken message from the specified reader or buffer.
+         * @function decode
+         * @memberof api.PayloadApplicationInvalidToken
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {api.PayloadApplicationInvalidToken} PayloadApplicationInvalidToken
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        PayloadApplicationInvalidToken.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.PayloadApplicationInvalidToken();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.token = reader.string();
+                    break;
+                case 2:
+                    message.hint = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a PayloadApplicationInvalidToken message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof api.PayloadApplicationInvalidToken
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {api.PayloadApplicationInvalidToken} PayloadApplicationInvalidToken
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        PayloadApplicationInvalidToken.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a PayloadApplicationInvalidToken message.
+         * @function verify
+         * @memberof api.PayloadApplicationInvalidToken
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        PayloadApplicationInvalidToken.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.token != null && message.hasOwnProperty("token"))
+                if (!$util.isString(message.token))
+                    return "token: string expected";
+            if (message.hint != null && message.hasOwnProperty("hint"))
+                if (!$util.isString(message.hint))
+                    return "hint: string expected";
+            return null;
+        };
+
+        /**
+         * Creates a PayloadApplicationInvalidToken message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof api.PayloadApplicationInvalidToken
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {api.PayloadApplicationInvalidToken} PayloadApplicationInvalidToken
+         */
+        PayloadApplicationInvalidToken.fromObject = function fromObject(object) {
+            if (object instanceof $root.api.PayloadApplicationInvalidToken)
+                return object;
+            var message = new $root.api.PayloadApplicationInvalidToken();
+            if (object.token != null)
+                message.token = String(object.token);
+            if (object.hint != null)
+                message.hint = String(object.hint);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a PayloadApplicationInvalidToken message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof api.PayloadApplicationInvalidToken
+         * @static
+         * @param {api.PayloadApplicationInvalidToken} message PayloadApplicationInvalidToken
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        PayloadApplicationInvalidToken.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.token = "";
+                object.hint = "";
+            }
+            if (message.token != null && message.hasOwnProperty("token"))
+                object.token = message.token;
+            if (message.hint != null && message.hasOwnProperty("hint"))
+                object.hint = message.hint;
+            return object;
+        };
+
+        /**
+         * Converts this PayloadApplicationInvalidToken to JSON.
+         * @function toJSON
+         * @memberof api.PayloadApplicationInvalidToken
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        PayloadApplicationInvalidToken.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return PayloadApplicationInvalidToken;
     })();
 
     return api;

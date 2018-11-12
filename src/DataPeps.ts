@@ -4,7 +4,7 @@ import * as protobufjs from "protobufjs";
 import { api } from "./proto";
 import { Base64, Uint8Tool } from "./Tools";
 import { Encryption, EncryptAnonymous } from "./CryptoFuncs";
-import { Client, Request } from "./HTTP";
+import * as HTTP from "./HTTP";
 import { SessionImpl, AccessRequestImpl, _login } from "./Session";
 import { IdentityX } from "./Identity";
 import { Resource } from "./Resource";
@@ -23,12 +23,6 @@ export const RegisterTokenStatus = api.RegisterTokenStatus;
 protobufjs.util.Long = Long;
 protobufjs.configure();
 
-const defaultAPIURL = "https://api.datapeps.com";
-const defaultWSURL = "https://ws.datapeps.com";
-
-let client = new Client(defaultAPIURL, defaultWSURL);
-let webSocketURL = defaultWSURL;
-
 export var debug = false;
 
 /**
@@ -36,8 +30,7 @@ export var debug = false;
  * @param APIUrl The url of the DataPeps service.
  */
 export function configure(APIUrl: string, WSUrl?: string) {
-  client = new Client(APIUrl, WSUrl);
-  webSocketURL = WSUrl;
+  HTTP.configure(APIUrl, WSUrl);
 }
 
 export function clipID<T extends Uint8Array | string>(id: ID, data: T): T {
@@ -175,7 +168,7 @@ async function _register(
 ): Promise<void> {
   let encryption = new Encryption();
   encryption.generate(Uint8Tool.convert(secret), null);
-  return client.doRequest<void>({
+  return HTTP.client.doRequest<void>({
     method: "POST",
     code: 201,
     path,
@@ -208,7 +201,7 @@ export async function requestDelegatedAccess(
     login,
     publicKey: keypair.publicKey
   });
-  let { id } = await client.doRequest({
+  let { id } = await HTTP.client.doRequest({
     method: "POST",
     code: 201,
     path: "/api/v4/delegatedAccess",
@@ -230,7 +223,7 @@ export async function requestDelegatedAccess(
     }
   });
   let resource = new Resource(0, null, null, keypair, null);
-  return new AccessRequestImpl(id, login, client, resource);
+  return new AccessRequestImpl(id, login, HTTP.client, resource);
 }
 
 /**
@@ -243,7 +236,7 @@ export async function requestDelegatedAccess(
 export async function getLatestPublicKeys(
   logins: string[]
 ): Promise<IdentityPublicKey[]> {
-  let { publicKeys } = await client.doRequest({
+  let { publicKeys } = await HTTP.client.doRequest({
     method: "POST",
     code: 200,
     path: "/api/v4/identities/latestPublicKeys",
@@ -281,7 +274,7 @@ export async function getLatestPublicKey(
  * - `RegisterInvalidEmail` if the `email` is badly formatted.
  */
 export async function sendRegisterLink(email: string): Promise<void> {
-  return await client.doRequest<void>({
+  return await HTTP.client.doRequest<void>({
     method: "POST",
     code: 201,
     path: "/api/v4/register/link",
@@ -332,7 +325,7 @@ export async function login(
   options?: { saltKind?: SessionSaltKind }
 ): Promise<Session> {
   return await _login(
-    client,
+    HTTP.client,
     login,
     (e, c) => {
       let encryption = new Encryption(e);
@@ -352,7 +345,7 @@ export enum IdentityAccessKind {
 /**
  * A object that can be used to make authenticated request by a {@link_Session}.
  */
-export interface SessionRequest<T> extends Request<T> {
+export interface SessionRequest<T> extends HTTP.Request<T> {
   assume?: { login: string; kind: IdentityAccessKind };
 }
 

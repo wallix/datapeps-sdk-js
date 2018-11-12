@@ -35,8 +35,73 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var DataPeps = require("./DataPeps");
+var Resource_1 = require("./Resource");
 var proto_1 = require("./proto");
 var Interface_1 = require("./Interface");
+var Tools_1 = require("./Tools");
+var CryptoFuncs_1 = require("./CryptoFuncs");
+var HTTP = require("./HTTP");
+function createUser(appID, auth, secret) {
+    return __awaiter(this, void 0, void 0, function () {
+        var encryption, secretBytes, payload, identity, resource, body;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    encryption = new CryptoFuncs_1.Encryption();
+                    secretBytes = Tools_1.Uint8Tool.convert(secret);
+                    encryption.generate(secretBytes, null);
+                    payload = Tools_1.Uint8Tool.convert(JSON.stringify({}));
+                    identity = {
+                        login: null,
+                        name: null,
+                        kind: appID + "/application/user",
+                        payload: payload
+                    };
+                    resource = Resource_1.ResourceImpl.createWithEncryption("application/secret", secretBytes, encryption, { serialize: function (u) { return u; } });
+                    body = proto_1.api.RegisterExternalIdentityRequest.encode({
+                        appID: appID,
+                        auth: auth,
+                        encryption: encryption,
+                        identity: identity,
+                        resources: { appSecret: resource.resourceRequestBody }
+                    }).finish();
+                    return [4 /*yield*/, HTTP.client.doRequest({
+                            method: "POST",
+                            code: 201,
+                            path: "/api/v4/register/external-identity",
+                            request: function () { return body; },
+                            response: proto_1.api.RegisterExternalIdentityResponse.decode,
+                            before: function (x, b) {
+                                return x.setRequestHeader("content-type", "application/x-protobuf");
+                            }
+                        })];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        });
+    });
+}
+exports.createUser = createUser;
+function secure(appID, login, secret) {
+    return __awaiter(this, void 0, void 0, function () {
+        var appLogin, session, identityLogin, appSecretResource;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    appLogin = ApplicationImpl.composeApplicationLogin(login, appID);
+                    return [4 /*yield*/, DataPeps.login(appLogin, secret)];
+                case 1:
+                    session = _a.sent();
+                    identityLogin = login.concat("@", appID);
+                    return [4 /*yield*/, session.Identity.getNamedResource(identityLogin, "appSecret", { parse: function (u) { return u; } })];
+                case 2:
+                    appSecretResource = _a.sent();
+                    return [2 /*return*/, { session: session, secret: appSecretResource.payload }];
+            }
+        });
+    });
+}
+exports.secure = secure;
 var ApplicationImpl = /** @class */ (function () {
     function ApplicationImpl(session) {
         this.session = session;
@@ -91,6 +156,10 @@ var ApplicationImpl = /** @class */ (function () {
                 }
             });
         });
+    };
+    ApplicationImpl.composeApplicationLogin = function (login, appID) {
+        var appLogin = login.concat("@", appID);
+        return appLogin;
     };
     return ApplicationImpl;
 }());

@@ -2,6 +2,11 @@ import { api } from "./proto";
 import { SDKKind, Error } from "./Error";
 import { debug } from "./DataPeps";
 
+const defaultAPIURL = "https://api.datapeps.com";
+const defaultWSURL = "https://ws.datapeps.com";
+
+export { client, webSocketURL };
+
 export interface Request<T> {
   method: string;
   path: string;
@@ -141,3 +146,11 @@ export class Client {
     return url + "?" + uriParams;
   }
 }
+
+export function configure(APIUrl: string, WSUrl?: string) {
+  client = new Client(APIUrl, WSUrl);
+  webSocketURL = WSUrl;
+}
+
+let webSocketURL = defaultWSURL;
+let client = new Client(defaultAPIURL, defaultWSURL);

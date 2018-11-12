@@ -1,7 +1,7 @@
 /// <reference types="long" />
 import * as Long from "long";
 import { api } from "./proto";
-import { Request } from "./HTTP";
+import * as HTTP from "./HTTP";
 import { Resource } from "./Resource";
 export { Error, ErrorKind, ServerKind as ServerError, SDKKind as SDKError } from "./Error";
 export declare type RegisterTokenStatus = api.RegisterTokenStatus;
@@ -139,7 +139,7 @@ export declare enum IdentityAccessKind {
 /**
  * A object that can be used to make authenticated request by a {@link_Session}.
  */
-export interface SessionRequest<T> extends Request<T> {
+export interface SessionRequest<T> extends HTTP.Request<T> {
     assume?: {
         login: string;
         kind: IdentityAccessKind;

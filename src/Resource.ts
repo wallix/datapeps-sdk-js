@@ -11,7 +11,7 @@ import {
   ResourceShareLink,
   ResourceAccessLog
 } from "./DataPeps";
-import { EncryptFuncs } from "./CryptoFuncs";
+import { Encryption, EncryptFuncs } from "./CryptoFuncs";
 import { SessionImpl } from "./Session";
 import { Uint8Tool, Base64 } from "./Tools";
 
@@ -99,13 +99,62 @@ export class ResourceImpl implements ResourceAPI {
     this.session = session;
   }
 
+  static createWithEncryption<T>(
+    kind: string,
+    payload: T,
+    encryption: Encryption,
+    options?: { serialize?: ((payload: T) => Uint8Array) }
+  ): {
+    resourceRequestBody: api.IResourcePostRequest;
+    resource: Resource<T>;
+  } {
+    options = options == null ? {} : options;
+    let serialize =
+      options.serialize != null
+        ? options.serialize
+        : p => new TextEncoder().encode(JSON.stringify(p));
+    let encryptionPK: IdentityPublicKey = {
+      login: null,
+      version: null,
+      sign: encryption.signEncrypted.publicKey,
+      box: encryption.boxEncrypted.publicKey
+    };
+    let keyPair = nacl.box.keyPair();
+    let cryptoSES = encryption.encrypt(api.ResourceType.SES);
+    let sharer: api.IResourceShareEntry = {};
+    let sharerSKEncrypted = cryptoSES.encrypt(
+      encryptionPK.box,
+      keyPair.secretKey
+    );
+    sharer.nonce = sharerSKEncrypted.nonce;
+    sharer.encryptedKey = sharerSKEncrypted.message;
+    let payloadEncrypted = cryptoSES.encrypt(
+      keyPair.publicKey,
+      serialize(payload)
+    );
+    let body: api.IResourcePostRequest = {
+      kind,
+      type: api.ResourceType.ANONYMOUS,
+      payload: payloadEncrypted.message,
+      nonce: payloadEncrypted.nonce,
+      publicKey: keyPair.publicKey,
+      sharingGroup: [sharer]
+    };
+    let resource = new Resource(
+      null,
+      body.kind,
+      payload,
+      keyPair,
+      encryptionPK
+    );
+    return { resourceRequestBody: body, resource };
+  }
+
   async _createBodyRequest<T>(
     payload: T,
     sharingGroup: string[],
     crypto: EncryptFuncs,
-    options?: {
-      serialize?: ((payload: T) => Uint8Array);
-    }
+    options?: { serialize?: ((payload: T) => Uint8Array) }
   ) {
     options = options != null ? options : {};
     let serialize =
@@ -137,9 +186,7 @@ export class ResourceImpl implements ResourceAPI {
     kind: string,
     payload: T,
     sharingGroup: string[],
-    options?: {
-      serialize?: ((payload: T) => Uint8Array);
-    }
+    options?: { serialize?: ((payload: T) => Uint8Array) }
   ): Promise<Resource<T>> {
     options = options == null ? {} : options;
     // keys and payload are always encrypted with SES
@@ -225,12 +272,7 @@ export class ResourceImpl implements ResourceAPI {
     );
   }
 
-  async delete(
-    id: ID,
-    options?: {
-      assume?: string;
-    }
-  ): Promise<void> {
+  async delete(id: ID, options?: { assume?: string }): Promise<void> {
     options = options != null ? options : {};
     let assume = options.assume != null ? options.assume : this.session.login;
     return await this.session.doProtoRequest<void>({
@@ -242,12 +284,7 @@ export class ResourceImpl implements ResourceAPI {
     });
   }
 
-  async unlink(
-    id: ID,
-    options?: {
-      assume?: string;
-    }
-  ): Promise<void> {
+  async unlink(id: ID, options?: { assume?: string }): Promise<void> {
     options = options != null ? options : {};
     let assume = options.assume != null ? options.assume : this.session.login;
     return await this.session.doProtoRequest<void>({
@@ -262,9 +299,7 @@ export class ResourceImpl implements ResourceAPI {
   async extendSharingGroup(
     id: ID,
     sharingGroup: string[],
-    options?: {
-      assume?: string;
-    }
+    options?: { assume?: string }
   ): Promise<void> {
     options = options != null ? options : {};
     let assume = options.assume != null ? options.assume : this.session.login;
@@ -303,9 +338,7 @@ export class ResourceImpl implements ResourceAPI {
 
   async getSharingGroup(
     id: ID,
-    options?: {
-      assume?: string;
-    }
+    options?: { assume?: string }
   ): Promise<ResourceShareLink[]> {
     options = options != null ? options : {};
     let assume = options.assume != null ? options.assume : this.session.login;
@@ -328,12 +361,7 @@ export class ResourceImpl implements ResourceAPI {
     let publicKeys = await this.session.getLatestPublicKeys(sharingGroup);
     return publicKeys.map(({ login, version, box, sign }) => {
       let { message, nonce } = crypto.encrypt(box, text);
-      return {
-        login,
-        version,
-        nonce,
-        encryptedKey: message
-      };
+      return { login, version, nonce, encryptedKey: message };
     });
   }
 

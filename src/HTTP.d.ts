@@ -1,3 +1,4 @@
+export { client, webSocketURL };
 export interface Request<T> {
     method: string;
     path: string;
@@ -17,3 +18,6 @@ export declare class Client {
     doRequest<T>(r: Request<T>): Promise<T>;
     private uri_query(url, params?);
 }
+export declare function configure(APIUrl: string, WSUrl?: string): void;
+declare let webSocketURL: string;
+declare let client: Client;

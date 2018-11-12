@@ -41,7 +41,7 @@ var protobufjs = require("protobufjs");
 var proto_1 = require("./proto");
 var Tools_1 = require("./Tools");
 var CryptoFuncs_1 = require("./CryptoFuncs");
-var HTTP_1 = require("./HTTP");
+var HTTP = require("./HTTP");
 var Session_1 = require("./Session");
 var Resource_1 = require("./Resource");
 var Error_1 = require("./Error");
@@ -53,18 +53,13 @@ exports.SDKError = Error_2.SDKKind;
 exports.RegisterTokenStatus = proto_1.api.RegisterTokenStatus;
 protobufjs.util.Long = Long;
 protobufjs.configure();
-var defaultAPIURL = "https://api.datapeps.com";
-var defaultWSURL = "https://ws.datapeps.com";
-var client = new HTTP_1.Client(defaultAPIURL, defaultWSURL);
-var webSocketURL = defaultWSURL;
 exports.debug = false;
 /**
  * Configure the endpoint of the SDK.
  * @param APIUrl The url of the DataPeps service.
  */
 function configure(APIUrl, WSUrl) {
-    client = new HTTP_1.Client(APIUrl, WSUrl);
-    webSocketURL = WSUrl;
+    HTTP.configure(APIUrl, WSUrl);
 }
 exports.configure = configure;
 function clipID(id, data) {
@@ -195,7 +190,7 @@ function _register(path, identity, secret, request) {
         return __generator(this, function (_a) {
             encryption = new CryptoFuncs_1.Encryption();
             encryption.generate(Tools_1.Uint8Tool.convert(secret), null);
-            return [2 /*return*/, client.doRequest({
+            return [2 /*return*/, HTTP.client.doRequest({
                     method: "POST",
                     code: 201,
                     path: path,
@@ -234,7 +229,7 @@ function requestDelegatedAccess(login, sign) {
                         })];
                 case 2:
                     signResult = _b.sent();
-                    return [4 /*yield*/, client.doRequest({
+                    return [4 /*yield*/, HTTP.client.doRequest({
                             method: "POST",
                             code: 201,
                             path: "/api/v4/delegatedAccess",
@@ -259,7 +254,7 @@ function requestDelegatedAccess(login, sign) {
                 case 3:
                     id = (_b.sent()).id;
                     resource = new Resource_1.Resource(0, null, null, keypair, null);
-                    return [2 /*return*/, new Session_1.AccessRequestImpl(id, login, client, resource)];
+                    return [2 /*return*/, new Session_1.AccessRequestImpl(id, login, HTTP.client, resource)];
             }
         });
     });
@@ -277,7 +272,7 @@ function getLatestPublicKeys(logins) {
         var publicKeys;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, client.doRequest({
+                case 0: return [4 /*yield*/, HTTP.client.doRequest({
                         method: "POST",
                         code: 200,
                         path: "/api/v4/identities/latestPublicKeys",
@@ -331,7 +326,7 @@ function sendRegisterLink(email) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, client.doRequest({
+                case 0: return [4 /*yield*/, HTTP.client.doRequest({
                         method: "POST",
                         code: 201,
                         path: "/api/v4/register/link",
@@ -370,7 +365,7 @@ function login(login, secret, options) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, Session_1._login(client, login, function (e, c) {
+                case 0: return [4 /*yield*/, Session_1._login(HTTP.client, login, function (e, c) {
                         var encryption = new CryptoFuncs_1.Encryption(e);
                         encryption.recover(Tools_1.Uint8Tool.convert(secret), c);
                         return encryption;

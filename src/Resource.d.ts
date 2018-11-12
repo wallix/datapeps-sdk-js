@@ -1,7 +1,7 @@
 import * as nacl from "tweetnacl";
 import { api } from "./proto";
 import { ID, IdentityPublicKey, ResourceAPI, ResourceShareLink, ResourceAccessLog } from "./DataPeps";
-import { EncryptFuncs } from "./CryptoFuncs";
+import { Encryption, EncryptFuncs } from "./CryptoFuncs";
 import { SessionImpl } from "./Session";
 export declare enum ResourceType {
     ANONYMOUS = 0,
@@ -25,6 +25,12 @@ export declare class Resource<T> {
 export declare class ResourceImpl implements ResourceAPI {
     private session;
     constructor(session: SessionImpl);
+    static createWithEncryption<T>(kind: string, payload: T, encryption: Encryption, options?: {
+        serialize?: ((payload: T) => Uint8Array);
+    }): {
+        resourceRequestBody: api.IResourcePostRequest;
+        resource: Resource<T>;
+    };
     _createBodyRequest<T>(payload: T, sharingGroup: string[], crypto: EncryptFuncs, options?: {
         serialize?: ((payload: T) => Uint8Array);
     }): Promise<{

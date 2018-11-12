@@ -3,6 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var proto_1 = require("./proto");
 var Error_1 = require("./Error");
 var DataPeps_1 = require("./DataPeps");
+var defaultAPIURL = "https://api.datapeps.com";
+var defaultWSURL = "https://ws.datapeps.com";
 var Client = /** @class */ (function () {
     function Client(host, wsHost) {
         this.host = host;
@@ -119,4 +121,13 @@ var Client = /** @class */ (function () {
     return Client;
 }());
 exports.Client = Client;
+function configure(APIUrl, WSUrl) {
+    exports.client = client = new Client(APIUrl, WSUrl);
+    exports.webSocketURL = webSocketURL = WSUrl;
+}
+exports.configure = configure;
+var webSocketURL = defaultWSURL;
+exports.webSocketURL = webSocketURL;
+var client = new Client(defaultAPIURL, defaultWSURL);
+exports.client = client;
 //# sourceMappingURL=HTTP.js.map

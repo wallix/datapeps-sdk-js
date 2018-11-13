@@ -53,7 +53,6 @@ var CryptoFuncs_1 = require("./CryptoFuncs");
 var Identity_1 = require("./Identity");
 var Resource_1 = require("./Resource");
 var Admin_1 = require("./Admin");
-var Kval_1 = require("./Kval");
 var Application_1 = require("./Application");
 var MemoryPublicKeyCache = /** @class */ (function () {
     function MemoryPublicKeyCache() {
@@ -180,8 +179,6 @@ var SessionImpl = /** @class */ (function () {
         this.Identity = new Identity_1.IdentityImpl(this);
         this.Resource = new Resource_1.ResourceImpl(this);
         this.Admin = new Admin_1.AdminImpl(this);
-        this.Kval = new Kval_1.Kval(this);
-        this.KvalDelegates = new Kval_1.KvalDelegates(this.Kval);
         this.encryption = encryption;
         this.token = Tools_1.Base64.encode(token);
         this.salt = salt;

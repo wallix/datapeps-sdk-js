@@ -231,10 +231,6 @@ export interface Session {
     Resource: ResourceAPI;
     /** Access to the admin API.*/
     Admin: AdminAPI;
-    /** Access to the Kval API */
-    Kval: KvalAPI;
-    /** Access to the KvalDelegates API */
-    KvalDelegates: KvalDelegatesAPI;
     /** Access to the Application API */
     Application: ApplicationAPI;
     /**
@@ -753,17 +749,6 @@ export interface AdminAPI {
         domain?: string;
     }): Promise<api.IRegisterEmailValidationToken[]>;
 }
-export interface KvalAPI {
-    put(namespace: string, key: Uint8Array, value: Uint8Array): Promise<void>;
-    get(namespace: string, key: Uint8Array): Promise<{
-        value: Uint8Array;
-        pk: IdentityPublicKeyID;
-    }>;
-}
-export interface KvalDelegatesAPI {
-    put(login: string, application: string, delegates: string[]): Promise<void>;
-    get(login: string, application: string): Promise<string[]>;
-}
 export declare enum ApplicationJwtAlgorithm {
     HS256 = 0,
     HS384 = 1,
@@ -783,4 +768,6 @@ export declare type ApplicationJwtConfig = {
 export interface ApplicationAPI {
     putConfig(appID: string, configuration: ApplicationJwtConfig): Promise<void>;
     getConfig(appID: string): Promise<ApplicationJwtConfig>;
+}
+export declare namespace ApplicationAPI {
 }

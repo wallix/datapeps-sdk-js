@@ -46,6 +46,7 @@ var Session_1 = require("./Session");
 var Resource_1 = require("./Resource");
 var Error_1 = require("./Error");
 var Constants_1 = require("./Constants");
+var Application_1 = require("./Application");
 var Error_2 = require("./Error");
 exports.Error = Error_2.Error;
 exports.ServerError = Error_2.ServerKind;
@@ -414,6 +415,9 @@ var ResourceType;
     ResourceType[ResourceType["ANONYMOUS"] = 0] = "ANONYMOUS";
 })(ResourceType = exports.ResourceType || (exports.ResourceType = {}));
 exports.ResourceAccessReason = proto_1.api.ResourceAccessReason;
+/////////////////////////////////////////////////
+// Application
+/////////////////////////////////////////////////
 var ApplicationJwtAlgorithm;
 (function (ApplicationJwtAlgorithm) {
     ApplicationJwtAlgorithm[ApplicationJwtAlgorithm["HS256"] = 0] = "HS256";
@@ -426,4 +430,8 @@ var ApplicationJwtAlgorithm;
     ApplicationJwtAlgorithm[ApplicationJwtAlgorithm["ES384"] = 7] = "ES384";
     ApplicationJwtAlgorithm[ApplicationJwtAlgorithm["ES512"] = 8] = "ES512";
 })(ApplicationJwtAlgorithm = exports.ApplicationJwtAlgorithm || (exports.ApplicationJwtAlgorithm = {}));
+var ApplicationAPI;
+(function (ApplicationAPI) {
+    Application_1.createJWTSession;
+})(ApplicationAPI = exports.ApplicationAPI || (exports.ApplicationAPI = {}));
 //# sourceMappingURL=DataPeps.js.map

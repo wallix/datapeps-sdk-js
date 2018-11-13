@@ -10,7 +10,7 @@ import { IdentityX } from "./Identity";
 import { Resource } from "./Resource";
 import { Error, SDKKind } from "./Error";
 import { Constants } from "./Constants";
-import { KvalDelegates } from "./Kval";
+import { createJWTSession } from "./Application";
 export {
   Error,
   ErrorKind,
@@ -478,12 +478,6 @@ export interface Session {
 
   /** Access to the admin API.*/
   Admin: AdminAPI;
-
-  /** Access to the Kval API */
-  Kval: KvalAPI;
-
-  /** Access to the KvalDelegates API */
-  KvalDelegates: KvalDelegatesAPI;
 
   /** Access to the Application API */
   Application: ApplicationAPI;
@@ -1126,23 +1120,8 @@ export interface AdminAPI {
 }
 
 /////////////////////////////////////////////////
-// Kval APIs
+// Application
 /////////////////////////////////////////////////
-
-export interface KvalAPI {
-  put(namespace: string, key: Uint8Array, value: Uint8Array): Promise<void>;
-
-  get(
-    namespace: string,
-    key: Uint8Array
-  ): Promise<{ value: Uint8Array; pk: IdentityPublicKeyID }>;
-}
-
-export interface KvalDelegatesAPI {
-  put(login: string, application: string, delegates: string[]): Promise<void>;
-
-  get(login: string, application: string): Promise<string[]>;
-}
 
 export enum ApplicationJwtAlgorithm {
   HS256 = 0,
@@ -1165,4 +1144,8 @@ export type ApplicationJwtConfig = {
 export interface ApplicationAPI {
   putConfig(appID: string, configuration: ApplicationJwtConfig): Promise<void>;
   getConfig(appID: string): Promise<ApplicationJwtConfig>;
+}
+
+export namespace ApplicationAPI {
+  createJWTSession;
 }

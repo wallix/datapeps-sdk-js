@@ -102,6 +102,45 @@ function secure(appID, login, secret) {
     });
 }
 exports.secure = secure;
+function createJWTSession(appID, appLogin, secret, connector) {
+    return __awaiter(this, void 0, void 0, function () {
+        var appSecret, _a, session, appSecret_1, app, e_1, app, token, session;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    _b.trys.push([0, 3, , 9]);
+                    return [4 /*yield*/, secure(appID, appLogin, secret)];
+                case 1:
+                    _a = _b.sent(), session = _a.session, appSecret_1 = _a.secret;
+                    return [4 /*yield*/, connector.createSession(appLogin, appSecret_1)];
+                case 2:
+                    app = _b.sent();
+                    return [2 /*return*/, { session: session, app: app, new: false }];
+                case 3:
+                    e_1 = _b.sent();
+                    if (!(e_1.kind == proto_1.api.PepsErrorKind.IdentityNotFound)) return [3 /*break*/, 8];
+                    return [4 /*yield*/, connector.createSession(appLogin, appSecret)];
+                case 4:
+                    app = _b.sent();
+                    return [4 /*yield*/, connector.getToken(app)];
+                case 5:
+                    token = _b.sent();
+                    // Create the DataPeps Identity
+                    return [4 /*yield*/, createUser(appID, { jwt: { token: token } }, secret)];
+                case 6:
+                    // Create the DataPeps Identity
+                    _b.sent();
+                    return [4 /*yield*/, secure(appID, appLogin, secret)];
+                case 7:
+                    session = (_b.sent()).session;
+                    return [2 /*return*/, { session: session, app: app, new: true }];
+                case 8: throw e_1;
+                case 9: return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.createJWTSession = createJWTSession;
 var ApplicationImpl = /** @class */ (function () {
     function ApplicationImpl(session) {
         this.session = session;

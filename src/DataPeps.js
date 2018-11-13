@@ -46,7 +46,7 @@ var Session_1 = require("./Session");
 var Resource_1 = require("./Resource");
 var Error_1 = require("./Error");
 var Constants_1 = require("./Constants");
-var Application_1 = require("./Application");
+var Application = require("./Application");
 var Error_2 = require("./Error");
 exports.Error = Error_2.Error;
 exports.ServerError = Error_2.ServerKind;
@@ -432,6 +432,6 @@ var ApplicationJwtAlgorithm;
 })(ApplicationJwtAlgorithm = exports.ApplicationJwtAlgorithm || (exports.ApplicationJwtAlgorithm = {}));
 var ApplicationAPI;
 (function (ApplicationAPI) {
-    Application_1.createJWTSession;
+    ApplicationAPI.createJWTSession = Application.createJWTSession;
 })(ApplicationAPI = exports.ApplicationAPI || (exports.ApplicationAPI = {}));
 //# sourceMappingURL=DataPeps.js.map

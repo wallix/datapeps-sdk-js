@@ -3,6 +3,7 @@ import * as Long from "long";
 import { api } from "./proto";
 import * as HTTP from "./HTTP";
 import { Resource } from "./Resource";
+import * as Application from "./Application";
 export { Error, ErrorKind, ServerKind as ServerError, SDKKind as SDKError } from "./Error";
 export declare type RegisterTokenStatus = api.RegisterTokenStatus;
 export declare const RegisterTokenStatus: typeof api.RegisterTokenStatus;
@@ -770,4 +771,5 @@ export interface ApplicationAPI {
     getConfig(appID: string): Promise<ApplicationJwtConfig>;
 }
 export declare namespace ApplicationAPI {
+    const createJWTSession: typeof Application.createJWTSession;
 }

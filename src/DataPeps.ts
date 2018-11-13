@@ -10,7 +10,7 @@ import { IdentityX } from "./Identity";
 import { Resource } from "./Resource";
 import { Error, SDKKind } from "./Error";
 import { Constants } from "./Constants";
-import { createJWTSession } from "./Application";
+import * as Application from "./Application";
 export {
   Error,
   ErrorKind,
@@ -1147,5 +1147,5 @@ export interface ApplicationAPI {
 }
 
 export namespace ApplicationAPI {
-  createJWTSession;
+  export const createJWTSession = Application.createJWTSession;
 }

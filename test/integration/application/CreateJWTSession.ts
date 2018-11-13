@@ -8,7 +8,6 @@ import { expect } from "chai";
 import * as mocha from "mocha";
 import * as Long from "long";
 import * as JWT from "jsonwebtoken";
-import { AssertionError } from "assert";
 
 const appASecretKey = "appASecretKey";
 const badAppASecretKey = "badbadnotgood";
@@ -82,7 +81,7 @@ describe("application.createJWTSession", () => {
       session: dataPepsSession,
       app: appSession,
       new: isNew
-    } = await Application.createJWTSession(
+    } = await DataPeps.ApplicationAPI.createJWTSession(
       appADevCtx.app.login,
       appAAliceLogin,
       appAUserSecret,
@@ -99,7 +98,7 @@ describe("application.createJWTSession", () => {
       session: dataPepsSession,
       app: appSession,
       new: isNew
-    } = await Application.createJWTSession(
+    } = await DataPeps.ApplicationAPI.createJWTSession(
       appADevCtx.app.login,
       appABobLogin,
       appAUserSecret,
@@ -119,7 +118,7 @@ describe("application.createJWTSession", () => {
     let mockConnector = new BadMockApplicationConnector();
     let errorOccurred = false;
     try {
-      await Application.createJWTSession(
+      await DataPeps.ApplicationAPI.createJWTSession(
         appADevCtx.app.login,
         appAAliceBadMockLogin,
         appAUserSecret,
@@ -135,7 +134,7 @@ describe("application.createJWTSession", () => {
     let mockConnector = new BadMockApplicationConnector();
     let errorOccurred = false;
     try {
-      await Application.createJWTSession(
+      await DataPeps.ApplicationAPI.createJWTSession(
         appADevCtx.app.login,
         appABobBadMockLogin,
         appAUserSecret,

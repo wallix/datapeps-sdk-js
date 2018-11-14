@@ -1,50 +1,107 @@
 import * as Config from "../../Config";
 import * as Application from "../../../src/Application";
 import * as DataPeps from "../../../src/DataPeps";
-import { init, dev } from "../../Context";
+import { init, dev, devCtx } from "../../Context";
 import * as nacl from "tweetnacl";
 import { expect } from "chai";
 import { ApplicationImpl } from "../../../src/Application";
 import { Uint8Tool } from "../../../src/Tools";
 import * as jwt from "jsonwebtoken";
+import { ITest } from "mocha";
+import { itError } from "../../Utils";
+import { HSKey, RSKey, ESKey } from "../application/Utils";
 
 describe("identity.ApplicationJwt", () => {
-  let initCtx, devCtx;
+  let initCtx, devCtx: devCtx;
 
   beforeEach(async () => {
     initCtx = await init();
     devCtx = await dev(initCtx);
   });
 
-  it(`should configure an application with HS256 algo`, async () => {
-    let config: DataPeps.ApplicationJwtConfig = {
-      key: nacl.randomBytes(128),
-      signAlgorithm: DataPeps.ApplicationJwtAlgorithm.ES256,
-      claimForLogin: "login"
-    };
+  ///////////////////////////////////////////////
+  // Test nominal cases of configuration
+  ///////////////////////////////////////////////
 
-    // Open a session with dev identity
-    let appConfigurator = devCtx.dev.session.Application;
+  function itConfigureOKWithAlgo(
+    key: Uint8Array,
+    signAlgorithm: DataPeps.ApplicationJwtAlgorithm
+  ): ITest {
+    return it(`should configure an application with signAlgorithm(${
+      DataPeps.ApplicationJwtAlgorithm[signAlgorithm]
+    })`, async () => {
+      let putConfig: DataPeps.ApplicationJwtConfig = {
+        key,
+        signAlgorithm,
+        claimForLogin: "login"
+      };
+      await devCtx.dev.session.Application.putConfig(
+        devCtx.app.login,
+        putConfig
+      );
+      let getConfig = await devCtx.dev.session.Application.getConfig(
+        devCtx.app.login
+      );
+      Object.keys(putConfig).forEach(k => {
+        expect(getConfig[k], `config field ${k}`).deep.equals(putConfig[k]);
+      });
+    });
+  }
 
-    try {
-      await appConfigurator.putConfig(devCtx.app.login, config);
-    } catch (err) {
-      console.log(err);
-      expect(err).to.be.null;
-    }
-    try {
-      let storedConfig = await appConfigurator.getConfig(devCtx.app.login);
-      Object.keys(config).forEach(k =>
-        expect(config[k]).deep.equals(storedConfig[k])
-      );
-      Object.keys(storedConfig).forEach(k =>
-        expect(storedConfig[k]).deep.equals(config[k])
-      );
-    } catch (err) {
-      console.log(err);
-      expect(err).to.be.null;
-    }
-  });
+  itConfigureOKWithAlgo(HSKey, DataPeps.ApplicationJwtAlgorithm.HS256);
+  itConfigureOKWithAlgo(HSKey, DataPeps.ApplicationJwtAlgorithm.HS384);
+  itConfigureOKWithAlgo(HSKey, DataPeps.ApplicationJwtAlgorithm.HS512);
+
+  itConfigureOKWithAlgo(RSKey, DataPeps.ApplicationJwtAlgorithm.RS256);
+  itConfigureOKWithAlgo(RSKey, DataPeps.ApplicationJwtAlgorithm.RS384);
+  itConfigureOKWithAlgo(RSKey, DataPeps.ApplicationJwtAlgorithm.RS512);
+
+  itConfigureOKWithAlgo(ESKey, DataPeps.ApplicationJwtAlgorithm.ES256);
+  itConfigureOKWithAlgo(ESKey, DataPeps.ApplicationJwtAlgorithm.ES384);
+  itConfigureOKWithAlgo(ESKey, DataPeps.ApplicationJwtAlgorithm.ES512);
+
+  ///////////////////////////////////////////////
+  // Test some invalid cases of configuration
+  ///////////////////////////////////////////////
+
+  function itConfigureKOWithAlgo(
+    key: Uint8Array,
+    signAlgorithm: DataPeps.ApplicationJwtAlgorithm
+  ): ITest {
+    return itError(
+      `should not configure with a key that is not valid for the signAlgorithm(${
+        DataPeps.ApplicationJwtAlgorithm[signAlgorithm]
+      })`,
+      () =>
+        devCtx.dev.session.Application.putConfig(devCtx.app.login, {
+          key,
+          signAlgorithm,
+          claimForLogin: "login"
+        }),
+      DataPeps.ServerError.ApplicationConfigInvalid
+    );
+  }
+
+  itConfigureKOWithAlgo(
+    new Uint8Array(0),
+    DataPeps.ApplicationJwtAlgorithm.HS256
+  );
+  itConfigureKOWithAlgo(
+    new Uint8Array(0),
+    DataPeps.ApplicationJwtAlgorithm.HS384
+  );
+  itConfigureKOWithAlgo(
+    new Uint8Array(0),
+    DataPeps.ApplicationJwtAlgorithm.HS512
+  );
+
+  itConfigureKOWithAlgo(ESKey, DataPeps.ApplicationJwtAlgorithm.RS256);
+  itConfigureKOWithAlgo(ESKey, DataPeps.ApplicationJwtAlgorithm.RS384);
+  itConfigureKOWithAlgo(ESKey, DataPeps.ApplicationJwtAlgorithm.RS512);
+
+  itConfigureKOWithAlgo(RSKey, DataPeps.ApplicationJwtAlgorithm.ES256);
+  itConfigureKOWithAlgo(RSKey, DataPeps.ApplicationJwtAlgorithm.ES384);
+  itConfigureKOWithAlgo(RSKey, DataPeps.ApplicationJwtAlgorithm.ES512);
 
   it(`should store an application with default value`, async () => {
     let config: DataPeps.ApplicationJwtConfig = {

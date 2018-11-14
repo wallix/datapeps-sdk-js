@@ -12499,6 +12499,96 @@ export namespace api {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of a PayloadApplicationConfigInvalid. */
+    interface IPayloadApplicationConfigInvalid {
+
+        /** PayloadApplicationConfigInvalid hint */
+        hint?: (string|null);
+    }
+
+    /** Represents a PayloadApplicationConfigInvalid. */
+    class PayloadApplicationConfigInvalid implements IPayloadApplicationConfigInvalid {
+
+        /**
+         * Constructs a new PayloadApplicationConfigInvalid.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: api.IPayloadApplicationConfigInvalid);
+
+        /** PayloadApplicationConfigInvalid hint. */
+        public hint: string;
+
+        /**
+         * Creates a new PayloadApplicationConfigInvalid instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PayloadApplicationConfigInvalid instance
+         */
+        public static create(properties?: api.IPayloadApplicationConfigInvalid): api.PayloadApplicationConfigInvalid;
+
+        /**
+         * Encodes the specified PayloadApplicationConfigInvalid message. Does not implicitly {@link api.PayloadApplicationConfigInvalid.verify|verify} messages.
+         * @param message PayloadApplicationConfigInvalid message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: api.IPayloadApplicationConfigInvalid, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PayloadApplicationConfigInvalid message, length delimited. Does not implicitly {@link api.PayloadApplicationConfigInvalid.verify|verify} messages.
+         * @param message PayloadApplicationConfigInvalid message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: api.IPayloadApplicationConfigInvalid, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PayloadApplicationConfigInvalid message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PayloadApplicationConfigInvalid
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.PayloadApplicationConfigInvalid;
+
+        /**
+         * Decodes a PayloadApplicationConfigInvalid message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PayloadApplicationConfigInvalid
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.PayloadApplicationConfigInvalid;
+
+        /**
+         * Verifies a PayloadApplicationConfigInvalid message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PayloadApplicationConfigInvalid message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PayloadApplicationConfigInvalid
+         */
+        public static fromObject(object: { [k: string]: any }): api.PayloadApplicationConfigInvalid;
+
+        /**
+         * Creates a plain object from a PayloadApplicationConfigInvalid message. Also converts values to other types if specified.
+         * @param message PayloadApplicationConfigInvalid
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: api.PayloadApplicationConfigInvalid, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PayloadApplicationConfigInvalid to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of a PayloadApplicationConfigNotFound. */
     interface IPayloadApplicationConfigNotFound {
 

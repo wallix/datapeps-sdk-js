@@ -8,33 +8,92 @@ import { expect } from "chai";
 import * as mocha from "mocha";
 import * as Long from "long";
 import * as JWT from "jsonwebtoken";
+import { HSKey, RSKey, ESKey, ESSecretKey, RSSecretKey } from "./Utils";
 
 describe("application.createUser", () => {
-  let appADevCtx: Context.devCtx;
-  let appASecretKey = "appASecretKey";
-  let appAConfig: DataPeps.ApplicationJwtConfig = {
-    key: Uint8Tool.convert(appASecretKey),
-    signAlgorithm: DataPeps.ApplicationJwtAlgorithm.HS256,
-    claimForLogin: "login"
-  };
-  let appAUserSecret = nacl.randomBytes(8);
-  let appAAliceLoginToken = JWT.sign({ login: "appA.Alice" }, appASecretKey);
+  let ctx: Context.initCtx & Context.devCtx;
 
-  beforeEach(async () => {
+  before(async () => {
     let initCtx = await Context.init();
-    appADevCtx = await Context.dev(initCtx);
-    await appADevCtx.dev.session.Application.putConfig(
-      appADevCtx.app.login,
-      appAConfig
-    );
+    let devCtx = await Context.dev(initCtx);
+    ctx = { ...initCtx, ...devCtx };
   });
 
-  it("An application can create a user", async () => {
-    let createAliceResp = await Application.createUser(
-      appADevCtx.app.login,
-      { jwt: { token: appAAliceLoginToken.toString() } },
-      appAUserSecret
-    );
-    await DataPeps.login(createAliceResp.login, appAUserSecret);
-  });
+  ///////////////////////////////////////////////
+  // Test nominal cases of user creation
+  ///////////////////////////////////////////////
+
+  function itCreateUserOKWithAlgo(
+    key: Uint8Array,
+    signAlgorithm: DataPeps.ApplicationJwtAlgorithm,
+    secretKey?: Uint8Array
+  ) {
+    it(`configure the application with signAlgorith(${
+      DataPeps.ApplicationJwtAlgorithm[signAlgorithm]
+    })`, async () => {
+      await ctx.dev.session.Application.putConfig(ctx.app.login, {
+        key,
+        signAlgorithm,
+        claimForLogin: "login"
+      });
+    });
+
+    it(`create user using with signAlgorith(${
+      DataPeps.ApplicationJwtAlgorithm[signAlgorithm]
+    })`, async () => {
+      let userSecret = "aSoStrongSecret";
+      let token = JWT.sign(
+        { login: `alice${Math.random()}` },
+        new TextDecoder().decode(secretKey === undefined ? key : secretKey),
+        { algorithm: DataPeps.ApplicationJwtAlgorithm[signAlgorithm] }
+      );
+      let createAliceResp = await Application.createUser(
+        ctx.app.login,
+        { jwt: { token: token.toString() } },
+        userSecret
+      );
+      console.log(createAliceResp);
+      await DataPeps.login(createAliceResp.login, userSecret);
+    });
+  }
+
+  itCreateUserOKWithAlgo(HSKey, DataPeps.ApplicationJwtAlgorithm.HS256);
+  itCreateUserOKWithAlgo(HSKey, DataPeps.ApplicationJwtAlgorithm.HS384);
+  itCreateUserOKWithAlgo(HSKey, DataPeps.ApplicationJwtAlgorithm.HS512);
+
+  itCreateUserOKWithAlgo(
+    RSKey,
+    DataPeps.ApplicationJwtAlgorithm.RS256,
+    RSSecretKey
+  );
+  itCreateUserOKWithAlgo(
+    RSKey,
+    DataPeps.ApplicationJwtAlgorithm.RS384,
+    RSSecretKey
+  );
+  itCreateUserOKWithAlgo(
+    RSKey,
+    DataPeps.ApplicationJwtAlgorithm.RS512,
+    RSSecretKey
+  );
+
+  itCreateUserOKWithAlgo(
+    ESKey,
+    DataPeps.ApplicationJwtAlgorithm.ES256,
+    ESSecretKey
+  );
+  itCreateUserOKWithAlgo(
+    ESKey,
+    DataPeps.ApplicationJwtAlgorithm.ES384,
+    ESSecretKey
+  );
+  itCreateUserOKWithAlgo(
+    ESKey,
+    DataPeps.ApplicationJwtAlgorithm.ES512,
+    ESSecretKey
+  );
+
+  ///////////////////////////////////////////////
+  // TODO: Test error cases of user creation
+  ///////////////////////////////////////////////
 });

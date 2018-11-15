@@ -4,11 +4,11 @@ import * as DataPeps from '../../src/DataPeps'
 import * as nacl from 'tweetnacl'
 import { expect } from 'chai'
 
-describe('DelegatedAccess', () => {
+describe('delegatedAccess', () => {
     let seed = Math.floor(Math.random() * 99999)
     let aliceSecret = nacl.randomBytes(128)
     let alice: DataPeps.Identity<Uint8Array> = {
-        login: "alice." + seed + "@peps.test",
+        login: "alice." + seed,
         name: "alice test identity, TS",
         admin: false,
         active: true,
@@ -22,7 +22,7 @@ describe('DelegatedAccess', () => {
     }
     let bobSecret = nacl.randomBytes(128)
     let bob: DataPeps.Identity<Uint8Array> = {
-        login: "bob." + seed + "@peps.test",
+        login: "bob." + seed,
         name: "bob test identity, TS",
         admin: false,
         active: true,
@@ -37,14 +37,14 @@ describe('DelegatedAccess', () => {
 
     let sdk = Config.sdk
     let aliceSession: DataPeps.Session
-    let bobSession: DataPeps.Session    
+    let bobSession: DataPeps.Session
     // Create alice, bob and a group
     before(async () => {
         await Config.init()
         await sdk.register(alice, aliceSecret)
         await sdk.register(bob, bobSecret)
         aliceSession = await sdk.login(alice.login, aliceSecret)
-        bobSession = await sdk.login(bob.login, bobSecret)        
+        bobSession = await sdk.login(bob.login, bobSecret)
     })
 
     let res: DataPeps.Resource<any>
@@ -63,13 +63,13 @@ describe('DelegatedAccess', () => {
 
     let accessRequest: DataPeps.AccessRequest
     it('alice request a delegate access to bob', async () => {
-        accessRequest = await sdk.requestDelegatedAccess(bob.login, (({login, publicKey}) => {
+        accessRequest = await sdk.requestDelegatedAccess(bob.login, (({ login, publicKey }) => {
             let ulogin = new TextEncoder().encode(login)
             let toSign = new Uint8Array(ulogin.byteLength + publicKey.byteLength)
             toSign.set(ulogin, 0)
             toSign.set(publicKey, ulogin.byteLength)
             let sign = aliceSession.sign(toSign)
-            return Promise.resolve({requester: alice.login, sign})
+            return Promise.resolve({ requester: alice.login, sign })
         }))
         expect(accessRequest).to.be.not.null
     })
@@ -95,6 +95,13 @@ describe('DelegatedAccess', () => {
         let result = resource.decrypt(encrypted)
         expect(result).to.be.deep.equals(content)
         expect(resource.payload).to.be.deep.equals(res.payload)
+    })
+
+    it('alice list delegated access', async () => {
+        let accesses = await aliceSession.listDelegatedAccess(aliceSession.login)
+        expect(accesses.length).to.be.equals(1)
+        expect(accesses[0].requester.login).to.be.equals(alice.login)
+        expect(accesses[0].target.login).to.be.equals(bob.login)
     })
 
 })

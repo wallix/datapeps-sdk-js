@@ -41,31 +41,60 @@ var protobufjs = require("protobufjs");
 var proto_1 = require("./proto");
 var Tools_1 = require("./Tools");
 var CryptoFuncs_1 = require("./CryptoFuncs");
-var HTTP_1 = require("./HTTP");
+var HTTP = require("./HTTP");
 var Session_1 = require("./Session");
 var Resource_1 = require("./Resource");
 var Error_1 = require("./Error");
 var Constants_1 = require("./Constants");
+var Application = require("./Application");
 var Error_2 = require("./Error");
 exports.Error = Error_2.Error;
 exports.ServerError = Error_2.ServerKind;
 exports.SDKError = Error_2.SDKKind;
-exports.RegisterTokenStatus = proto_1.types.RegisterTokenStatus;
+exports.RegisterTokenStatus = proto_1.api.RegisterTokenStatus;
 protobufjs.util.Long = Long;
 protobufjs.configure();
-var defaultAPIURL = "https://api.datapeps.com";
-var defaultWSURL = "https://ws.datapeps.com";
-var client = new HTTP_1.Client(defaultAPIURL, defaultWSURL);
-var webSocketURL = defaultWSURL;
+exports.debug = false;
 /**
  * Configure the endpoint of the SDK.
  * @param APIUrl The url of the DataPeps service.
  */
 function configure(APIUrl, WSUrl) {
-    client = new HTTP_1.Client(APIUrl, WSUrl);
-    webSocketURL = WSUrl;
+    HTTP.configure(APIUrl, WSUrl);
 }
 exports.configure = configure;
+function clipID(id, data) {
+    if (data instanceof Uint8Array) {
+        var encapsulated = new Uint8Array(8 + data.length);
+        var lid = Long.fromValue(id);
+        var high = lid.getHighBitsUnsigned();
+        encapsulated[0] = (high >>> 24) & 0xff;
+        encapsulated[1] = (high >>> 16) & 0xff;
+        encapsulated[2] = (high >>> 8) & 0xff;
+        encapsulated[3] = high & 0xff;
+        var low = lid.getLowBitsUnsigned();
+        encapsulated[4] = (low >>> 24) & 0xff;
+        encapsulated[5] = (low >>> 16) & 0xff;
+        encapsulated[6] = (low >>> 8) & 0xff;
+        encapsulated[7] = low & 0xff;
+        encapsulated.set(data, 8);
+        return encapsulated;
+    }
+    return id.toString() + "." + data;
+}
+exports.clipID = clipID;
+function unclipID(data) {
+    if (data instanceof Uint8Array) {
+        var high = (data[0] << 24) + (data[1] << 16) + (data[2] << 8) + data[3];
+        var low = (data[4] << 24) + (data[5] << 16) + (data[6] << 8) + data[7];
+        return { id: new Long(low, high, true), data: data.slice(8) };
+    }
+    var i = data.indexOf(".");
+    var strId = data.slice(0, i);
+    var id = Long.fromString(strId, true);
+    return { id: id, data: data.slice(i + 1) };
+}
+exports.unclipID = unclipID;
 /**
  * Redefine the AccessRequest.openResolver() default function
  * @param params An object containing the new AccessRequest.openResolver() function
@@ -74,8 +103,8 @@ function configureAccessRequestResolver(params) {
     Session_1.AccessRequestImpl.prototype._openConfigured = params.open;
 }
 exports.configureAccessRequestResolver = configureAccessRequestResolver;
-var bs58 = require('bs58');
-var sha = require('sha.js');
+var bs58 = require("bs58");
+var sha = require("sha.js");
 /**
  * Returns the hash of an IdentityPublicKey.
  * The hash is computed thanks a sha2156 of the concat of box and sign key.
@@ -123,7 +152,9 @@ function register(identity, secret) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, _register("/api/v4/register", identity, secret, function (r) { return proto_1.types.IdentityRegisterRequest.encode(r).finish(); })];
+                case 0: return [4 /*yield*/, _register("/api/v4/register", identity, secret, function (r) {
+                        return proto_1.api.IdentityRegisterRequest.encode(r).finish();
+                    })];
                 case 1: return [2 /*return*/, _a.sent()];
             }
         });
@@ -147,7 +178,7 @@ function registerWithToken(token, identity, secret) {
             switch (_a.label) {
                 case 0:
                     btoken = token instanceof Uint8Array ? Tools_1.Base64.encode(token) : token;
-                    return [4 /*yield*/, _register("/api/v4/register/link/" + encodeURIComponent(btoken), identity, secret, function (r) { return proto_1.types.RegisterPostLinkTokenRequest.encode(r).finish(); })];
+                    return [4 /*yield*/, _register("/api/v4/register/link/" + encodeURIComponent(btoken), identity, secret, function (r) { return proto_1.api.RegisterPostLinkTokenRequest.encode(r).finish(); })];
                 case 1: return [2 /*return*/, _a.sent()];
             }
         });
@@ -160,10 +191,14 @@ function _register(path, identity, secret, request) {
         return __generator(this, function (_a) {
             encryption = new CryptoFuncs_1.Encryption();
             encryption.generate(Tools_1.Uint8Tool.convert(secret), null);
-            return [2 /*return*/, client.doRequest({
-                    method: "POST", code: 201, path: path,
+            return [2 /*return*/, HTTP.client.doRequest({
+                    method: "POST",
+                    code: 201,
+                    path: path,
                     request: function () { return request({ identity: identity, encryption: encryption }); },
-                    before: function (x, b) { return x.setRequestHeader("content-type", "application/x-protobuf"); }
+                    before: function (x, b) {
+                        return x.setRequestHeader("content-type", "application/x-protobuf");
+                    }
                 })];
         });
     });
@@ -189,23 +224,30 @@ function requestDelegatedAccess(login, sign) {
                 case 1:
                     _a = _b.sent(), box = _a.box, version = _a.version;
                     encryptedKey = encrypt.encrypt(box, keypair.secretKey);
-                    return [4 /*yield*/, sign({ login: login, publicKey: keypair.publicKey })];
+                    return [4 /*yield*/, sign({
+                            login: login,
+                            publicKey: keypair.publicKey
+                        })];
                 case 2:
                     signResult = _b.sent();
-                    return [4 /*yield*/, client.doRequest({
-                            method: "POST", code: 201,
+                    return [4 /*yield*/, HTTP.client.doRequest({
+                            method: "POST",
+                            code: 201,
                             path: "/api/v4/delegatedAccess",
-                            request: function () { return proto_1.types.DelegatedPostRequest.encode({
-                                publicKey: keypair.publicKey,
-                                sign: signResult.sign,
-                                requester: signResult.requester,
-                                sharing: {
-                                    encryptedKey: encryptedKey.message,
-                                    nonce: encryptedKey.nonce,
-                                    login: login, version: version
-                                },
-                            }).finish(); },
-                            response: proto_1.types.DelegatedPostResponse.decode,
+                            request: function () {
+                                return proto_1.api.DelegatedPostRequest.encode({
+                                    publicKey: keypair.publicKey,
+                                    sign: signResult.sign,
+                                    requester: signResult.requester,
+                                    sharing: {
+                                        encryptedKey: encryptedKey.message,
+                                        nonce: encryptedKey.nonce,
+                                        login: login,
+                                        version: version
+                                    }
+                                }).finish();
+                            },
+                            response: proto_1.api.DelegatedPostResponse.decode,
                             before: function (x, b) {
                                 x.setRequestHeader("content-type", "application/x-protobuf");
                             }
@@ -213,7 +255,7 @@ function requestDelegatedAccess(login, sign) {
                 case 3:
                     id = (_b.sent()).id;
                     resource = new Resource_1.Resource(0, null, null, keypair, null);
-                    return [2 /*return*/, new Session_1.AccessRequestImpl(id, login, client, resource)];
+                    return [2 /*return*/, new Session_1.AccessRequestImpl(id, login, HTTP.client, resource)];
             }
         });
     });
@@ -231,11 +273,14 @@ function getLatestPublicKeys(logins) {
         var publicKeys;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, client.doRequest({
-                        method: "POST", code: 200,
+                case 0: return [4 /*yield*/, HTTP.client.doRequest({
+                        method: "POST",
+                        code: 200,
                         path: "/api/v4/identities/latestPublicKeys",
-                        request: function () { return proto_1.types.IdentityGetLatestPublicKeysRequest.encode({ logins: logins }).finish(); },
-                        response: proto_1.types.IdentityGetLatestPublicKeysResponse.decode,
+                        request: function () {
+                            return proto_1.api.IdentityGetLatestPublicKeysRequest.encode({ logins: logins }).finish();
+                        },
+                        response: proto_1.api.IdentityGetLatestPublicKeysResponse.decode,
                         before: function (x, b) {
                             x.setRequestHeader("content-type", "application/x-protobuf");
                         }
@@ -282,13 +327,18 @@ function sendRegisterLink(email) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, client.doRequest({
-                        method: "POST", code: 201,
+                case 0: return [4 /*yield*/, HTTP.client.doRequest({
+                        method: "POST",
+                        code: 201,
                         path: "/api/v4/register/link",
-                        request: function () { return proto_1.types.RegisterLinkRequest.encode({
-                            email: email
-                        }).finish(); },
-                        before: function (x, b) { return x.setRequestHeader("content-type", "application/x-protobuf"); }
+                        request: function () {
+                            return proto_1.api.RegisterLinkRequest.encode({
+                                email: email
+                            }).finish();
+                        },
+                        before: function (x, b) {
+                            return x.setRequestHeader("content-type", "application/x-protobuf");
+                        }
                     })];
                 case 1: return [2 /*return*/, _a.sent()];
             }
@@ -296,6 +346,12 @@ function sendRegisterLink(email) {
     });
 }
 exports.sendRegisterLink = sendRegisterLink;
+function compareID(a, b) {
+    if (Long.isLong(a))
+        return a.compare(b);
+    return new Long(a).compare(b);
+}
+exports.compareID = compareID;
 /**
  * Create a new session.
  * @param login The login of the identity to login with.
@@ -310,7 +366,7 @@ function login(login, secret, options) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, Session_1._login(client, login, function (e, c) {
+                case 0: return [4 /*yield*/, Session_1._login(HTTP.client, login, function (e, c) {
                         var encryption = new CryptoFuncs_1.Encryption(e);
                         encryption.recover(Tools_1.Uint8Tool.convert(secret), c);
                         return encryption;
@@ -331,8 +387,7 @@ var IdentityAccessKind;
 configureAccessRequestResolver({
     open: function (id, login) {
         // check if running in browser
-        if (typeof window == 'undefined'
-            || typeof window.document == 'undefined') {
+        if (typeof window == "undefined" || typeof window.document == "undefined") {
             throw new Error_1.Error({
                 kind: Error_1.SDKKind.SDKInternalError,
                 payload: {
@@ -341,11 +396,13 @@ configureAccessRequestResolver({
             });
         }
         var resolverUrl = Constants_1.Constants.Session.RESOLVER_URL +
-            "?id=" + encodeURIComponent(id.toString()) +
-            "&login=" + encodeURIComponent(login);
+            "?id=" +
+            encodeURIComponent(id.toString()) +
+            "&login=" +
+            encodeURIComponent(login);
         var features = Constants_1.Constants.Session.RESOLVER_WINDOW_DEFAULT_FEATURES;
         return window.open(resolverUrl, "", features);
-    },
+    }
 });
 /////////////////////////////////////////////////
 // Resource
@@ -357,5 +414,24 @@ var ResourceType;
 (function (ResourceType) {
     ResourceType[ResourceType["ANONYMOUS"] = 0] = "ANONYMOUS";
 })(ResourceType = exports.ResourceType || (exports.ResourceType = {}));
-exports.ResourceAccessReason = proto_1.types.ResourceAccessReason;
+exports.ResourceAccessReason = proto_1.api.ResourceAccessReason;
+/////////////////////////////////////////////////
+// Application
+/////////////////////////////////////////////////
+var ApplicationJwtAlgorithm;
+(function (ApplicationJwtAlgorithm) {
+    ApplicationJwtAlgorithm[ApplicationJwtAlgorithm["HS256"] = 0] = "HS256";
+    ApplicationJwtAlgorithm[ApplicationJwtAlgorithm["HS384"] = 1] = "HS384";
+    ApplicationJwtAlgorithm[ApplicationJwtAlgorithm["HS512"] = 2] = "HS512";
+    ApplicationJwtAlgorithm[ApplicationJwtAlgorithm["RS256"] = 3] = "RS256";
+    ApplicationJwtAlgorithm[ApplicationJwtAlgorithm["RS384"] = 4] = "RS384";
+    ApplicationJwtAlgorithm[ApplicationJwtAlgorithm["RS512"] = 5] = "RS512";
+    ApplicationJwtAlgorithm[ApplicationJwtAlgorithm["ES256"] = 6] = "ES256";
+    ApplicationJwtAlgorithm[ApplicationJwtAlgorithm["ES384"] = 7] = "ES384";
+    ApplicationJwtAlgorithm[ApplicationJwtAlgorithm["ES512"] = 8] = "ES512";
+})(ApplicationJwtAlgorithm = exports.ApplicationJwtAlgorithm || (exports.ApplicationJwtAlgorithm = {}));
+var ApplicationAPI;
+(function (ApplicationAPI) {
+    ApplicationAPI.createJWTSession = Application.createJWTSession;
+})(ApplicationAPI = exports.ApplicationAPI || (exports.ApplicationAPI = {}));
 //# sourceMappingURL=DataPeps.js.map

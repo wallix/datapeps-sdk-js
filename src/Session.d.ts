@@ -1,19 +1,19 @@
-import { types } from './proto';
-import { ID, Session, SessionRequest, PublicKeysCache, TrustPolicy, AccessRequestResolver } from './DataPeps';
-import { IdentityPublicKey, IdentityPublicKeyID, IdentityAccessKind } from './DataPeps';
-import { AccessRequest } from './DataPeps';
-import { Resource } from './DataPeps';
-import { Client } from './HTTP';
-import { ResolvedCipher, Encryption } from './CryptoFuncs';
-import { IdentityImpl } from './Identity';
-import { ResourceImpl } from './Resource';
-import { AdminImpl } from './Admin';
+import { api } from "./proto";
+import { ID, Session, SessionRequest, PublicKeysCache, TrustPolicy, AccessRequestResolver, DelegatedAccess, ApplicationAPI } from "./DataPeps";
+import { IdentityPublicKey, IdentityPublicKeyID, IdentityAccessKind } from "./DataPeps";
+import { AccessRequest } from "./DataPeps";
+import { Resource } from "./DataPeps";
+import { Client } from "./HTTP";
+import { ResolvedCipher, Encryption } from "./CryptoFuncs";
+import { IdentityImpl } from "./Identity";
+import { ResourceImpl } from "./Resource";
+import { AdminImpl } from "./Admin";
 export interface AssumeParams {
-    key: types.IDelegatedKeys;
+    key: api.IDelegatedKeys;
     kind: IdentityAccessKind;
 }
-export declare function _login(client: Client, login: string, recover: (e: types.IdentityEncryption, c: types.IdentityPublicKey) => Encryption, options?: {
-    saltKind?: types.SessionSaltKind;
+export declare function _login(client: Client, login: string, recover: (e: api.IdentityEncryption, c: api.IdentityPublicKey) => Encryption, options?: {
+    saltKind?: api.SessionSaltKind;
 }): Promise<Session>;
 export declare class SessionImpl implements Session {
     APIHost: string;
@@ -22,13 +22,14 @@ export declare class SessionImpl implements Session {
     encryption: Encryption;
     client: Client;
     token: string;
+    Application: ApplicationAPI;
     private salt;
     private saltKind;
     private deltaSaltTime;
     private pkCache;
     private trustPolicy;
     private assumeKeyCache;
-    constructor(login: string, token: Uint8Array, salt: Uint8Array, saltKind: types.SessionSaltKind, encryption: Encryption, client: Client);
+    constructor(login: string, token: Uint8Array, salt: Uint8Array, saltKind: api.SessionSaltKind, encryption: Encryption, client: Client);
     Identity: IdentityImpl;
     Resource: ResourceImpl;
     Admin: AdminImpl;
@@ -44,6 +45,11 @@ export declare class SessionImpl implements Session {
     setTrustPolicy(policy: TrustPolicy): void;
     setPublicKeyCache(cache: PublicKeysCache): void;
     getSecretToken(login: string): Promise<string>;
+    listDelegatedAccess(login: string, options?: {
+        limit?: number;
+        sinceID?: ID;
+        maxID?: ID;
+    }): Promise<DelegatedAccess[]>;
     sign(message: Uint8Array): Uint8Array;
     doRequest<T>(r: SessionRequest<T>): Promise<T>;
     doProtoRequest<T>(r: SessionRequest<T>): Promise<T>;
@@ -54,14 +60,14 @@ export declare class SessionImpl implements Session {
     private beforeRequest(request, body, assume?);
     getSalt(): Uint8Array;
     private unStale();
-    resolveCipherList(ciphers: types.ICipher[]): Promise<ResolvedCipher[]>;
-    decryptCipherList(type: types.ResourceType, ciphers: types.ICipher[], secretKey?: Uint8Array): Promise<Uint8Array>;
+    resolveCipherList(ciphers: api.ICipher[]): Promise<ResolvedCipher[]>;
+    decryptCipherList(type: api.ResourceType, ciphers: api.ICipher[], secretKey?: Uint8Array): Promise<Uint8Array>;
     getAssumeParams(assume?: {
         login: string;
         kind: IdentityAccessKind;
     }): Promise<AssumeParams>;
     private getKeys(login);
-    fetchKeys(login: string, version?: number): Promise<types.IDelegatedKeys>;
+    fetchKeys(login: string, version?: number): Promise<api.IDelegatedKeys>;
     clearAssumeParams(login: string): void;
 }
 export declare class AccessRequestImpl implements AccessRequest {

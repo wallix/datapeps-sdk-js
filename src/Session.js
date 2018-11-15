@@ -46,24 +46,26 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var nacl = require("tweetnacl");
 var proto_1 = require("./proto");
 var DataPeps_1 = require("./DataPeps");
+var DataPeps_2 = require("./DataPeps");
 var Error_1 = require("./Error");
 var Tools_1 = require("./Tools");
 var CryptoFuncs_1 = require("./CryptoFuncs");
 var Identity_1 = require("./Identity");
 var Resource_1 = require("./Resource");
 var Admin_1 = require("./Admin");
+var Application_1 = require("./Application");
 var MemoryPublicKeyCache = /** @class */ (function () {
     function MemoryPublicKeyCache() {
         this.cache = {};
     }
     MemoryPublicKeyCache.prototype.latest = function (login) {
         var keys = this.cache[login];
-        return (keys == null || keys.length == 0) ? null : keys[keys.length - 1];
+        return keys == null || keys.length == 0 ? null : keys[keys.length - 1];
     };
     MemoryPublicKeyCache.prototype.get = function (_a) {
         var login = _a.login, version = _a.version;
         var keys = this.cache[login];
-        return (keys == null || keys.length == 0) ? null : keys[version];
+        return keys == null || keys.length == 0 ? null : keys[version];
     };
     MemoryPublicKeyCache.prototype.set = function (_a, pk) {
         var login = _a.login, version = _a.version;
@@ -85,13 +87,17 @@ var TrustOnFirstUse = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         if (pk.version == 1) {
-                            console.log("TrustFirstUse", pk.login, Tools_1.Base64.encode(pk.sign), Tools_1.Base64.encode(pk.box), " mandate by ", mandate);
+                            if (DataPeps_1.debug) {
+                                console.log("TrustFirstUse", pk.login, Tools_1.Base64.encode(pk.sign), Tools_1.Base64.encode(pk.box), " mandate by ", mandate);
+                            }
                             return [2 /*return*/, Promise.resolve()];
                         }
                         return [4 /*yield*/, this.session.getPublicKey(mandate)];
                     case 1:
                         _a.sent();
-                        console.log("TrustByMandate", pk.login, pk.version, Tools_1.Base64.encode(pk.sign), Tools_1.Base64.encode(pk.box), " mandate by ", mandate);
+                        if (DataPeps_1.debug) {
+                            console.log("TrustByMandate", pk.login, pk.version, Tools_1.Base64.encode(pk.sign), Tools_1.Base64.encode(pk.box), " mandate by ", mandate);
+                        }
                         return [2 /*return*/, Promise.resolve()];
                 }
             });
@@ -115,46 +121,54 @@ function loginWithKeys(client, keys) {
 }
 function _login(client, login, recover, options) {
     return __awaiter(this, void 0, void 0, function () {
-        var saltKind, challengeRequest, createResponse, creator, encryption, token, salt, resolveResponse;
+        var saltKind, createResponse, encryption, token, salt, resolveResponse;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    saltKind = options != null && options.saltKind != null ? options.saltKind : proto_1.types.SessionSaltKind.TIME;
-                    challengeRequest = proto_1.types.SessionCreateChallengeRequest.create({
-                        login: login,
-                        saltKind: saltKind
-                    });
+                    saltKind = options != null && options.saltKind != null
+                        ? options.saltKind
+                        : proto_1.api.SessionSaltKind.TIME;
                     return [4 /*yield*/, client.doRequest({
-                            method: "POST", code: 201,
+                            method: "POST",
+                            code: 201,
                             path: "/api/v4/session/challenge/create",
-                            request: function () { return proto_1.types.SessionCreateChallengeRequest.encode({
-                                login: login,
-                                saltKind: saltKind,
-                            }).finish(); },
-                            response: proto_1.types.SessionCreateChallengeResponse.decode,
-                            before: function (x, b) { return x.setRequestHeader("content-type", "application/x-protobuf"); }
+                            request: function () {
+                                return proto_1.api.SessionCreateChallengeRequest.encode({
+                                    login: login,
+                                    saltKind: saltKind
+                                }).finish();
+                            },
+                            response: proto_1.api.SessionCreateChallengeResponse.decode,
+                            before: function (x, b) {
+                                return x.setRequestHeader("content-type", "application/x-protobuf");
+                            }
                         })];
                 case 1:
                     createResponse = _a.sent();
-                    creator = proto_1.types.IdentityPublicKey.create(createResponse.creator);
-                    encryption = recover(proto_1.types.IdentityEncryption.create(createResponse.encryption), proto_1.types.IdentityPublicKey.create(createResponse.creator));
+                    encryption = recover(proto_1.api.IdentityEncryption.create(createResponse.encryption), proto_1.api.IdentityPublicKey.create(createResponse.creator));
                     token = createResponse.token;
                     salt = createResponse.salt;
                     return [4 /*yield*/, client.doRequest({
-                            method: "POST", code: 200,
+                            method: "POST",
+                            code: 200,
                             path: "/api/v4/session/challenge/resolve",
-                            request: function () { return proto_1.types.SessionResolveChallengeRequest.encode({
-                                token: token, salt: salt,
-                                signature: encryption.sign(salt),
-                            }).finish(); },
-                            response: proto_1.types.SessionResolveChallengeResponse.decode,
-                            before: function (x, b) { return x.setRequestHeader("content-type", "application/x-protobuf"); }
+                            request: function () {
+                                return proto_1.api.SessionResolveChallengeRequest.encode({
+                                    token: token,
+                                    salt: salt,
+                                    signature: encryption.sign(salt)
+                                }).finish();
+                            },
+                            response: proto_1.api.SessionResolveChallengeResponse.decode,
+                            before: function (x, b) {
+                                return x.setRequestHeader("content-type", "application/x-protobuf");
+                            }
                         })];
                 case 2:
                     resolveResponse = _a.sent();
                     saltKind = createResponse.saltKind;
                     salt = createResponse.salt;
-                    return [2 /*return*/, new SessionImpl(login, token, salt, saltKind, encryption, client)];
+                    return [2 /*return*/, new SessionImpl(resolveResponse.login, token, salt, saltKind, encryption, client)];
             }
         });
     });
@@ -173,6 +187,7 @@ var SessionImpl = /** @class */ (function () {
         this.client = client;
         this.pkCache = new MemoryPublicKeyCache();
         this.trustPolicy = new TrustOnFirstUse(this);
+        this.Application = new Application_1.ApplicationImpl(this);
         this.assumeKeyCache = {};
         this.afterRequestHandleSalt();
     }
@@ -181,8 +196,9 @@ var SessionImpl = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.doProtoRequest({
-                            method: "PUT", code: 200,
-                            path: "/api/v4/session/close",
+                            method: "PUT",
+                            code: 200,
+                            path: "/api/v4/session/close"
                         })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
@@ -210,7 +226,7 @@ var SessionImpl = /** @class */ (function () {
             login: this.login,
             version: this.encryption.version,
             sign: p.signEncrypted.publicKey,
-            box: p.boxEncrypted.publicKey,
+            box: p.boxEncrypted.publicKey
         };
     };
     SessionImpl.prototype.getLatestPublicKey = function (login) {
@@ -233,15 +249,18 @@ var SessionImpl = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.doProtoRequest({
-                            method: "POST", code: 200,
+                            method: "POST",
+                            code: 200,
                             path: "/api/v4/identities/latestPublicChains",
-                            request: function () { return proto_1.types.IdentityGetLatestPublicChainsRequest.encode({
-                                ids: logins.map(function (login) {
-                                    var pk = _this.pkCache.latest(login);
-                                    return { login: login, since: pk == null ? 0 : pk.version };
-                                })
-                            }).finish(); },
-                            response: proto_1.types.IdentityGetLatestPublicChainsResponse.decode,
+                            request: function () {
+                                return proto_1.api.IdentityGetLatestPublicChainsRequest.encode({
+                                    ids: logins.map(function (login) {
+                                        var pk = _this.pkCache.latest(login);
+                                        return { login: login, since: pk == null ? 0 : pk.version };
+                                    })
+                                }).finish();
+                            },
+                            response: proto_1.api.IdentityGetLatestPublicChainsResponse.decode
                         })];
                     case 1:
                         chains = (_a.sent()).chains;
@@ -288,17 +307,20 @@ var SessionImpl = /** @class */ (function () {
                             return [2 /*return*/, ids.map(function (id) { return _this.pkCache.get(id); })];
                         }
                         return [4 /*yield*/, this.doProtoRequest({
-                                method: "POST", code: 200,
+                                method: "POST",
+                                code: 200,
                                 path: "/api/v4/identities/publicChains",
-                                request: function () { return proto_1.types.IdentityGetPublicChainsRequest.encode({
-                                    ids: Object.keys(requestIds).map(function (login) {
-                                        var pk = _this.pkCache.latest(login);
-                                        var since = pk == null ? 0 : pk.version;
-                                        var version = requestIds[login];
-                                        return { id: { login: login, version: version }, since: since };
-                                    })
-                                }).finish(); },
-                                response: proto_1.types.IdentityGetPublicChainsResponse.decode
+                                request: function () {
+                                    return proto_1.api.IdentityGetPublicChainsRequest.encode({
+                                        ids: Object.keys(requestIds).map(function (login) {
+                                            var pk = _this.pkCache.latest(login);
+                                            var since = pk == null ? 0 : pk.version;
+                                            var version = requestIds[login];
+                                            return { id: { login: login, version: version }, since: since };
+                                        })
+                                    }).finish();
+                                },
+                                response: proto_1.api.IdentityGetPublicChainsResponse.decode
                             })];
                     case 1:
                         chains = (_a.sent()).chains;
@@ -316,22 +338,23 @@ var SessionImpl = /** @class */ (function () {
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0: return [4 /*yield*/, this.doProtoRequest({
-                            method: "GET", code: 200,
+                            method: "GET",
+                            code: 200,
                             path: "/api/v4/delegatedAccess/" + requestId.toString(),
-                            response: proto_1.types.DelegatedGetResponse.decode,
+                            response: proto_1.api.DelegatedGetResponse.decode
                         })];
                     case 1:
                         _a = _b.sent(), sign = _a.sign, resource = _a.resource;
-                        return [4 /*yield*/, Resource_1.makeResourceFromResponse(resource, proto_1.types.ResourceType.ANONYMOUS, this, null, null)
-                            // Verify requester's signature
-                        ];
+                        return [4 /*yield*/, Resource_1.makeResourceFromResponse(resource, proto_1.api.ResourceType.ANONYMOUS, this, null, null)];
                     case 2:
                         r = _b.sent();
                         msg = Tools_1.Uint8Tool.concat(new TextEncoder().encode(this.login), r.publicKey());
                         if (!nacl.sign.detached.verify(msg, sign, r.creator.sign)) {
                             throw new Error_1.Error({
-                                kind: Error_1.SDKKind.IdentitySignChainInvalid, payload: {
-                                    requestId: requestId, requester: r.creator,
+                                kind: Error_1.SDKKind.IdentitySignChainInvalid,
+                                payload: {
+                                    requestId: requestId,
+                                    requester: r.creator
                                 }
                             });
                         }
@@ -368,6 +391,28 @@ var SessionImpl = /** @class */ (function () {
                     case 1:
                         keys = _a.sent();
                         return [2 /*return*/, Tools_1.Base64.encode(keys.signKey)];
+                }
+            });
+        });
+    };
+    SessionImpl.prototype.listDelegatedAccess = function (login, options) {
+        return __awaiter(this, void 0, void 0, function () {
+            var accesses;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.doProtoRequest({
+                            method: "GET",
+                            code: 200,
+                            path: "/api/v4/delegatedAccesses",
+                            response: proto_1.api.DelegatedAccessListResponse.decode,
+                            assume: { login: login, kind: DataPeps_2.IdentityAccessKind.READ },
+                            params: options
+                        })];
+                    case 1:
+                        accesses = (_a.sent()).accesses;
+                        return [2 /*return*/, accesses.map(function (access) {
+                                return (__assign({}, access, { resolved: access.resolved, created: new Date(access.created * 1000) }));
+                            })];
                 }
             });
         });
@@ -424,7 +469,10 @@ var SessionImpl = /** @class */ (function () {
                         this.clearAssumeParams(r.assume.login);
                         return [2 /*return*/, this.doRequest(r)];
                     case 10:
-                        this.afterRequest(xhr);
+                        if (xhr != null) {
+                            // Ensure that request was done before validating salt
+                            this.afterRequest(xhr);
+                        }
                         throw err_1;
                     case 11: return [2 /*return*/];
                 }
@@ -464,6 +512,8 @@ var SessionImpl = /** @class */ (function () {
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
+                        // work on a duplicate of the chains parameter as shift() change the object
+                        chains = chains.slice();
                         firstVersion = version - chains.length;
                         if (firstVersion < 0) {
                             throw new Error_1.Error({
@@ -482,7 +532,8 @@ var SessionImpl = /** @class */ (function () {
                         this.pkCache.set({ login: login, version: 1 }, pk);
                         return [3 /*break*/, 3];
                     case 2:
-                        if ((!Tools_1.Uint8Tool.equals(pk.box, chains[0].box) || !Tools_1.Uint8Tool.equals(pk.sign, chains[0].sign))) {
+                        if (!Tools_1.Uint8Tool.equals(pk.box, chains[0].box) ||
+                            !Tools_1.Uint8Tool.equals(pk.sign, chains[0].sign)) {
                             throw new Error_1.Error({
                                 kind: Error_1.SDKKind.IdentitySignChainInvalid,
                                 payload: { login: login, version: 1 }
@@ -538,14 +589,20 @@ var SessionImpl = /** @class */ (function () {
         if (salt == null) {
             throw new Error_1.Error({
                 kind: Error_1.SDKKind.ProtocolError,
-                payload: { missing: "x-peps-salt", headers: request.getAllResponseHeaders() }
+                payload: {
+                    missing: "x-peps-salt",
+                    headers: request.getAllResponseHeaders()
+                }
             });
         }
         this.salt = Tools_1.Base64.decode(salt);
         this.afterRequestHandleSalt();
     };
     SessionImpl.prototype.afterRequestHandleSalt = function () {
-        var secondsServer = (this.salt[0] << 24) + (this.salt[1] << 16) + (this.salt[2] << 8) + this.salt[3];
+        var secondsServer = (this.salt[0] << 24) +
+            (this.salt[1] << 16) +
+            (this.salt[2] << 8) +
+            this.salt[3];
         var secondsLocal = Math.floor(Date.now() / 1000);
         this.deltaSaltTime = secondsServer - secondsLocal;
     };
@@ -560,28 +617,32 @@ var SessionImpl = /** @class */ (function () {
         }
         request.setRequestHeader("x-peps-assume-access", assume.kind.toString());
         request.setRequestHeader("x-peps-assume-identity", assume.key.login + "/" + assume.key.version);
-        var key = assume.kind == DataPeps_1.IdentityAccessKind.READ ? assume.key.readKey : assume.key.signKey;
+        var key = assume.kind == DataPeps_2.IdentityAccessKind.READ
+            ? assume.key.readKey
+            : assume.key.signKey;
         request.setRequestHeader("x-peps-assume-signature", Tools_1.Base64.encode(nacl.sign.detached(tosign, key)));
     };
     SessionImpl.prototype.getSalt = function () {
         switch (this.saltKind) {
-            case proto_1.types.SessionSaltKind.RAND: return this.salt;
-            case proto_1.types.SessionSaltKind.TIME:
+            case proto_1.api.SessionSaltKind.RAND:
+                return this.salt;
+            case proto_1.api.SessionSaltKind.TIME:
                 var seconds = Math.floor(Date.now() / 1000) + this.deltaSaltTime;
                 var salt = new Uint8Array(4);
-                salt[0] = (seconds >>> 24) & 0xFF;
-                salt[1] = (seconds >>> 16) & 0xFF;
-                salt[2] = (seconds >>> 8) & 0xFF;
-                salt[3] = seconds & 0xFF;
+                salt[0] = (seconds >>> 24) & 0xff;
+                salt[1] = (seconds >>> 16) & 0xff;
+                salt[2] = (seconds >>> 8) & 0xff;
+                salt[3] = seconds & 0xff;
                 return salt;
         }
     };
     SessionImpl.prototype.unStale = function () {
         var _this = this;
         return this.doProtoRequest({
-            method: "PUT", code: 200,
+            method: "PUT",
+            code: 200,
             path: "/api/v4/session/unStale",
-            response: proto_1.types.SessionUnStaleResponse.decode,
+            response: proto_1.api.SessionUnStaleResponse.decode
         }).then(function (_a) {
             var encryption = _a.encryption, creator = _a.creator;
             _this.clearAssumeParams(_this.login);
@@ -623,7 +684,9 @@ var SessionImpl = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.resolveCipherList(ciphers)];
                     case 1:
                         resolvedCiphers = _a.sent();
-                        return [2 /*return*/, this.encryption.decrypt(type, secretKey).decryptList(resolvedCiphers)];
+                        return [2 /*return*/, this.encryption
+                                .decrypt(type, secretKey)
+                                .decryptList(resolvedCiphers)];
                 }
             });
         });
@@ -670,12 +733,20 @@ var SessionImpl = /** @class */ (function () {
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        if (this.login == login && (version == undefined || this.encryption.version == version)) {
+                        if (this.login == login &&
+                            (version == undefined || this.encryption.version == version)) {
                             sharingKey_1 = this.encryption.sharingKeyPair.secretKey;
                             signKey_1 = this.encryption.signKeyPair.secretKey;
                             boxKey_1 = this.encryption.boxKeyPair.secretKey;
                             readKey_1 = this.encryption.readKeyPair.secretKey;
-                            return [2 /*return*/, ({ sharingKey: sharingKey_1, signKey: signKey_1, boxKey: boxKey_1, readKey: readKey_1, version: this.encryption.version, login: login })];
+                            return [2 /*return*/, {
+                                    sharingKey: sharingKey_1,
+                                    signKey: signKey_1,
+                                    boxKey: boxKey_1,
+                                    readKey: readKey_1,
+                                    version: this.encryption.version,
+                                    login: login
+                                }];
                         }
                         if (version != undefined) {
                             params = { version: version.toString() };
@@ -684,26 +755,33 @@ var SessionImpl = /** @class */ (function () {
                                 method: "GET",
                                 path: "/api/v4/identity/" + encodeURI(login) + "/keys",
                                 code: 200,
-                                response: proto_1.types.IdentityGetKeysResponse.decode,
-                                params: params,
+                                response: proto_1.api.IdentityGetKeysResponse.decode,
+                                params: params
                             })];
                     case 1:
                         _a = _c.sent(), sharingKey = _a.sharingKey, signKey = _a.signKey, boxKey = _a.boxKey, readKey = _a.readKey, identityVersion = _a.version;
-                        return [4 /*yield*/, this.decryptCipherList(proto_1.types.ResourceType.SES, sharingKey)];
+                        return [4 /*yield*/, this.decryptCipherList(proto_1.api.ResourceType.SES, sharingKey)];
                     case 2:
                         decryptedSharingKey = _c.sent();
                         return [4 /*yield*/, this.resolveCipherList([signKey, boxKey, readKey])];
                     case 3:
                         _b = _c.sent(), cipherSignkey = _b[0], cipherBoxKey = _b[1], cipherReadKey = _b[2];
-                        decryptedSignKey = this.encryption.decrypt(proto_1.types.ResourceType.SES, decryptedSharingKey).decrypt(cipherSignkey);
-                        decryptedBoxKey = this.encryption.decrypt(proto_1.types.ResourceType.SES, decryptedSharingKey).decrypt(cipherBoxKey);
-                        decryptedReadKey = this.encryption.decrypt(proto_1.types.ResourceType.SES, decryptedBoxKey).decrypt(cipherReadKey);
+                        decryptedSignKey = this.encryption
+                            .decrypt(proto_1.api.ResourceType.SES, decryptedSharingKey)
+                            .decrypt(cipherSignkey);
+                        decryptedBoxKey = this.encryption
+                            .decrypt(proto_1.api.ResourceType.SES, decryptedSharingKey)
+                            .decrypt(cipherBoxKey);
+                        decryptedReadKey = this.encryption
+                            .decrypt(proto_1.api.ResourceType.SES, decryptedBoxKey)
+                            .decrypt(cipherReadKey);
                         return [2 /*return*/, {
                                 sharingKey: decryptedSharingKey,
                                 signKey: decryptedSignKey,
                                 boxKey: decryptedBoxKey,
                                 readKey: decryptedReadKey,
-                                version: identityVersion, login: login
+                                version: identityVersion,
+                                login: login
                             }];
                 }
             });
@@ -733,14 +811,17 @@ var AccessRequestImpl = /** @class */ (function () {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
                         return [4 /*yield*/, this.client.doRequest({
-                                method: "GET", code: 200,
+                                method: "GET",
+                                code: 200,
                                 path: "/api/v4/delegatedAccess/" + this.id.toString() + "/keys",
-                                response: proto_1.types.DelegatedGetKeysResponse.decode,
-                                before: function (x, b) { return x.setRequestHeader("content-type", "application/x-protobuf"); }
+                                response: proto_1.api.DelegatedGetKeysResponse.decode,
+                                before: function (x, b) {
+                                    return x.setRequestHeader("content-type", "application/x-protobuf");
+                                }
                             })];
                     case 1:
                         keys = (_a.sent()).keys;
-                        this.keys = proto_1.types.DelegatedKeys.decode(this.resource.decrypt(keys));
+                        this.keys = proto_1.api.DelegatedKeys.decode(this.resource.decrypt(keys));
                         this.resolve();
                         return [3 /*break*/, 3];
                     case 2:
@@ -793,7 +874,9 @@ var AccessRequestImpl = /** @class */ (function () {
     AccessRequestImpl.prototype._openConfigured = function (id, login) {
         throw new Error_1.Error({
             kind: Error_1.SDKKind.SDKInternalError,
-            payload: { reason: "AccessRequest.openResolver() function has not been configured" }
+            payload: {
+                reason: "AccessRequest.openResolver() function has not been configured"
+            }
         });
     };
     return AccessRequestImpl;
@@ -816,11 +899,14 @@ var AccessRequestResolverImpl = /** @class */ (function () {
                     case 1:
                         keys = _a.sent();
                         return [4 /*yield*/, this.session.doProtoRequest({
-                                method: "PUT", code: 200,
+                                method: "PUT",
+                                code: 200,
                                 path: "/api/v4/delegatedAccess/" + this.id.toString() + "/keys",
-                                request: function () { return proto_1.types.DelegatedPostKeysRequest.encode({
-                                    keys: _this.resource.encrypt(proto_1.types.DelegatedKeys.encode(keys).finish())
-                                }).finish(); }
+                                request: function () {
+                                    return proto_1.api.DelegatedPostKeysRequest.encode({
+                                        keys: _this.resource.encrypt(proto_1.api.DelegatedKeys.encode(keys).finish())
+                                    }).finish();
+                                }
                             })];
                     case 2:
                         _a.sent();

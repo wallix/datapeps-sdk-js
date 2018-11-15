@@ -88,6 +88,7 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_datapeps_.session.html#admin" class="tsd-kind-icon">Admin</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_datapeps_.session.html#application" class="tsd-kind-icon">Application</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_datapeps_.session.html#identity" class="tsd-kind-icon">Identity</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_datapeps_.session.html#resource" class="tsd-kind-icon">Resource</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_datapeps_.session.html#login" class="tsd-kind-icon">login</a></li>
@@ -98,6 +99,7 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_datapeps_.session.html#close" class="tsd-kind-icon">close</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_datapeps_.session.html#createsession" class="tsd-kind-icon">create<wbr>Session</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter"><a href="_datapeps_.session.html#doprotorequest" class="tsd-kind-icon">do<wbr>Proto<wbr>Request</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter"><a href="_datapeps_.session.html#dorequest" class="tsd-kind-icon">do<wbr>Request</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_datapeps_.session.html#getlatestpublickey" class="tsd-kind-icon">get<wbr>Latest<wbr>Public<wbr>Key</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_datapeps_.session.html#getlatestpublickeys" class="tsd-kind-icon">get<wbr>Latest<wbr>Public<wbr>Keys</a></li>
@@ -105,6 +107,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_datapeps_.session.html#getpublickeys" class="tsd-kind-icon">get<wbr>Public<wbr>Keys</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_datapeps_.session.html#getsecrettoken" class="tsd-kind-icon">get<wbr>Secret<wbr>Token</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_datapeps_.session.html#getsessionpublickey" class="tsd-kind-icon">get<wbr>Session<wbr>Public<wbr>Key</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_datapeps_.session.html#listdelegatedaccess" class="tsd-kind-icon">list<wbr>Delegated<wbr>Access</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_datapeps_.session.html#renewkeys" class="tsd-kind-icon">renew<wbr>Keys</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_datapeps_.session.html#resolveaccessrequest" class="tsd-kind-icon">resolve<wbr>Access<wbr>Request</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_datapeps_.session.html#setpublickeycache" class="tsd-kind-icon">set<wbr>Public<wbr>Key<wbr>Cache</a></li>
@@ -123,7 +126,7 @@
 					<div class="tsd-signature tsd-kind-icon">Admin<span class="tsd-signature-symbol">:</span> <a href="_datapeps_.adminapi.html" class="tsd-signature-type">AdminAPI</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L369">DataPeps.ts:369</a></li>
+							<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L480">DataPeps.ts:480</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -133,12 +136,27 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="application" class="tsd-anchor"></a>
+					<h3>Application</h3>
+					<div class="tsd-signature tsd-kind-icon">Application<span class="tsd-signature-symbol">:</span> <a href="../modules/_datapeps_.applicationapi.html" class="tsd-signature-type">ApplicationAPI</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L483">DataPeps.ts:483</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Access to the Application API</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="identity" class="tsd-anchor"></a>
 					<h3>Identity</h3>
 					<div class="tsd-signature tsd-kind-icon">Identity<span class="tsd-signature-symbol">:</span> <a href="_datapeps_.identityapi.html" class="tsd-signature-type">IdentityAPI</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L363">DataPeps.ts:363</a></li>
+							<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L474">DataPeps.ts:474</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -153,7 +171,7 @@
 					<div class="tsd-signature tsd-kind-icon">Resource<span class="tsd-signature-symbol">:</span> <a href="_datapeps_.resourceapi.html" class="tsd-signature-type">ResourceAPI</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L366">DataPeps.ts:366</a></li>
+							<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L477">DataPeps.ts:477</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -168,7 +186,7 @@
 					<div class="tsd-signature tsd-kind-icon">login<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L360">DataPeps.ts:360</a></li>
+							<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L471">DataPeps.ts:471</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -190,7 +208,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L375">DataPeps.ts:375</a></li>
+									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L489">DataPeps.ts:489</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -217,7 +235,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L436">DataPeps.ts:436</a></li>
+									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L550">DataPeps.ts:550</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -239,6 +257,42 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
+					<a name="doprotorequest" class="tsd-anchor"></a>
+					<h3>do<wbr>Proto<wbr>Request</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">do<wbr>Proto<wbr>Request&lt;T&gt;<span class="tsd-signature-symbol">(</span>request<span class="tsd-signature-symbol">: </span><a href="_datapeps_.sessionrequest.html" class="tsd-signature-type">SessionRequest</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L596">DataPeps.ts:596</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Do an authenticated proto request.</p>
+								</div>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>T</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>request: <a href="_datapeps_.sessionrequest.html" class="tsd-signature-type">SessionRequest</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
 					<a name="dorequest" class="tsd-anchor"></a>
 					<h3>do<wbr>Request</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
@@ -248,7 +302,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L464">DataPeps.ts:464</a></li>
+									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L590">DataPeps.ts:590</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -284,7 +338,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L397">DataPeps.ts:397</a></li>
+									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L511">DataPeps.ts:511</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -324,7 +378,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L406">DataPeps.ts:406</a></li>
+									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L520">DataPeps.ts:520</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -364,7 +418,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L415">DataPeps.ts:415</a></li>
+									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L529">DataPeps.ts:529</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -404,7 +458,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L424">DataPeps.ts:424</a></li>
+									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L538">DataPeps.ts:538</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -444,7 +498,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L458">DataPeps.ts:458</a></li>
+									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L572">DataPeps.ts:572</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -472,7 +526,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L388">DataPeps.ts:388</a></li>
+									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L502">DataPeps.ts:502</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -486,6 +540,39 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="listdelegatedaccess" class="tsd-anchor"></a>
+					<h3>list<wbr>Delegated<wbr>Access</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">list<wbr>Delegated<wbr>Access<span class="tsd-signature-symbol">(</span>login<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="_datapeps_.delegatedaccess.html" class="tsd-signature-type">DelegatedAccess</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L577">DataPeps.ts:577</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>List the requests of DelegatedAccess that the given identity has requested.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>login: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <span class="tsd-signature-type">object</span></h5>
+									<ul class="tsd-parameters">
+									</ul>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="_datapeps_.delegatedaccess.html" class="tsd-signature-type">DelegatedAccess</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
 					<a name="renewkeys" class="tsd-anchor"></a>
 					<h3>renew<wbr>Keys</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
@@ -495,7 +582,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L382">DataPeps.ts:382</a></li>
+									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L496">DataPeps.ts:496</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -531,7 +618,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L430">DataPeps.ts:430</a></li>
+									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L544">DataPeps.ts:544</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -559,7 +646,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L448">DataPeps.ts:448</a></li>
+									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L562">DataPeps.ts:562</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -590,7 +677,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L442">DataPeps.ts:442</a></li>
+									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L556">DataPeps.ts:556</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -621,7 +708,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L453">DataPeps.ts:453</a></li>
+									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L567">DataPeps.ts:567</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -654,48 +741,6 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-enum tsd-parent-kind-external-module">
-						<a href="../enums/_datapeps_.identityaccesskind.html" class="tsd-kind-icon">Identity<wbr>Access<wbr>Kind</a>
-					</li>
-					<li class=" tsd-kind-enum tsd-parent-kind-external-module">
-						<a href="../enums/_datapeps_.resourcetype.html" class="tsd-kind-icon">Resource<wbr>Type</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_datapeps_.accessrequest.html" class="tsd-kind-icon">Access<wbr>Request</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_datapeps_.accessrequestresolver.html" class="tsd-kind-icon">Access<wbr>Request<wbr>Resolver</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_datapeps_.adminapi.html" class="tsd-kind-icon">AdminAPI</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-has-type-parameter">
-						<a href="_datapeps_.identity.html" class="tsd-kind-icon">Identity</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_datapeps_.identityapi.html" class="tsd-kind-icon">IdentityAPI</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_datapeps_.identityfields.html" class="tsd-kind-icon">Identity<wbr>Fields</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_datapeps_.identitypublickey.html" class="tsd-kind-icon">Identity<wbr>Public<wbr>Key</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_datapeps_.identitypublickeyid.html" class="tsd-kind-icon">Identity<wbr>Public<wbr>KeyID</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_datapeps_.publickeyscache.html" class="tsd-kind-icon">Public<wbr>Keys<wbr>Cache</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-has-type-parameter">
-						<a href="_datapeps_.resource.html" class="tsd-kind-icon">Resource</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_datapeps_.resourceapi.html" class="tsd-kind-icon">ResourceAPI</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_datapeps_.resourceaccesslog.html" class="tsd-kind-icon">Resource<wbr>Access<wbr>Log</a>
-					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
@@ -703,6 +748,9 @@
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="_datapeps_.session.html#admin" class="tsd-kind-icon">Admin</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_datapeps_.session.html#application" class="tsd-kind-icon">Application</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="_datapeps_.session.html#identity" class="tsd-kind-icon">Identity</a>
@@ -718,6 +766,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="_datapeps_.session.html#createsession" class="tsd-kind-icon">create<wbr>Session</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
+								<a href="_datapeps_.session.html#doprotorequest" class="tsd-kind-icon">do<wbr>Proto<wbr>Request</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
 								<a href="_datapeps_.session.html#dorequest" class="tsd-kind-icon">do<wbr>Request</a>
@@ -741,6 +792,9 @@
 								<a href="_datapeps_.session.html#getsessionpublickey" class="tsd-kind-icon">get<wbr>Session<wbr>Public<wbr>Key</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="_datapeps_.session.html#listdelegatedaccess" class="tsd-kind-icon">list<wbr>Delegated<wbr>Access</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="_datapeps_.session.html#renewkeys" class="tsd-kind-icon">renew<wbr>Keys</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
@@ -759,69 +813,6 @@
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-has-type-parameter">
-						<a href="_datapeps_.sessionrequest.html" class="tsd-kind-icon">Session<wbr>Request</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_datapeps_.trustpolicy.html" class="tsd-kind-icon">Trust<wbr>Policy</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/_datapeps_.html#id" class="tsd-kind-icon">ID</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/_datapeps_.html#identitykeykind" class="tsd-kind-icon">Identity<wbr>Key<wbr>Kind</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/_datapeps_.html#identitysharelink" class="tsd-kind-icon">Identity<wbr>Share<wbr>Link</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/_datapeps_.html#registertokenstatus" class="tsd-kind-icon">Register<wbr>Token<wbr>Status</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/_datapeps_.html#resourceaccessreason" class="tsd-kind-icon">Resource<wbr>Access<wbr>Reason</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/_datapeps_.html#resourcesharelink" class="tsd-kind-icon">Resource<wbr>Share<wbr>Link</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/_datapeps_.html#sessionsaltkind" class="tsd-kind-icon">Session<wbr>Salt<wbr>Kind</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module">
-						<a href="../modules/_datapeps_.html#configure" class="tsd-kind-icon">configure</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module">
-						<a href="../modules/_datapeps_.html#configureaccessrequestresolver" class="tsd-kind-icon">configure<wbr>Access<wbr>Request<wbr>Resolver</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module">
-						<a href="../modules/_datapeps_.html#datefromid" class="tsd-kind-icon">date<wbr>FromID</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module">
-						<a href="../modules/_datapeps_.html#getlatestpublickey" class="tsd-kind-icon">get<wbr>Latest<wbr>Public<wbr>Key</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module">
-						<a href="../modules/_datapeps_.html#getlatestpublickeys" class="tsd-kind-icon">get<wbr>Latest<wbr>Public<wbr>Keys</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module">
-						<a href="../modules/_datapeps_.html#hashidentitypublickey" class="tsd-kind-icon">hash<wbr>Identity<wbr>Public<wbr>Key</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module">
-						<a href="../modules/_datapeps_.html#login" class="tsd-kind-icon">login</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module">
-						<a href="../modules/_datapeps_.html#printidentitypublickey" class="tsd-kind-icon">print<wbr>Identity<wbr>Public<wbr>Key</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module">
-						<a href="../modules/_datapeps_.html#register" class="tsd-kind-icon">register</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module">
-						<a href="../modules/_datapeps_.html#registerwithtoken" class="tsd-kind-icon">register<wbr>With<wbr>Token</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module">
-						<a href="../modules/_datapeps_.html#requestdelegatedaccess" class="tsd-kind-icon">request<wbr>Delegated<wbr>Access</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module">
-						<a href="../modules/_datapeps_.html#sendregisterlink" class="tsd-kind-icon">send<wbr>Register<wbr>Link</a>
-					</li>
 				</ul>
 			</nav>
 		</div>

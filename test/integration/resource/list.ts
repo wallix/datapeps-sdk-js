@@ -8,12 +8,12 @@ import 'mocha';
 type TestResource =
     DataPeps.Resource<{ description: string; }>
 
-describe('Resource.list', () => {
+describe('resource.list', () => {
     let seed = Math.floor(Math.random() * 99999)
 
     let aliceSecret = nacl.randomBytes(128)
     let alice: DataPeps.IdentityFields = {
-        login: "alice." + seed + "@peps.test",
+        login: "alice." + seed,
         name: "alice 1",
         kind: "user",
         payload: new TextEncoder().encode(JSON.stringify({
@@ -23,7 +23,7 @@ describe('Resource.list', () => {
 
     let bobSecret = nacl.randomBytes(128)
     let bob: DataPeps.IdentityFields = {
-        login: "bob." + seed + "@peps.test",
+        login: "bob." + seed,
         name: "bob 1",
         kind: "user",
         payload: new TextEncoder().encode(JSON.stringify({
@@ -33,7 +33,7 @@ describe('Resource.list', () => {
 
     let charlieSecret = nacl.randomBytes(128)
     let charlie: DataPeps.IdentityFields = {
-        login: "charlie." + seed + "@peps.test",
+        login: "charlie." + seed,
         name: "charlie 1",
         kind: "user",
         payload: new TextEncoder().encode(JSON.stringify({
@@ -43,7 +43,7 @@ describe('Resource.list', () => {
 
     let deviceSecret = nacl.randomBytes(128)
     let device: DataPeps.IdentityFields = {
-        login: "device." + seed + "@peps.test",
+        login: "device." + seed,
         name: "device 1",
         kind: "device",
         payload: null,
@@ -77,7 +77,7 @@ describe('Resource.list', () => {
 
     it('Check resources created by alice', async () => {
         let got = await aliceSession.Resource.list<{ description: string }>()
-        expect(got).to.be.deep.equal([aliceRes1, aliceRes2])
+        expect(got).to.be.deep.equal([aliceRes2, aliceRes1])
     })
 
     it('Check resources created by bob', async () => {
@@ -88,7 +88,7 @@ describe('Resource.list', () => {
     it('Check alice can access to its resources after key renewal', async () => {
         await aliceSession.Identity.renewKeys(aliceSession.login)
         let got = await aliceSession.Resource.list<{ description: string }>()
-        expect(got).to.be.deep.equal([aliceRes1, aliceRes2])
+        expect(got).to.be.deep.equal([aliceRes2, aliceRes1])
     })
 
     let aliceRes3: TestResource
@@ -98,13 +98,13 @@ describe('Resource.list', () => {
         aliceRes3 = await aliceSession.Resource.create("test/A", { description: "This is a test resource for Alice 3" }, [alice.login])
 
         let got = await aliceSession.Resource.list<{ description: string }>()
-        expect(got).to.be.deep.equal([aliceRes1, aliceRes2, aliceRes3])
+        expect(got).to.be.deep.equal([aliceRes3, aliceRes2, aliceRes1])
     })
 
     it('Check bob can access to a resource shared by alice', async () => {
         sharedRes = await aliceSession.Resource.create("test/A", { description: "resource created by alice shared with bob" }, [alice.login, bob.login])
         let got = await bobSession.Resource.list<{ description: string }>()
-        expect(got).to.be.deep.equal([bobRes, sharedRes])
+        expect(got).to.be.deep.equal([sharedRes, bobRes])
     })
 
     it('Check charlie can access to a resource created by alice shared by bob', async () => {
@@ -131,23 +131,23 @@ describe('Resource.list', () => {
             }
         })
         expect(got[1].payload).to.be.equal(contentRes1)
-        expect(got[2].payload).to.be.equal(contentRes2)
+        expect(got[0].payload).to.be.equal(contentRes2)
     })
 
     it('Check device can list resources by assuming alice identity', async () => {
         let got = await deviceSession.Resource.list<{ description: string }>({ assume: alice.login })
-        expect(got).to.be.deep.equal([aliceRes1, aliceRes2, aliceRes3, sharedRes])
+        expect(got).to.be.deep.equal([sharedRes, aliceRes3, aliceRes2, aliceRes1])
     })
 
     it('Check offset and limit', async () => {
         let got = await aliceSession.Resource.list<{ description: string }>({ limit: 10 })
-        expect(got).to.be.deep.equal([aliceRes1, aliceRes2, aliceRes3, sharedRes])
+        expect(got).to.be.deep.equal([sharedRes, aliceRes3, aliceRes2, aliceRes1])
 
         got = await aliceSession.Resource.list<{ description: string }>({ limit: 2 })
-        expect(got).to.be.deep.equal([aliceRes1, aliceRes2])
+        expect(got).to.be.deep.equal([sharedRes, aliceRes3])
 
         got = await aliceSession.Resource.list<{ description: string }>({ limit: 2, offset: 1 })
-        expect(got).to.be.deep.equal([aliceRes2, aliceRes3])
+        expect(got).to.be.deep.equal([aliceRes3, aliceRes2])
 
         got = await aliceSession.Resource.list<{ description: string }>({ limit: 2, offset: 5 })
         expect(got).to.be.deep.equal([])

@@ -3,12 +3,12 @@ import * as DataPeps from '../../../src/DataPeps';
 import * as nacl from 'tweetnacl';
 import { expect } from 'chai';
 
-describe('Identity.Update', () => {
+describe('identity.Update', () => {
     let seed = Math.floor(Math.random() * 99999)
 
     let aliceSecret = nacl.randomBytes(128)
     let alice: DataPeps.IdentityFields = {
-        login: "alice." + seed + "@peps.test",
+        login: "alice." + seed,
         name: "alice 1",
         kind: "user",
         payload: new TextEncoder().encode(JSON.stringify({
@@ -18,7 +18,7 @@ describe('Identity.Update', () => {
 
     let bobSecret = nacl.randomBytes(128)
     let bob: DataPeps.IdentityFields = {
-        login: "bob." + seed + "@peps.test",
+        login: "bob." + seed,
         name: "bob 1",
         kind: "user",
         payload: new TextEncoder().encode(JSON.stringify({
@@ -27,16 +27,18 @@ describe('Identity.Update', () => {
     }
 
     let totoAdminSecret = nacl.randomBytes(128)
+    let totoAdminEmail = "admin." + seed + "@toto.com"
     let totoAdmin: DataPeps.IdentityFields = {
-        login: "admin." + seed + "@toto.com",
+        login: "adminToto." + seed,
         name: "Toto Admin",
         kind: "user",
         payload: null,
     }
 
     let totoUserSecret = nacl.randomBytes(128)
+    let totoUserEmail = "user." + seed + "@toto.com"
     let totoUser: DataPeps.IdentityFields = {
-        login: "user." + seed + "@toto.com",
+        login: "userToto." + seed,
         name: "Toto User",
         kind: "user",
         payload: null,
@@ -56,10 +58,10 @@ describe('Identity.Update', () => {
             secret: bobSecret
         })
         bobSession = await DataPeps.login(bob.login, bobSecret)
-        await adminSession.Identity.create(totoAdmin, { secret: totoAdminSecret })
+        await adminSession.Identity.create(totoAdmin, { secret: totoAdminSecret, email: totoAdminEmail })
         await adminSession.Admin.setAdmin(totoAdmin.login, true)
         totoAdminSession = await DataPeps.login(totoAdmin.login, totoAdminSecret)
-        await adminSession.Identity.create(totoUser, { secret: totoAdminSecret })
+        await adminSession.Identity.create(totoUser, { secret: totoAdminSecret, email: totoUserEmail })
     })
 
     function checkFields(identity: DataPeps.Identity<Uint8Array>, fields: DataPeps.IdentityFields) {

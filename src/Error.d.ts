@@ -1,7 +1,7 @@
-import { errors } from './proto';
+import { api } from "./proto";
 export declare type ErrorKind = ServerKind | SDKKind;
-export declare const ServerKind: typeof errors.PepsErrorKind;
-export declare type ServerKind = errors.PepsErrorKind;
+export declare const ServerKind: typeof api.PepsErrorKind;
+export declare type ServerKind = api.PepsErrorKind;
 export declare enum SDKKind {
     BadStatusCode = -1,
     BadResponse = -2,

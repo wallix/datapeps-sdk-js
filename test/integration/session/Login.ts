@@ -6,12 +6,12 @@ import { expect, assert } from 'chai';
 /**
  * This test is about testing of the funtion DataPeps.login
  */
-describe('Session.Login', () => {
+describe('session.Login', () => {
     let seed = Math.floor(Math.random() * 99999)
 
     let aliceSecret = nacl.randomBytes(128)
     let alice: DataPeps.IdentityFields = {
-        login: "alice." + seed + "@peps.test",
+        login: "alice." + seed,
         name: "alice test identity, TS",
         kind: "user",
         payload: null,
@@ -19,7 +19,7 @@ describe('Session.Login', () => {
 
     let anotherSecret = nacl.randomBytes(128)
     let another: DataPeps.IdentityFields = {
-        login: "another." + seed + "@peps.test",
+        login: "another." + seed,
         name: "another test identity, TS",
         kind: "user",
         payload: null,
@@ -66,16 +66,17 @@ describe('Session.Login', () => {
 
 
     it('check alice can login after an identity of its sharing group has changed her password', async () => {
-        aliceSession.Identity.extendSharingGroup(aliceSession.login, [another.login])
+        await aliceSession.Identity.extendSharingGroup(aliceSession.login, [another.login])
         let anotherSession = await DataPeps.login(another.login, anotherSecret)
         aliceSecret = nacl.randomBytes(128)
         await anotherSession.Identity.renewKeys(aliceSession.login, aliceSecret)
         aliceSession = await DataPeps.login(alice.login, aliceSecret)
         checkAliceSession(aliceSession)
+
     })
 
     it('check error when we try to login with a unexisting login', async () => {
-        let login = "unknown@unkown.xxx"
+        let login = "unknown@unknown.xxx"
         try {
             await DataPeps.login(login, new Uint8Array(1))
         } catch (err) {

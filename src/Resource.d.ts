@@ -1,8 +1,8 @@
-import * as nacl from 'tweetnacl';
-import { types } from './proto';
-import { ID, IdentityPublicKey, ResourceAPI, ResourceShareLink, ResourceAccessLog } from './DataPeps';
-import { EncryptFuncs } from './CryptoFuncs';
-import { SessionImpl } from './Session';
+import * as nacl from "tweetnacl";
+import { api } from "./proto";
+import { ID, IdentityPublicKey, ResourceAPI, ResourceShareLink, ResourceAccessLog } from "./DataPeps";
+import { Encryption, EncryptFuncs } from "./CryptoFuncs";
+import { SessionImpl } from "./Session";
 export declare enum ResourceType {
     ANONYMOUS = 0,
 }
@@ -15,12 +15,22 @@ export declare class Resource<T> {
     private keypair;
     constructor(id: ID, kind: string, payload: T, keypair: nacl.BoxKeyPair, creator: IdentityPublicKey, type?: ResourceType);
     publicKey(): Uint8Array;
-    encrypt(content: Uint8Array): Uint8Array;
-    decrypt(message: Uint8Array): Uint8Array;
+    encrypt<T extends Uint8Array | string>(content: T): T;
+    private encryptUint8Array(content);
+    private encryptString(clear);
+    decrypt<T extends Uint8Array | string>(message: T): T;
+    private decryptUint8Array(message);
+    private decryptString(cipher);
 }
 export declare class ResourceImpl implements ResourceAPI {
     private session;
     constructor(session: SessionImpl);
+    static createWithEncryption<T>(kind: string, payload: T, encryption: Encryption, options?: {
+        serialize?: ((payload: T) => Uint8Array);
+    }): {
+        resourceRequestBody: api.IResourcePostRequest;
+        resource: Resource<T>;
+    };
     _createBodyRequest<T>(payload: T, sharingGroup: string[], crypto: EncryptFuncs, options?: {
         serialize?: ((payload: T) => Uint8Array);
     }): Promise<{
@@ -53,7 +63,9 @@ export declare class ResourceImpl implements ResourceAPI {
         reason?: string;
     }): Promise<Resource<T>>;
     delete(id: ID, options?: {
-        soft?: boolean;
+        assume?: string;
+    }): Promise<void>;
+    unlink(id: ID, options?: {
         assume?: string;
     }): Promise<void>;
     extendSharingGroup(id: ID, sharingGroup: string[], options?: {
@@ -70,4 +82,4 @@ export declare class ResourceImpl implements ResourceAPI {
         assume?: string;
     }): Promise<ResourceAccessLog[]>;
 }
-export declare function makeResourceFromResponse<T>({resource, encryptedKey, creator}: types.IResourceGetResponse, typeOfKey: types.ResourceType, session: SessionImpl, parse?: any, assume?: any): Promise<Resource<T>>;
+export declare function makeResourceFromResponse<T>({resource, encryptedKey, creator}: api.IResourceGetResponse, typeOfKey: api.ResourceType, session: SessionImpl, parse?: any, assume?: string): Promise<Resource<T>>;

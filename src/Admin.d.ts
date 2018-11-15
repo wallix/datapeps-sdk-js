@@ -1,6 +1,6 @@
-import { types } from './proto';
-import { AdminAPI } from './DataPeps';
-import { SessionImpl } from './Session';
+import { api } from "./proto";
+import { AdminAPI } from "./DataPeps";
+import { SessionImpl } from "./Session";
 export declare class AdminImpl implements AdminAPI {
     private session;
     constructor(session: SessionImpl);
@@ -11,5 +11,5 @@ export declare class AdminImpl implements AdminAPI {
         offset?: number;
         limit?: number;
         domain?: string;
-    }): Promise<types.IRegisterEmailValidationToken[]>;
+    }): Promise<api.IRegisterEmailValidationToken[]>;
 }

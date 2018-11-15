@@ -23,7 +23,7 @@ var Base64 = /** @class */ (function () {
         var i, s = [], len = arr.length;
         for (i = 0; i < len; i++)
             s.push(String.fromCharCode(arr[i]));
-        return btoa(s.join(''));
+        return btoa(s.join(""));
     };
     return Base64;
 }());
@@ -125,7 +125,12 @@ var Crypto = /** @class */ (function () {
         }
         // BIG endian encoding of integer i.
         function INT(i) {
-            return new Uint8Array([(i >> 24) & 0xFF, (i >> 16) & 0xFF, (i >> 8) & 0xFF, i & 0xFF]);
+            return new Uint8Array([
+                (i >> 24) & 0xff,
+                (i >> 16) & 0xff,
+                (i >> 8) & 0xff,
+                i & 0xff
+            ]);
         }
         /** Check description of the algorithm
          * http://en.wikipedia.org/wiki/PBKDF2

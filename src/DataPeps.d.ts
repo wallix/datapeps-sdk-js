@@ -1,16 +1,23 @@
 /// <reference types="long" />
-import * as Long from 'long';
-import { types } from './proto';
-import { Request } from './HTTP';
-import { Resource } from './Resource';
-export { Error, ErrorKind, ServerKind as ServerError, SDKKind as SDKError } from './Error';
-export declare type RegisterTokenStatus = types.RegisterTokenStatus;
-export declare const RegisterTokenStatus: typeof types.RegisterTokenStatus;
+import * as Long from "long";
+import { api } from "./proto";
+import * as HTTP from "./HTTP";
+import { Resource } from "./Resource";
+import * as Application from "./Application";
+export { Error, ErrorKind, ServerKind as ServerError, SDKKind as SDKError } from "./Error";
+export declare type RegisterTokenStatus = api.RegisterTokenStatus;
+export declare const RegisterTokenStatus: typeof api.RegisterTokenStatus;
+export declare var debug: boolean;
 /**
  * Configure the endpoint of the SDK.
  * @param APIUrl The url of the DataPeps service.
  */
 export declare function configure(APIUrl: string, WSUrl?: string): void;
+export declare function clipID<T extends Uint8Array | string>(id: ID, data: T): T;
+export declare function unclipID<T extends Uint8Array | string>(data: T): {
+    id: ID;
+    data: T;
+};
 /**
  * Redefine the AccessRequest.openResolver() default function
  * @param params An object containing the new AccessRequest.openResolver() function
@@ -105,12 +112,13 @@ export declare function sendRegisterLink(email: string): Promise<void>;
  * Type of identitfier of DataPeps objects.
  */
 export declare type ID = Long | number;
+export declare function compareID(a: ID, b: ID): number;
 /**
  * Specify how the sdk request should be authenticated by the DataPeps service.
  * - "RAND" means that the service generates a fresh salt for each request `n` which is used to sign request `n+1`. It is the most secure kind of salt, but implies that all requests MUST be done sequentially.
  * - "TIME" means that the service generates a salt based on a timestamp, so a signed request can be authenticated within a time window.
  */
-export declare type SessionSaltKind = types.SessionSaltKind;
+export declare type SessionSaltKind = api.SessionSaltKind;
 /**
  * Create a new session.
  * @param login The login of the identity to login with.
@@ -132,7 +140,7 @@ export declare enum IdentityAccessKind {
 /**
  * A object that can be used to make authenticated request by a {@link_Session}.
  */
-export interface SessionRequest<T> extends Request<T> {
+export interface SessionRequest<T> extends HTTP.Request<T> {
     assume?: {
         login: string;
         kind: IdentityAccessKind;
@@ -182,6 +190,36 @@ export interface AccessRequestResolver {
      */
     resolve(login: string): Promise<void>;
 }
+export interface DelegatedAccess {
+    /**
+     * The identifier of the delegated access.
+     */
+    id: ID;
+    /**
+     * The public key used by the resolver to encrypt the keys.
+     */
+    publicKey: Uint8Array;
+    /**
+     * The signature of the requester.
+     */
+    sign: Uint8Array;
+    /**
+     * The identity that request the delegated access.
+     */
+    requester: IdentityPublicKeyID;
+    /**
+     * The identity target of the delegated access.
+     */
+    target: IdentityPublicKeyID;
+    /**
+     * The date of creation of the delegated access.
+     */
+    created: Date;
+    /**
+     * Indicates if the delegated access request has been resolved.
+     */
+    resolved: boolean;
+}
 /**
  * A Session is used to perform authenticated requests to the DataPeps service and allows access to the authenticated API of the DataPeps service.
  */
@@ -194,6 +232,8 @@ export interface Session {
     Resource: ResourceAPI;
     /** Access to the admin API.*/
     Admin: AdminAPI;
+    /** Access to the Application API */
+    Application: ApplicationAPI;
     /**
      * Close the session.
      * @return(p) On success the promise will be resolved with void.
@@ -271,10 +311,23 @@ export interface Session {
      */
     getSecretToken(login: string): Promise<string>;
     /**
+     * List the requests of DelegatedAccess that the given identity has requested.
+     */
+    listDelegatedAccess(login: string, options?: {
+        limit?: number;
+        maxID?: ID;
+        sinceID?: ID;
+    }): Promise<DelegatedAccess[]>;
+    /**
      * Do an authenticated request.
      * @param request
      */
     doRequest<T>(request: SessionRequest<T>): Promise<T>;
+    /**
+     * Do an authenticated proto request.
+     * @param request
+     */
+    doProtoRequest<T>(request: SessionRequest<T>): Promise<T>;
 }
 /**
  * An {@Identity} owns several keys, this is a reference to the unique version of an identity public key.
@@ -284,11 +337,24 @@ export interface IdentityPublicKeyID {
     version: number;
 }
 /**
+ * An object containing a locked key
+ */
+export interface LockedVersion {
+    /** The publicKey of the locked key */
+    publicKey: IdentityPublicKeyWithMetadata;
+}
+/**
  * An {@Identity} owns several keys, this refers to the unique version of an identity public key.
  */
 export interface IdentityPublicKey extends IdentityPublicKeyID {
     sign: Uint8Array;
     box: Uint8Array;
+}
+/**
+ * an identity public key with its creation date
+ */
+export interface IdentityPublicKeyWithMetadata extends IdentityPublicKey {
+    created: Date;
 }
 /**
  * The description of the fields of an identity.
@@ -317,7 +383,6 @@ export interface Identity<T> {
     created: Date;
     /** Indicates if the identity is an admin. */
     admin: boolean;
-    /** Indicates if the identity is active. */
     active: boolean;
     /** A payload to have a more structured description of the identity. */
     payload: T;
@@ -325,13 +390,14 @@ export interface Identity<T> {
 /**
  * IdentityKeyKind indicates which kind of keys is shared has between two identities.
  */
-export declare type IdentityKeyKind = types.IdentityShareKind;
+export declare type IdentityKeyKind = api.IdentityShareKind;
 /**
  * IdentityShareLink describes a share link between two identities.
  */
 export declare type IdentityShareLink = {
     id: IdentityPublicKeyID;
     kind: IdentityKeyKind;
+    locked: boolean;
 };
 export interface IdentityAPI {
     /**
@@ -363,6 +429,7 @@ export interface IdentityAPI {
      * @param options A collection of options:
      *  - secret: An optional secret associated with the created identity that could be used to login.
      *  - sharingGroup: An optional list of identity logins that are shared with the created identity.
+     *  - email: An optional email associated with the identity to create.
      * @return(p) On success the promise will be resolved with void.
      * On error the promise will be rejected with an {@link Error} with kind
      * - `IdentityInvalidLogin` if identity.login is not a valid login.
@@ -371,6 +438,7 @@ export interface IdentityAPI {
     create(identity: IdentityFields, options: {
         secret?: Uint8Array | string;
         sharingGroup?: string[];
+        email?: string;
     }): Promise<void>;
     /**
      * Update an identity.
@@ -426,6 +494,52 @@ export interface IdentityAPI {
      * - `IdentityNotFound` if the identity cannot be accessed.
      */
     getAccessGroup(login: string): Promise<IdentityShareLink[]>;
+    /**
+     * Get all history of public keys of the given identity login.
+     * WARNING: These keys are not trusted, i.e. the chain of trust is not validated
+     * @param login The login of identity to get the key history.
+     * @return(p) On success the promise will be resolved with the history of public keys of `login`.
+     * On error the promise will be rejected with an {@link Error} with kind
+     * - `IdentityNotFound` if the identity is not found.
+     */
+    getPublicKeyHistory(login: string): Promise<IdentityPublicKey[]>;
+    /**
+     * Get the keys of the versions of an identity that are locked. A version of an identity is locked if it is not accessible
+     * by the current version of the identity
+     * @param login The login of the identity to get the sharing group.
+     * @param options A collection of initialization options that control the sessions:
+     * @return(p) On success the promise will be resolved with a list of the public keys identity that are locked.
+     * On error the promise will be rejected with an {@link Error} with kind
+     * - `IdentityNotFound` if the identity cannot be accessed.
+     */
+    getLockedVersions(login: string): Promise<LockedVersion[]>;
+    /**
+     * Try to unlock the locked versions with the secret passed as parameter.
+     * @param secret A secret used to unlock previous versions of the current identity
+     * @return(p) On success the promise will be resolved with the list of unlocked identities.
+     */
+    unlockVersions(login: string, secret: string | Uint8Array): Promise<IdentityPublicKeyWithMetadata[]>;
+    /**
+     * Save a one-to-one association between a tuple <identityLogin, resourceName> and a resourceID.
+     * @param login The login of the identity involved in the association
+     * @param resourceName The desired resource name involved in the association
+     * @param resourceID The ID of the resource involved in the association
+     * @return(p) On success the promise will be resolved with void. On error the promise will be rejected with an {@link Error} with kind:
+     * - `DataPeps.ServerError.IdentityNotFound` if the identity cannot be assumed or if the identity does not exist.
+     * - `DataPeps.ServerError.ResourceNotFound` if the resource does not exist.
+     */
+    setNamedResource(login: string, resourceName: string, resourceID: ID): Promise<void>;
+    /**
+     * Get the resource associated with the tuple <identityLogin, resourceName>.
+     * @param login The login of the identity involved in the association
+     * @param resourceName The resource name involved in the association
+     * @return(p) On success the promise will be resolved with resource associated with the tuple <identityLogin, resourceName>. On error the promise will be rejected with an {@link Error} with kind:
+     * - `DataPeps.ServerError.IdentityNotFound` if the identity cannot be assumed or if the identity does not exist.
+     * - `DataPeps.ServerError.NamedResourceNotFound` if the NamedResource does not exist.
+     */
+    getNamedResource<T>(login: string, resourceName: string, options?: {
+        parse?: ((u: Uint8Array) => T);
+    }): Promise<Resource<T>>;
 }
 /**
  * The list the cryptographic schemes of a {@link Resource}
@@ -436,7 +550,7 @@ export declare enum ResourceType {
 /**
  * ResourceShareLink describes a share of a resource to an identity.
  */
-export declare type ResourceShareLink = types.ResourceShareLink;
+export declare type ResourceShareLink = api.ResourceShareLink;
 /**
  * A DataPeps Resource is a sharable object that handles the basic function encrypt/decrypt.
  */
@@ -447,15 +561,15 @@ export interface Resource<T> {
     payload: T;
     creator: IdentityPublicKey;
     publicKey(): Uint8Array;
-    encrypt(clear: Uint8Array): Uint8Array;
+    encrypt<T extends Uint8Array | string>(clear: T): T;
     /**
      * Decrypts a cipher text, that should be encrypted by the encrypt function of the resource, to the original clear text.
      * @throws DataPeps.Error with kind `DataPeps.SDKError.DecryptFail`
      */
-    decrypt(cipher: Uint8Array): Uint8Array;
+    decrypt<T extends Uint8Array | string>(cipher: T): T;
 }
-export declare type ResourceAccessReason = types.ResourceAccessReason;
-export declare const ResourceAccessReason: typeof types.ResourceAccessReason;
+export declare type ResourceAccessReason = api.ResourceAccessReason;
+export declare const ResourceAccessReason: typeof api.ResourceAccessReason;
 export interface ResourceAccessLog {
     /**
      * The ID of the resource that has been accessed.
@@ -528,16 +642,25 @@ export interface ResourceAPI {
         reason?: string;
     }): Promise<Resource<T>>;
     /**
-     * Delete a resource thanks its identifier.
+     * Soft-delete a resource thanks its identifier. It deletes only the copy.
      * @param id The identifier of the resource to delete.
      * @param options A collection of options:
-     *  - soft: If true delete only the copy, if false delete the resource for all identities in its sharingGroup.
+     * @return(p) On success the promise will be resolved with void.
+     * On error the promise will be rejected with an {@link Error} with kind:
+     * - `ResourceNotFound` if the resource does not exists.
+     */
+    unlink(id: ID, options?: {
+        assume?: string;
+    }): Promise<void>;
+    /**
+     * Hard-delete a resource thanks its identifier. It deletes the resource for all identities in its sharingGroup.
+     * @param id The identifier of the resource to delete.
+     * @param options A collection of options:
      * @return(p) On success the promise will be resolved with void.
      * On error the promise will be rejected with an {@link Error} with kind:
      * - `ResourceNotFound` if the resource does not exists.
      */
     delete(id: ID, options?: {
-        soft?: boolean;
         assume?: string;
     }): Promise<void>;
     /**
@@ -625,5 +748,28 @@ export interface AdminAPI {
         offset?: number;
         limit?: number;
         domain?: string;
-    }): Promise<types.IRegisterEmailValidationToken[]>;
+    }): Promise<api.IRegisterEmailValidationToken[]>;
+}
+export declare enum ApplicationJwtAlgorithm {
+    HS256 = 0,
+    HS384 = 1,
+    HS512 = 2,
+    RS256 = 3,
+    RS384 = 4,
+    RS512 = 5,
+    ES256 = 6,
+    ES384 = 7,
+    ES512 = 8,
+}
+export declare type ApplicationJwtConfig = {
+    key: Uint8Array;
+    signAlgorithm?: ApplicationJwtAlgorithm;
+    claimForLogin?: string;
+};
+export interface ApplicationAPI {
+    putConfig(appID: string, configuration: ApplicationJwtConfig): Promise<void>;
+    getConfig(appID: string): Promise<ApplicationJwtConfig>;
+}
+export declare namespace ApplicationAPI {
+    const createJWTSession: typeof Application.createJWTSession;
 }

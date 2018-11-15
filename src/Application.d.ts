@@ -1,7 +1,7 @@
 import { ApplicationAPI, ApplicationJwtConfig, Session } from "./DataPeps";
 import { api } from "./proto";
-export interface ApplicationJWTConnector<T> {
-    createSession: (login: string, secret: Uint8Array) => Promise<T>;
+export interface ApplicationJWTConnector<AppSession, Secret> {
+    createSession: (login: string, secret: Secret) => Promise<AppSession>;
     getToken: (T) => Promise<string>;
 }
 export declare function createUser(appID: string, auth: {
@@ -13,7 +13,7 @@ export declare function secure(appID: string, login: string, secret: string | Ui
     session: Session;
     secret: Uint8Array;
 }>;
-export declare function createJWTSession<AppSession>(appID: string, appLogin: string, secret: string | Uint8Array, connector: ApplicationJWTConnector<AppSession>): Promise<{
+export declare function createJWTSession<AppSession, Secret extends string | Uint8Array>(appID: string, appLogin: string, secret: Secret, connector: ApplicationJWTConnector<AppSession, Secret>): Promise<{
     session: Session;
     app: AppSession;
     new: boolean;

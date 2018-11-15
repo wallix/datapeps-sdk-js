@@ -17,7 +17,8 @@ class MockApplicationSession {
 }
 
 class MockApplicationConnector
-  implements Application.ApplicationJWTConnector<MockApplicationSession> {
+  implements
+    Application.ApplicationJWTConnector<MockApplicationSession, Uint8Array> {
   createSession = async (login: string, secret: Uint8Array) => {
     return { login: login };
   };
@@ -28,7 +29,8 @@ class MockApplicationConnector
 }
 
 class BadMockApplicationConnector
-  implements Application.ApplicationJWTConnector<MockApplicationSession> {
+  implements
+    Application.ApplicationJWTConnector<MockApplicationSession, Uint8Array> {
   createSession = async (login: string, secret: Uint8Array) => {
     return { login: login };
   };

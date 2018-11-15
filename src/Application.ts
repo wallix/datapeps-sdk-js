@@ -13,8 +13,8 @@ import { Uint8Tool, Base64 } from "./Tools";
 import { Encryption } from "./CryptoFuncs";
 import * as HTTP from "./HTTP";
 
-export interface ApplicationJWTConnector<T> {
-  createSession: (login: string, secret: Uint8Array) => Promise<T>;
+export interface ApplicationJWTConnector<AppSession, Secret> {
+  createSession: (login: string, secret: Secret) => Promise<AppSession>;
   getToken: (T) => Promise<string>;
 }
 
@@ -77,24 +77,31 @@ export async function secure(
   return { session, secret: appSecretResource.payload };
 }
 
-export async function createJWTSession<AppSession>(
+export async function createJWTSession<
+  AppSession,
+  Secret extends string | Uint8Array
+>(
   appID: string,
   appLogin: string,
-  secret: string | Uint8Array,
-  connector: ApplicationJWTConnector<AppSession>
+  secret: Secret,
+  connector: ApplicationJWTConnector<AppSession, Secret>
 ): Promise<{ session: Session; app: AppSession; new: boolean }> {
-  let appSecret: Uint8Array;
   // Try to connect to DataPeps
   try {
     let { session, secret: appSecret } = await secure(appID, appLogin, secret);
     // The DataPeps Identity exists, connect to the application
-    let app = await connector.createSession(appLogin, appSecret);
+    if (secret instanceof Uint8Array) {
+      secret = appSecret as Secret;
+    } else {
+      secret = new TextDecoder().decode(appSecret) as Secret;
+    }
+    let app = await connector.createSession(appLogin, secret);
     return { session, app, new: false };
   } catch (e) {
     // If the DataPeps Identity doesn't exists
     if (e.kind == api.PepsErrorKind.IdentityNotFound) {
       // Connect to the application
-      let app = await connector.createSession(appLogin, appSecret);
+      let app = await connector.createSession(appLogin, secret);
       // Get the jwt token to create the DataPeps Identity for the Application End-User.
       let token = await connector.getToken(app);
       // Create the DataPeps Identity

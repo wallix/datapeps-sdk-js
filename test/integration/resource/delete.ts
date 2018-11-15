@@ -411,7 +411,7 @@ describe("resource.delete", () => {
 
   it("The owner can soft-delete the resource D after renewing the key", async () => {
     // AliceChild renews its keys
-    aliceChild.session.renewKeys();
+    await aliceChild.session.renewKeys();
 
     // AliceChild gets the resourceD (he is in its sharing group)
     let resourceAliceChild = await aliceChild.session.Resource.get(
@@ -448,7 +448,7 @@ describe("resource.delete", () => {
 
   it("A sharer can soft-delete the resource D after renewing the key", async () => {
     // Alice renews its keys
-    ctx.alice.session.renewKeys();
+    await ctx.alice.session.renewKeys();
 
     // Alice gets the resourceD (she is in its sharing group)
     let resourceAlice = await ctx.alice.session.Resource.get(resourceD.id);
@@ -492,7 +492,7 @@ describe("resource.delete", () => {
     );
 
     // AliceChild renews its keys
-    aliceChild.session.renewKeys();
+    await aliceChild.session.renewKeys();
 
     // AliceChild hard deletes the resourceD (he is its creator)
     await aliceChild.session.Resource.delete(resourceD.id);

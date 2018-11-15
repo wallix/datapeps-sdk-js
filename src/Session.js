@@ -215,6 +215,9 @@ var SessionImpl = /** @class */ (function () {
                         if (secret != null) {
                             this.encryption.secret = Tools_1.Uint8Tool.convert(secret);
                         }
+                        return [4 /*yield*/, this.unStale()];
+                    case 2:
+                        _a.sent();
                         return [2 /*return*/];
                 }
             });

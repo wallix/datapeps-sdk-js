@@ -129,7 +129,15 @@ describe("identity.ApplicationJwt", () => {
     );
     expect(storedConfig.claimForLogin).to.equal("sub");
   });
-
+  it(`should receive correct error trying to get non existent configuration as application`, async () => {
+    let appConfigurator = devCtx.dev.session.Application;
+    try {
+      await appConfigurator.getConfig(devCtx.app.login);
+      expect("I should not").to.equal("be there");
+    } catch (err) {
+      expect(err.code).to.equal(404);
+    }
+  });
   it(`should not configure a non existent application`, async () => {
     let config = { key: nacl.randomBytes(128), claimForLogin: "login" };
     let appConfigurator = devCtx.dev.session.Application;

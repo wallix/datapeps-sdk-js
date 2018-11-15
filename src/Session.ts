@@ -221,6 +221,7 @@ export class SessionImpl implements Session {
     if (secret != null) {
       (this.encryption as any).secret = Uint8Tool.convert(secret);
     }
+    await this.unStale();
   }
 
   getSessionPublicKey(): IdentityPublicKey {

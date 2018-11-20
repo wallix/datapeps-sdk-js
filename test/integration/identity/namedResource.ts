@@ -7,7 +7,9 @@ import { itError } from "../../Utils";
 import * as DataPeps from "../../../src/DataPeps";
 
 describe("identity.namedResource", () => {
-  let resourceA: Utils.Resource, resourceB: Utils.Resource;
+  let resourceA: Utils.Resource,
+    resourceB: Utils.Resource,
+    resourceC: Utils.Resource;
   let resourceName = "nameOfMyResource";
   let ctx: Context.aliceBobWithDeviceAndGroupCtx;
   let randomIdentity: string;
@@ -35,6 +37,13 @@ describe("identity.namedResource", () => {
     randomIdentity = String(random);
 
     fakeId = new Long(1, 0, true);
+
+    let resourceCDataPeps = await ctx.alice.session.Resource.create(
+      "test kind",
+      { text: "payload C" },
+      [ctx.alice.identity.login]
+    );
+    resourceC = new Utils.Resource(resourceCDataPeps, "Content C");
   });
 
   it("Creation and access to a named resource", async () => {
@@ -53,12 +62,6 @@ describe("identity.namedResource", () => {
 
     // verification that the obtained resource is the same as the original
     Utils.checkFetchedResource(namedResourceA, resourceA);
-
-    // verification that the obtained resource is the same as the original using encrypt and decrypt
-    let plaintext = new Uint8Array([1, 2, 3, 4]);
-    let ciphertext = resourceA.resource.encrypt(plaintext);
-    let decryption = namedResourceA.decrypt(ciphertext);
-    expect(plaintext).to.be.deep.equal(decryption);
   });
 
   it("Get a named resource when created by an identity in the sharing graph", async () => {
@@ -209,4 +212,22 @@ describe("identity.namedResource", () => {
       name: resourceName
     })
   );
+
+  it("Overwrite a named resource", async () => {
+    // Alice overwrites the named resource (Alice, resourceName, resourceA) with (Alice, resourceName, resourceC)
+    await ctx.alice.session.Identity.setNamedResource(
+      ctx.alice.identity.login,
+      resourceName,
+      resourceC.resource.id
+    );
+
+    // access to the overwrited named resource
+    let namedResource = await ctx.alice.session.Identity.getNamedResource(
+      ctx.alice.identity.login,
+      resourceName
+    );
+
+    // verification that the obtained resource is the same as the original
+    Utils.checkFetchedResource(namedResource, resourceC);
+  });
 });

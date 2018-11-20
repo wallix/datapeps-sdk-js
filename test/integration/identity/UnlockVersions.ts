@@ -2,23 +2,7 @@ import * as Config from "../../Config";
 import * as DataPeps from "../../../src/DataPeps";
 import * as nacl from "tweetnacl";
 import { expect } from "chai";
-
-type TestResource = DataPeps.Resource<{ description: string }>;
-
-async function expectInaccessibleResource(
-  session: DataPeps.Session,
-  id: DataPeps.ID
-) {
-  try {
-    await session.Resource.get<TestResource>(id);
-  } catch (e) {
-    expect(e).to.not.be.null;
-    expect(e).instanceof(DataPeps.Error);
-    expect(e.kind).equal(DataPeps.ServerError.IdentityNotFound);
-    return;
-  }
-  throw new Error("version " + id.toString() + " should not be accessible");
-}
+import * as Utils from "../../Utils";
 
 describe("identity.UnlockVersions", () => {
   let seed = Math.floor(Math.random() * 99999);
@@ -46,7 +30,7 @@ describe("identity.UnlockVersions", () => {
   let deviceSession: DataPeps.Session;
   let adminSession: DataPeps.Session;
 
-  let resv1, resv2, resv3, resv4, resv5, resv6, resv7: TestResource;
+  let resv1, resv2, resv3, resv4, resv5, resv6, resv7: Utils.TestResource;
 
   before(async () => {
     await Config.init();
@@ -122,16 +106,16 @@ describe("identity.UnlockVersions", () => {
 
   it("Resources created by locked versions are not accessible", async () => {
     expect(
-      await aliceSession.Resource.get<TestResource>(resv6.id)
+      await aliceSession.Resource.get<Utils.TestResource>(resv6.id)
     ).to.be.deep.equal(resv6);
     expect(
-      await aliceSession.Resource.get<TestResource>(resv7.id)
+      await aliceSession.Resource.get<Utils.TestResource>(resv7.id)
     ).to.be.deep.equal(resv7);
-    await expectInaccessibleResource(aliceSession, resv1.id);
-    await expectInaccessibleResource(aliceSession, resv2.id);
-    await expectInaccessibleResource(aliceSession, resv3.id);
-    await expectInaccessibleResource(aliceSession, resv4.id);
-    await expectInaccessibleResource(aliceSession, resv5.id);
+    await Utils.tryAndCheckIdentityNotFoundError(aliceSession, resv1.id);
+    await Utils.tryAndCheckIdentityNotFoundError(aliceSession, resv2.id);
+    await Utils.tryAndCheckIdentityNotFoundError(aliceSession, resv3.id);
+    await Utils.tryAndCheckIdentityNotFoundError(aliceSession, resv4.id);
+    await Utils.tryAndCheckIdentityNotFoundError(aliceSession, resv5.id);
   });
 
   it("Unlock no version when providing a bad secret", async () => {
@@ -155,14 +139,14 @@ describe("identity.UnlockVersions", () => {
 
   it("After unlock of v4 and v5, the related resources become accessible", async () => {
     expect(
-      await aliceSession.Resource.get<TestResource>(resv4.id)
+      await aliceSession.Resource.get<Utils.TestResource>(resv4.id)
     ).to.be.deep.equal(resv4);
     expect(
-      await aliceSession.Resource.get<TestResource>(resv5.id)
+      await aliceSession.Resource.get<Utils.TestResource>(resv5.id)
     ).to.be.deep.equal(resv5);
-    await expectInaccessibleResource(aliceSession, resv1.id);
-    await expectInaccessibleResource(aliceSession, resv2.id);
-    await expectInaccessibleResource(aliceSession, resv3.id);
+    await Utils.tryAndCheckIdentityNotFoundError(aliceSession, resv1.id);
+    await Utils.tryAndCheckIdentityNotFoundError(aliceSession, resv2.id);
+    await Utils.tryAndCheckIdentityNotFoundError(aliceSession, resv3.id);
   });
 
   it("Unlock v1 and v2", async () => {
@@ -189,25 +173,25 @@ describe("identity.UnlockVersions", () => {
 
   it("After unlock all versions are accessible", async () => {
     expect(
-      await aliceSession.Resource.get<TestResource>(resv1.id)
+      await aliceSession.Resource.get<Utils.TestResource>(resv1.id)
     ).to.be.deep.equal(resv1);
     expect(
-      await aliceSession.Resource.get<TestResource>(resv2.id)
+      await aliceSession.Resource.get<Utils.TestResource>(resv2.id)
     ).to.be.deep.equal(resv2);
     expect(
-      await aliceSession.Resource.get<TestResource>(resv3.id)
+      await aliceSession.Resource.get<Utils.TestResource>(resv3.id)
     ).to.be.deep.equal(resv3);
     expect(
-      await aliceSession.Resource.get<TestResource>(resv4.id)
+      await aliceSession.Resource.get<Utils.TestResource>(resv4.id)
     ).to.be.deep.equal(resv4);
     expect(
-      await aliceSession.Resource.get<TestResource>(resv5.id)
+      await aliceSession.Resource.get<Utils.TestResource>(resv5.id)
     ).to.be.deep.equal(resv5);
     expect(
-      await aliceSession.Resource.get<TestResource>(resv6.id)
+      await aliceSession.Resource.get<Utils.TestResource>(resv6.id)
     ).to.be.deep.equal(resv6);
     expect(
-      await aliceSession.Resource.get<TestResource>(resv7.id)
+      await aliceSession.Resource.get<Utils.TestResource>(resv7.id)
     ).to.be.deep.equal(resv7);
   });
 
@@ -215,13 +199,13 @@ describe("identity.UnlockVersions", () => {
     await adminSession.Admin.overwriteKeys(alice.login, adminSecret3); // key reset: v8
     aliceSession = await DataPeps.login(alice.login, adminSecret3);
     // all resources are inaccessible
-    await expectInaccessibleResource(aliceSession, resv1.id);
-    await expectInaccessibleResource(aliceSession, resv2.id);
-    await expectInaccessibleResource(aliceSession, resv3.id);
-    await expectInaccessibleResource(aliceSession, resv4.id);
-    await expectInaccessibleResource(aliceSession, resv5.id);
-    await expectInaccessibleResource(aliceSession, resv6.id);
-    await expectInaccessibleResource(aliceSession, resv7.id);
+    await Utils.tryAndCheckIdentityNotFoundError(aliceSession, resv1.id);
+    await Utils.tryAndCheckIdentityNotFoundError(aliceSession, resv2.id);
+    await Utils.tryAndCheckIdentityNotFoundError(aliceSession, resv3.id);
+    await Utils.tryAndCheckIdentityNotFoundError(aliceSession, resv4.id);
+    await Utils.tryAndCheckIdentityNotFoundError(aliceSession, resv5.id);
+    await Utils.tryAndCheckIdentityNotFoundError(aliceSession, resv6.id);
+    await Utils.tryAndCheckIdentityNotFoundError(aliceSession, resv7.id);
 
     let unlockedSessions = await deviceSession.Identity.unlockVersions(
       alice.login,
@@ -239,25 +223,25 @@ describe("identity.UnlockVersions", () => {
     aliceSession = await DataPeps.login(alice.login, adminSecret3);
     // all resources are now accessible
     expect(
-      await aliceSession.Resource.get<TestResource>(resv1.id)
+      await aliceSession.Resource.get<Utils.TestResource>(resv1.id)
     ).to.be.deep.equal(resv1);
     expect(
-      await aliceSession.Resource.get<TestResource>(resv2.id)
+      await aliceSession.Resource.get<Utils.TestResource>(resv2.id)
     ).to.be.deep.equal(resv2);
     expect(
-      await aliceSession.Resource.get<TestResource>(resv3.id)
+      await aliceSession.Resource.get<Utils.TestResource>(resv3.id)
     ).to.be.deep.equal(resv3);
     expect(
-      await aliceSession.Resource.get<TestResource>(resv4.id)
+      await aliceSession.Resource.get<Utils.TestResource>(resv4.id)
     ).to.be.deep.equal(resv4);
     expect(
-      await aliceSession.Resource.get<TestResource>(resv5.id)
+      await aliceSession.Resource.get<Utils.TestResource>(resv5.id)
     ).to.be.deep.equal(resv5);
     expect(
-      await aliceSession.Resource.get<TestResource>(resv6.id)
+      await aliceSession.Resource.get<Utils.TestResource>(resv6.id)
     ).to.be.deep.equal(resv6);
     expect(
-      await aliceSession.Resource.get<TestResource>(resv7.id)
+      await aliceSession.Resource.get<Utils.TestResource>(resv7.id)
     ).to.be.deep.equal(resv7);
   });
 });

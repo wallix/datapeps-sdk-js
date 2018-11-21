@@ -1,6 +1,6 @@
 import {
   ApplicationAPI,
-  ApplicationJwtConfig,
+  ApplicationConfig,
   Session,
   ApplicationJwtAlgorithm,
   IdentityFields
@@ -121,26 +121,29 @@ export class ApplicationImpl implements ApplicationAPI {
     this.session = session;
   }
 
-  async putConfig(appID: string, config: ApplicationJwtConfig): Promise<void> {
-    let c = { jwt: { key: config.key, claimForLogin: config.claimForLogin } };
-    if ("signAlgorithm" in config) {
-      c.jwt["signAlgorithm"] = config.signAlgorithm.valueOf();
+  async putConfig(appID: string, fullConfig: ApplicationConfig): Promise<void> {
+    if ("jwt" in fullConfig) {
+      const config = fullConfig.jwt;
+      let c = { jwt: { key: config.key, claimForLogin: config.claimForLogin } };
+      if ("signAlgorithm" in config) {
+        c.jwt["signAlgorithm"] = config.signAlgorithm.valueOf();
+      }
+      return await this.session.doProtoRequest<void>({
+        method: "PUT",
+        assume: { login: appID, kind: IdentityAccessKind.WRITE },
+        code: 201,
+        path: `/api/v4/identity/${encodeURI(appID)}/configure-as-application`,
+        request: () =>
+          api.IdentityConfigurationAsApplicationRequest.encode({
+            Login: appID,
+            config: c
+          }).finish()
+      });
     }
-    return await this.session.doProtoRequest<void>({
-      method: "PUT",
-      assume: { login: appID, kind: IdentityAccessKind.WRITE },
-      code: 201,
-      path: `/api/v4/identity/${encodeURI(appID)}/configure-as-application`,
-      request: () =>
-        api.IdentityConfigurationAsApplicationRequest.encode({
-          Login: appID,
-          config: c
-        }).finish()
-    });
   }
 
-  async getConfig(appID: string): Promise<ApplicationJwtConfig> {
-    return await this.session.doProtoRequest<ApplicationJwtConfig>({
+  async getConfig(appID: string): Promise<ApplicationConfig> {
+    return await this.session.doProtoRequest<ApplicationConfig>({
       method: "GET",
       assume: { login: appID, kind: IdentityAccessKind.READ },
       code: 200,
@@ -148,10 +151,12 @@ export class ApplicationImpl implements ApplicationAPI {
       response: r => {
         let config = api.IdentityConfigurationAsApplicationResponse.decode(r)
           .config;
-        return <ApplicationJwtConfig>{
-          key: config.jwt.key,
-          signAlgorithm: config.jwt.signAlgorithm.valueOf(),
-          claimForLogin: config.jwt.claimForLogin
+        return <ApplicationConfig>{
+          jwt: {
+            key: config.jwt.key,
+            signAlgorithm: config.jwt.signAlgorithm.valueOf(),
+            claimForLogin: config.jwt.claimForLogin
+          }
         };
       }
     });

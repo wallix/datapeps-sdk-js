@@ -75,21 +75,6 @@ export async function wait(
   return ms > 0;
 }
 
-// TRYING FUNCTIONS
-
-export async function tryAndCheckIdentityNotFoundError(
-  session: DataPeps.Session,
-  id: DataPeps.ID
-) {
-  let errorOccurred = { isTrue: false };
-  try {
-    await session.Resource.get<TestResource>(id);
-  } catch (err) {
-    checkIdentityNotFoundError(err, errorOccurred);
-  }
-  expect(errorOccurred.isTrue).to.be.true;
-}
-
 // CHECKING FUNCTIONS
 
 export function checkFetchedResource(

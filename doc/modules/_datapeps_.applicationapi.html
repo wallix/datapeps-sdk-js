@@ -93,7 +93,7 @@
 					<div class="tsd-signature tsd-kind-icon">createJWTSession<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">createJWTSession</span><span class="tsd-signature-symbol"> =&nbsp;Application.createJWTSession</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L1150">DataPeps.ts:1150</a></li>
+							<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L1186">DataPeps.ts:1186</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -104,22 +104,41 @@
 					<a name="getconfig" class="tsd-anchor"></a>
 					<h3>get<wbr>Config</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-module">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Config<span class="tsd-signature-symbol">(</span>appID<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="_datapeps_.html#applicationjwtconfig" class="tsd-signature-type">ApplicationJwtConfig</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Config<span class="tsd-signature-symbol">(</span>appID<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="_datapeps_.html#applicationconfig" class="tsd-signature-type">ApplicationConfig</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L1146">DataPeps.ts:1146</a></li>
+									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L1182">DataPeps.ts:1182</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get configuration of an application</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>return(p)</dt>
+									<dd><p>On success the promise will be resolved with an ApplicationConfig.
+										On error the promise will be rejected with an {@link Error} with kind:</p>
+										<ul>
+											<li><code>IdentityCannotAssumeAccess</code> if session doens&#39;t log with correct login</li>
+											<li><code>IdentityNotFound</code> if <code>appID</code> is not accessible.</li>
+											<li><code>ApplicationConfigNotFound</code> if configuration doesn&#39;t exist</li>
+										</ul>
+									</dd>
+								</dl>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>appID: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the app ID</p>
+									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="_datapeps_.html#applicationjwtconfig" class="tsd-signature-type">ApplicationJwtConfig</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="_datapeps_.html#applicationconfig" class="tsd-signature-type">ApplicationConfig</a><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -127,22 +146,43 @@
 					<a name="putconfig" class="tsd-anchor"></a>
 					<h3>put<wbr>Config</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-module">
-						<li class="tsd-signature tsd-kind-icon">put<wbr>Config<span class="tsd-signature-symbol">(</span>appID<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, configuration<span class="tsd-signature-symbol">: </span><a href="_datapeps_.html#applicationjwtconfig" class="tsd-signature-type">ApplicationJwtConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">put<wbr>Config<span class="tsd-signature-symbol">(</span>appID<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, config<span class="tsd-signature-symbol">: </span><a href="_datapeps_.html#applicationconfig" class="tsd-signature-type">ApplicationConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L1145">DataPeps.ts:1145</a></li>
+									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DataPeps.ts#L1172">DataPeps.ts:1172</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Put configuration of an application</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>return(p)</dt>
+									<dd><p>On success the promise will be resolved with void.
+										On error the promise will be rejected with an {@link Error} with kind:</p>
+										<ul>
+											<li><code>IdentityCannotAssumeAccess</code> if session doens&#39;t log with correct login</li>
+											<li><code>ApplicationConfigInvalid</code> if configuration object is invalid</li>
+										</ul>
+									</dd>
+								</dl>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>appID: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the app ID</p>
+									</div>
 								</li>
 								<li>
-									<h5>configuration: <a href="_datapeps_.html#applicationjwtconfig" class="tsd-signature-type">ApplicationJwtConfig</a></h5>
+									<h5>config: <a href="_datapeps_.html#applicationconfig" class="tsd-signature-type">ApplicationConfig</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The config of the application.</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>

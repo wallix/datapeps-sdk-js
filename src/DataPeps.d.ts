@@ -761,14 +761,47 @@ export declare enum ApplicationJwtAlgorithm {
     ES384 = 7,
     ES512 = 8,
 }
+/**
+ * Parameters to configure the application as JWT.
+ */
 export declare type ApplicationJwtConfig = {
+    /** The key that be used by DataPeps to verify JWT tokens. */
     key: Uint8Array;
+    /**
+     * The signAlgorithm that should be used by DataPeps to verify JWT tokens.
+     * By default use ApplicationJwtAlgorithm.HS256
+     */
     signAlgorithm?: ApplicationJwtAlgorithm;
+    /**
+     * The claim used by DataPeps to generates the login of an identity created
+     * thanks a JWT Token. By default use the "sub" claim.
+     */
     claimForLogin?: string;
 };
+export declare type ApplicationConfig = {
+    jwt?: ApplicationJwtConfig;
+};
 export interface ApplicationAPI {
-    putConfig(appID: string, configuration: ApplicationJwtConfig): Promise<void>;
-    getConfig(appID: string): Promise<ApplicationJwtConfig>;
+    /**
+     * Put configuration of an application
+     * @param appID the app ID
+     * @param config The config of the application.
+     * @return(p) On success the promise will be resolved with void.
+     * On error the promise will be rejected with an {@link Error} with kind:
+     * - `IdentityCannotAssumeAccess` if session doens't log with correct login
+     * - `ApplicationConfigInvalid` if configuration object is invalid
+     */
+    putConfig(appID: string, config: ApplicationConfig): Promise<void>;
+    /**
+     * Get configuration of an application
+     * @param appID the app ID
+     * @return(p) On success the promise will be resolved with an ApplicationConfig.
+     * On error the promise will be rejected with an {@link Error} with kind:
+     * - `IdentityCannotAssumeAccess` if session doens't log with correct login
+     * - `IdentityNotFound` if `appID` is not accessible.
+     * - `ApplicationConfigNotFound` if configuration doesn't exist
+     */
+    getConfig(appID: string): Promise<ApplicationConfig>;
 }
 export declare namespace ApplicationAPI {
     const createJWTSession: typeof Application.createJWTSession;

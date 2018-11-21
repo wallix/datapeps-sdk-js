@@ -9,6 +9,7 @@ import * as mocha from "mocha";
 import * as Long from "long";
 import * as JWT from "jsonwebtoken";
 import { HSKey, RSKey, ESKey, ESSecretKey, RSSecretKey } from "./Utils";
+import { config } from "shelljs";
 
 describe("application.createUser", () => {
   let ctx: Context.initCtx & Context.devCtx;
@@ -32,18 +33,21 @@ describe("application.createUser", () => {
       DataPeps.ApplicationJwtAlgorithm[signAlgorithm]
     })`, async () => {
       await ctx.dev.session.Application.putConfig(ctx.app.login, {
-        key,
-        signAlgorithm,
-        claimForLogin: "login"
+        jwt: {
+          key,
+          signAlgorithm,
+          claimForLogin: "login"
+        }
       });
     });
 
     it(`create user using with signAlgorith(${
       DataPeps.ApplicationJwtAlgorithm[signAlgorithm]
     })`, async () => {
+      const login = `alice${Math.random()}`;
       let userSecret = "aSoStrongSecret";
       let token = JWT.sign(
-        { login: `alice${Math.random()}` },
+        { login },
         new TextDecoder().decode(secretKey === undefined ? key : secretKey),
         { algorithm: DataPeps.ApplicationJwtAlgorithm[signAlgorithm] }
       );
@@ -52,7 +56,7 @@ describe("application.createUser", () => {
         { jwt: { token: token.toString() } },
         userSecret
       );
-      console.log(createAliceResp);
+      expect(createAliceResp.login).to.equal(`${login}@${ctx.app.login}`);
       await DataPeps.login(createAliceResp.login, userSecret);
     });
   }

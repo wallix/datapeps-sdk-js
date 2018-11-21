@@ -42,10 +42,12 @@ class BadMockApplicationConnector
 
 describe("application.createJWTSession", () => {
   let appADevCtx: Context.devCtx;
-  let appAConfig: DataPeps.ApplicationJwtConfig = {
-    key: Uint8Tool.convert(appASecretKey),
-    signAlgorithm: DataPeps.ApplicationJwtAlgorithm.HS256,
-    claimForLogin: "login"
+  let appAConfig: DataPeps.ApplicationConfig = {
+    jwt: {
+      key: Uint8Tool.convert(appASecretKey),
+      signAlgorithm: DataPeps.ApplicationJwtAlgorithm.HS256,
+      claimForLogin: "login"
+    }
   };
 
   let appAUserSecret = nacl.randomBytes(8);

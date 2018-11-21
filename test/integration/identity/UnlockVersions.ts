@@ -4,6 +4,16 @@ import * as nacl from "tweetnacl";
 import { expect } from "chai";
 import * as Utils from "../../Utils";
 
+async function expectCannotAssumeOwnershipToGetAResource(
+  session: DataPeps.Session,
+  id: DataPeps.ID
+) {
+  return await Utils.expectError(
+    session.Resource.get<Utils.TestResource>(id),
+    DataPeps.ServerError.IdentityCannotAssumeOwnership
+  );
+}
+
 describe("identity.UnlockVersions", () => {
   let seed = Math.floor(Math.random() * 99999);
 
@@ -93,7 +103,11 @@ describe("identity.UnlockVersions", () => {
       { description: "This is a test resource for Alice v6" },
       [alice.login]
     );
+    expect(
+      await aliceSession.Resource.get<Utils.TestResource>(resv6.id)
+    ).to.be.deep.equal(resv6);
   });
+
   it("Create identity and resource v7", async () => {
     await aliceSession.renewKeys(); // v7
     aliceSession = await DataPeps.login(alice.login, adminSecret2);
@@ -102,20 +116,18 @@ describe("identity.UnlockVersions", () => {
       { description: "This is a test resource for Alice v7" },
       [alice.login]
     );
-  });
-
-  it("Resources created by locked versions are not accessible", async () => {
     expect(
       await aliceSession.Resource.get<Utils.TestResource>(resv6.id)
     ).to.be.deep.equal(resv6);
     expect(
       await aliceSession.Resource.get<Utils.TestResource>(resv7.id)
     ).to.be.deep.equal(resv7);
-    await Utils.tryAndCheckIdentityNotFoundError(aliceSession, resv1.id);
-    await Utils.tryAndCheckIdentityNotFoundError(aliceSession, resv2.id);
-    await Utils.tryAndCheckIdentityNotFoundError(aliceSession, resv3.id);
-    await Utils.tryAndCheckIdentityNotFoundError(aliceSession, resv4.id);
-    await Utils.tryAndCheckIdentityNotFoundError(aliceSession, resv5.id);
+
+    await expectCannotAssumeOwnershipToGetAResource(aliceSession, resv1.id);
+    await expectCannotAssumeOwnershipToGetAResource(aliceSession, resv2.id);
+    await expectCannotAssumeOwnershipToGetAResource(aliceSession, resv3.id);
+    await expectCannotAssumeOwnershipToGetAResource(aliceSession, resv4.id);
+    await expectCannotAssumeOwnershipToGetAResource(aliceSession, resv5.id);
   });
 
   it("Unlock no version when providing a bad secret", async () => {
@@ -144,9 +156,9 @@ describe("identity.UnlockVersions", () => {
     expect(
       await aliceSession.Resource.get<Utils.TestResource>(resv5.id)
     ).to.be.deep.equal(resv5);
-    await Utils.tryAndCheckIdentityNotFoundError(aliceSession, resv1.id);
-    await Utils.tryAndCheckIdentityNotFoundError(aliceSession, resv2.id);
-    await Utils.tryAndCheckIdentityNotFoundError(aliceSession, resv3.id);
+    await expectCannotAssumeOwnershipToGetAResource(aliceSession, resv1.id);
+    await expectCannotAssumeOwnershipToGetAResource(aliceSession, resv2.id);
+    await expectCannotAssumeOwnershipToGetAResource(aliceSession, resv3.id);
   });
 
   it("Unlock v1 and v2", async () => {
@@ -198,15 +210,16 @@ describe("identity.UnlockVersions", () => {
   it("Create new locked versions for tests from a device (with assume)", async () => {
     await adminSession.Admin.overwriteKeys(alice.login, adminSecret3); // key reset: v8
     aliceSession = await DataPeps.login(alice.login, adminSecret3);
-    // all resources are inaccessible
-    await Utils.tryAndCheckIdentityNotFoundError(aliceSession, resv1.id);
-    await Utils.tryAndCheckIdentityNotFoundError(aliceSession, resv2.id);
-    await Utils.tryAndCheckIdentityNotFoundError(aliceSession, resv3.id);
-    await Utils.tryAndCheckIdentityNotFoundError(aliceSession, resv4.id);
-    await Utils.tryAndCheckIdentityNotFoundError(aliceSession, resv5.id);
-    await Utils.tryAndCheckIdentityNotFoundError(aliceSession, resv6.id);
-    await Utils.tryAndCheckIdentityNotFoundError(aliceSession, resv7.id);
+    await expectCannotAssumeOwnershipToGetAResource(aliceSession, resv1.id);
+    await expectCannotAssumeOwnershipToGetAResource(aliceSession, resv2.id);
+    await expectCannotAssumeOwnershipToGetAResource(aliceSession, resv3.id);
+    await expectCannotAssumeOwnershipToGetAResource(aliceSession, resv4.id);
+    await expectCannotAssumeOwnershipToGetAResource(aliceSession, resv5.id);
+    await expectCannotAssumeOwnershipToGetAResource(aliceSession, resv6.id);
+    await expectCannotAssumeOwnershipToGetAResource(aliceSession, resv7.id);
+  });
 
+  it("Unlock alice versions with its device", async () => {
     let unlockedSessions = await deviceSession.Identity.unlockVersions(
       alice.login,
       adminSecret2

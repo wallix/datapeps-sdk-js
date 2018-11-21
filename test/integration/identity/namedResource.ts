@@ -109,7 +109,7 @@ describe("identity.namedResource", () => {
         resourceName,
         resourceA.resource.id
       ),
-    DataPeps.ServerError.IdentityNotFound
+    DataPeps.ServerError.IdentityCannotAssumeOwnership
   );
 
   itError(
@@ -172,7 +172,7 @@ describe("identity.namedResource", () => {
         ctx.alice.identity.login,
         resourceName
       ),
-    DataPeps.ServerError.IdentityNotFound
+    DataPeps.ServerError.IdentityCannotAssumeOwnership
   );
 
   itError(

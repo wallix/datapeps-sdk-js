@@ -172,7 +172,7 @@ describe("application.ConfigJwt", () => {
 
       return appConfigurator2.putConfig(devCtx.app.login, config);
     },
-    DataPeps.ServerError.IdentityNotFound
+    DataPeps.ServerError.IdentityCannotAssumeOwnership
   );
   itError(
     `should not get configuration an application of someone else`,
@@ -189,6 +189,6 @@ describe("application.ConfigJwt", () => {
 
       return appConfigurator2.getConfig(devCtx.app.login);
     },
-    DataPeps.ServerError.IdentityNotFound
+    DataPeps.ServerError.IdentityCannotAssumeOwnership
   );
 });

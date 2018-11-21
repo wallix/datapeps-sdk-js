@@ -2,6 +2,7 @@ import * as Config from "../Config";
 import * as DataPeps from "../../src/DataPeps";
 import * as nacl from "tweetnacl";
 import { expect } from "chai";
+import { itError } from "../Utils";
 
 describe("identity.main", () => {
   let seed = Math.floor(Math.random() * 99999);
@@ -163,18 +164,14 @@ describe("identity.main", () => {
     ]);
   });
 
-  it("the revoked deviceA try to extend the sharing group of alice", async () => {
-    try {
+  itError(
+    "the revoked deviceA try to extend the sharing group of alice",
+    async () =>
       await deviceASession.Identity.extendSharingGroup(alice.login, [
         bob.login
-      ]);
-    } catch (err) {
-      expect(err).to.not.be.null;
-      expect(err.kind).equal(DataPeps.ServerError.IdentityNotFound);
-      return;
-    }
-    throw new Error("The revoked device as already access to alice identity");
-  });
+      ]),
+    DataPeps.ServerError.IdentityCannotAssumeOwnership
+  );
 
   it("deviceB validate public keys of group", async () => {
     let k = await deviceBSession.getLatestPublicKey(group.login);

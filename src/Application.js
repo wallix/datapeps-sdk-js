@@ -152,15 +152,17 @@ var ApplicationImpl = /** @class */ (function () {
     function ApplicationImpl(session) {
         this.session = session;
     }
-    ApplicationImpl.prototype.putConfig = function (appID, config) {
+    ApplicationImpl.prototype.putConfig = function (appID, fullConfig) {
         return __awaiter(this, void 0, void 0, function () {
-            var c;
+            var config, c_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        c = { jwt: { key: config.key, claimForLogin: config.claimForLogin } };
+                        if (!("jwt" in fullConfig)) return [3 /*break*/, 2];
+                        config = fullConfig.jwt;
+                        c_1 = { jwt: { key: config.key, claimForLogin: config.claimForLogin } };
                         if ("signAlgorithm" in config) {
-                            c.jwt["signAlgorithm"] = config.signAlgorithm.valueOf();
+                            c_1.jwt["signAlgorithm"] = config.signAlgorithm.valueOf();
                         }
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "PUT",
@@ -170,11 +172,12 @@ var ApplicationImpl = /** @class */ (function () {
                                 request: function () {
                                     return proto_1.api.IdentityConfigurationAsApplicationRequest.encode({
                                         Login: appID,
-                                        config: c
+                                        config: c_1
                                     }).finish();
                                 }
                             })];
                     case 1: return [2 /*return*/, _a.sent()];
+                    case 2: return [2 /*return*/];
                 }
             });
         });
@@ -192,9 +195,11 @@ var ApplicationImpl = /** @class */ (function () {
                                 var config = proto_1.api.IdentityConfigurationAsApplicationResponse.decode(r)
                                     .config;
                                 return {
-                                    key: config.jwt.key,
-                                    signAlgorithm: config.jwt.signAlgorithm.valueOf(),
-                                    claimForLogin: config.jwt.claimForLogin
+                                    jwt: {
+                                        key: config.jwt.key,
+                                        signAlgorithm: config.jwt.signAlgorithm.valueOf(),
+                                        claimForLogin: config.jwt.claimForLogin
+                                    }
                                 };
                             }
                         })];

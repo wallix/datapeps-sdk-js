@@ -13,10 +13,12 @@ import { AssertionError } from "assert";
 describe("application.secure", () => {
   let appADevCtx: Context.devCtx;
   let appASecretKey = "appASecretKey";
-  let appAConfig: DataPeps.ApplicationJwtConfig = {
-    key: Uint8Tool.convert(appASecretKey),
-    signAlgorithm: DataPeps.ApplicationJwtAlgorithm.HS256,
-    claimForLogin: "login"
+  let appAConfig: DataPeps.ApplicationConfig = {
+    jwt: {
+      key: Uint8Tool.convert(appASecretKey),
+      signAlgorithm: DataPeps.ApplicationJwtAlgorithm.HS256,
+      claimForLogin: "login"
+    }
   };
   let appAUserSecret = nacl.randomBytes(8);
   let appAAliceLogin = "appA.Alice";

@@ -1,4 +1,4 @@
-import { ApplicationAPI, ApplicationJwtConfig, Session } from "./DataPeps";
+import { ApplicationAPI, ApplicationConfig, Session } from "./DataPeps";
 import { api } from "./proto";
 export interface ApplicationJWTConnector<AppSession, Secret> {
     createSession: (login: string, secret: Secret) => Promise<AppSession>;
@@ -21,7 +21,7 @@ export declare function createJWTSession<AppSession, Secret extends string | Uin
 export declare class ApplicationImpl implements ApplicationAPI {
     private session;
     constructor(session: Session);
-    putConfig(appID: string, config: ApplicationJwtConfig): Promise<void>;
-    getConfig(appID: string): Promise<ApplicationJwtConfig>;
+    putConfig(appID: string, fullConfig: ApplicationConfig): Promise<void>;
+    getConfig(appID: string): Promise<ApplicationConfig>;
     static composeApplicationLogin(login: string, appID: string): string;
 }

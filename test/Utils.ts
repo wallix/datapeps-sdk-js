@@ -93,26 +93,44 @@ export function checkFetchedResource(
   expect(decryptedContent).to.be.deep.equals(resourceExpected.content.plain);
 }
 
+function checkError(
+  err,
+  errorOccurred: { isTrue: boolean },
+  internalCheck: () => void
+) {
+  expect(err).to.not.be.null;
+  expect(err).instanceof(DataPeps.Error);
+  internalCheck();
+  errorOccurred.isTrue = true;
+}
+
 export function checkResourceNotFoundError(
   err,
   resourceId: DataPeps.ID,
   errorOccurred: { isTrue: boolean }
 ) {
-  expect(err).to.not.be.null;
-  expect(err).instanceof(DataPeps.Error);
-  expect(err.kind).equal(DataPeps.ServerError.ResourceNotFound);
-  expect(err.payload.id).to.be.deep.equals(resourceId);
-  errorOccurred.isTrue = true;
+  checkError(err, errorOccurred, () => {
+    expect(err.kind).equal(DataPeps.ServerError.ResourceNotFound);
+    expect(err.payload.id).to.be.deep.equals(resourceId);
+  });
 }
 
 export function checkIdentityNotFoundError(
   err,
   errorOccurred: { isTrue: boolean }
 ) {
-  expect(err).to.not.be.null;
-  expect(err).instanceof(DataPeps.Error);
-  expect(err.kind).equal(DataPeps.ServerError.IdentityNotFound);
-  errorOccurred.isTrue = true;
+  checkError(err, errorOccurred, () => {
+    expect(err.kind).equal(DataPeps.ServerError.IdentityNotFound);
+  });
+}
+
+export function checkPayloadApplicationInvalidTokenError(
+  err,
+  errorOccurred: { isTrue: boolean }
+) {
+  checkError(err, errorOccurred, () => {
+    expect(err.kind).equal(DataPeps.ServerError.ApplicationInvalidToken);
+  });
 }
 
 // FETCHING FUNCTIONS

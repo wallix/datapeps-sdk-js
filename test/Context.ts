@@ -154,25 +154,44 @@ export async function aliceBobWithDeviceAndGroup(
 export interface devCtx {
   dev: userAndSessionCtx;
   app: DataPeps.Identity<Uint8Array>;
+  apps: DataPeps.Identity<Uint8Array>[];
 }
 
-export async function dev(init: initCtx): Promise<devCtx> {
+/**
+ * Create a context with a developer that owns n application
+ * @param init
+ * @param n
+ */
+export async function dev(init: initCtx, n = 1): Promise<devCtx> {
   let dev = await userAndSession(init, "dev");
-  let app: DataPeps.IdentityFields = {
-    login: `app.${init.seed}`,
-    name: "A killer app",
-    kind: "pepsswarm/3",
-    payload: new TextEncoder().encode(
-      JSON.stringify({
-        description: `app allows you to do awesome stuff and respect your privacy`
+  let apps = await Promise.all(
+    new Array(n)
+      .fill(null)
+      .map((_, i) => ({
+        login: `app${i}.${init.seed}`,
+        name: "A killer app",
+        kind: "pepsswarm/3",
+        payload: new TextEncoder().encode(
+          JSON.stringify({
+            description: `app allows you to do awesome stuff and respect your privacy`
+          })
+        )
+      }))
+      .map(async app => {
+        await dev.session.Identity.create(app, {
+          sharingGroup: [dev.identity.login]
+        });
+        return {
+          ...app,
+          created: new Date(),
+          admin: false,
+          active: true
+        };
       })
-    )
-  };
-  await dev.session.Identity.create(app, {
-    sharingGroup: [dev.identity.login]
-  });
+  );
   return {
     dev,
-    app: { ...app, created: new Date(), admin: false, active: true }
+    app: apps[0],
+    apps
   };
 }

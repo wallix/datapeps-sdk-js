@@ -1,3 +1,6 @@
+import { ApplicationJWT, ApplicationAPI } from "../../../src/DataPeps";
+import { devCtx, initCtx, dev } from "../../Context";
+
 export const HSKey = new TextEncoder().encode("aVerySecretKey");
 export const RSKey = new TextEncoder().encode(
   "\n-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAy2kQaxIDLw6vXEmSyDIU\nW2+7zumTbO9KE2o5/afE55lUyTV8lY+kVZDoRToP6yfiUKYC9t3fFBui50rBdtXJ\nd8TgD7ecw9tdoLiQ8usELOIV1Il+e0NUOocypPRYuI26RzOBQ98ULtqXWRPvW7G3\nXhvwhB7FY31LXSRtbTA2ZOXhl64ZfWYBqWwsFMQ0wmWxnnF60J+NDESR1dWKHrzB\n0gaJAk341Mm0Golftan/R3Bd4uJ3u48gDr2uOzpSZB3m9VbK3sn1/1a2V/1mL20y\n/799hgxtB04Wz+cjm1O6gRuau7q7qxNRkvWL+hoXBXWUv2/WrBcglDr0f9tsvnh4\nfwIDAQAB\n-----END PUBLIC KEY-----"
@@ -11,3 +14,97 @@ export const ESKey = new TextEncoder().encode(
 export const ESSecretKey = new TextEncoder().encode(
   "-----BEGIN EC PRIVATE KEY-----\nMHcCAQEEIPb0cw03iNESoTNmdGXxh/DUnuhGb7MIrJZl16dIGsojoAoGCCqGSM49\nAwEHoUQDQgAEQ4/x3bCZotGA3n+5CxFmuNZnzB7LZUd9C885FDhZN8+oRavvPrWS\niGKv72hMKsfL9wVpEygSzZWXqZW+H/w7Jw==\n-----END EC PRIVATE KEY-----"
 );
+
+const hsBadSecretKey = "badbadnotgood";
+
+const rsaBadSecretKey = `-----BEGIN RSA PRIVATE KEY-----
+MIICWgIBAAKBgEQEKWAXTGo7N2Qqi6xgJt62WgvxlnCRBstz+A28eFjrEJiICrOR
+FT72ntoeQNM6QzB994+4iAu6bgR3Fq+EJgWhgcjpjnGZGkmehVacqdKgjSclFyHN
+0XMnRauwp6UVlqX7nh6w6QXLUsVRRNkGtYlpAoUudFMrzIZjhsN4xIMxAgMBAAEC
+gYAmnmJLwA7QRn0l745Mum93hvxLyclMctvzyw3t5rRCcH2EzcGdwWPZ0zfQytqt
+1Gfv8aYNwY3lct4ixOdpktPvSqy4dlcoC91ihDI3SzpTr+mInWxf0sBGsZHjd/94
+0SuEPlLz9EsAuGRLZ1MWcQGXZgm/SRklsWo/LWHoLYVqPQJBAIZUick15MOzREbr
+tdwg5vBi1prcT9xU9nblX4r7Icvk4kOFCzzfAvSdzgkkKBJsg2qUHsb5Hp0r/+Ve
+0earX7sCQQCBnz+5dnshzGIvui+loYlpAdZ5VxgKIO3cYaqO0QgPt4wo7ipcZprN
+JqIuwkhsc9b8zoAION9wEyTMA0qsZuwDAkAQdxJAgIOe3T1UOBYdekb0VhkZ+EEt
+r5haMHlKjsewt0hooEklV+yD0Ufs5Oqof3aIPMmc9/Ihr7/4/GtcC8t7AkAtrCMU
+Aj9YpV9jWcM4JTb5nQApORrrVrb5FCC4ucaRYycrtN+QN0cMSjSTLTm/nQF/inNq
+cj+oidZJXE+Pd6RpAkBJERT8s8Oqd+bMNJfoq491U9oWm8OAkGyQJg8+hPNDd1+O
+TueuJ5lmKkvL4rj2g0FAT494kVQX8ehzdpsK/BHi
+-----END RSA PRIVATE KEY-----`;
+
+const ecdsaBadSecretKey = `-----BEGIN EC PRIVATE KEY-----
+MHQCAQEEIDzzdyNssoQ8INJVzkF2iUSCX2tKKW4VdxRWx3iqwD2joAcGBSuBBAAK
+oUQDQgAE8AAAdm47cDORi5tu2ozSPqtsKOJR9Zy/GIPmTl35MlDaGQciYTKKSfa5
++D7iGI4DYI/vxYsLEKjxpWLajz7XCw==
+-----END EC PRIVATE KEY-----`;
+
+export function getBadAlgoKey(algo: ApplicationJWT.Algorithm): string {
+  switch (algo) {
+    case ApplicationJWT.Algorithm.HS256:
+    case ApplicationJWT.Algorithm.HS384:
+    case ApplicationJWT.Algorithm.HS512:
+      return hsBadSecretKey;
+    case ApplicationJWT.Algorithm.RS256:
+    case ApplicationJWT.Algorithm.RS384:
+    case ApplicationJWT.Algorithm.RS512:
+      return rsaBadSecretKey;
+    case ApplicationJWT.Algorithm.ES256:
+    case ApplicationJWT.Algorithm.ES384:
+    case ApplicationJWT.Algorithm.ES512:
+      return ecdsaBadSecretKey;
+    default:
+      throw "unknown ApplicationJWTAlgorithm: " + algo;
+  }
+}
+
+function getKey(algo: ApplicationJWT.Algorithm, secret: boolean): Uint8Array {
+  switch (algo) {
+    case ApplicationJWT.Algorithm.HS256:
+    case ApplicationJWT.Algorithm.HS384:
+    case ApplicationJWT.Algorithm.HS512:
+      return HSKey;
+    case ApplicationJWT.Algorithm.RS256:
+    case ApplicationJWT.Algorithm.RS384:
+    case ApplicationJWT.Algorithm.RS512:
+      return secret ? RSSecretKey : RSKey;
+    case ApplicationJWT.Algorithm.ES256:
+    case ApplicationJWT.Algorithm.ES384:
+    case ApplicationJWT.Algorithm.ES512:
+      return secret ? ESSecretKey : ESKey;
+    default:
+      throw "unknown ApplicationJWTAlgorithm: " + algo;
+  }
+}
+
+export const configs = Object.keys(ApplicationJWT.Algorithm)
+  .filter(key => !isNaN(Number(key)))
+  .map(key => {
+    let signAlgorithm = Number(key);
+    return {
+      secretKey: getKey(signAlgorithm, true),
+      config: {
+        key: getKey(signAlgorithm, false),
+        signAlgorithm,
+        claimForLogin: "login"
+      }
+    };
+  });
+
+/**
+ * Create a devCtx with n applications that are configured with all different
+ * JWT configs + 1 application that is not configured.
+ */
+export async function devWithAllConfigs(init: initCtx): Promise<devCtx> {
+  let devCtx = await dev(init, configs.length + 1);
+  let api = new ApplicationAPI(devCtx.dev.session);
+  await Promise.all(
+    devCtx.apps.slice(0, configs.length).map(
+      async (app, i) =>
+        await api.putConfig(app.login, {
+          jwt: configs[i].config
+        })
+    )
+  );
+  return devCtx;
+}

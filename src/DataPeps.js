@@ -34,6 +34,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
 Object.defineProperty(exports, "__esModule", { value: true });
 var nacl = require("tweetnacl");
 var Long = require("long");
@@ -46,7 +49,6 @@ var Session_1 = require("./Session");
 var Resource_1 = require("./Resource");
 var Error_1 = require("./Error");
 var Constants_1 = require("./Constants");
-var Application = require("./Application");
 var Error_2 = require("./Error");
 exports.Error = Error_2.Error;
 exports.ServerError = Error_2.ServerKind;
@@ -418,20 +420,6 @@ exports.ResourceAccessReason = proto_1.api.ResourceAccessReason;
 /////////////////////////////////////////////////
 // Application
 /////////////////////////////////////////////////
-var ApplicationJwtAlgorithm;
-(function (ApplicationJwtAlgorithm) {
-    ApplicationJwtAlgorithm[ApplicationJwtAlgorithm["HS256"] = 0] = "HS256";
-    ApplicationJwtAlgorithm[ApplicationJwtAlgorithm["HS384"] = 1] = "HS384";
-    ApplicationJwtAlgorithm[ApplicationJwtAlgorithm["HS512"] = 2] = "HS512";
-    ApplicationJwtAlgorithm[ApplicationJwtAlgorithm["RS256"] = 3] = "RS256";
-    ApplicationJwtAlgorithm[ApplicationJwtAlgorithm["RS384"] = 4] = "RS384";
-    ApplicationJwtAlgorithm[ApplicationJwtAlgorithm["RS512"] = 5] = "RS512";
-    ApplicationJwtAlgorithm[ApplicationJwtAlgorithm["ES256"] = 6] = "ES256";
-    ApplicationJwtAlgorithm[ApplicationJwtAlgorithm["ES384"] = 7] = "ES384";
-    ApplicationJwtAlgorithm[ApplicationJwtAlgorithm["ES512"] = 8] = "ES512";
-})(ApplicationJwtAlgorithm = exports.ApplicationJwtAlgorithm || (exports.ApplicationJwtAlgorithm = {}));
-var ApplicationAPI;
-(function (ApplicationAPI) {
-    ApplicationAPI.createJWTSession = Application.createJWTSession;
-})(ApplicationAPI = exports.ApplicationAPI || (exports.ApplicationAPI = {}));
+__export(require("./ApplicationAPI"));
+__export(require("./ApplicationJWT"));
 //# sourceMappingURL=DataPeps.js.map

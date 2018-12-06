@@ -1,6 +1,6 @@
 {
   "name": "datapeps-sdk",
-  "version": "0.0.43-dev-9f5c6c",
+  "version": "0.0.43-dev-40a86f",
   "description": "DataPeps SDK enables safe end-to-end-encryption for any application",
   "main": "./src/DataPeps.js",
   "types": "./src/DataPeps.d.ts",
@@ -23,12 +23,12 @@
     "@types/jsonwebtoken": "^8.3.0",
     "@types/mocha": "^2.2.41",
     "@types/node": "^8.0.31",
-    "atob": "^2.0.3",
+    "atob": "^2.1.2",
     "awesome-typescript-loader": "^3.2.3",
     "btoa": "^1.1.2",
     "chai": "^4.1.0",
     "jsonwebtoken": "^8.3.0",
-    "mocha": "^3.5.0",
+    "mocha": "^5.2.0",
     "mochawesome": "^3.0.3",
     "precise-commits": "^1.0.2",
     "prettier": "^1.14.3",
@@ -45,7 +45,7 @@
   "dependencies": {
     "bs58": "^4.0.1",
     "long": "^3.2.0",
-    "protobufjs": "^6.8.3",
+    "protobufjs": "^6.8.8",
     "sha.js": "^2.4.10",
     "tweetnacl": "^1.0.0"
   },

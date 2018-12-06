@@ -1,16 +1,10 @@
-import {
-  ApplicationAPI,
-  Session,
-  ApplicationJWT,
-  IdentityFields
-} from "./DataPeps";
-import * as DataPeps from "./DataPeps";
-import { Resource, ResourceImpl } from "./Resource";
 import { api } from "./proto";
-import { IdentityAccessKind } from "./Interface";
-import { Uint8Tool, Base64 } from "./Tools";
+import { Uint8Tool } from "./Tools";
 import { Encryption } from "./CryptoFuncs";
 import * as HTTP from "./HTTP";
+import { createWithEncryption } from "./ResourceInternal";
+import { IdentityAPI, IdentityFields } from "./IdentityAPI";
+import { Session } from "./Session";
 
 /**
  * Create a user thanks an external referential of identities
@@ -40,7 +34,7 @@ export async function createUser(
     payload
   };
 
-  let resource = ResourceImpl.createWithEncryption<Uint8Array>(
+  let resource = createWithEncryption<Uint8Array>(
     "application/secret",
     secretBytes,
     encryption,
@@ -70,14 +64,12 @@ export async function secure(
   secret: string | Uint8Array
 ): Promise<{ session: Session; secret: Uint8Array }> {
   let appLogin = composeApplicationLogin(login, appID);
-  let session = await DataPeps.login(appLogin, secret);
+  let session = await Session.login(appLogin, secret);
   let identityLogin = login.concat("@", appID);
 
-  let appSecretResource = await session.Identity.getNamedResource<Uint8Array>(
-    identityLogin,
-    "appSecret",
-    { parse: u => u }
-  );
+  let appSecretResource = await new IdentityAPI(session).getNamedResource<
+    Uint8Array
+  >(identityLogin, "appSecret", { parse: u => u });
   return { session, secret: appSecretResource.payload };
 }
 

@@ -39,7 +39,7 @@ describe("application.createUser", () => {
         userSecret
       );
       expect(createAliceResp.login).to.equal(`${login}@${ctx.apps[i].login}`);
-      await DataPeps.login(createAliceResp.login, userSecret);
+      await DataPeps.Session.login(createAliceResp.login, userSecret);
     });
 
     ///////////////////////////////////////////////

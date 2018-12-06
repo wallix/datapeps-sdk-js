@@ -1,5 +1,5 @@
-import { Session } from "./DataPeps";
 import { api } from "./proto";
+import { Session } from "./Session";
 /**
  * Create a user thanks an external referential of identities
  * @param appID The identifier of a configured application

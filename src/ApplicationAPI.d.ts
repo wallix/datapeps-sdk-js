@@ -1,5 +1,5 @@
-import { Session } from "./DataPeps";
 import { ApplicationJWT } from "./ApplicationJWT";
+import { Session } from "./Session";
 export declare namespace ApplicationAPI {
     type Config = {
         jwt?: ApplicationJWT.Config;

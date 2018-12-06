@@ -35,8 +35,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var DataPeps_1 = require("./DataPeps");
 var proto_1 = require("./proto");
+var IdentityAPI_1 = require("./IdentityAPI");
 var ApplicationAPI = /** @class */ (function () {
     function ApplicationAPI(session) {
         this.session = session;
@@ -69,7 +69,7 @@ var ApplicationAPI = /** @class */ (function () {
                         }
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "PUT",
-                                assume: { login: appID, kind: DataPeps_1.IdentityAccessKind.WRITE },
+                                assume: { login: appID, kind: IdentityAPI_1.IdentityAccessKind.WRITE },
                                 code: 201,
                                 path: "/api/v4/identity/" + encodeURI(appID) + "/configure-as-application",
                                 request: function () {
@@ -99,7 +99,7 @@ var ApplicationAPI = /** @class */ (function () {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "GET",
-                            assume: { login: appID, kind: DataPeps_1.IdentityAccessKind.READ },
+                            assume: { login: appID, kind: IdentityAPI_1.IdentityAccessKind.READ },
                             code: 200,
                             path: "/api/v4/identity/" + encodeURI(appID) + "/configure-as-application",
                             response: function (r) {

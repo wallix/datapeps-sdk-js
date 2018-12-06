@@ -1,6 +1,6 @@
-import { Session } from "./DataPeps";
 import { api } from "./proto";
 import { secure, createUser } from "./Application";
+import { Session } from "./Session";
 
 /**
  * Expose all specific types and functions for JWT application.

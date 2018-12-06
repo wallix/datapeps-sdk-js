@@ -1,4 +1,4 @@
-import { Session } from "./DataPeps";
+import { Session } from "./Session";
 /**
  * Expose all specific types and functions for JWT application.
  */

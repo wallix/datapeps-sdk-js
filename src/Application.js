@@ -35,12 +35,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var DataPeps = require("./DataPeps");
-var Resource_1 = require("./Resource");
 var proto_1 = require("./proto");
 var Tools_1 = require("./Tools");
 var CryptoFuncs_1 = require("./CryptoFuncs");
 var HTTP = require("./HTTP");
+var ResourceInternal_1 = require("./ResourceInternal");
+var IdentityAPI_1 = require("./IdentityAPI");
+var Session_1 = require("./Session");
 /**
  * Create a user thanks an external referential of identities
  * @param appID The identifier of a configured application
@@ -67,7 +68,7 @@ function createUser(appID, auth, secret) {
                         kind: appID + "/application/user",
                         payload: payload
                     };
-                    resource = Resource_1.ResourceImpl.createWithEncryption("application/secret", secretBytes, encryption, { serialize: function (u) { return u; } });
+                    resource = ResourceInternal_1.createWithEncryption("application/secret", secretBytes, encryption, { serialize: function (u) { return u; } });
                     body = proto_1.api.RegisterExternalIdentityRequest.encode({
                         appID: appID,
                         auth: auth,
@@ -98,11 +99,11 @@ function secure(appID, login, secret) {
             switch (_a.label) {
                 case 0:
                     appLogin = composeApplicationLogin(login, appID);
-                    return [4 /*yield*/, DataPeps.login(appLogin, secret)];
+                    return [4 /*yield*/, Session_1.Session.login(appLogin, secret)];
                 case 1:
                     session = _a.sent();
                     identityLogin = login.concat("@", appID);
-                    return [4 /*yield*/, session.Identity.getNamedResource(identityLogin, "appSecret", { parse: function (u) { return u; } })];
+                    return [4 /*yield*/, new IdentityAPI_1.IdentityAPI(session).getNamedResource(identityLogin, "appSecret", { parse: function (u) { return u; } })];
                 case 2:
                     appSecretResource = _a.sent();
                     return [2 /*return*/, { session: session, secret: appSecretResource.payload }];

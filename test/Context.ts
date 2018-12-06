@@ -1,6 +1,7 @@
 import * as DataPeps from "../src/DataPeps";
 import * as Config from "./Config";
 import * as nacl from "tweetnacl";
+import { IdentityAPI } from "../src/DataPeps";
 
 export interface initCtx {
   seed: number;
@@ -32,7 +33,7 @@ export async function admin(): Promise<adminCtx> {
       throw e;
     }
   }
-  let adminSession = await DataPeps.login(admin.login, adminSecret);
+  let adminSession = await DataPeps.Session.login(admin.login, adminSecret);
   return { admin, adminSecret, adminSession };
 }
 
@@ -77,7 +78,7 @@ export async function userAndSession(
   name: string
 ): Promise<userAndSessionCtx> {
   let ctx = await user(init, name);
-  let session = await DataPeps.login(ctx.identity.login, ctx.secret);
+  let session = await DataPeps.Session.login(ctx.identity.login, ctx.secret);
   return { ...ctx, session };
 }
 
@@ -112,9 +113,9 @@ async function createDevice(
     payload: null
   };
   let secret = nacl.randomBytes(1024);
-  await user.session.Identity.create(device, { secret });
-  let session = await DataPeps.login(device.login, secret);
-  await user.session.Identity.extendSharingGroup(user.identity.login, [
+  await new IdentityAPI(user.session).create(device, { secret });
+  let session = await DataPeps.Session.login(device.login, secret);
+  await new IdentityAPI(user.session).extendSharingGroup(user.identity.login, [
     device.login
   ]);
   return {
@@ -138,7 +139,7 @@ export async function aliceBobWithDeviceAndGroup(
       } as groupPayload)
     )
   };
-  await abCtx.alice.session.Identity.create(groupFields, {
+  await new IdentityAPI(abCtx.alice.session).create(groupFields, {
     sharingGroup: [abCtx.alice.identity.login, abCtx.bob.identity.login]
   });
   let aliceDevice = await createDevice(abCtx.alice);
@@ -178,7 +179,7 @@ export async function dev(init: initCtx, n = 1): Promise<devCtx> {
         )
       }))
       .map(async app => {
-        await dev.session.Identity.create(app, {
+        await new IdentityAPI(dev.session).create(app, {
           sharingGroup: [dev.identity.login]
         });
         return {

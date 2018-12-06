@@ -2,6 +2,7 @@ import * as Config from "../../Config";
 import * as DataPeps from "../../../src/DataPeps";
 import * as nacl from "tweetnacl";
 import { expect } from "chai";
+import { AdminAPI, IdentityAPI } from "../../../src/DataPeps";
 
 /**
  * This test is about testing of the funtion DataPeps.IdentityAPI.getAccessGroup
@@ -37,14 +38,14 @@ describe("identity.AccessGroup", () => {
   before(async () => {
     await Config.init();
     await DataPeps.register(alice, aliceSecret);
-    aliceSession = await DataPeps.login(alice.login, aliceSecret);
+    aliceSession = await DataPeps.Session.login(alice.login, aliceSecret);
     adminSession = await Config.adminLogin();
   });
 
   it("create others identities with alice in their sharingGroup", async () => {
     await Promise.all(
       others.map(other => {
-        return aliceSession.Identity.create(other, {
+        return new IdentityAPI(aliceSession).create(other, {
           sharingGroup: [alice.login]
         });
       })
@@ -52,7 +53,9 @@ describe("identity.AccessGroup", () => {
   });
 
   async function checkAliceAccessGroup() {
-    let accessGroup = await aliceSession.Identity.getAccessGroup(alice.login);
+    let accessGroup = await new IdentityAPI(aliceSession).getAccessGroup(
+      alice.login
+    );
     expect(accessGroup.length).to.be.equals(nothers);
     others.forEach(other => {
       let link = accessGroup.find(link => link.id.login == other.login);
@@ -74,25 +77,25 @@ describe("identity.AccessGroup", () => {
   it("checks alice accessGroup after renew others keys", async () => {
     await Promise.all(
       others.map(other => {
-        return aliceSession.Identity.renewKeys(other.login);
+        return new IdentityAPI(aliceSession).renewKeys(other.login);
       })
     );
     await checkAliceAccessGroup();
   });
 
   it("checks accessgroup are unlocked after delegate key renewal", async () => {
-    await aliceSession.Identity.renewKeys(getOtherLogin(0));
+    await new IdentityAPI(aliceSession).renewKeys(getOtherLogin(0));
   });
 
   it("checks alice accessGroup after admin reset keys", async () => {
     let newPassword = "a new password";
-    await adminSession.Admin.overwriteKeys(alice.login, newPassword);
-    aliceSession = await DataPeps.login(alice.login, newPassword);
+    await new AdminAPI(adminSession).overwriteKeys(alice.login, newPassword);
+    aliceSession = await DataPeps.Session.login(alice.login, newPassword);
 
     // Add new element to accessGroup and check it is unlocked
     nothers = nothers + 1;
     let afterKeyRenewalLogin = getOtherLogin(nothers);
-    await aliceSession.Identity.create(
+    await new IdentityAPI(aliceSession).create(
       {
         login: afterKeyRenewalLogin,
         name: "Other " + nothers,

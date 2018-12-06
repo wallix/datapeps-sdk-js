@@ -1,6 +1,7 @@
-import { Session, IdentityAccessKind } from "./DataPeps";
 import { ApplicationJWT } from "./ApplicationJWT";
 import { api } from "./proto";
+import { Session } from "./Session";
+import { IdentityAccessKind } from "./IdentityAPI";
 
 export namespace ApplicationAPI {
   export type Config = {

@@ -2,6 +2,7 @@ import { expect } from "chai";
 import * as mocha from "mocha";
 
 import * as DataPeps from "../src/DataPeps";
+import { ResourceAPI } from "../src/DataPeps";
 
 export function itError(
   description: string,
@@ -93,6 +94,7 @@ export function checkFetchedResource(
   expect(decryptedContent).to.be.deep.equals(resourceExpected.content.plain);
 }
 
+// deprecated
 function checkError(
   err,
   errorOccurred: { isTrue: boolean },
@@ -104,6 +106,7 @@ function checkError(
   errorOccurred.isTrue = true;
 }
 
+// deprecated
 export function checkResourceNotFoundError(
   err,
   resourceId: DataPeps.ID,
@@ -115,6 +118,7 @@ export function checkResourceNotFoundError(
   });
 }
 
+// deprec
 export function checkIdentityNotFoundError(
   err,
   errorOccurred: { isTrue: boolean }
@@ -139,7 +143,9 @@ export async function fetchAndCheckResource(
   session: DataPeps.Session,
   resource: Resource
 ): Promise<DataPeps.Resource<{}>> {
-  let resourceFecthed = await session.Resource.get(resource.resource.id);
+  let resourceFecthed = await new ResourceAPI(session).get(
+    resource.resource.id
+  );
   checkFetchedResource(resourceFecthed, resource);
   return Promise.resolve(resourceFecthed);
 }

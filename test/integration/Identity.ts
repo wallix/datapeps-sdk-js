@@ -3,6 +3,7 @@ import * as DataPeps from "../../src/DataPeps";
 import * as nacl from "tweetnacl";
 import { expect } from "chai";
 import { itError } from "../Utils";
+import { AdminAPI, IdentityAPI } from "../../src/DataPeps";
 
 describe("identity.main", () => {
   let seed = Math.floor(Math.random() * 99999);
@@ -78,7 +79,7 @@ describe("identity.main", () => {
 
   let aliceSession: DataPeps.Session;
   it("login with alice", async () => {
-    aliceSession = await sdk.login(alice.login, aliceSecret);
+    aliceSession = await sdk.Session.login(alice.login, aliceSecret);
     expect(aliceSession).to.be.not.null;
   });
 
@@ -93,7 +94,7 @@ describe("identity.main", () => {
   }
 
   it("get alice identity", async () => {
-    let identity = await aliceSession.Identity.get(alice.login);
+    let identity = await new IdentityAPI(aliceSession).get(alice.login);
     checkFields(identity, alice);
   });
 
@@ -101,10 +102,10 @@ describe("identity.main", () => {
     aliceSecret = nacl.randomBytes(128);
     await aliceSession.renewKeys(aliceSecret);
     // The old session must works
-    let identity = await aliceSession.Identity.get(alice.login);
+    let identity = await new IdentityAPI(aliceSession).get(alice.login);
     // Try with a new session
-    let session = await sdk.login(alice.login, aliceSecret);
-    identity = await session.Identity.get(alice.login);
+    let session = await sdk.Session.login(alice.login, aliceSecret);
+    identity = await new IdentityAPI(session).get(alice.login);
     expect(identity).to.not.be.null;
   });
 
@@ -114,18 +115,20 @@ describe("identity.main", () => {
 
   let deviceASession: DataPeps.Session;
   it("login with the alice deviceA", async () => {
-    deviceASession = await sdk.login(deviceA.login, deviceASecret);
+    deviceASession = await sdk.Session.login(deviceA.login, deviceASecret);
     expect(deviceASession).to.be.not.null;
   });
 
   it("alice shares its identity with its device", async () => {
-    await aliceSession.Identity.extendSharingGroup(alice.login, [
+    await new IdentityAPI(aliceSession).extendSharingGroup(alice.login, [
       deviceA.login
     ]);
   });
 
   it("create a group shared with alice", async () => {
-    await aliceSession.Identity.create(group, { sharingGroup: [alice.login] });
+    await new IdentityAPI(aliceSession).create(group, {
+      sharingGroup: [alice.login]
+    });
   });
 
   it("register bob", async () => {
@@ -133,7 +136,9 @@ describe("identity.main", () => {
   });
 
   it("alice thanks its deviceA add bob to the group", async () => {
-    await deviceASession.Identity.extendSharingGroup(group.login, [bob.login]);
+    await new IdentityAPI(deviceASession).extendSharingGroup(group.login, [
+      bob.login
+    ]);
   });
 
   it("register the alice deviceB", async () => {
@@ -142,7 +147,7 @@ describe("identity.main", () => {
 
   let deviceBSession: DataPeps.Session;
   it("login with the alice deviceB", async () => {
-    deviceBSession = await sdk.login(deviceB.login, deviceBSecret);
+    deviceBSession = await sdk.Session.login(deviceB.login, deviceBSecret);
     expect(deviceBSession).to.be.not.null;
   });
 
@@ -153,13 +158,13 @@ describe("identity.main", () => {
   });
 
   it("alice add the deviceB thanks deviceA", async () => {
-    await deviceASession.Identity.extendSharingGroup(alice.login, [
+    await new IdentityAPI(deviceASession).extendSharingGroup(alice.login, [
       deviceB.login
     ]);
   });
 
   it("alice remove its device of its sharing group thanks deviceB", async () => {
-    await deviceBSession.Identity.replaceSharingGroup(alice.login, [
+    await new IdentityAPI(deviceBSession).replaceSharingGroup(alice.login, [
       deviceB.login
     ]);
   });
@@ -167,7 +172,7 @@ describe("identity.main", () => {
   itError(
     "the revoked deviceA try to extend the sharing group of alice",
     async () =>
-      await deviceASession.Identity.extendSharingGroup(alice.login, [
+      await new IdentityAPI(deviceASession).extendSharingGroup(alice.login, [
         bob.login
       ]),
     DataPeps.ServerError.IdentityCannotAssumeOwnership
@@ -179,7 +184,7 @@ describe("identity.main", () => {
 
   it("alice attempt to promote bob to admin", async () => {
     try {
-      await aliceSession.Admin.setAdmin(bob.login, true);
+      await new AdminAPI(aliceSession).setAdmin(bob.login, true);
     } catch (err) {
       expect(err).to.not.be.null;
       expect(err.kind).equal(DataPeps.ServerError.IdentityNotAdmin);
@@ -195,25 +200,27 @@ describe("identity.main", () => {
   });
 
   it("administrator promote alice to admin", async () => {
-    await adminSession.Admin.setAdmin(alice.login, true);
+    await new AdminAPI(adminSession).setAdmin(alice.login, true);
   });
 
   it("alice promote bob to admin", async () => {
-    await aliceSession.Admin.setAdmin(bob.login, true);
+    await new AdminAPI(aliceSession).setAdmin(bob.login, true);
   });
 
   it("alice list tokens to test its admin right", async () => {
-    await adminSession.Admin.listRegisterTokens({ domain: "peps.test" });
+    await new AdminAPI(adminSession).listRegisterTokens({
+      domain: "peps.test"
+    });
   });
 
   let renewSecret = nacl.randomBytes(128);
   it("administrator overwrite keys for alice", async () => {
-    await adminSession.Admin.overwriteKeys(alice.login, renewSecret);
+    await new AdminAPI(adminSession).overwriteKeys(alice.login, renewSecret);
   });
 
   it("alice attempt to list identities", async () => {
     try {
-      await aliceSession.Identity.list({ domain: "peps.test" });
+      await new IdentityAPI(aliceSession).list({ domain: "peps.test" });
     } catch (err) {
       expect(err).instanceof(DataPeps.Error);
       expect(err.kind).equal(DataPeps.ServerError.SessionStale);
@@ -223,13 +230,13 @@ describe("identity.main", () => {
   });
 
   it("login with alice with overwrited keys", async () => {
-    aliceSession = await sdk.login(alice.login, renewSecret);
+    aliceSession = await sdk.Session.login(alice.login, renewSecret);
     expect(aliceSession).to.be.not.null;
   });
 
   let bobSession: DataPeps.Session;
   it("login with bob", async () => {
-    bobSession = await sdk.login(bob.login, bobSecret);
+    bobSession = await sdk.Session.login(bob.login, bobSecret);
   });
 
   it("bob check alice keys", async () => {
@@ -237,12 +244,12 @@ describe("identity.main", () => {
   });
 
   it("deactivate bob identity", async () => {
-    await adminSession.Admin.setActive(bob.login, false);
+    await new AdminAPI(adminSession).setActive(bob.login, false);
   });
 
   it("bob try to do something with its old session", async () => {
     try {
-      await bobSession.Identity.get(alice.login);
+      await new IdentityAPI(bobSession).get(alice.login);
     } catch (e) {
       return;
     }
@@ -251,7 +258,7 @@ describe("identity.main", () => {
 
   it("attempt to login with bob", async () => {
     try {
-      await sdk.login(bob.login, bobSecret);
+      await sdk.Session.login(bob.login, bobSecret);
     } catch (err) {
       expect(err).to.not.be.null;
       expect(err.kind).equal(DataPeps.ServerError.IdentityNotFound);
@@ -261,11 +268,11 @@ describe("identity.main", () => {
   });
 
   it("reactivate bob identity", async () => {
-    await adminSession.Admin.setActive(bob.login, true);
+    await new AdminAPI(adminSession).setActive(bob.login, true);
   });
 
   it("login with bob", async () => {
-    bobSession = await sdk.login(bob.login, bobSecret);
+    bobSession = await sdk.Session.login(bob.login, bobSecret);
     expect(bobSession).to.be.not.null;
   });
 });

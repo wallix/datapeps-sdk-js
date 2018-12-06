@@ -4,6 +4,7 @@ import * as DataPeps from "../../../src/DataPeps";
 import * as nacl from "tweetnacl";
 import { expect } from "chai";
 import "mocha";
+import { ResourceAPI } from "../../../src/DataPeps";
 
 describe("resource.getAccessLogs", () => {
   let alice, bob, device: DataPeps.Identity<Uint8Array>;
@@ -23,18 +24,18 @@ describe("resource.getAccessLogs", () => {
     device = ctx.aliceDevice.identity;
     deviceSession = ctx.aliceDevice.session;
 
-    aliceRes1 = await aliceSession.Resource.create("test/A", null, [
+    aliceRes1 = await new ResourceAPI(aliceSession).create("test/A", null, [
       alice.login,
       bob.login
     ]);
-    aliceRes2 = await aliceSession.Resource.create("test/A", null, [
+    aliceRes2 = await new ResourceAPI(aliceSession).create("test/A", null, [
       alice.login
     ]);
   });
 
   it("Alice read the resource1, alice check access", async () => {
-    await aliceSession.Resource.get(aliceRes1.id);
-    let logs = await aliceSession.Resource.getAccessLogs({ limit: 1 });
+    await new ResourceAPI(aliceSession).get(aliceRes1.id);
+    let logs = await new ResourceAPI(aliceSession).getAccessLogs({ limit: 1 });
     expect(logs.length).to.be.equals(1);
     expect(logs[0].resourceID.toString()).to.be.equals(aliceRes1.id.toString());
     expect(logs[0].owner.login).to.be.equals(alice.login);
@@ -45,8 +46,8 @@ describe("resource.getAccessLogs", () => {
   });
 
   it("Bob read the resource1, alice check access", async () => {
-    await bobSession.Resource.get(aliceRes1.id);
-    let logs = await aliceSession.Resource.getAccessLogs({ limit: 1 });
+    await new ResourceAPI(bobSession).get(aliceRes1.id);
+    let logs = await new ResourceAPI(aliceSession).getAccessLogs({ limit: 1 });
     expect(logs.length).to.be.equals(1);
     expect(logs[0].resourceID.toString()).to.be.equals(aliceRes1.id.toString());
     expect(logs[0].owner.login).to.be.equals(bob.login);
@@ -57,8 +58,10 @@ describe("resource.getAccessLogs", () => {
   });
 
   it("Device read the resource1, alice check access", async () => {
-    await deviceSession.Resource.get(aliceRes1.id, { assume: alice.login });
-    let logs = await aliceSession.Resource.getAccessLogs({ limit: 1 });
+    await new ResourceAPI(deviceSession).get(aliceRes1.id, {
+      assume: alice.login
+    });
+    let logs = await new ResourceAPI(aliceSession).getAccessLogs({ limit: 1 });
     expect(logs.length).to.be.equals(1);
     expect(logs[0].resourceID.toString()).to.be.equals(aliceRes1.id.toString());
     expect(logs[0].owner.login).to.be.equals(device.login);
@@ -69,8 +72,8 @@ describe("resource.getAccessLogs", () => {
   });
 
   it("Alice read the resource2, alice check access", async () => {
-    await aliceSession.Resource.get(aliceRes2.id);
-    let logs = await aliceSession.Resource.getAccessLogs({ limit: 1 });
+    await new ResourceAPI(aliceSession).get(aliceRes2.id);
+    let logs = await new ResourceAPI(aliceSession).getAccessLogs({ limit: 1 });
     expect(logs.length).to.be.equals(1);
     expect(logs[0].resourceID.toString()).to.be.equals(aliceRes2.id.toString());
     expect(logs[0].owner.login).to.be.equals(alice.login);
@@ -82,8 +85,8 @@ describe("resource.getAccessLogs", () => {
 
   it("Alice renew keys and access to the resource1, alice check access", async () => {
     await aliceSession.renewKeys();
-    await aliceSession.Resource.get(aliceRes1.id);
-    let logs = await aliceSession.Resource.getAccessLogs({ limit: 1 });
+    await new ResourceAPI(aliceSession).get(aliceRes1.id);
+    let logs = await new ResourceAPI(aliceSession).getAccessLogs({ limit: 1 });
     expect(logs.length).to.be.equals(1);
     expect(logs[0].resourceID.toString()).to.be.equals(aliceRes1.id.toString());
     expect(logs[0].owner.login).to.be.equals(alice.login);
@@ -94,7 +97,7 @@ describe("resource.getAccessLogs", () => {
   });
 
   it("Alice check accesses of its resources", async () => {
-    let logs = await aliceSession.Resource.getAccessLogs({ limit: 5 });
+    let logs = await new ResourceAPI(aliceSession).getAccessLogs({ limit: 5 });
     expect(logs.length).to.be.equals(5);
     expect(logs[0].resourceID.toString()).to.be.equals(aliceRes1.id.toString());
     expect(logs[0].owner.login).to.be.equals(alice.login);
@@ -129,7 +132,7 @@ describe("resource.getAccessLogs", () => {
   });
 
   it("Device check accesses of alice resources", async () => {
-    let logs = await deviceSession.Resource.getAccessLogs({
+    let logs = await new ResourceAPI(deviceSession).getAccessLogs({
       limit: 5,
       assume: alice.login
     });
@@ -167,7 +170,7 @@ describe("resource.getAccessLogs", () => {
   });
 
   it("Bob check accesses of its resources", async () => {
-    let logs = await bobSession.Resource.getAccessLogs();
+    let logs = await new ResourceAPI(bobSession).getAccessLogs();
     expect(logs.length).to.be.equals(4);
     expect(logs[0].resourceID.toString()).to.be.equals(aliceRes1.id.toString());
     expect(logs[0].owner.login).to.be.equals(alice.login);
@@ -196,7 +199,7 @@ describe("resource.getAccessLogs", () => {
   });
 
   it("Alice check accesses of its resources, with resource filters", async () => {
-    let logs = await aliceSession.Resource.getAccessLogs({
+    let logs = await new ResourceAPI(aliceSession).getAccessLogs({
       resourceIDs: [aliceRes1.id]
     });
     expect(logs.length).to.be.equals(4);
@@ -224,7 +227,7 @@ describe("resource.getAccessLogs", () => {
     expect(logs[3].assume.login).to.be.equals(alice.login);
     expect(logs[3].assume.version).to.be.equals(1);
     expect(logs[3].reason).to.be.equals("Read");
-    logs = await aliceSession.Resource.getAccessLogs({
+    logs = await new ResourceAPI(aliceSession).getAccessLogs({
       limit: 2,
       resourceIDs: [aliceRes1.id]
     });
@@ -241,7 +244,7 @@ describe("resource.getAccessLogs", () => {
     expect(logs[1].assume.login).to.be.equals(alice.login);
     expect(logs[1].assume.version).to.be.equals(1);
     expect(logs[1].reason).to.be.equals("Read");
-    logs = await aliceSession.Resource.getAccessLogs({
+    logs = await new ResourceAPI(aliceSession).getAccessLogs({
       offset: 2,
       resourceIDs: [aliceRes1.id]
     });
@@ -258,7 +261,7 @@ describe("resource.getAccessLogs", () => {
     expect(logs[1].assume.login).to.be.equals(alice.login);
     expect(logs[1].assume.version).to.be.equals(1);
     expect(logs[1].reason).to.be.equals("Read");
-    logs = await aliceSession.Resource.getAccessLogs({
+    logs = await new ResourceAPI(aliceSession).getAccessLogs({
       resourceIDs: [aliceRes2.id]
     });
     expect(logs.length).to.be.equals(1);
@@ -271,8 +274,10 @@ describe("resource.getAccessLogs", () => {
   });
 
   it("Alice share the resource2, alice check access", async () => {
-    await aliceSession.Resource.extendSharingGroup(aliceRes2.id, [bob.login]);
-    let logs = await aliceSession.Resource.getAccessLogs({ limit: 1 });
+    await new ResourceAPI(aliceSession).extendSharingGroup(aliceRes2.id, [
+      bob.login
+    ]);
+    let logs = await new ResourceAPI(aliceSession).getAccessLogs({ limit: 1 });
     expect(logs.length).to.be.equals(1);
     expect(logs[0].resourceID.toString()).to.be.equals(aliceRes2.id.toString());
     expect(logs[0].owner.login).to.be.equals(alice.login);
@@ -283,8 +288,8 @@ describe("resource.getAccessLogs", () => {
   });
 
   it("Alice list its resources, alice check access", async () => {
-    await aliceSession.Resource.list();
-    let logs = await aliceSession.Resource.getAccessLogs({ limit: 2 });
+    await new ResourceAPI(aliceSession).list();
+    let logs = await new ResourceAPI(aliceSession).getAccessLogs({ limit: 2 });
     expect(logs.length).to.be.equals(2);
     expect(logs[0].owner.login).to.be.equals(alice.login);
     expect(logs[0].owner.version).to.be.equals(2);
@@ -299,10 +304,10 @@ describe("resource.getAccessLogs", () => {
   });
 
   it("Check custom reason for get access", async () => {
-    await aliceSession.Resource.get(aliceRes1.id, {
+    await new ResourceAPI(aliceSession).get(aliceRes1.id, {
       reason: "specific access"
     });
-    let logs = await aliceSession.Resource.getAccessLogs({ limit: 1 });
+    let logs = await new ResourceAPI(aliceSession).getAccessLogs({ limit: 1 });
     expect(logs.length).to.be.equals(1);
     expect(logs[0].resourceID.toString()).to.be.equals(aliceRes1.id.toString());
     expect(logs[0].owner.login).to.be.equals(alice.login);
@@ -313,11 +318,11 @@ describe("resource.getAccessLogs", () => {
   });
 
   it("Check custom reason for list access", async () => {
-    await aliceSession.Resource.list({
+    await new ResourceAPI(aliceSession).list({
       reason: "specific list access",
       limit: 1
     });
-    let logs = await aliceSession.Resource.getAccessLogs({ limit: 1 });
+    let logs = await new ResourceAPI(aliceSession).getAccessLogs({ limit: 1 });
     expect(logs.length).to.be.equals(1);
     expect(logs[0].resourceID.toString()).to.be.equals(aliceRes2.id.toString());
     expect(logs[0].owner.login).to.be.equals(alice.login);

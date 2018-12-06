@@ -1,6 +1,6 @@
 import * as nacl from "tweetnacl";
 import { api } from "./proto";
-import { IdentityPublicKey, IdentityKeyKind } from "./DataPeps";
+import { IdentityPublicKey, IdentityKeyKind } from "./IdentityAPI";
 import { Error, SDKKind } from "./Error";
 import { Uint8Tool, Crypto } from "./Tools";
 

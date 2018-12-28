@@ -35,7 +35,6 @@ describe("applicationAPI.config.JWT", () => {
       ApplicationJWT.Algorithm[signAlgorithm]
     })`, async () => {
       let api = new ApplicationAPI(ctx.dev.session);
-      console.log();
       await api.putConfig(ctx.apps[i].login, { jwt: config });
       let getConfig = await api.getConfig(ctx.apps[i].login);
       expect(getConfig.jwt).not.null;
@@ -109,6 +108,43 @@ describe("applicationAPI.config.JWT", () => {
         jwt: { key: nacl.randomBytes(128), claimForLogin: "login" }
       }),
     ServerError.IdentityCannotAssumeOwnership
+  );
+
+  itError(
+    `should not configure with a invalid key RS PEM`,
+    () =>
+      new ApplicationAPI(ctx.dev.session).putConfig(ctx.app.login, {
+        jwt: {
+          key: new TextEncoder().encode(
+            `-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAy2kQaxIDLw6vXEmSyDIU
+W2+7zumTbO9KE2o5/afE55lUyTV8lY+kVZDoRToP6yfiUKYC9t3fFBui50rBdtXJ
+d8TgD7ecw9tdoLiQ8usELOIV1Il+e0NUOocypPRYuI26RzOBQ98ULtqXWRPvW7G3
+XhvwhB7FY31LXSRtbTA2ZOXhl64ZfWYBqWwsFMQ0wmWxnnF60J+NDESR1dWKHrzB
+0gaJAk341Mm0Golftan/R3Bd4uJ3u48gDr2uOzpSZB3m9VbK3sn1/1a2V/1mL20y
+/799hgxtB04Wz+cjm1O6gRuau7q7qxNRkvWL+hoXBXWUv2/WrBcglDr0f9tsvnh4
+fwIDAQAB
+  -----END PUBLIC KEY-----` // Invalid because spaces in front of last line
+          ),
+          signAlgorithm: ApplicationJWT.Algorithm.RS256
+        }
+      }),
+    ServerError.ApplicationConfigInvalid
+  );
+
+  itError(
+    `should not configure with a invalid key ES PEM`,
+    () =>
+      new ApplicationAPI(ctx.dev.session).putConfig(ctx.app.login, {
+        jwt: {
+          key: new TextEncoder().encode(
+            `-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEQ4/x3bCZotGA3n+5CxFmuNZnzB7L\nZUd9C885FDhZN8+oRavvPrWSiGKv72hMKsfL9wVpEygSzZWXqZW+H/w7Jw==
+            -----END PUBLIC KEY-----` // Invalid because spaces in front of last line
+          ),
+          signAlgorithm: ApplicationJWT.Algorithm.ES256
+        }
+      }),
+    ServerError.ApplicationConfigInvalid
   );
 
   // ApplicationConfigInvalid` if configuration object is invalid.

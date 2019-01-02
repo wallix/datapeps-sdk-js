@@ -196,3 +196,34 @@ export async function dev(init: initCtx, n = 1): Promise<devCtx> {
     apps
   };
 }
+
+export interface identitiesCtx {
+  identities: DataPeps.Identity<Uint8Array>[];
+}
+
+export async function identities(
+  init: initCtx,
+  kind: string,
+  n: number
+): Promise<identitiesCtx> {
+  let identities = [];
+  let promises = [];
+  for (let i = 0; i < n; i++) {
+    let secret = nacl.randomBytes(128);
+    let identity: DataPeps.IdentityFields = {
+      login: `id.${i}.${init.seed}`,
+      name: `identity ${i}`,
+      kind: kind,
+      payload: null
+    };
+    promises.push(DataPeps.register(identity, secret));
+    identities.push({
+      ...identity,
+      created: new Date(),
+      admin: false,
+      active: true
+    });
+  }
+  await Promise.all(promises);
+  return { identities };
+}

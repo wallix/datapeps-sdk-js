@@ -48,3 +48,7 @@ export interface devCtx {
  * @param n
  */
 export declare function dev(init: initCtx, n?: number): Promise<devCtx>;
+export interface identitiesCtx {
+    identities: DataPeps.Identity<Uint8Array>[];
+}
+export declare function identities(init: initCtx, kind: string, n: number): Promise<identitiesCtx>;

@@ -262,4 +262,32 @@ function dev(init, n) {
     });
 }
 exports.dev = dev;
+function identities(init, kind, n) {
+    return __awaiter(this, void 0, void 0, function () {
+        var identities, promises, i, secret, identity;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    identities = [];
+                    promises = [];
+                    for (i = 0; i < n; i++) {
+                        secret = nacl.randomBytes(128);
+                        identity = {
+                            login: "id." + i + "." + init.seed,
+                            name: "identity " + i,
+                            kind: kind,
+                            payload: null
+                        };
+                        promises.push(DataPeps.register(identity, secret));
+                        identities.push(__assign({}, identity, { created: new Date(), admin: false, active: true }));
+                    }
+                    return [4 /*yield*/, Promise.all(promises)];
+                case 1:
+                    _a.sent();
+                    return [2 /*return*/, { identities: identities }];
+            }
+        });
+    });
+}
+exports.identities = identities;
 //# sourceMappingURL=Context.js.map

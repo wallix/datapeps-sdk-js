@@ -137,7 +137,7 @@ describe("identity.namedResource", function () {
     Utils_1.itError("Put a named resource with a login that cannot be assumed", function () {
         return new DataPeps_1.IdentityAPI(ctx.alice.session).setNamedResource(ctx.bob.identity.login, resourceName, resourceA.resource.id);
     }, DataPeps.ServerError.IdentityCannotAssumeOwnership);
-    Utils_1.itError("Put a named resource with a login that does not exists", function () {
+    Utils_1.itError("Put a named resource with a login that does not exist", function () {
         // Bob tries to creat the named resource (randomId, resourceName, resourceB) but he is not allowed to assume Alice identity
         return new DataPeps_1.IdentityAPI(ctx.bob.session).setNamedResource(randomIdentity, resourceName, resourceB.resource.id);
     }, DataPeps.ServerError.IdentityNotFound);
@@ -177,13 +177,13 @@ describe("identity.namedResource", function () {
         // Bob tries to get the named resource (alice,resourceName) but he cannot assume Alice identity
         return new DataPeps_1.IdentityAPI(ctx.bob.session).getNamedResource(ctx.alice.identity.login, resourceName);
     }, DataPeps.ServerError.IdentityCannotAssumeOwnership);
-    Utils_1.itError("Put a named resource with a resource ID that does not exists", function () {
+    Utils_1.itError("Put a named resource with a resource ID that does not exist", function () {
         // Alice tries to create the named resource (Alice, resourceName, fakeId) with a resource id that does not exist: 1
         return new DataPeps_1.IdentityAPI(ctx.alice.session).setNamedResource(ctx.alice.identity.login, resourceName, fakeId);
     }, DataPeps.ServerError.ResourceNotFound, function () { return ({
         id: fakeId
     }); });
-    Utils_1.itError("Get a named resource with a identity that does not exists", function () {
+    Utils_1.itError("Get a named resource with a identity that does not exist", function () {
         // Alice tries to get the named resource (Alice, resourceName, fakeId) with a resource id that does not exist: 1
         return new DataPeps_1.IdentityAPI(ctx.alice.session).getNamedResource(randomIdentity, resourceName);
     }, DataPeps.ServerError.IdentityNotFound);

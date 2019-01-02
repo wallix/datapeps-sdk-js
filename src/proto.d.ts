@@ -5432,6 +5432,19 @@ export namespace api {
         public toJSON(): { [k: string]: any };
     }
 
+    /** IdentitySortingField enum. */
+    enum IdentitySortingField {
+        LOGIN = 0,
+        CREATED = 1,
+        KIND = 2
+    }
+
+    /** SortingOrder enum. */
+    enum SortingOrder {
+        DESC = 0,
+        ASC = 1
+    }
+
     /** SessionSaltKind enum. */
     enum SessionSaltKind {
         TIME = 0,

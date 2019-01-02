@@ -118,6 +118,18 @@ export enum IdentityAccessKind {
   WRITE = 1
 }
 
+/** Allows to indicate which kind of field should be sorted. */
+export enum IdentitySortingField {
+  LOGIN = 0,
+  CREATED = 1,
+  KIND = 2
+}
+
+export enum IdentitySortingOrder {
+  DESC = 0,
+  ASC = 1
+}
+
 export class IdentityAPI {
   private session: Session;
 
@@ -182,6 +194,10 @@ export class IdentityAPI {
    * @param options A collection of options:
    *  - offset: Skip this number of results.
    *  - limit: Limit the length of the result (default: 10).
+   *  - search: select only logins containing this string
+   *  - kind: Filter on a specific kind
+   *  - sortingField: Sort the result according to this field, default is CREATED
+   *  - sortingOrder: Specifies the sorting order "ASC" or "DESC", default is ASC
    * @return(p) On success the promise will be resolved with a list.
    */
   async list(options?: {
@@ -189,7 +205,15 @@ export class IdentityAPI {
     limit?: number;
     search?: string;
     kind?: string;
+    sortingField?: IdentitySortingField;
+    sortingOrder?: IdentitySortingOrder;
   }): Promise<Identity<Uint8Array>[]> {
+    if (options.sortingField === undefined) {
+      options.sortingField = IdentitySortingField.CREATED;
+    }
+    if (options.sortingOrder === undefined) {
+      options.sortingOrder = IdentitySortingOrder.ASC;
+    }
     return await this.session.doProtoRequest({
       method: "GET",
       code: 200,

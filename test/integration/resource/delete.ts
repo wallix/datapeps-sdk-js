@@ -487,7 +487,7 @@ describe("resource.delete", () => {
 
   it("The server returns ResourceNotFound error, when a user tries to delete an inexistant resource", async () => {
     let errorOccurred = { isTrue: false };
-    // tests if when Alice asks for a resource (that does not exists), the system does not create that resource
+    // tests if when Alice asks for a resource (that does not exist), the system does not create that resource
     for (let i = 0; i < 2; i++) {
       try {
         // Alice gets a resource (IMPOSSIBLE because it DOES NOT exist)

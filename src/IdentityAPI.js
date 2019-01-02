@@ -80,6 +80,18 @@ var IdentityAccessKind;
     IdentityAccessKind[IdentityAccessKind["READ"] = 0] = "READ";
     IdentityAccessKind[IdentityAccessKind["WRITE"] = 1] = "WRITE";
 })(IdentityAccessKind = exports.IdentityAccessKind || (exports.IdentityAccessKind = {}));
+/** Allows to indicate which kind of field should be sorted. */
+var IdentitySortingField;
+(function (IdentitySortingField) {
+    IdentitySortingField[IdentitySortingField["LOGIN"] = 0] = "LOGIN";
+    IdentitySortingField[IdentitySortingField["CREATED"] = 1] = "CREATED";
+    IdentitySortingField[IdentitySortingField["KIND"] = 2] = "KIND";
+})(IdentitySortingField = exports.IdentitySortingField || (exports.IdentitySortingField = {}));
+var IdentitySortingOrder;
+(function (IdentitySortingOrder) {
+    IdentitySortingOrder[IdentitySortingOrder["DESC"] = 0] = "DESC";
+    IdentitySortingOrder[IdentitySortingOrder["ASC"] = 1] = "ASC";
+})(IdentitySortingOrder = exports.IdentitySortingOrder || (exports.IdentitySortingOrder = {}));
 var IdentityAPI = /** @class */ (function () {
     function IdentityAPI(session) {
         this.session = session;
@@ -162,22 +174,33 @@ var IdentityAPI = /** @class */ (function () {
      * @param options A collection of options:
      *  - offset: Skip this number of results.
      *  - limit: Limit the length of the result (default: 10).
+     *  - search: select only logins containing this string
+     *  - kind: Filter on a specific kind
+     *  - sortingField: Sort the result according to this field, default is CREATED
+     *  - sortingOrder: Specifies the sorting order "ASC" or "DESC", default is ASC
      * @return(p) On success the promise will be resolved with a list.
      */
     IdentityAPI.prototype.list = function (options) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.session.doProtoRequest({
-                            method: "GET",
-                            code: 200,
-                            path: "/api/v4/identities/list",
-                            params: options,
-                            response: function (r) {
-                                var identities = proto_1.api.IdentityListResponse.decode(r).identities;
-                                return identities.map(IdentityX.fromapi);
-                            }
-                        })];
+                    case 0:
+                        if (options.sortingField === undefined) {
+                            options.sortingField = IdentitySortingField.CREATED;
+                        }
+                        if (options.sortingOrder === undefined) {
+                            options.sortingOrder = IdentitySortingOrder.ASC;
+                        }
+                        return [4 /*yield*/, this.session.doProtoRequest({
+                                method: "GET",
+                                code: 200,
+                                path: "/api/v4/identities/list",
+                                params: options,
+                                response: function (r) {
+                                    var identities = proto_1.api.IdentityListResponse.decode(r).identities;
+                                    return identities.map(IdentityX.fromapi);
+                                }
+                            })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });

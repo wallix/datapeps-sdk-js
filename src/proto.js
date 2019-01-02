@@ -13160,6 +13160,36 @@ $root.api = (function() {
     })();
 
     /**
+     * IdentitySortingField enum.
+     * @name api.IdentitySortingField
+     * @enum {string}
+     * @property {number} LOGIN=0 LOGIN value
+     * @property {number} CREATED=1 CREATED value
+     * @property {number} KIND=2 KIND value
+     */
+    api.IdentitySortingField = (function() {
+        var valuesById = {}, values = Object.create(valuesById);
+        values[valuesById[0] = "LOGIN"] = 0;
+        values[valuesById[1] = "CREATED"] = 1;
+        values[valuesById[2] = "KIND"] = 2;
+        return values;
+    })();
+
+    /**
+     * SortingOrder enum.
+     * @name api.SortingOrder
+     * @enum {string}
+     * @property {number} DESC=0 DESC value
+     * @property {number} ASC=1 ASC value
+     */
+    api.SortingOrder = (function() {
+        var valuesById = {}, values = Object.create(valuesById);
+        values[valuesById[0] = "DESC"] = 0;
+        values[valuesById[1] = "ASC"] = 1;
+        return values;
+    })();
+
+    /**
      * SessionSaltKind enum.
      * @name api.SessionSaltKind
      * @enum {string}

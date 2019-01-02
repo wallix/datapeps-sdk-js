@@ -111,7 +111,7 @@ describe("identity.namedResource", () => {
   );
 
   itError(
-    "Put a named resource with a login that does not exists",
+    "Put a named resource with a login that does not exist",
     () =>
       // Bob tries to creat the named resource (randomId, resourceName, resourceB) but he is not allowed to assume Alice identity
       new IdentityAPI(ctx.bob.session).setNamedResource(
@@ -174,7 +174,7 @@ describe("identity.namedResource", () => {
   );
 
   itError(
-    "Put a named resource with a resource ID that does not exists",
+    "Put a named resource with a resource ID that does not exist",
     () =>
       // Alice tries to create the named resource (Alice, resourceName, fakeId) with a resource id that does not exist: 1
       new IdentityAPI(ctx.alice.session).setNamedResource(
@@ -189,7 +189,7 @@ describe("identity.namedResource", () => {
   );
 
   itError(
-    "Get a named resource with a identity that does not exists",
+    "Get a named resource with a identity that does not exist",
     () =>
       // Alice tries to get the named resource (Alice, resourceName, fakeId) with a resource id that does not exist: 1
       new IdentityAPI(ctx.alice.session).getNamedResource(

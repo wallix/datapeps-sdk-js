@@ -5,7 +5,7 @@ import { expect } from "chai";
 import { AdminAPI } from "../../src/DataPeps";
 import { api } from "../../src/proto";
 
-describe("register", () => {
+describe("register.main", () => {
   let sdk = Config.sdk;
   let adminSession: DataPeps.Session;
   before(done => {
@@ -46,7 +46,6 @@ describe("register", () => {
   var token: Uint8Array;
   it("admin get registered links", async () => {
     let links = await new AdminAPI(adminSession).listRegisterTokens({
-      domain,
       limit: 100
     });
     expect(links).to.not.be.null;

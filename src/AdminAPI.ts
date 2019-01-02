@@ -76,13 +76,11 @@ export class AdminAPI {
    * @param options A collection of options:
    *  - offset: Skip this number of results.
    *  - limit: Limit the length of the result (default: 10).
-   *  - domain: Filter on a specific domain.
    * @return(p) On success the promise will be resolved with a list.
    */
   async listRegisterTokens(options?: {
     offset?: number;
     limit?: number;
-    domain?: string;
   }): Promise<api.IRegisterEmailValidationToken[]> {
     let { links } = await this.session.doProtoRequest({
       method: "GET",

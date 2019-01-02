@@ -125,23 +125,4 @@ describe("identity.Update", () => {
     await new IdentityAPI(adminSession).update(alice);
     checkFields(await new IdentityAPI(adminSession).get(alice.login), alice);
   });
-
-  it("Toto admin should not update alice fields", async () => {
-    let up = { ...alice, name: "alice toto" };
-    try {
-      await new IdentityAPI(totoAdminSession).update(up);
-    } catch (e) {
-      expect(e).is.instanceOf(DataPeps.Error);
-      let d = e as DataPeps.Error;
-      expect(d.kind).to.be.equal(DataPeps.ServerError.IdentityNotAdminDomain);
-      return;
-    }
-    throw new Error("bob should not update alice fields");
-  });
-
-  it("Toto admin should update toto user fields", async () => {
-    totoUser.name = "New toto name";
-    totoUser.kind = "totouser";
-    await new IdentityAPI(totoAdminSession).update(totoUser);
-  });
 });

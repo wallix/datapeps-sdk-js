@@ -24738,7 +24738,6 @@ $root.api = (function() {
                 case 15:
                 case 16:
                 case 17:
-                case 18:
                 case 19:
                 case 20:
                 case 21:
@@ -24846,10 +24845,6 @@ $root.api = (function() {
             case "IdentityNotAdmin":
             case 17:
                 message.kind = 17;
-                break;
-            case "IdentityNotAdminDomain":
-            case 18:
-                message.kind = 18;
                 break;
             case "IdentitySharingKindMismatch":
             case 19:
@@ -24982,7 +24977,6 @@ $root.api = (function() {
      * @property {number} IdentityNotFound=15 IdentityNotFound value
      * @property {number} IdentityVersionMismatch=16 IdentityVersionMismatch value
      * @property {number} IdentityNotAdmin=17 IdentityNotAdmin value
-     * @property {number} IdentityNotAdminDomain=18 IdentityNotAdminDomain value
      * @property {number} IdentitySharingKindMismatch=19 IdentitySharingKindMismatch value
      * @property {number} IdentityEmailNotAssociated=20 IdentityEmailNotAssociated value
      * @property {number} IdentityEmailAlreadyAssociated=21 IdentityEmailAlreadyAssociated value
@@ -25018,7 +25012,6 @@ $root.api = (function() {
         values[valuesById[15] = "IdentityNotFound"] = 15;
         values[valuesById[16] = "IdentityVersionMismatch"] = 16;
         values[valuesById[17] = "IdentityNotAdmin"] = 17;
-        values[valuesById[18] = "IdentityNotAdminDomain"] = 18;
         values[valuesById[19] = "IdentitySharingKindMismatch"] = 19;
         values[valuesById[20] = "IdentityEmailNotAssociated"] = 20;
         values[valuesById[21] = "IdentityEmailAlreadyAssociated"] = 21;
@@ -27580,216 +27573,6 @@ $root.api = (function() {
         };
 
         return PayloadIdentityNotAdmin;
-    })();
-
-    api.PayloadIdentityNotAdminDomain = (function() {
-
-        /**
-         * Properties of a PayloadIdentityNotAdminDomain.
-         * @memberof api
-         * @interface IPayloadIdentityNotAdminDomain
-         * @property {string|null} [login] PayloadIdentityNotAdminDomain login
-         * @property {string|null} [domain] PayloadIdentityNotAdminDomain domain
-         */
-
-        /**
-         * Constructs a new PayloadIdentityNotAdminDomain.
-         * @memberof api
-         * @classdesc Represents a PayloadIdentityNotAdminDomain.
-         * @implements IPayloadIdentityNotAdminDomain
-         * @constructor
-         * @param {api.IPayloadIdentityNotAdminDomain=} [properties] Properties to set
-         */
-        function PayloadIdentityNotAdminDomain(properties) {
-            if (properties)
-                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                    if (properties[keys[i]] != null)
-                        this[keys[i]] = properties[keys[i]];
-        }
-
-        /**
-         * PayloadIdentityNotAdminDomain login.
-         * @member {string} login
-         * @memberof api.PayloadIdentityNotAdminDomain
-         * @instance
-         */
-        PayloadIdentityNotAdminDomain.prototype.login = "";
-
-        /**
-         * PayloadIdentityNotAdminDomain domain.
-         * @member {string} domain
-         * @memberof api.PayloadIdentityNotAdminDomain
-         * @instance
-         */
-        PayloadIdentityNotAdminDomain.prototype.domain = "";
-
-        /**
-         * Creates a new PayloadIdentityNotAdminDomain instance using the specified properties.
-         * @function create
-         * @memberof api.PayloadIdentityNotAdminDomain
-         * @static
-         * @param {api.IPayloadIdentityNotAdminDomain=} [properties] Properties to set
-         * @returns {api.PayloadIdentityNotAdminDomain} PayloadIdentityNotAdminDomain instance
-         */
-        PayloadIdentityNotAdminDomain.create = function create(properties) {
-            return new PayloadIdentityNotAdminDomain(properties);
-        };
-
-        /**
-         * Encodes the specified PayloadIdentityNotAdminDomain message. Does not implicitly {@link api.PayloadIdentityNotAdminDomain.verify|verify} messages.
-         * @function encode
-         * @memberof api.PayloadIdentityNotAdminDomain
-         * @static
-         * @param {api.IPayloadIdentityNotAdminDomain} message PayloadIdentityNotAdminDomain message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        PayloadIdentityNotAdminDomain.encode = function encode(message, writer) {
-            if (!writer)
-                writer = $Writer.create();
-            if (message.login != null && message.hasOwnProperty("login"))
-                writer.uint32(/* id 1, wireType 2 =*/10).string(message.login);
-            if (message.domain != null && message.hasOwnProperty("domain"))
-                writer.uint32(/* id 2, wireType 2 =*/18).string(message.domain);
-            return writer;
-        };
-
-        /**
-         * Encodes the specified PayloadIdentityNotAdminDomain message, length delimited. Does not implicitly {@link api.PayloadIdentityNotAdminDomain.verify|verify} messages.
-         * @function encodeDelimited
-         * @memberof api.PayloadIdentityNotAdminDomain
-         * @static
-         * @param {api.IPayloadIdentityNotAdminDomain} message PayloadIdentityNotAdminDomain message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        PayloadIdentityNotAdminDomain.encodeDelimited = function encodeDelimited(message, writer) {
-            return this.encode(message, writer).ldelim();
-        };
-
-        /**
-         * Decodes a PayloadIdentityNotAdminDomain message from the specified reader or buffer.
-         * @function decode
-         * @memberof api.PayloadIdentityNotAdminDomain
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @param {number} [length] Message length if known beforehand
-         * @returns {api.PayloadIdentityNotAdminDomain} PayloadIdentityNotAdminDomain
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        PayloadIdentityNotAdminDomain.decode = function decode(reader, length) {
-            if (!(reader instanceof $Reader))
-                reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.PayloadIdentityNotAdminDomain();
-            while (reader.pos < end) {
-                var tag = reader.uint32();
-                switch (tag >>> 3) {
-                case 1:
-                    message.login = reader.string();
-                    break;
-                case 2:
-                    message.domain = reader.string();
-                    break;
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-                }
-            }
-            return message;
-        };
-
-        /**
-         * Decodes a PayloadIdentityNotAdminDomain message from the specified reader or buffer, length delimited.
-         * @function decodeDelimited
-         * @memberof api.PayloadIdentityNotAdminDomain
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {api.PayloadIdentityNotAdminDomain} PayloadIdentityNotAdminDomain
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        PayloadIdentityNotAdminDomain.decodeDelimited = function decodeDelimited(reader) {
-            if (!(reader instanceof $Reader))
-                reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
-        };
-
-        /**
-         * Verifies a PayloadIdentityNotAdminDomain message.
-         * @function verify
-         * @memberof api.PayloadIdentityNotAdminDomain
-         * @static
-         * @param {Object.<string,*>} message Plain object to verify
-         * @returns {string|null} `null` if valid, otherwise the reason why it is not
-         */
-        PayloadIdentityNotAdminDomain.verify = function verify(message) {
-            if (typeof message !== "object" || message === null)
-                return "object expected";
-            if (message.login != null && message.hasOwnProperty("login"))
-                if (!$util.isString(message.login))
-                    return "login: string expected";
-            if (message.domain != null && message.hasOwnProperty("domain"))
-                if (!$util.isString(message.domain))
-                    return "domain: string expected";
-            return null;
-        };
-
-        /**
-         * Creates a PayloadIdentityNotAdminDomain message from a plain object. Also converts values to their respective internal types.
-         * @function fromObject
-         * @memberof api.PayloadIdentityNotAdminDomain
-         * @static
-         * @param {Object.<string,*>} object Plain object
-         * @returns {api.PayloadIdentityNotAdminDomain} PayloadIdentityNotAdminDomain
-         */
-        PayloadIdentityNotAdminDomain.fromObject = function fromObject(object) {
-            if (object instanceof $root.api.PayloadIdentityNotAdminDomain)
-                return object;
-            var message = new $root.api.PayloadIdentityNotAdminDomain();
-            if (object.login != null)
-                message.login = String(object.login);
-            if (object.domain != null)
-                message.domain = String(object.domain);
-            return message;
-        };
-
-        /**
-         * Creates a plain object from a PayloadIdentityNotAdminDomain message. Also converts values to other types if specified.
-         * @function toObject
-         * @memberof api.PayloadIdentityNotAdminDomain
-         * @static
-         * @param {api.PayloadIdentityNotAdminDomain} message PayloadIdentityNotAdminDomain
-         * @param {$protobuf.IConversionOptions} [options] Conversion options
-         * @returns {Object.<string,*>} Plain object
-         */
-        PayloadIdentityNotAdminDomain.toObject = function toObject(message, options) {
-            if (!options)
-                options = {};
-            var object = {};
-            if (options.defaults) {
-                object.login = "";
-                object.domain = "";
-            }
-            if (message.login != null && message.hasOwnProperty("login"))
-                object.login = message.login;
-            if (message.domain != null && message.hasOwnProperty("domain"))
-                object.domain = message.domain;
-            return object;
-        };
-
-        /**
-         * Converts this PayloadIdentityNotAdminDomain to JSON.
-         * @function toJSON
-         * @memberof api.PayloadIdentityNotAdminDomain
-         * @instance
-         * @returns {Object.<string,*>} JSON object
-         */
-        PayloadIdentityNotAdminDomain.prototype.toJSON = function toJSON() {
-            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-        };
-
-        return PayloadIdentityNotAdminDomain;
     })();
 
     api.PayloadIdentityEmailNotAssociated = (function() {

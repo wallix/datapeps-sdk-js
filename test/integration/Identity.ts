@@ -207,12 +207,6 @@ describe("identity.main", () => {
     await new AdminAPI(aliceSession).setAdmin(bob.login, true);
   });
 
-  it("alice list tokens to test its admin right", async () => {
-    await new AdminAPI(adminSession).listRegisterTokens({
-      domain: "peps.test"
-    });
-  });
-
   let renewSecret = nacl.randomBytes(128);
   it("administrator overwrite keys for alice", async () => {
     await new AdminAPI(adminSession).overwriteKeys(alice.login, renewSecret);
@@ -220,7 +214,7 @@ describe("identity.main", () => {
 
   it("alice attempt to list identities", async () => {
     try {
-      await new IdentityAPI(aliceSession).list({ domain: "peps.test" });
+      await new IdentityAPI(aliceSession).list({});
     } catch (err) {
       expect(err).instanceof(DataPeps.Error);
       expect(err.kind).equal(DataPeps.ServerError.SessionStale);

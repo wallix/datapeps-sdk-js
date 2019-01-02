@@ -10177,7 +10177,6 @@ export namespace api {
         IdentityNotFound = 15,
         IdentityVersionMismatch = 16,
         IdentityNotAdmin = 17,
-        IdentityNotAdminDomain = 18,
         IdentitySharingKindMismatch = 19,
         IdentityEmailNotAssociated = 20,
         IdentityEmailAlreadyAssociated = 21,
@@ -11384,102 +11383,6 @@ export namespace api {
 
         /**
          * Converts this PayloadIdentityNotAdmin to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a PayloadIdentityNotAdminDomain. */
-    interface IPayloadIdentityNotAdminDomain {
-
-        /** PayloadIdentityNotAdminDomain login */
-        login?: (string|null);
-
-        /** PayloadIdentityNotAdminDomain domain */
-        domain?: (string|null);
-    }
-
-    /** Represents a PayloadIdentityNotAdminDomain. */
-    class PayloadIdentityNotAdminDomain implements IPayloadIdentityNotAdminDomain {
-
-        /**
-         * Constructs a new PayloadIdentityNotAdminDomain.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: api.IPayloadIdentityNotAdminDomain);
-
-        /** PayloadIdentityNotAdminDomain login. */
-        public login: string;
-
-        /** PayloadIdentityNotAdminDomain domain. */
-        public domain: string;
-
-        /**
-         * Creates a new PayloadIdentityNotAdminDomain instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns PayloadIdentityNotAdminDomain instance
-         */
-        public static create(properties?: api.IPayloadIdentityNotAdminDomain): api.PayloadIdentityNotAdminDomain;
-
-        /**
-         * Encodes the specified PayloadIdentityNotAdminDomain message. Does not implicitly {@link api.PayloadIdentityNotAdminDomain.verify|verify} messages.
-         * @param message PayloadIdentityNotAdminDomain message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: api.IPayloadIdentityNotAdminDomain, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified PayloadIdentityNotAdminDomain message, length delimited. Does not implicitly {@link api.PayloadIdentityNotAdminDomain.verify|verify} messages.
-         * @param message PayloadIdentityNotAdminDomain message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: api.IPayloadIdentityNotAdminDomain, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a PayloadIdentityNotAdminDomain message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns PayloadIdentityNotAdminDomain
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.PayloadIdentityNotAdminDomain;
-
-        /**
-         * Decodes a PayloadIdentityNotAdminDomain message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns PayloadIdentityNotAdminDomain
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.PayloadIdentityNotAdminDomain;
-
-        /**
-         * Verifies a PayloadIdentityNotAdminDomain message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a PayloadIdentityNotAdminDomain message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns PayloadIdentityNotAdminDomain
-         */
-        public static fromObject(object: { [k: string]: any }): api.PayloadIdentityNotAdminDomain;
-
-        /**
-         * Creates a plain object from a PayloadIdentityNotAdminDomain message. Also converts values to other types if specified.
-         * @param message PayloadIdentityNotAdminDomain
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: api.PayloadIdentityNotAdminDomain, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this PayloadIdentityNotAdminDomain to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };

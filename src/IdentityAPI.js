@@ -197,8 +197,11 @@ var IdentityAPI = /** @class */ (function () {
                                 path: "/api/v4/identities/list",
                                 params: options,
                                 response: function (r) {
-                                    var identities = proto_1.api.IdentityListResponse.decode(r).identities;
-                                    return identities.map(IdentityX.fromapi);
+                                    var _a = proto_1.api.IdentityListResponse.decode(r), identities = _a.identities, totalIdentitiesCount = _a.totalIdentitiesCount;
+                                    return {
+                                        identities: identities.map(IdentityX.fromapi),
+                                        totalIdentitiesCount: totalIdentitiesCount
+                                    };
                                 }
                             })];
                     case 1: return [2 /*return*/, _a.sent()];

@@ -148,7 +148,10 @@ export declare class IdentityAPI {
         kind?: string;
         sortingField?: IdentitySortingField;
         sortingOrder?: IdentitySortingOrder;
-    }): Promise<Identity<Uint8Array>[]>;
+    }): Promise<{
+        identities: Identity<Uint8Array>[];
+        totalIdentitiesCount: number;
+    }>;
     /**
      * Create a new identity.
      * @param identity The description of the identity.

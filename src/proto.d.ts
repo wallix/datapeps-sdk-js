@@ -1810,6 +1810,9 @@ export namespace api {
 
         /** IdentityListResponse identities */
         identities?: (api.IIdentity[]|null);
+
+        /** IdentityListResponse totalIdentitiesCount */
+        totalIdentitiesCount?: (number|null);
     }
 
     /** Represents an IdentityListResponse. */
@@ -1823,6 +1826,9 @@ export namespace api {
 
         /** IdentityListResponse identities. */
         public identities: api.IIdentity[];
+
+        /** IdentityListResponse totalIdentitiesCount. */
+        public totalIdentitiesCount: number;
 
         /**
          * Creates a new IdentityListResponse instance using the specified properties.

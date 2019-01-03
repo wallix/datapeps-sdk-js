@@ -10,20 +10,27 @@ import {
 } from "../../../src/IdentityAPI";
 
 describe("identity.list", () => {
+  let n = 10;
   let kind: string;
-  let ctx: Context.adminCtx & Context.identitiesCtx;
+  let ctx: Context.adminCtx & {
+    A: Context.identitiesCtx;
+    B: Context.identitiesCtx;
+  };
 
   before(async () => {
     let init = await Context.init();
     kind = `list/${init.seed}`;
     let admin = await Context.admin();
-    let identities = await Context.identities(init, kind, 10);
-    ctx = { ...admin, ...identities };
+    let A = await Context.identities(init, n, { kind, name: "alice" });
+    let B = await Context.identities(init, n, { kind, name: "bob" });
+    ctx = { ...admin, A, B };
   });
 
   ///////////////////////////////////////////////
-  // Test nominal cases - forEach sortingField / sortingOrder
+  // Test nominal cases
   ///////////////////////////////////////////////
+
+  // Test forEach sortingField / sortingOrder
 
   function itWithSortingOptions(
     field: IdentitySortingField,
@@ -32,17 +39,21 @@ describe("identity.list", () => {
     return it(`list users in an ordered way (${IdentitySortingField[field]}, ${
       IdentitySortingOrder[order]
     })`, async () => {
+      let expected = [];
+      expected.push(...ctx.A.identities);
+      expected.push(...ctx.B.identities);
       let result = await new IdentityAPI(ctx.adminSession).list({
         offset: 0,
-        limit: 100,
+        limit: n * 2,
         kind: kind,
         sortingField: field,
         sortingOrder: order
       });
       expectIdentitiesListAreEquals(
-        sortIdentities(field, order, ctx.identities),
-        result
+        sortIdentities(field, order, expected),
+        result.identities
       );
+      expect(expected.length).to.be.equal(result.totalIdentitiesCount);
     });
   }
 
@@ -58,6 +69,41 @@ describe("identity.list", () => {
   sortingFields.forEach(field =>
     sortingOrders.forEach(order => itWithSortingOptions(field, order))
   );
+
+  // Test with prefix filtering
+
+  function itWithPrefixSearch(name: string, expectedF: () => Identity<any>[]) {
+    it(`list all users with prefix search '${name}'`, async () => {
+      let expected = expectedF();
+      let result = await new IdentityAPI(ctx.adminSession).list({
+        offset: 0,
+        limit: Math.ceil(n * 2),
+        kind: kind,
+        search: name
+      });
+      expectContainsAllIdentities(expected, result.identities);
+      expect(expected.length).to.be.equal(result.totalIdentitiesCount);
+    });
+    function itWithPage(limit, offset) {
+      it(`list page(${offset}, ${limit}) users with prefix search '${name}'`, async () => {
+        let expected = expectedF();
+        let result = await new IdentityAPI(ctx.adminSession).list({
+          offset,
+          limit,
+          kind: kind,
+          search: name
+        });
+        expectContainsAllIdentities(result.identities, expected, false);
+        expect(expected.length).to.be.equal(result.totalIdentitiesCount);
+      });
+    }
+    itWithPage(Math.ceil(n / 2), 0);
+    itWithPage(0, Math.ceil(n / 2));
+    itWithPage(Math.ceil(n / 4), Math.ceil(n / 2));
+    itWithPage(n * 3, 0);
+  }
+  itWithPrefixSearch("alice", () => ctx.A.identities);
+  itWithPrefixSearch("bob", () => ctx.B.identities);
 
   ///////////////////////////////////////////////
   // Error cases
@@ -96,6 +142,25 @@ describe("identity.list", () => {
   ///////////////////////////////////////////////
   // Tools
   ///////////////////////////////////////////////
+
+  function expectContainsAllIdentities(
+    expected: Identity<Uint8Array>[],
+    result: Identity<Uint8Array>[],
+    both = true
+  ) {
+    if (both) {
+      expect(
+        result.length,
+        "identities list hasn't the same length"
+      ).to.be.equals(expected.length);
+    }
+    expected.forEach(e => {
+      expect(
+        result.find(r => r.login === e.login),
+        `cannot find '${e.login}' in result`
+      ).to.be.not.null;
+    });
+  }
 
   function expectIdentitiesListAreEquals(
     expected: Identity<Uint8Array>[],

@@ -37,31 +37,23 @@ export async function admin(): Promise<adminCtx> {
   return { admin, adminSecret, adminSession };
 }
 
-export interface userPayload {
-  description: string;
-  firstname: string;
-  lastname: string;
-}
-
-export interface userCtx {
-  identity: DataPeps.Identity<Uint8Array>;
+export interface identityCtx {
+  identity: DataPeps.Identity<any>;
   secret: Uint8Array;
 }
 
-export async function user(init: initCtx, name: string): Promise<userCtx> {
+export interface identityOptions {
+  name?: string;
+  kind?: string;
+  payload?: Uint8Array;
+}
+
+export async function identity(
+  init: initCtx,
+  options: identityOptions
+): Promise<identityCtx> {
   let secret = nacl.randomBytes(128);
-  let identity: DataPeps.IdentityFields = {
-    login: `${name}.${init.seed}`,
-    name: `${name} martin`,
-    kind: "pepsswarm/0",
-    payload: new TextEncoder().encode(
-      JSON.stringify({
-        firstname: name,
-        lastname: "typescript",
-        description: `${name} is a test identity from typescript integration test`
-      } as userPayload)
-    )
-  };
+  let identity = generateIdentityFields(init, options);
   await DataPeps.register(identity, secret);
   return {
     identity: { ...identity, created: new Date(), admin: false, active: true },
@@ -69,15 +61,96 @@ export async function user(init: initCtx, name: string): Promise<userCtx> {
   };
 }
 
-export interface userAndSessionCtx extends userCtx {
+export interface identityAndSessionCtx extends identityCtx {
   session: DataPeps.Session;
 }
 
+export async function identityAndSession(
+  init: initCtx,
+  name: string,
+  options?: identityOptions
+): Promise<identityAndSessionCtx> {
+  let ctx = await identity(init, options);
+  let session = await DataPeps.Session.login(ctx.identity.login, ctx.secret);
+  return { ...ctx, session };
+}
+
+export interface childIdentityCtx extends identityCtx {
+  parent: identityCtx;
+}
+
+export interface childIdentityOptions {
+  kind?: string;
+  payload?: Uint8Array;
+
+  hasSecret?: boolean;
+  sharingGroup?: string[];
+  domain?: string;
+}
+
+export async function childIdentity(
+  parent: identityAndSessionCtx,
+  init: initCtx,
+  options?: childIdentityOptions
+): Promise<childIdentityCtx> {
+  let parentIdentityAPI = await new IdentityAPI(parent.session);
+  options = options ? options : {};
+  let identityFields = generateIdentityFields(init, options);
+  let secret: Uint8Array;
+  if (options.hasSecret) {
+    secret = nacl.randomBytes(128);
+  }
+  let email = `${identityFields.login}@${options.domain}`;
+  await parentIdentityAPI.create(identityFields, {
+    secret,
+    sharingGroup: options.sharingGroup,
+    email
+  });
+  let childCtx = {
+    identity: {
+      ...identityFields,
+      created: new Date(),
+      admin: false,
+      active: true
+    },
+    secret,
+    parent: parent
+  };
+  return childCtx;
+}
+
+export interface userPayload {
+  description: string;
+  firstname: string;
+  lastname: string;
+}
+
+export interface userCtx extends identityCtx {}
+
+export async function user(
+  init: initCtx,
+  name: string,
+  domain?: string
+): Promise<userCtx> {
+  let payload = new TextEncoder().encode(
+    JSON.stringify({
+      firstname: name,
+      lastname: "typescript",
+      description: `${name} is a test identity from typescript integration test`
+    } as userPayload)
+  );
+  let userCtx = await identity(init, { kind: "pepsswarm/0", payload, name });
+  return userCtx;
+}
+
+export interface userAndSessionCtx extends identityAndSessionCtx {}
+
 export async function userAndSession(
   init: initCtx,
-  name: string
+  name: string,
+  domain?: string
 ): Promise<userAndSessionCtx> {
-  let ctx = await user(init, name);
+  let ctx = await user(init, name, domain);
   let session = await DataPeps.Session.login(ctx.identity.login, ctx.secret);
   return { ...ctx, session };
 }
@@ -203,19 +276,19 @@ export interface identitiesCtx {
 
 export async function identities(
   init: initCtx,
-  kind: string,
-  n: number
+  n: number,
+  options?: identityOptions
 ): Promise<identitiesCtx> {
   let identities = [];
   let promises = [];
+  options = options ? options : {};
+  let name = options.name == null ? "id" : options.name;
   for (let i = 0; i < n; i++) {
     let secret = nacl.randomBytes(128);
-    let identity: DataPeps.IdentityFields = {
-      login: `id.${i}.${init.seed}`,
-      name: `identity ${i}`,
-      kind: kind,
-      payload: null
-    };
+    let identity: DataPeps.IdentityFields = generateIdentityFields(init, {
+      ...options,
+      name: `${name}${i}`
+    });
     promises.push(DataPeps.register(identity, secret));
     identities.push({
       ...identity,
@@ -226,4 +299,26 @@ export async function identities(
   }
   await Promise.all(promises);
   return { identities };
+}
+
+const identityDefaultKind = "kind/test-default";
+
+function generateIdentityFields(
+  init: initCtx,
+  options: identityOptions
+): DataPeps.IdentityFields {
+  options = options ? options : {};
+  let name = options.name == null ? "test" : options.name;
+  let login = `${name}.${init.seed}`;
+  let kind = options.kind;
+  if (!kind || 0 === kind.length) {
+    kind = identityDefaultKind;
+  }
+  let identityFields: DataPeps.IdentityFields = {
+    login,
+    name: `${name} martin`,
+    kind,
+    payload: options.payload
+  };
+  return identityFields;
 }

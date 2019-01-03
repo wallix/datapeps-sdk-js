@@ -4517,6 +4517,7 @@ $root.api = (function() {
          * @memberof api
          * @interface IIdentityListResponse
          * @property {Array.<api.IIdentity>|null} [identities] IdentityListResponse identities
+         * @property {number|null} [totalIdentitiesCount] IdentityListResponse totalIdentitiesCount
          */
 
         /**
@@ -4542,6 +4543,14 @@ $root.api = (function() {
          * @instance
          */
         IdentityListResponse.prototype.identities = $util.emptyArray;
+
+        /**
+         * IdentityListResponse totalIdentitiesCount.
+         * @member {number} totalIdentitiesCount
+         * @memberof api.IdentityListResponse
+         * @instance
+         */
+        IdentityListResponse.prototype.totalIdentitiesCount = 0;
 
         /**
          * Creates a new IdentityListResponse instance using the specified properties.
@@ -4570,6 +4579,8 @@ $root.api = (function() {
             if (message.identities != null && message.identities.length)
                 for (var i = 0; i < message.identities.length; ++i)
                     $root.api.Identity.encode(message.identities[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            if (message.totalIdentitiesCount != null && message.hasOwnProperty("totalIdentitiesCount"))
+                writer.uint32(/* id 2, wireType 0 =*/16).uint32(message.totalIdentitiesCount);
             return writer;
         };
 
@@ -4608,6 +4619,9 @@ $root.api = (function() {
                     if (!(message.identities && message.identities.length))
                         message.identities = [];
                     message.identities.push($root.api.Identity.decode(reader, reader.uint32()));
+                    break;
+                case 2:
+                    message.totalIdentitiesCount = reader.uint32();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -4653,6 +4667,9 @@ $root.api = (function() {
                         return "identities." + error;
                 }
             }
+            if (message.totalIdentitiesCount != null && message.hasOwnProperty("totalIdentitiesCount"))
+                if (!$util.isInteger(message.totalIdentitiesCount))
+                    return "totalIdentitiesCount: integer expected";
             return null;
         };
 
@@ -4678,6 +4695,8 @@ $root.api = (function() {
                     message.identities[i] = $root.api.Identity.fromObject(object.identities[i]);
                 }
             }
+            if (object.totalIdentitiesCount != null)
+                message.totalIdentitiesCount = object.totalIdentitiesCount >>> 0;
             return message;
         };
 
@@ -4696,11 +4715,15 @@ $root.api = (function() {
             var object = {};
             if (options.arrays || options.defaults)
                 object.identities = [];
+            if (options.defaults)
+                object.totalIdentitiesCount = 0;
             if (message.identities && message.identities.length) {
                 object.identities = [];
                 for (var j = 0; j < message.identities.length; ++j)
                     object.identities[j] = $root.api.Identity.toObject(message.identities[j], options);
             }
+            if (message.totalIdentitiesCount != null && message.hasOwnProperty("totalIdentitiesCount"))
+                object.totalIdentitiesCount = message.totalIdentitiesCount;
             return object;
         };
 

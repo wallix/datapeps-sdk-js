@@ -207,7 +207,10 @@ export class IdentityAPI {
     kind?: string;
     sortingField?: IdentitySortingField;
     sortingOrder?: IdentitySortingOrder;
-  }): Promise<Identity<Uint8Array>[]> {
+  }): Promise<{
+    identities: Identity<Uint8Array>[]
+    totalIdentitiesCount: number
+  }> {
     if (options.sortingField === undefined) {
       options.sortingField = IdentitySortingField.CREATED;
     }
@@ -220,8 +223,11 @@ export class IdentityAPI {
       path: "/api/v4/identities/list",
       params: options,
       response: r => {
-        let { identities } = api.IdentityListResponse.decode(r);
-        return identities.map(IdentityX.fromapi);
+        let { identities, totalIdentitiesCount } = api.IdentityListResponse.decode(r);
+        return {
+          identities: identities.map(IdentityX.fromapi),
+          totalIdentitiesCount
+        }
       }
     });
   }

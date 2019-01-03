@@ -83,23 +83,14 @@ function admin() {
     });
 }
 exports.admin = admin;
-function user(init, name) {
+function identity(init, options) {
     return __awaiter(this, void 0, void 0, function () {
         var secret, identity;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     secret = nacl.randomBytes(128);
-                    identity = {
-                        login: name + "." + init.seed,
-                        name: name + " martin",
-                        kind: "pepsswarm/0",
-                        payload: new TextEncoder().encode(JSON.stringify({
-                            firstname: name,
-                            lastname: "typescript",
-                            description: name + " is a test identity from typescript integration test"
-                        }))
-                    };
+                    identity = generateIdentityFields(init, options);
                     return [4 /*yield*/, DataPeps.register(identity, secret)];
                 case 1:
                     _a.sent();
@@ -111,13 +102,82 @@ function user(init, name) {
         });
     });
 }
-exports.user = user;
-function userAndSession(init, name) {
+exports.identity = identity;
+function identityAndSession(init, name, options) {
     return __awaiter(this, void 0, void 0, function () {
         var ctx, session;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, user(init, name)];
+                case 0: return [4 /*yield*/, identity(init, options)];
+                case 1:
+                    ctx = _a.sent();
+                    return [4 /*yield*/, DataPeps.Session.login(ctx.identity.login, ctx.secret)];
+                case 2:
+                    session = _a.sent();
+                    return [2 /*return*/, __assign({}, ctx, { session: session })];
+            }
+        });
+    });
+}
+exports.identityAndSession = identityAndSession;
+function childIdentity(parent, init, options) {
+    return __awaiter(this, void 0, void 0, function () {
+        var parentIdentityAPI, identityFields, secret, email, childCtx;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, new DataPeps_1.IdentityAPI(parent.session)];
+                case 1:
+                    parentIdentityAPI = _a.sent();
+                    options = options ? options : {};
+                    identityFields = generateIdentityFields(init, options);
+                    if (options.hasSecret) {
+                        secret = nacl.randomBytes(128);
+                    }
+                    email = identityFields.login + "@" + options.domain;
+                    return [4 /*yield*/, parentIdentityAPI.create(identityFields, {
+                            secret: secret,
+                            sharingGroup: options.sharingGroup,
+                            email: email
+                        })];
+                case 2:
+                    _a.sent();
+                    childCtx = {
+                        identity: __assign({}, identityFields, { created: new Date(), admin: false, active: true }),
+                        secret: secret,
+                        parent: parent
+                    };
+                    return [2 /*return*/, childCtx];
+            }
+        });
+    });
+}
+exports.childIdentity = childIdentity;
+function user(init, name, domain) {
+    return __awaiter(this, void 0, void 0, function () {
+        var payload, userCtx;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    payload = new TextEncoder().encode(JSON.stringify({
+                        firstname: name,
+                        lastname: "typescript",
+                        description: name + " is a test identity from typescript integration test"
+                    }));
+                    return [4 /*yield*/, identity(init, { kind: "pepsswarm/0", payload: payload, name: name })];
+                case 1:
+                    userCtx = _a.sent();
+                    return [2 /*return*/, userCtx];
+            }
+        });
+    });
+}
+exports.user = user;
+function userAndSession(init, name, domain) {
+    return __awaiter(this, void 0, void 0, function () {
+        var ctx, session;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, user(init, name, domain)];
                 case 1:
                     ctx = _a.sent();
                     return [4 /*yield*/, DataPeps.Session.login(ctx.identity.login, ctx.secret)];
@@ -262,24 +322,21 @@ function dev(init, n) {
     });
 }
 exports.dev = dev;
-function identities(init, kind, n) {
+function identities(init, n, options) {
     return __awaiter(this, void 0, void 0, function () {
-        var identities, promises, i, secret, identity;
+        var identities, promises, name, i, secret, identity_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     identities = [];
                     promises = [];
+                    options = options ? options : {};
+                    name = options.name == null ? "id" : options.name;
                     for (i = 0; i < n; i++) {
                         secret = nacl.randomBytes(128);
-                        identity = {
-                            login: "id." + i + "." + init.seed,
-                            name: "identity " + i,
-                            kind: kind,
-                            payload: null
-                        };
-                        promises.push(DataPeps.register(identity, secret));
-                        identities.push(__assign({}, identity, { created: new Date(), admin: false, active: true }));
+                        identity_1 = generateIdentityFields(init, __assign({}, options, { name: "" + name + i }));
+                        promises.push(DataPeps.register(identity_1, secret));
+                        identities.push(__assign({}, identity_1, { created: new Date(), admin: false, active: true }));
                     }
                     return [4 /*yield*/, Promise.all(promises)];
                 case 1:
@@ -290,4 +347,21 @@ function identities(init, kind, n) {
     });
 }
 exports.identities = identities;
+var identityDefaultKind = "kind/test-default";
+function generateIdentityFields(init, options) {
+    options = options ? options : {};
+    var name = options.name == null ? "test" : options.name;
+    var login = name + "." + init.seed;
+    var kind = options.kind;
+    if (!kind || 0 === kind.length) {
+        kind = identityDefaultKind;
+    }
+    var identityFields = {
+        login: login,
+        name: name + " martin",
+        kind: kind,
+        payload: options.payload
+    };
+    return identityFields;
+}
 //# sourceMappingURL=Context.js.map

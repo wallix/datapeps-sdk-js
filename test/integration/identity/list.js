@@ -50,10 +50,11 @@ var Utils_1 = require("../../Utils");
 var DataPeps_1 = require("../../../src/DataPeps");
 var IdentityAPI_1 = require("../../../src/IdentityAPI");
 describe("identity.list", function () {
+    var n = 10;
     var kind;
     var ctx;
     before(function () { return __awaiter(_this, void 0, void 0, function () {
-        var init, admin, identities;
+        var init, admin, A, B;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, Context.init()];
@@ -63,33 +64,42 @@ describe("identity.list", function () {
                     return [4 /*yield*/, Context.admin()];
                 case 2:
                     admin = _a.sent();
-                    return [4 /*yield*/, Context.identities(init, kind, 10)];
+                    return [4 /*yield*/, Context.identities(init, n, { kind: kind, name: "alice" })];
                 case 3:
-                    identities = _a.sent();
-                    ctx = __assign({}, admin, identities);
+                    A = _a.sent();
+                    return [4 /*yield*/, Context.identities(init, n, { kind: kind, name: "bob" })];
+                case 4:
+                    B = _a.sent();
+                    ctx = __assign({}, admin, { A: A, B: B });
                     return [2 /*return*/];
             }
         });
     }); });
     ///////////////////////////////////////////////
-    // Test nominal cases - forEach sortingField / sortingOrder
+    // Test nominal cases
     ///////////////////////////////////////////////
+    // Test forEach sortingField / sortingOrder
     function itWithSortingOptions(field, order) {
         var _this = this;
         return it("list users in an ordered way (" + IdentityAPI_1.IdentitySortingField[field] + ", " + IdentityAPI_1.IdentitySortingOrder[order] + ")", function () { return __awaiter(_this, void 0, void 0, function () {
-            var result;
+            var expected, result;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, new IdentityAPI_1.IdentityAPI(ctx.adminSession).list({
-                            offset: 0,
-                            limit: 100,
-                            kind: kind,
-                            sortingField: field,
-                            sortingOrder: order
-                        })];
+                    case 0:
+                        expected = [];
+                        expected.push.apply(expected, ctx.A.identities);
+                        expected.push.apply(expected, ctx.B.identities);
+                        return [4 /*yield*/, new IdentityAPI_1.IdentityAPI(ctx.adminSession).list({
+                                offset: 0,
+                                limit: n * 2,
+                                kind: kind,
+                                sortingField: field,
+                                sortingOrder: order
+                            })];
                     case 1:
                         result = _a.sent();
-                        expectIdentitiesListAreEquals(sortIdentities(field, order, ctx.identities), result);
+                        expectIdentitiesListAreEquals(sortIdentities(field, order, expected), result.identities);
+                        chai_1.expect(expected.length).to.be.equal(result.totalIdentitiesCount);
                         return [2 /*return*/];
                 }
             });
@@ -106,6 +116,59 @@ describe("identity.list", function () {
     sortingFields.forEach(function (field) {
         return sortingOrders.forEach(function (order) { return itWithSortingOptions(field, order); });
     });
+    // Test with prefix filtering
+    function itWithPrefixSearch(name, expectedF) {
+        var _this = this;
+        it("list all users with prefix search '" + name + "'", function () { return __awaiter(_this, void 0, void 0, function () {
+            var expected, result;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        expected = expectedF();
+                        return [4 /*yield*/, new IdentityAPI_1.IdentityAPI(ctx.adminSession).list({
+                                offset: 0,
+                                limit: Math.ceil(n * 2),
+                                kind: kind,
+                                search: name
+                            })];
+                    case 1:
+                        result = _a.sent();
+                        expectContainsAllIdentities(expected, result.identities);
+                        chai_1.expect(expected.length).to.be.equal(result.totalIdentitiesCount);
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+        function itWithPage(limit, offset) {
+            var _this = this;
+            it("list page(" + offset + ", " + limit + ") users with prefix search '" + name + "'", function () { return __awaiter(_this, void 0, void 0, function () {
+                var expected, result;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            expected = expectedF();
+                            return [4 /*yield*/, new IdentityAPI_1.IdentityAPI(ctx.adminSession).list({
+                                    offset: offset,
+                                    limit: limit,
+                                    kind: kind,
+                                    search: name
+                                })];
+                        case 1:
+                            result = _a.sent();
+                            expectContainsAllIdentities(result.identities, expected, false);
+                            chai_1.expect(expected.length).to.be.equal(result.totalIdentitiesCount);
+                            return [2 /*return*/];
+                    }
+                });
+            }); });
+        }
+        itWithPage(Math.ceil(n / 2), 0);
+        itWithPage(0, Math.ceil(n / 2));
+        itWithPage(Math.ceil(n / 4), Math.ceil(n / 2));
+        itWithPage(n * 3, 0);
+    }
+    itWithPrefixSearch("alice", function () { return ctx.A.identities; });
+    itWithPrefixSearch("bob", function () { return ctx.B.identities; });
     ///////////////////////////////////////////////
     // Error cases
     ///////////////////////////////////////////////
@@ -130,6 +193,15 @@ describe("identity.list", function () {
     ///////////////////////////////////////////////
     // Tools
     ///////////////////////////////////////////////
+    function expectContainsAllIdentities(expected, result, both) {
+        if (both === void 0) { both = true; }
+        if (both) {
+            chai_1.expect(result.length, "identities list hasn't the same length").to.be.equals(expected.length);
+        }
+        expected.forEach(function (e) {
+            chai_1.expect(result.find(function (r) { return r.login === e.login; }), "cannot find '" + e.login + "' in result").to.be.not.null;
+        });
+    }
     function expectIdentitiesListAreEquals(expected, result) {
         chai_1.expect(result.length, "identities list hasn't the same length").to.be.equals(expected.length);
         expected.forEach(function (e, i) {

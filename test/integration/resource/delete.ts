@@ -50,7 +50,7 @@ describe("resource.delete", () => {
       { text: "payload C" },
       [aliceChild.identity.login, ctx.alice.identity.login]
     );
-    resourceC = new Utils.Resource(resourceADataPeps, "Content C");
+    resourceC = new Utils.Resource(resourceCDataPeps, "Content C");
 
     let resourceDDataPeps = await new ResourceAPI(aliceChild.session).create(
       "test kind",

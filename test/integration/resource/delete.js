@@ -79,7 +79,7 @@ describe("resource.delete", function () {
                     return [4 /*yield*/, new DataPeps_1.ResourceAPI(aliceChild.session).create("test kind", { text: "payload C" }, [aliceChild.identity.login, ctx.alice.identity.login])];
                 case 6:
                     resourceCDataPeps = _a.sent();
-                    resourceC = new Utils.Resource(resourceADataPeps, "Content C");
+                    resourceC = new Utils.Resource(resourceCDataPeps, "Content C");
                     return [4 /*yield*/, new DataPeps_1.ResourceAPI(aliceChild.session).create("test kind", { text: "payload D" }, [
                             aliceChild.identity.login,
                             ctx.alice.identity.login,

@@ -15182,6 +15182,1114 @@ $root.api = (function() {
         return IdentityConfigurationAsApplicationResponse;
     })();
 
+    api.ApplicationUsageOverview = (function() {
+
+        /**
+         * Properties of an ApplicationUsageOverview.
+         * @memberof api
+         * @interface IApplicationUsageOverview
+         * @property {api.ApplicationUsageOverview.IJWT|null} [jwt] ApplicationUsageOverview jwt
+         * @property {api.ApplicationUsageOverview.IDelegatedAccess|null} [delegates] ApplicationUsageOverview delegates
+         */
+
+        /**
+         * Constructs a new ApplicationUsageOverview.
+         * @memberof api
+         * @classdesc Represents an ApplicationUsageOverview.
+         * @implements IApplicationUsageOverview
+         * @constructor
+         * @param {api.IApplicationUsageOverview=} [properties] Properties to set
+         */
+        function ApplicationUsageOverview(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * ApplicationUsageOverview jwt.
+         * @member {api.ApplicationUsageOverview.IJWT|null|undefined} jwt
+         * @memberof api.ApplicationUsageOverview
+         * @instance
+         */
+        ApplicationUsageOverview.prototype.jwt = null;
+
+        /**
+         * ApplicationUsageOverview delegates.
+         * @member {api.ApplicationUsageOverview.IDelegatedAccess|null|undefined} delegates
+         * @memberof api.ApplicationUsageOverview
+         * @instance
+         */
+        ApplicationUsageOverview.prototype.delegates = null;
+
+        /**
+         * Creates a new ApplicationUsageOverview instance using the specified properties.
+         * @function create
+         * @memberof api.ApplicationUsageOverview
+         * @static
+         * @param {api.IApplicationUsageOverview=} [properties] Properties to set
+         * @returns {api.ApplicationUsageOverview} ApplicationUsageOverview instance
+         */
+        ApplicationUsageOverview.create = function create(properties) {
+            return new ApplicationUsageOverview(properties);
+        };
+
+        /**
+         * Encodes the specified ApplicationUsageOverview message. Does not implicitly {@link api.ApplicationUsageOverview.verify|verify} messages.
+         * @function encode
+         * @memberof api.ApplicationUsageOverview
+         * @static
+         * @param {api.IApplicationUsageOverview} message ApplicationUsageOverview message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ApplicationUsageOverview.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.jwt != null && message.hasOwnProperty("jwt"))
+                $root.api.ApplicationUsageOverview.JWT.encode(message.jwt, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            if (message.delegates != null && message.hasOwnProperty("delegates"))
+                $root.api.ApplicationUsageOverview.DelegatedAccess.encode(message.delegates, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified ApplicationUsageOverview message, length delimited. Does not implicitly {@link api.ApplicationUsageOverview.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof api.ApplicationUsageOverview
+         * @static
+         * @param {api.IApplicationUsageOverview} message ApplicationUsageOverview message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ApplicationUsageOverview.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an ApplicationUsageOverview message from the specified reader or buffer.
+         * @function decode
+         * @memberof api.ApplicationUsageOverview
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {api.ApplicationUsageOverview} ApplicationUsageOverview
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ApplicationUsageOverview.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.ApplicationUsageOverview();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.jwt = $root.api.ApplicationUsageOverview.JWT.decode(reader, reader.uint32());
+                    break;
+                case 2:
+                    message.delegates = $root.api.ApplicationUsageOverview.DelegatedAccess.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an ApplicationUsageOverview message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof api.ApplicationUsageOverview
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {api.ApplicationUsageOverview} ApplicationUsageOverview
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ApplicationUsageOverview.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an ApplicationUsageOverview message.
+         * @function verify
+         * @memberof api.ApplicationUsageOverview
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        ApplicationUsageOverview.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.jwt != null && message.hasOwnProperty("jwt")) {
+                var error = $root.api.ApplicationUsageOverview.JWT.verify(message.jwt);
+                if (error)
+                    return "jwt." + error;
+            }
+            if (message.delegates != null && message.hasOwnProperty("delegates")) {
+                var error = $root.api.ApplicationUsageOverview.DelegatedAccess.verify(message.delegates);
+                if (error)
+                    return "delegates." + error;
+            }
+            return null;
+        };
+
+        /**
+         * Creates an ApplicationUsageOverview message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof api.ApplicationUsageOverview
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {api.ApplicationUsageOverview} ApplicationUsageOverview
+         */
+        ApplicationUsageOverview.fromObject = function fromObject(object) {
+            if (object instanceof $root.api.ApplicationUsageOverview)
+                return object;
+            var message = new $root.api.ApplicationUsageOverview();
+            if (object.jwt != null) {
+                if (typeof object.jwt !== "object")
+                    throw TypeError(".api.ApplicationUsageOverview.jwt: object expected");
+                message.jwt = $root.api.ApplicationUsageOverview.JWT.fromObject(object.jwt);
+            }
+            if (object.delegates != null) {
+                if (typeof object.delegates !== "object")
+                    throw TypeError(".api.ApplicationUsageOverview.delegates: object expected");
+                message.delegates = $root.api.ApplicationUsageOverview.DelegatedAccess.fromObject(object.delegates);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an ApplicationUsageOverview message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof api.ApplicationUsageOverview
+         * @static
+         * @param {api.ApplicationUsageOverview} message ApplicationUsageOverview
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        ApplicationUsageOverview.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.jwt = null;
+                object.delegates = null;
+            }
+            if (message.jwt != null && message.hasOwnProperty("jwt"))
+                object.jwt = $root.api.ApplicationUsageOverview.JWT.toObject(message.jwt, options);
+            if (message.delegates != null && message.hasOwnProperty("delegates"))
+                object.delegates = $root.api.ApplicationUsageOverview.DelegatedAccess.toObject(message.delegates, options);
+            return object;
+        };
+
+        /**
+         * Converts this ApplicationUsageOverview to JSON.
+         * @function toJSON
+         * @memberof api.ApplicationUsageOverview
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        ApplicationUsageOverview.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        ApplicationUsageOverview.JWT = (function() {
+
+            /**
+             * Properties of a JWT.
+             * @memberof api.ApplicationUsageOverview
+             * @interface IJWT
+             * @property {number|null} [totalIdentities] JWT totalIdentities
+             * @property {number|null} [newIdentities] JWT newIdentities
+             * @property {number|null} [newSessions] JWT newSessions
+             */
+
+            /**
+             * Constructs a new JWT.
+             * @memberof api.ApplicationUsageOverview
+             * @classdesc Represents a JWT.
+             * @implements IJWT
+             * @constructor
+             * @param {api.ApplicationUsageOverview.IJWT=} [properties] Properties to set
+             */
+            function JWT(properties) {
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * JWT totalIdentities.
+             * @member {number} totalIdentities
+             * @memberof api.ApplicationUsageOverview.JWT
+             * @instance
+             */
+            JWT.prototype.totalIdentities = 0;
+
+            /**
+             * JWT newIdentities.
+             * @member {number} newIdentities
+             * @memberof api.ApplicationUsageOverview.JWT
+             * @instance
+             */
+            JWT.prototype.newIdentities = 0;
+
+            /**
+             * JWT newSessions.
+             * @member {number} newSessions
+             * @memberof api.ApplicationUsageOverview.JWT
+             * @instance
+             */
+            JWT.prototype.newSessions = 0;
+
+            /**
+             * Creates a new JWT instance using the specified properties.
+             * @function create
+             * @memberof api.ApplicationUsageOverview.JWT
+             * @static
+             * @param {api.ApplicationUsageOverview.IJWT=} [properties] Properties to set
+             * @returns {api.ApplicationUsageOverview.JWT} JWT instance
+             */
+            JWT.create = function create(properties) {
+                return new JWT(properties);
+            };
+
+            /**
+             * Encodes the specified JWT message. Does not implicitly {@link api.ApplicationUsageOverview.JWT.verify|verify} messages.
+             * @function encode
+             * @memberof api.ApplicationUsageOverview.JWT
+             * @static
+             * @param {api.ApplicationUsageOverview.IJWT} message JWT message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            JWT.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.totalIdentities != null && message.hasOwnProperty("totalIdentities"))
+                    writer.uint32(/* id 1, wireType 0 =*/8).uint32(message.totalIdentities);
+                if (message.newIdentities != null && message.hasOwnProperty("newIdentities"))
+                    writer.uint32(/* id 2, wireType 0 =*/16).uint32(message.newIdentities);
+                if (message.newSessions != null && message.hasOwnProperty("newSessions"))
+                    writer.uint32(/* id 3, wireType 0 =*/24).uint32(message.newSessions);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified JWT message, length delimited. Does not implicitly {@link api.ApplicationUsageOverview.JWT.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof api.ApplicationUsageOverview.JWT
+             * @static
+             * @param {api.ApplicationUsageOverview.IJWT} message JWT message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            JWT.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a JWT message from the specified reader or buffer.
+             * @function decode
+             * @memberof api.ApplicationUsageOverview.JWT
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {api.ApplicationUsageOverview.JWT} JWT
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            JWT.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.ApplicationUsageOverview.JWT();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1:
+                        message.totalIdentities = reader.uint32();
+                        break;
+                    case 2:
+                        message.newIdentities = reader.uint32();
+                        break;
+                    case 3:
+                        message.newSessions = reader.uint32();
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a JWT message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof api.ApplicationUsageOverview.JWT
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {api.ApplicationUsageOverview.JWT} JWT
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            JWT.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a JWT message.
+             * @function verify
+             * @memberof api.ApplicationUsageOverview.JWT
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            JWT.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.totalIdentities != null && message.hasOwnProperty("totalIdentities"))
+                    if (!$util.isInteger(message.totalIdentities))
+                        return "totalIdentities: integer expected";
+                if (message.newIdentities != null && message.hasOwnProperty("newIdentities"))
+                    if (!$util.isInteger(message.newIdentities))
+                        return "newIdentities: integer expected";
+                if (message.newSessions != null && message.hasOwnProperty("newSessions"))
+                    if (!$util.isInteger(message.newSessions))
+                        return "newSessions: integer expected";
+                return null;
+            };
+
+            /**
+             * Creates a JWT message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof api.ApplicationUsageOverview.JWT
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {api.ApplicationUsageOverview.JWT} JWT
+             */
+            JWT.fromObject = function fromObject(object) {
+                if (object instanceof $root.api.ApplicationUsageOverview.JWT)
+                    return object;
+                var message = new $root.api.ApplicationUsageOverview.JWT();
+                if (object.totalIdentities != null)
+                    message.totalIdentities = object.totalIdentities >>> 0;
+                if (object.newIdentities != null)
+                    message.newIdentities = object.newIdentities >>> 0;
+                if (object.newSessions != null)
+                    message.newSessions = object.newSessions >>> 0;
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a JWT message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof api.ApplicationUsageOverview.JWT
+             * @static
+             * @param {api.ApplicationUsageOverview.JWT} message JWT
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            JWT.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                var object = {};
+                if (options.defaults) {
+                    object.totalIdentities = 0;
+                    object.newIdentities = 0;
+                    object.newSessions = 0;
+                }
+                if (message.totalIdentities != null && message.hasOwnProperty("totalIdentities"))
+                    object.totalIdentities = message.totalIdentities;
+                if (message.newIdentities != null && message.hasOwnProperty("newIdentities"))
+                    object.newIdentities = message.newIdentities;
+                if (message.newSessions != null && message.hasOwnProperty("newSessions"))
+                    object.newSessions = message.newSessions;
+                return object;
+            };
+
+            /**
+             * Converts this JWT to JSON.
+             * @function toJSON
+             * @memberof api.ApplicationUsageOverview.JWT
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            JWT.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            return JWT;
+        })();
+
+        ApplicationUsageOverview.DelegatedAccess = (function() {
+
+            /**
+             * Properties of a DelegatedAccess.
+             * @memberof api.ApplicationUsageOverview
+             * @interface IDelegatedAccess
+             * @property {number|null} [newRequested] DelegatedAccess newRequested
+             * @property {number|null} [newResolved] DelegatedAccess newResolved
+             * @property {number|null} [newDistinctRequested] DelegatedAccess newDistinctRequested
+             * @property {number|null} [newDistinctResolved] DelegatedAccess newDistinctResolved
+             */
+
+            /**
+             * Constructs a new DelegatedAccess.
+             * @memberof api.ApplicationUsageOverview
+             * @classdesc Represents a DelegatedAccess.
+             * @implements IDelegatedAccess
+             * @constructor
+             * @param {api.ApplicationUsageOverview.IDelegatedAccess=} [properties] Properties to set
+             */
+            function DelegatedAccess(properties) {
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * DelegatedAccess newRequested.
+             * @member {number} newRequested
+             * @memberof api.ApplicationUsageOverview.DelegatedAccess
+             * @instance
+             */
+            DelegatedAccess.prototype.newRequested = 0;
+
+            /**
+             * DelegatedAccess newResolved.
+             * @member {number} newResolved
+             * @memberof api.ApplicationUsageOverview.DelegatedAccess
+             * @instance
+             */
+            DelegatedAccess.prototype.newResolved = 0;
+
+            /**
+             * DelegatedAccess newDistinctRequested.
+             * @member {number} newDistinctRequested
+             * @memberof api.ApplicationUsageOverview.DelegatedAccess
+             * @instance
+             */
+            DelegatedAccess.prototype.newDistinctRequested = 0;
+
+            /**
+             * DelegatedAccess newDistinctResolved.
+             * @member {number} newDistinctResolved
+             * @memberof api.ApplicationUsageOverview.DelegatedAccess
+             * @instance
+             */
+            DelegatedAccess.prototype.newDistinctResolved = 0;
+
+            /**
+             * Creates a new DelegatedAccess instance using the specified properties.
+             * @function create
+             * @memberof api.ApplicationUsageOverview.DelegatedAccess
+             * @static
+             * @param {api.ApplicationUsageOverview.IDelegatedAccess=} [properties] Properties to set
+             * @returns {api.ApplicationUsageOverview.DelegatedAccess} DelegatedAccess instance
+             */
+            DelegatedAccess.create = function create(properties) {
+                return new DelegatedAccess(properties);
+            };
+
+            /**
+             * Encodes the specified DelegatedAccess message. Does not implicitly {@link api.ApplicationUsageOverview.DelegatedAccess.verify|verify} messages.
+             * @function encode
+             * @memberof api.ApplicationUsageOverview.DelegatedAccess
+             * @static
+             * @param {api.ApplicationUsageOverview.IDelegatedAccess} message DelegatedAccess message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            DelegatedAccess.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.newRequested != null && message.hasOwnProperty("newRequested"))
+                    writer.uint32(/* id 1, wireType 0 =*/8).uint32(message.newRequested);
+                if (message.newResolved != null && message.hasOwnProperty("newResolved"))
+                    writer.uint32(/* id 2, wireType 0 =*/16).uint32(message.newResolved);
+                if (message.newDistinctRequested != null && message.hasOwnProperty("newDistinctRequested"))
+                    writer.uint32(/* id 3, wireType 0 =*/24).uint32(message.newDistinctRequested);
+                if (message.newDistinctResolved != null && message.hasOwnProperty("newDistinctResolved"))
+                    writer.uint32(/* id 4, wireType 0 =*/32).uint32(message.newDistinctResolved);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified DelegatedAccess message, length delimited. Does not implicitly {@link api.ApplicationUsageOverview.DelegatedAccess.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof api.ApplicationUsageOverview.DelegatedAccess
+             * @static
+             * @param {api.ApplicationUsageOverview.IDelegatedAccess} message DelegatedAccess message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            DelegatedAccess.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a DelegatedAccess message from the specified reader or buffer.
+             * @function decode
+             * @memberof api.ApplicationUsageOverview.DelegatedAccess
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {api.ApplicationUsageOverview.DelegatedAccess} DelegatedAccess
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            DelegatedAccess.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.ApplicationUsageOverview.DelegatedAccess();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1:
+                        message.newRequested = reader.uint32();
+                        break;
+                    case 2:
+                        message.newResolved = reader.uint32();
+                        break;
+                    case 3:
+                        message.newDistinctRequested = reader.uint32();
+                        break;
+                    case 4:
+                        message.newDistinctResolved = reader.uint32();
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a DelegatedAccess message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof api.ApplicationUsageOverview.DelegatedAccess
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {api.ApplicationUsageOverview.DelegatedAccess} DelegatedAccess
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            DelegatedAccess.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a DelegatedAccess message.
+             * @function verify
+             * @memberof api.ApplicationUsageOverview.DelegatedAccess
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            DelegatedAccess.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.newRequested != null && message.hasOwnProperty("newRequested"))
+                    if (!$util.isInteger(message.newRequested))
+                        return "newRequested: integer expected";
+                if (message.newResolved != null && message.hasOwnProperty("newResolved"))
+                    if (!$util.isInteger(message.newResolved))
+                        return "newResolved: integer expected";
+                if (message.newDistinctRequested != null && message.hasOwnProperty("newDistinctRequested"))
+                    if (!$util.isInteger(message.newDistinctRequested))
+                        return "newDistinctRequested: integer expected";
+                if (message.newDistinctResolved != null && message.hasOwnProperty("newDistinctResolved"))
+                    if (!$util.isInteger(message.newDistinctResolved))
+                        return "newDistinctResolved: integer expected";
+                return null;
+            };
+
+            /**
+             * Creates a DelegatedAccess message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof api.ApplicationUsageOverview.DelegatedAccess
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {api.ApplicationUsageOverview.DelegatedAccess} DelegatedAccess
+             */
+            DelegatedAccess.fromObject = function fromObject(object) {
+                if (object instanceof $root.api.ApplicationUsageOverview.DelegatedAccess)
+                    return object;
+                var message = new $root.api.ApplicationUsageOverview.DelegatedAccess();
+                if (object.newRequested != null)
+                    message.newRequested = object.newRequested >>> 0;
+                if (object.newResolved != null)
+                    message.newResolved = object.newResolved >>> 0;
+                if (object.newDistinctRequested != null)
+                    message.newDistinctRequested = object.newDistinctRequested >>> 0;
+                if (object.newDistinctResolved != null)
+                    message.newDistinctResolved = object.newDistinctResolved >>> 0;
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a DelegatedAccess message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof api.ApplicationUsageOverview.DelegatedAccess
+             * @static
+             * @param {api.ApplicationUsageOverview.DelegatedAccess} message DelegatedAccess
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            DelegatedAccess.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                var object = {};
+                if (options.defaults) {
+                    object.newRequested = 0;
+                    object.newResolved = 0;
+                    object.newDistinctRequested = 0;
+                    object.newDistinctResolved = 0;
+                }
+                if (message.newRequested != null && message.hasOwnProperty("newRequested"))
+                    object.newRequested = message.newRequested;
+                if (message.newResolved != null && message.hasOwnProperty("newResolved"))
+                    object.newResolved = message.newResolved;
+                if (message.newDistinctRequested != null && message.hasOwnProperty("newDistinctRequested"))
+                    object.newDistinctRequested = message.newDistinctRequested;
+                if (message.newDistinctResolved != null && message.hasOwnProperty("newDistinctResolved"))
+                    object.newDistinctResolved = message.newDistinctResolved;
+                return object;
+            };
+
+            /**
+             * Converts this DelegatedAccess to JSON.
+             * @function toJSON
+             * @memberof api.ApplicationUsageOverview.DelegatedAccess
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            DelegatedAccess.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            return DelegatedAccess;
+        })();
+
+        return ApplicationUsageOverview;
+    })();
+
+    api.ApplicationUsageOverviewRequest = (function() {
+
+        /**
+         * Properties of an ApplicationUsageOverviewRequest.
+         * @memberof api
+         * @interface IApplicationUsageOverviewRequest
+         * @property {string|null} [Login] ApplicationUsageOverviewRequest Login
+         * @property {number|null} [since] ApplicationUsageOverviewRequest since
+         */
+
+        /**
+         * Constructs a new ApplicationUsageOverviewRequest.
+         * @memberof api
+         * @classdesc Represents an ApplicationUsageOverviewRequest.
+         * @implements IApplicationUsageOverviewRequest
+         * @constructor
+         * @param {api.IApplicationUsageOverviewRequest=} [properties] Properties to set
+         */
+        function ApplicationUsageOverviewRequest(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * ApplicationUsageOverviewRequest Login.
+         * @member {string} Login
+         * @memberof api.ApplicationUsageOverviewRequest
+         * @instance
+         */
+        ApplicationUsageOverviewRequest.prototype.Login = "";
+
+        /**
+         * ApplicationUsageOverviewRequest since.
+         * @member {number} since
+         * @memberof api.ApplicationUsageOverviewRequest
+         * @instance
+         */
+        ApplicationUsageOverviewRequest.prototype.since = 0;
+
+        /**
+         * Creates a new ApplicationUsageOverviewRequest instance using the specified properties.
+         * @function create
+         * @memberof api.ApplicationUsageOverviewRequest
+         * @static
+         * @param {api.IApplicationUsageOverviewRequest=} [properties] Properties to set
+         * @returns {api.ApplicationUsageOverviewRequest} ApplicationUsageOverviewRequest instance
+         */
+        ApplicationUsageOverviewRequest.create = function create(properties) {
+            return new ApplicationUsageOverviewRequest(properties);
+        };
+
+        /**
+         * Encodes the specified ApplicationUsageOverviewRequest message. Does not implicitly {@link api.ApplicationUsageOverviewRequest.verify|verify} messages.
+         * @function encode
+         * @memberof api.ApplicationUsageOverviewRequest
+         * @static
+         * @param {api.IApplicationUsageOverviewRequest} message ApplicationUsageOverviewRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ApplicationUsageOverviewRequest.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.Login != null && message.hasOwnProperty("Login"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.Login);
+            if (message.since != null && message.hasOwnProperty("since"))
+                writer.uint32(/* id 2, wireType 0 =*/16).uint32(message.since);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified ApplicationUsageOverviewRequest message, length delimited. Does not implicitly {@link api.ApplicationUsageOverviewRequest.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof api.ApplicationUsageOverviewRequest
+         * @static
+         * @param {api.IApplicationUsageOverviewRequest} message ApplicationUsageOverviewRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ApplicationUsageOverviewRequest.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an ApplicationUsageOverviewRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof api.ApplicationUsageOverviewRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {api.ApplicationUsageOverviewRequest} ApplicationUsageOverviewRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ApplicationUsageOverviewRequest.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.ApplicationUsageOverviewRequest();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.Login = reader.string();
+                    break;
+                case 2:
+                    message.since = reader.uint32();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an ApplicationUsageOverviewRequest message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof api.ApplicationUsageOverviewRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {api.ApplicationUsageOverviewRequest} ApplicationUsageOverviewRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ApplicationUsageOverviewRequest.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an ApplicationUsageOverviewRequest message.
+         * @function verify
+         * @memberof api.ApplicationUsageOverviewRequest
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        ApplicationUsageOverviewRequest.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.Login != null && message.hasOwnProperty("Login"))
+                if (!$util.isString(message.Login))
+                    return "Login: string expected";
+            if (message.since != null && message.hasOwnProperty("since"))
+                if (!$util.isInteger(message.since))
+                    return "since: integer expected";
+            return null;
+        };
+
+        /**
+         * Creates an ApplicationUsageOverviewRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof api.ApplicationUsageOverviewRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {api.ApplicationUsageOverviewRequest} ApplicationUsageOverviewRequest
+         */
+        ApplicationUsageOverviewRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.api.ApplicationUsageOverviewRequest)
+                return object;
+            var message = new $root.api.ApplicationUsageOverviewRequest();
+            if (object.Login != null)
+                message.Login = String(object.Login);
+            if (object.since != null)
+                message.since = object.since >>> 0;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an ApplicationUsageOverviewRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof api.ApplicationUsageOverviewRequest
+         * @static
+         * @param {api.ApplicationUsageOverviewRequest} message ApplicationUsageOverviewRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        ApplicationUsageOverviewRequest.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.Login = "";
+                object.since = 0;
+            }
+            if (message.Login != null && message.hasOwnProperty("Login"))
+                object.Login = message.Login;
+            if (message.since != null && message.hasOwnProperty("since"))
+                object.since = message.since;
+            return object;
+        };
+
+        /**
+         * Converts this ApplicationUsageOverviewRequest to JSON.
+         * @function toJSON
+         * @memberof api.ApplicationUsageOverviewRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        ApplicationUsageOverviewRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return ApplicationUsageOverviewRequest;
+    })();
+
+    api.ApplicationUsageOverviewResponse = (function() {
+
+        /**
+         * Properties of an ApplicationUsageOverviewResponse.
+         * @memberof api
+         * @interface IApplicationUsageOverviewResponse
+         * @property {api.IApplicationUsageOverview|null} [overview] ApplicationUsageOverviewResponse overview
+         */
+
+        /**
+         * Constructs a new ApplicationUsageOverviewResponse.
+         * @memberof api
+         * @classdesc Represents an ApplicationUsageOverviewResponse.
+         * @implements IApplicationUsageOverviewResponse
+         * @constructor
+         * @param {api.IApplicationUsageOverviewResponse=} [properties] Properties to set
+         */
+        function ApplicationUsageOverviewResponse(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * ApplicationUsageOverviewResponse overview.
+         * @member {api.IApplicationUsageOverview|null|undefined} overview
+         * @memberof api.ApplicationUsageOverviewResponse
+         * @instance
+         */
+        ApplicationUsageOverviewResponse.prototype.overview = null;
+
+        /**
+         * Creates a new ApplicationUsageOverviewResponse instance using the specified properties.
+         * @function create
+         * @memberof api.ApplicationUsageOverviewResponse
+         * @static
+         * @param {api.IApplicationUsageOverviewResponse=} [properties] Properties to set
+         * @returns {api.ApplicationUsageOverviewResponse} ApplicationUsageOverviewResponse instance
+         */
+        ApplicationUsageOverviewResponse.create = function create(properties) {
+            return new ApplicationUsageOverviewResponse(properties);
+        };
+
+        /**
+         * Encodes the specified ApplicationUsageOverviewResponse message. Does not implicitly {@link api.ApplicationUsageOverviewResponse.verify|verify} messages.
+         * @function encode
+         * @memberof api.ApplicationUsageOverviewResponse
+         * @static
+         * @param {api.IApplicationUsageOverviewResponse} message ApplicationUsageOverviewResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ApplicationUsageOverviewResponse.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.overview != null && message.hasOwnProperty("overview"))
+                $root.api.ApplicationUsageOverview.encode(message.overview, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified ApplicationUsageOverviewResponse message, length delimited. Does not implicitly {@link api.ApplicationUsageOverviewResponse.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof api.ApplicationUsageOverviewResponse
+         * @static
+         * @param {api.IApplicationUsageOverviewResponse} message ApplicationUsageOverviewResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ApplicationUsageOverviewResponse.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an ApplicationUsageOverviewResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof api.ApplicationUsageOverviewResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {api.ApplicationUsageOverviewResponse} ApplicationUsageOverviewResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ApplicationUsageOverviewResponse.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.ApplicationUsageOverviewResponse();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.overview = $root.api.ApplicationUsageOverview.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an ApplicationUsageOverviewResponse message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof api.ApplicationUsageOverviewResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {api.ApplicationUsageOverviewResponse} ApplicationUsageOverviewResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ApplicationUsageOverviewResponse.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an ApplicationUsageOverviewResponse message.
+         * @function verify
+         * @memberof api.ApplicationUsageOverviewResponse
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        ApplicationUsageOverviewResponse.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.overview != null && message.hasOwnProperty("overview")) {
+                var error = $root.api.ApplicationUsageOverview.verify(message.overview);
+                if (error)
+                    return "overview." + error;
+            }
+            return null;
+        };
+
+        /**
+         * Creates an ApplicationUsageOverviewResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof api.ApplicationUsageOverviewResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {api.ApplicationUsageOverviewResponse} ApplicationUsageOverviewResponse
+         */
+        ApplicationUsageOverviewResponse.fromObject = function fromObject(object) {
+            if (object instanceof $root.api.ApplicationUsageOverviewResponse)
+                return object;
+            var message = new $root.api.ApplicationUsageOverviewResponse();
+            if (object.overview != null) {
+                if (typeof object.overview !== "object")
+                    throw TypeError(".api.ApplicationUsageOverviewResponse.overview: object expected");
+                message.overview = $root.api.ApplicationUsageOverview.fromObject(object.overview);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an ApplicationUsageOverviewResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof api.ApplicationUsageOverviewResponse
+         * @static
+         * @param {api.ApplicationUsageOverviewResponse} message ApplicationUsageOverviewResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        ApplicationUsageOverviewResponse.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults)
+                object.overview = null;
+            if (message.overview != null && message.hasOwnProperty("overview"))
+                object.overview = $root.api.ApplicationUsageOverview.toObject(message.overview, options);
+            return object;
+        };
+
+        /**
+         * Converts this ApplicationUsageOverviewResponse to JSON.
+         * @function toJSON
+         * @memberof api.ApplicationUsageOverviewResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        ApplicationUsageOverviewResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return ApplicationUsageOverviewResponse;
+    })();
+
     api.UnlockVersionsRequest = (function() {
 
         /**

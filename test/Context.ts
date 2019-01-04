@@ -8,7 +8,7 @@ export interface initCtx {
 }
 
 export function init(): initCtx {
-  let seed = Math.floor(Math.random() * 99999);
+  let seed = Math.floor(Math.random() * (Math.pow(10, 6) - 1));
   return { seed };
 }
 
@@ -227,8 +227,8 @@ export async function aliceBobWithDeviceAndGroup(
 
 export interface devCtx {
   dev: userAndSessionCtx;
-  app: DataPeps.Identity<Uint8Array>;
-  apps: DataPeps.Identity<Uint8Array>[];
+  app: { identity: DataPeps.Identity<Uint8Array>; secret: Uint8Array };
+  apps: { identity: DataPeps.Identity<Uint8Array>; secret: Uint8Array }[];
 }
 
 /**
@@ -241,25 +241,33 @@ export async function dev(init: initCtx, n = 1): Promise<devCtx> {
   let apps = await Promise.all(
     new Array(n)
       .fill(null)
-      .map((_, i) => ({
-        login: `app${i}.${init.seed}`,
-        name: "A killer app",
-        kind: "pepsswarm/3",
-        payload: new TextEncoder().encode(
-          JSON.stringify({
-            description: `app allows you to do awesome stuff and respect your privacy`
-          })
-        )
-      }))
+      .map(
+        (_, i) =>
+          <DataPeps.IdentityFields>{
+            login: `app${i}.${init.seed}`,
+            name: "A killer app",
+            kind: "pepsswarm/3",
+            payload: new TextEncoder().encode(
+              JSON.stringify({
+                description: `app allows you to do awesome stuff and respect your privacy`
+              })
+            )
+          }
+      )
       .map(async app => {
+        let secret = nacl.randomBytes(128);
         await new IdentityAPI(dev.session).create(app, {
-          sharingGroup: [dev.identity.login]
+          sharingGroup: [dev.identity.login],
+          secret
         });
         return {
-          ...app,
-          created: new Date(),
-          admin: false,
-          active: true
+          identity: {
+            ...app,
+            created: new Date(),
+            admin: false,
+            active: true
+          },
+          secret
         };
       })
   );

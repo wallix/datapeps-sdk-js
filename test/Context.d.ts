@@ -61,8 +61,14 @@ export interface groupPayload {
 export declare function aliceBobWithDeviceAndGroup(init: initCtx): Promise<aliceBobWithDeviceAndGroupCtx>;
 export interface devCtx {
     dev: userAndSessionCtx;
-    app: DataPeps.Identity<Uint8Array>;
-    apps: DataPeps.Identity<Uint8Array>[];
+    app: {
+        identity: DataPeps.Identity<Uint8Array>;
+        secret: Uint8Array;
+    };
+    apps: {
+        identity: DataPeps.Identity<Uint8Array>;
+        secret: Uint8Array;
+    }[];
 }
 /**
  * Create a context with a developer that owns n application

@@ -82,7 +82,7 @@ describe("applicationJWT.createSession", function () {
                 var _a, session, app, isNew;
                 return __generator(this, function (_b) {
                     switch (_b.label) {
-                        case 0: return [4 /*yield*/, DataPeps_1.ApplicationJWT.createSession(ctx.apps[i].login, login, secret, createConnector(secretKey, config.signAlgorithm, secret))];
+                        case 0: return [4 /*yield*/, DataPeps_1.ApplicationJWT.createSession(ctx.apps[i].identity.login, login, secret, createConnector(secretKey, config.signAlgorithm, secret))];
                         case 1:
                             _a = _b.sent(), session = _a.session, app = _a.app, isNew = _a.new;
                             chai_1.expect(session).to.be.not.null;
@@ -97,7 +97,7 @@ describe("applicationJWT.createSession", function () {
                 var _a, session, app, isNew;
                 return __generator(this, function (_b) {
                     switch (_b.label) {
-                        case 0: return [4 /*yield*/, DataPeps_1.ApplicationJWT.createSession(ctx.apps[i].login, login, secret, createConnector(secretKey, config.signAlgorithm, secret))];
+                        case 0: return [4 /*yield*/, DataPeps_1.ApplicationJWT.createSession(ctx.apps[i].identity.login, login, secret, createConnector(secretKey, config.signAlgorithm, secret))];
                         case 1:
                             _a = _b.sent(), session = _a.session, app = _a.app, isNew = _a.new;
                             chai_1.expect(session).to.be.not.null;
@@ -115,7 +115,7 @@ describe("applicationJWT.createSession", function () {
             Utils_2.itError("A new user cannot create a session with a bad application secret key, algo(" + algorithm + "), secret(" + secretType + ")", function () { return __awaiter(_this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, DataPeps_1.ApplicationJWT.createSession(ctx.apps[i].login, badLogin, secret, createConnector(Utils_1.getBadAlgoKey(config.signAlgorithm), config.signAlgorithm, secret))];
+                        case 0: return [4 /*yield*/, DataPeps_1.ApplicationJWT.createSession(ctx.apps[i].identity.login, badLogin, secret, createConnector(Utils_1.getBadAlgoKey(config.signAlgorithm), config.signAlgorithm, secret))];
                         case 1:
                             _a.sent();
                             return [2 /*return*/];
@@ -126,7 +126,7 @@ describe("applicationJWT.createSession", function () {
             Utils_2.itError("An already registered user cannot create a session with a bad secret, algo(" + algorithm + "), secret(" + secretType + ")", function () { return __awaiter(_this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, DataPeps_1.ApplicationJWT.createSession(ctx.apps[i].login, login, badSecret, createConnector(secretKey, config.signAlgorithm, badSecret))];
+                        case 0: return [4 /*yield*/, DataPeps_1.ApplicationJWT.createSession(ctx.apps[i].identity.login, login, badSecret, createConnector(secretKey, config.signAlgorithm, badSecret))];
                         case 1:
                             _a.sent();
                             return [2 /*return*/];
@@ -153,13 +153,13 @@ describe("applicationJWT.createSession", function () {
     Utils_2.itError("Try to create a JWT session with an application that is not configured", function () { return __awaiter(_this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, DataPeps_1.ApplicationJWT.createSession(ctx.apps[ctx.apps.length - 1].login, "appLogin", "secret", createConnector(Utils_1.configs[0].secretKey, Utils_1.configs[0].config.signAlgorithm, "secret"))];
+                case 0: return [4 /*yield*/, DataPeps_1.ApplicationJWT.createSession(ctx.apps[ctx.apps.length - 1].identity.login, "appLogin", "secret", createConnector(Utils_1.configs[0].secretKey, Utils_1.configs[0].config.signAlgorithm, "secret"))];
                 case 1:
                     _a.sent();
                     return [2 /*return*/];
             }
         });
-    }); }, DataPeps_1.ServerError.ApplicationConfigNotFound, function () { return ({ login: ctx.apps[ctx.apps.length - 1].login }); });
+    }); }, DataPeps_1.ServerError.ApplicationConfigNotFound, function () { return ({ login: ctx.apps[ctx.apps.length - 1].identity.login }); });
 });
 var MockApplicationSession = /** @class */ (function () {
     function MockApplicationSession() {

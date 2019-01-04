@@ -4,6 +4,19 @@ export declare namespace ApplicationAPI {
     type Config = {
         jwt?: ApplicationJWT.Config;
     };
+    type UsageOverview = {
+        jwt: {
+            totalIdentities: number;
+            newIdentities: number;
+            newSessions: number;
+        };
+        delegatedAccess: {
+            newRequested: number;
+            newResolved: number;
+            newDistinctRequested: number;
+            newDistinctResolved: number;
+        };
+    };
 }
 export declare class ApplicationAPI {
     private session;
@@ -29,4 +42,17 @@ export declare class ApplicationAPI {
      * - `ApplicationConfigNotFound` if configuration doesn't exists.
      */
     getConfig(appID: string): Promise<ApplicationAPI.Config>;
+    /**
+     * Get usage overview of an application
+     * @param appID the app ID
+     * @param options A collection of options:
+     *  - since; unix timestamp from which requests data
+     * @return(p) On success the promise will be resolved with an ApplicationAPI.UsageOverview.
+     * On error the promise will be rejected with an {@link Error} with kind:
+     * - `IdentityCannotAssumeOwnership` if cannot have right to the application.
+     * - `IdentityNotFound` if the identity `appID` doesn't exists.
+     */
+    getUsageOverview(appID: string, options?: {
+        since?: number;
+    }): Promise<ApplicationAPI.UsageOverview>;
 }

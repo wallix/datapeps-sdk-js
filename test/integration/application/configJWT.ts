@@ -35,8 +35,8 @@ describe("applicationAPI.config.JWT", () => {
       ApplicationJWT.Algorithm[signAlgorithm]
     })`, async () => {
       let api = new ApplicationAPI(ctx.dev.session);
-      await api.putConfig(ctx.apps[i].login, { jwt: config });
-      let getConfig = await api.getConfig(ctx.apps[i].login);
+      await api.putConfig(ctx.apps[i].identity.login, { jwt: config });
+      let getConfig = await api.getConfig(ctx.apps[i].identity.login);
       expect(getConfig.jwt).not.null;
       Object.keys(config).forEach(k => {
         expect(getConfig.jwt[k], `config field ${k}`).deep.equals(config[k]);
@@ -52,8 +52,8 @@ describe("applicationAPI.config.JWT", () => {
     };
 
     let api = new ApplicationAPI(ctx.dev.session);
-    await api.putConfig(ctx.app.login, config);
-    let storedConfig = await api.getConfig(ctx.app.login);
+    await api.putConfig(ctx.app.identity.login, config);
+    let storedConfig = await api.getConfig(ctx.app.identity.login);
     expect(storedConfig.jwt).to.exist;
     expect(storedConfig.jwt.key).to.deep.equal(config.jwt.key);
     expect(storedConfig.jwt.signAlgorithm).to.equal(
@@ -67,12 +67,12 @@ describe("applicationAPI.config.JWT", () => {
       jwt: { key: nacl.randomBytes(128), claimForLogin: "field_1" }
     };
     let api = new ApplicationAPI(ctx.dev.session);
-    await api.putConfig(ctx.app.login, config);
+    await api.putConfig(ctx.app.identity.login, config);
 
     config = { jwt: { key: nacl.randomBytes(128), claimForLogin: "field_2" } };
-    await api.putConfig(ctx.app.login, config);
+    await api.putConfig(ctx.app.identity.login, config);
 
-    let storedConfig = await api.getConfig(ctx.app.login);
+    let storedConfig = await api.getConfig(ctx.app.identity.login);
     expect(storedConfig.jwt.claimForLogin).to.equal(config.jwt.claimForLogin);
     expect(storedConfig.jwt.key).to.deep.equals(config.jwt.key);
   });
@@ -104,16 +104,19 @@ describe("applicationAPI.config.JWT", () => {
   itError(
     `should not configure an application of someone else`,
     () =>
-      new ApplicationAPI(ctx.otherDev.session).putConfig(ctx.app.login, {
-        jwt: { key: nacl.randomBytes(128), claimForLogin: "login" }
-      }),
+      new ApplicationAPI(ctx.otherDev.session).putConfig(
+        ctx.app.identity.login,
+        {
+          jwt: { key: nacl.randomBytes(128), claimForLogin: "login" }
+        }
+      ),
     ServerError.IdentityCannotAssumeOwnership
   );
 
   itError(
     `should not configure with a invalid key RS PEM`,
     () =>
-      new ApplicationAPI(ctx.dev.session).putConfig(ctx.app.login, {
+      new ApplicationAPI(ctx.dev.session).putConfig(ctx.app.identity.login, {
         jwt: {
           key: new TextEncoder().encode(
             `-----BEGIN PUBLIC KEY-----
@@ -135,7 +138,7 @@ fwIDAQAB
   itError(
     `should not configure with a invalid key ES PEM`,
     () =>
-      new ApplicationAPI(ctx.dev.session).putConfig(ctx.app.login, {
+      new ApplicationAPI(ctx.dev.session).putConfig(ctx.app.identity.login, {
         jwt: {
           key: new TextEncoder().encode(
             `-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEQ4/x3bCZotGA3n+5CxFmuNZnzB7L\nZUd9C885FDhZN8+oRavvPrWSiGKv72hMKsfL9wVpEygSzZWXqZW+H/w7Jw==
@@ -155,7 +158,7 @@ fwIDAQAB
         ApplicationJWT.Algorithm[signAlgorithm]
       })`,
       () =>
-        new ApplicationAPI(ctx.dev.session).putConfig(ctx.app.login, {
+        new ApplicationAPI(ctx.dev.session).putConfig(ctx.app.identity.login, {
           jwt: {
             key: invalidKey(signAlgorithm),
             signAlgorithm,
@@ -183,7 +186,10 @@ fwIDAQAB
   // `IdentityCannotAssumeAccess` if cannot have right to read the configuration.
   itError(
     `should not get the configuration of an application of someone else`,
-    () => new ApplicationAPI(ctx.otherDev.session).getConfig(ctx.app.login),
+    () =>
+      new ApplicationAPI(ctx.otherDev.session).getConfig(
+        ctx.app.identity.login
+      ),
     ServerError.IdentityCannotAssumeOwnership
   );
 
@@ -199,7 +205,7 @@ fwIDAQAB
     `should receive correct error trying to get non existent configuration as application`,
     () =>
       new ApplicationAPI(ctx.dev.session).getConfig(
-        ctx.apps[configs.length].login
+        ctx.apps[configs.length].identity.login
       ),
     ServerError.ApplicationConfigNotFound
   );

@@ -61,7 +61,7 @@ var ApplicationJWT;
      * Create a DataPeps session and an application session.
      * @param appID The identifier of your DataPeps application.
      * @param appLogin The login of the identity in the referential of the application.
-     * @param secret The secret of the identity.
+     * @param secret The secret of the DataPeps identity.
      * @param connector The JWT connector of your application
      * @return(p) On success the promise will be resolved with the DataPeps session,
      * the application session and a boolean that indicates if its the first connection

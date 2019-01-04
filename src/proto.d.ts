@@ -6265,6 +6265,501 @@ export namespace api {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of an ApplicationUsageOverview. */
+    interface IApplicationUsageOverview {
+
+        /** ApplicationUsageOverview jwt */
+        jwt?: (api.ApplicationUsageOverview.IJWT|null);
+
+        /** ApplicationUsageOverview delegates */
+        delegates?: (api.ApplicationUsageOverview.IDelegatedAccess|null);
+    }
+
+    /** Represents an ApplicationUsageOverview. */
+    class ApplicationUsageOverview implements IApplicationUsageOverview {
+
+        /**
+         * Constructs a new ApplicationUsageOverview.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: api.IApplicationUsageOverview);
+
+        /** ApplicationUsageOverview jwt. */
+        public jwt?: (api.ApplicationUsageOverview.IJWT|null);
+
+        /** ApplicationUsageOverview delegates. */
+        public delegates?: (api.ApplicationUsageOverview.IDelegatedAccess|null);
+
+        /**
+         * Creates a new ApplicationUsageOverview instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ApplicationUsageOverview instance
+         */
+        public static create(properties?: api.IApplicationUsageOverview): api.ApplicationUsageOverview;
+
+        /**
+         * Encodes the specified ApplicationUsageOverview message. Does not implicitly {@link api.ApplicationUsageOverview.verify|verify} messages.
+         * @param message ApplicationUsageOverview message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: api.IApplicationUsageOverview, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ApplicationUsageOverview message, length delimited. Does not implicitly {@link api.ApplicationUsageOverview.verify|verify} messages.
+         * @param message ApplicationUsageOverview message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: api.IApplicationUsageOverview, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an ApplicationUsageOverview message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ApplicationUsageOverview
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.ApplicationUsageOverview;
+
+        /**
+         * Decodes an ApplicationUsageOverview message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ApplicationUsageOverview
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.ApplicationUsageOverview;
+
+        /**
+         * Verifies an ApplicationUsageOverview message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an ApplicationUsageOverview message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ApplicationUsageOverview
+         */
+        public static fromObject(object: { [k: string]: any }): api.ApplicationUsageOverview;
+
+        /**
+         * Creates a plain object from an ApplicationUsageOverview message. Also converts values to other types if specified.
+         * @param message ApplicationUsageOverview
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: api.ApplicationUsageOverview, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ApplicationUsageOverview to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace ApplicationUsageOverview {
+
+        /** Properties of a JWT. */
+        interface IJWT {
+
+            /** JWT totalIdentities */
+            totalIdentities?: (number|null);
+
+            /** JWT newIdentities */
+            newIdentities?: (number|null);
+
+            /** JWT newSessions */
+            newSessions?: (number|null);
+        }
+
+        /** Represents a JWT. */
+        class JWT implements IJWT {
+
+            /**
+             * Constructs a new JWT.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: api.ApplicationUsageOverview.IJWT);
+
+            /** JWT totalIdentities. */
+            public totalIdentities: number;
+
+            /** JWT newIdentities. */
+            public newIdentities: number;
+
+            /** JWT newSessions. */
+            public newSessions: number;
+
+            /**
+             * Creates a new JWT instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns JWT instance
+             */
+            public static create(properties?: api.ApplicationUsageOverview.IJWT): api.ApplicationUsageOverview.JWT;
+
+            /**
+             * Encodes the specified JWT message. Does not implicitly {@link api.ApplicationUsageOverview.JWT.verify|verify} messages.
+             * @param message JWT message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: api.ApplicationUsageOverview.IJWT, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified JWT message, length delimited. Does not implicitly {@link api.ApplicationUsageOverview.JWT.verify|verify} messages.
+             * @param message JWT message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: api.ApplicationUsageOverview.IJWT, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a JWT message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns JWT
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.ApplicationUsageOverview.JWT;
+
+            /**
+             * Decodes a JWT message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns JWT
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.ApplicationUsageOverview.JWT;
+
+            /**
+             * Verifies a JWT message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a JWT message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns JWT
+             */
+            public static fromObject(object: { [k: string]: any }): api.ApplicationUsageOverview.JWT;
+
+            /**
+             * Creates a plain object from a JWT message. Also converts values to other types if specified.
+             * @param message JWT
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: api.ApplicationUsageOverview.JWT, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this JWT to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+        }
+
+        /** Properties of a DelegatedAccess. */
+        interface IDelegatedAccess {
+
+            /** DelegatedAccess newRequested */
+            newRequested?: (number|null);
+
+            /** DelegatedAccess newResolved */
+            newResolved?: (number|null);
+
+            /** DelegatedAccess newDistinctRequested */
+            newDistinctRequested?: (number|null);
+
+            /** DelegatedAccess newDistinctResolved */
+            newDistinctResolved?: (number|null);
+        }
+
+        /** Represents a DelegatedAccess. */
+        class DelegatedAccess implements IDelegatedAccess {
+
+            /**
+             * Constructs a new DelegatedAccess.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: api.ApplicationUsageOverview.IDelegatedAccess);
+
+            /** DelegatedAccess newRequested. */
+            public newRequested: number;
+
+            /** DelegatedAccess newResolved. */
+            public newResolved: number;
+
+            /** DelegatedAccess newDistinctRequested. */
+            public newDistinctRequested: number;
+
+            /** DelegatedAccess newDistinctResolved. */
+            public newDistinctResolved: number;
+
+            /**
+             * Creates a new DelegatedAccess instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns DelegatedAccess instance
+             */
+            public static create(properties?: api.ApplicationUsageOverview.IDelegatedAccess): api.ApplicationUsageOverview.DelegatedAccess;
+
+            /**
+             * Encodes the specified DelegatedAccess message. Does not implicitly {@link api.ApplicationUsageOverview.DelegatedAccess.verify|verify} messages.
+             * @param message DelegatedAccess message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: api.ApplicationUsageOverview.IDelegatedAccess, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified DelegatedAccess message, length delimited. Does not implicitly {@link api.ApplicationUsageOverview.DelegatedAccess.verify|verify} messages.
+             * @param message DelegatedAccess message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: api.ApplicationUsageOverview.IDelegatedAccess, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a DelegatedAccess message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns DelegatedAccess
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.ApplicationUsageOverview.DelegatedAccess;
+
+            /**
+             * Decodes a DelegatedAccess message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns DelegatedAccess
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.ApplicationUsageOverview.DelegatedAccess;
+
+            /**
+             * Verifies a DelegatedAccess message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a DelegatedAccess message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns DelegatedAccess
+             */
+            public static fromObject(object: { [k: string]: any }): api.ApplicationUsageOverview.DelegatedAccess;
+
+            /**
+             * Creates a plain object from a DelegatedAccess message. Also converts values to other types if specified.
+             * @param message DelegatedAccess
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: api.ApplicationUsageOverview.DelegatedAccess, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this DelegatedAccess to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+        }
+    }
+
+    /** Properties of an ApplicationUsageOverviewRequest. */
+    interface IApplicationUsageOverviewRequest {
+
+        /** ApplicationUsageOverviewRequest Login */
+        Login?: (string|null);
+
+        /** ApplicationUsageOverviewRequest since */
+        since?: (number|null);
+    }
+
+    /** Represents an ApplicationUsageOverviewRequest. */
+    class ApplicationUsageOverviewRequest implements IApplicationUsageOverviewRequest {
+
+        /**
+         * Constructs a new ApplicationUsageOverviewRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: api.IApplicationUsageOverviewRequest);
+
+        /** ApplicationUsageOverviewRequest Login. */
+        public Login: string;
+
+        /** ApplicationUsageOverviewRequest since. */
+        public since: number;
+
+        /**
+         * Creates a new ApplicationUsageOverviewRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ApplicationUsageOverviewRequest instance
+         */
+        public static create(properties?: api.IApplicationUsageOverviewRequest): api.ApplicationUsageOverviewRequest;
+
+        /**
+         * Encodes the specified ApplicationUsageOverviewRequest message. Does not implicitly {@link api.ApplicationUsageOverviewRequest.verify|verify} messages.
+         * @param message ApplicationUsageOverviewRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: api.IApplicationUsageOverviewRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ApplicationUsageOverviewRequest message, length delimited. Does not implicitly {@link api.ApplicationUsageOverviewRequest.verify|verify} messages.
+         * @param message ApplicationUsageOverviewRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: api.IApplicationUsageOverviewRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an ApplicationUsageOverviewRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ApplicationUsageOverviewRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.ApplicationUsageOverviewRequest;
+
+        /**
+         * Decodes an ApplicationUsageOverviewRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ApplicationUsageOverviewRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.ApplicationUsageOverviewRequest;
+
+        /**
+         * Verifies an ApplicationUsageOverviewRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an ApplicationUsageOverviewRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ApplicationUsageOverviewRequest
+         */
+        public static fromObject(object: { [k: string]: any }): api.ApplicationUsageOverviewRequest;
+
+        /**
+         * Creates a plain object from an ApplicationUsageOverviewRequest message. Also converts values to other types if specified.
+         * @param message ApplicationUsageOverviewRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: api.ApplicationUsageOverviewRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ApplicationUsageOverviewRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an ApplicationUsageOverviewResponse. */
+    interface IApplicationUsageOverviewResponse {
+
+        /** ApplicationUsageOverviewResponse overview */
+        overview?: (api.IApplicationUsageOverview|null);
+    }
+
+    /** Represents an ApplicationUsageOverviewResponse. */
+    class ApplicationUsageOverviewResponse implements IApplicationUsageOverviewResponse {
+
+        /**
+         * Constructs a new ApplicationUsageOverviewResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: api.IApplicationUsageOverviewResponse);
+
+        /** ApplicationUsageOverviewResponse overview. */
+        public overview?: (api.IApplicationUsageOverview|null);
+
+        /**
+         * Creates a new ApplicationUsageOverviewResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ApplicationUsageOverviewResponse instance
+         */
+        public static create(properties?: api.IApplicationUsageOverviewResponse): api.ApplicationUsageOverviewResponse;
+
+        /**
+         * Encodes the specified ApplicationUsageOverviewResponse message. Does not implicitly {@link api.ApplicationUsageOverviewResponse.verify|verify} messages.
+         * @param message ApplicationUsageOverviewResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: api.IApplicationUsageOverviewResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ApplicationUsageOverviewResponse message, length delimited. Does not implicitly {@link api.ApplicationUsageOverviewResponse.verify|verify} messages.
+         * @param message ApplicationUsageOverviewResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: api.IApplicationUsageOverviewResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an ApplicationUsageOverviewResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ApplicationUsageOverviewResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.ApplicationUsageOverviewResponse;
+
+        /**
+         * Decodes an ApplicationUsageOverviewResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ApplicationUsageOverviewResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.ApplicationUsageOverviewResponse;
+
+        /**
+         * Verifies an ApplicationUsageOverviewResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an ApplicationUsageOverviewResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ApplicationUsageOverviewResponse
+         */
+        public static fromObject(object: { [k: string]: any }): api.ApplicationUsageOverviewResponse;
+
+        /**
+         * Creates a plain object from an ApplicationUsageOverviewResponse message. Also converts values to other types if specified.
+         * @param message ApplicationUsageOverviewResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: api.ApplicationUsageOverviewResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ApplicationUsageOverviewResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of an UnlockVersionsRequest. */
     interface IUnlockVersionsRequest {
 

@@ -81,10 +81,10 @@ describe("applicationAPI.config.JWT", function () {
                 switch (_a.label) {
                     case 0:
                         api = new DataPeps_1.ApplicationAPI(ctx.dev.session);
-                        return [4 /*yield*/, api.putConfig(ctx.apps[i].login, { jwt: config })];
+                        return [4 /*yield*/, api.putConfig(ctx.apps[i].identity.login, { jwt: config })];
                     case 1:
                         _a.sent();
-                        return [4 /*yield*/, api.getConfig(ctx.apps[i].login)];
+                        return [4 /*yield*/, api.getConfig(ctx.apps[i].identity.login)];
                     case 2:
                         getConfig = _a.sent();
                         chai_1.expect(getConfig.jwt).not.null;
@@ -107,10 +107,10 @@ describe("applicationAPI.config.JWT", function () {
                         }
                     };
                     api = new DataPeps_1.ApplicationAPI(ctx.dev.session);
-                    return [4 /*yield*/, api.putConfig(ctx.app.login, config)];
+                    return [4 /*yield*/, api.putConfig(ctx.app.identity.login, config)];
                 case 1:
                     _a.sent();
-                    return [4 /*yield*/, api.getConfig(ctx.app.login)];
+                    return [4 /*yield*/, api.getConfig(ctx.app.identity.login)];
                 case 2:
                     storedConfig = _a.sent();
                     chai_1.expect(storedConfig.jwt).to.exist;
@@ -130,14 +130,14 @@ describe("applicationAPI.config.JWT", function () {
                         jwt: { key: nacl.randomBytes(128), claimForLogin: "field_1" }
                     };
                     api = new DataPeps_1.ApplicationAPI(ctx.dev.session);
-                    return [4 /*yield*/, api.putConfig(ctx.app.login, config)];
+                    return [4 /*yield*/, api.putConfig(ctx.app.identity.login, config)];
                 case 1:
                     _a.sent();
                     config = { jwt: { key: nacl.randomBytes(128), claimForLogin: "field_2" } };
-                    return [4 /*yield*/, api.putConfig(ctx.app.login, config)];
+                    return [4 /*yield*/, api.putConfig(ctx.app.identity.login, config)];
                 case 2:
                     _a.sent();
-                    return [4 /*yield*/, api.getConfig(ctx.app.login)];
+                    return [4 /*yield*/, api.getConfig(ctx.app.identity.login)];
                 case 3:
                     storedConfig = _a.sent();
                     chai_1.expect(storedConfig.jwt.claimForLogin).to.equal(config.jwt.claimForLogin);
@@ -169,12 +169,12 @@ describe("applicationAPI.config.JWT", function () {
     }
     // `IdentityCannotAssumeAccess` if cannot have right to write the configuration.
     Utils_1.itError("should not configure an application of someone else", function () {
-        return new DataPeps_1.ApplicationAPI(ctx.otherDev.session).putConfig(ctx.app.login, {
+        return new DataPeps_1.ApplicationAPI(ctx.otherDev.session).putConfig(ctx.app.identity.login, {
             jwt: { key: nacl.randomBytes(128), claimForLogin: "login" }
         });
     }, DataPeps_1.ServerError.IdentityCannotAssumeOwnership);
     Utils_1.itError("should not configure with a invalid key RS PEM", function () {
-        return new DataPeps_1.ApplicationAPI(ctx.dev.session).putConfig(ctx.app.login, {
+        return new DataPeps_1.ApplicationAPI(ctx.dev.session).putConfig(ctx.app.identity.login, {
             jwt: {
                 key: new TextEncoder().encode("-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAy2kQaxIDLw6vXEmSyDIU\nW2+7zumTbO9KE2o5/afE55lUyTV8lY+kVZDoRToP6yfiUKYC9t3fFBui50rBdtXJ\nd8TgD7ecw9tdoLiQ8usELOIV1Il+e0NUOocypPRYuI26RzOBQ98ULtqXWRPvW7G3\nXhvwhB7FY31LXSRtbTA2ZOXhl64ZfWYBqWwsFMQ0wmWxnnF60J+NDESR1dWKHrzB\n0gaJAk341Mm0Golftan/R3Bd4uJ3u48gDr2uOzpSZB3m9VbK3sn1/1a2V/1mL20y\n/799hgxtB04Wz+cjm1O6gRuau7q7qxNRkvWL+hoXBXWUv2/WrBcglDr0f9tsvnh4\nfwIDAQAB\n  -----END PUBLIC KEY-----" // Invalid because spaces in front of last line
                 ),
@@ -183,7 +183,7 @@ describe("applicationAPI.config.JWT", function () {
         });
     }, DataPeps_1.ServerError.ApplicationConfigInvalid);
     Utils_1.itError("should not configure with a invalid key ES PEM", function () {
-        return new DataPeps_1.ApplicationAPI(ctx.dev.session).putConfig(ctx.app.login, {
+        return new DataPeps_1.ApplicationAPI(ctx.dev.session).putConfig(ctx.app.identity.login, {
             jwt: {
                 key: new TextEncoder().encode("-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEQ4/x3bCZotGA3n+5CxFmuNZnzB7L\nZUd9C885FDhZN8+oRavvPrWSiGKv72hMKsfL9wVpEygSzZWXqZW+H/w7Jw==\n            -----END PUBLIC KEY-----" // Invalid because spaces in front of last line
                 ),
@@ -196,7 +196,7 @@ describe("applicationAPI.config.JWT", function () {
         var secretKey = _a.secretKey, config = _a.config;
         var signAlgorithm = config.signAlgorithm;
         Utils_1.itError("should not configure with a invalid type of key for the signAlgorithm(" + DataPeps_1.ApplicationJWT.Algorithm[signAlgorithm] + ")", function () {
-            return new DataPeps_1.ApplicationAPI(ctx.dev.session).putConfig(ctx.app.login, {
+            return new DataPeps_1.ApplicationAPI(ctx.dev.session).putConfig(ctx.app.identity.login, {
                 jwt: {
                     key: invalidKey(signAlgorithm),
                     signAlgorithm: signAlgorithm,
@@ -215,12 +215,14 @@ describe("applicationAPI.config.JWT", function () {
     // Error cases: getConfig
     ///////////////////////////////////////////////
     // `IdentityCannotAssumeAccess` if cannot have right to read the configuration.
-    Utils_1.itError("should not get the configuration of an application of someone else", function () { return new DataPeps_1.ApplicationAPI(ctx.otherDev.session).getConfig(ctx.app.login); }, DataPeps_1.ServerError.IdentityCannotAssumeOwnership);
+    Utils_1.itError("should not get the configuration of an application of someone else", function () {
+        return new DataPeps_1.ApplicationAPI(ctx.otherDev.session).getConfig(ctx.app.identity.login);
+    }, DataPeps_1.ServerError.IdentityCannotAssumeOwnership);
     // `IdentityNotFound` if the identity `appID` doesn't exists.
     Utils_1.itError("should not get the configuration rof a non existent identity", function () { return new DataPeps_1.ApplicationAPI(ctx.dev.session).getConfig("non.existent.app"); }, DataPeps_1.ServerError.IdentityNotFound);
     // `ApplicationConfigNotFound` if configuration doesn't exists.
     Utils_1.itError("should receive correct error trying to get non existent configuration as application", function () {
-        return new DataPeps_1.ApplicationAPI(ctx.dev.session).getConfig(ctx.apps[Utils_2.configs.length].login);
+        return new DataPeps_1.ApplicationAPI(ctx.dev.session).getConfig(ctx.apps[Utils_2.configs.length].identity.login);
     }, DataPeps_1.ServerError.ApplicationConfigNotFound);
 });
 //# sourceMappingURL=configJWT.js.map

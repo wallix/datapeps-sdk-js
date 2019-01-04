@@ -85,10 +85,10 @@ describe("application.createUser", function () {
                         token = JWT.sign({ login: login }, new TextDecoder().decode(secretKey), {
                             algorithm: DataPeps_1.ApplicationJWT.Algorithm[signAlgorithm]
                         });
-                        return [4 /*yield*/, Application.createUser(ctx.apps[i].login, { jwt: { token: token } }, userSecret)];
+                        return [4 /*yield*/, Application.createUser(ctx.apps[i].identity.login, { jwt: { token: token } }, userSecret)];
                     case 1:
                         createAliceResp = _a.sent();
-                        chai_1.expect(createAliceResp.login).to.equal(login + "@" + ctx.apps[i].login);
+                        chai_1.expect(createAliceResp.login).to.equal(login + "@" + ctx.apps[i].identity.login);
                         return [4 /*yield*/, DataPeps.Session.login(createAliceResp.login, userSecret)];
                     case 2:
                         _a.sent();
@@ -109,7 +109,7 @@ describe("application.createUser", function () {
                         token = JWT.sign({ login: login }, Utils_1.getBadAlgoKey(signAlgorithm), {
                             algorithm: DataPeps_1.ApplicationJWT.Algorithm[signAlgorithm]
                         });
-                        return [4 /*yield*/, Application.createUser(ctx.apps[i].login, { jwt: { token: token } }, userSecret)];
+                        return [4 /*yield*/, Application.createUser(ctx.apps[i].identity.login, { jwt: { token: token } }, userSecret)];
                     case 1:
                         _a.sent();
                         return [2 /*return*/];
@@ -143,12 +143,12 @@ describe("application.createUser", function () {
                     login = "alice" + Math.random();
                     userSecret = "aSoStrongSecret";
                     token = "BimBam";
-                    return [4 /*yield*/, Application.createUser(ctx.apps[Utils_1.configs.length].login, { jwt: { token: token } }, userSecret)];
+                    return [4 /*yield*/, Application.createUser(ctx.apps[Utils_1.configs.length].identity.login, { jwt: { token: token } }, userSecret)];
                 case 1:
                     _a.sent();
                     return [2 /*return*/];
             }
         });
-    }); }, DataPeps_1.ServerError.ApplicationConfigNotFound, function () { return ({ login: ctx.apps[Utils_1.configs.length].login }); });
+    }); }, DataPeps_1.ServerError.ApplicationConfigNotFound, function () { return ({ login: ctx.apps[Utils_1.configs.length].identity.login }); });
 });
 //# sourceMappingURL=createUser.js.map

@@ -48,7 +48,7 @@ var Config = require("./Config");
 var nacl = require("tweetnacl");
 var DataPeps_1 = require("../src/DataPeps");
 function init() {
-    var seed = Math.floor(Math.random() * 99999);
+    var seed = Math.floor(Math.random() * (Math.pow(10, 6) - 1));
     return { seed: seed };
 }
 exports.init = init;
@@ -290,23 +290,32 @@ function dev(init, n) {
                     dev = _a.sent();
                     return [4 /*yield*/, Promise.all(new Array(n)
                             .fill(null)
-                            .map(function (_, i) { return ({
-                            login: "app" + i + "." + init.seed,
-                            name: "A killer app",
-                            kind: "pepsswarm/3",
-                            payload: new TextEncoder().encode(JSON.stringify({
-                                description: "app allows you to do awesome stuff and respect your privacy"
-                            }))
-                        }); })
+                            .map(function (_, i) {
+                            return ({
+                                login: "app" + i + "." + init.seed,
+                                name: "A killer app",
+                                kind: "pepsswarm/3",
+                                payload: new TextEncoder().encode(JSON.stringify({
+                                    description: "app allows you to do awesome stuff and respect your privacy"
+                                }))
+                            });
+                        })
                             .map(function (app) { return __awaiter(_this, void 0, void 0, function () {
+                            var secret;
                             return __generator(this, function (_a) {
                                 switch (_a.label) {
-                                    case 0: return [4 /*yield*/, new DataPeps_1.IdentityAPI(dev.session).create(app, {
-                                            sharingGroup: [dev.identity.login]
-                                        })];
+                                    case 0:
+                                        secret = nacl.randomBytes(128);
+                                        return [4 /*yield*/, new DataPeps_1.IdentityAPI(dev.session).create(app, {
+                                                sharingGroup: [dev.identity.login],
+                                                secret: secret
+                                            })];
                                     case 1:
                                         _a.sent();
-                                        return [2 /*return*/, __assign({}, app, { created: new Date(), admin: false, active: true })];
+                                        return [2 /*return*/, {
+                                                identity: __assign({}, app, { created: new Date(), admin: false, active: true }),
+                                                secret: secret
+                                            }];
                                 }
                             });
                         }); }))];

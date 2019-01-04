@@ -112,7 +112,7 @@ function devWithAllConfigs(init) {
                     return [4 /*yield*/, Promise.all(devCtx.apps.slice(0, exports.configs.length).map(function (app, i) { return __awaiter(_this, void 0, void 0, function () {
                             return __generator(this, function (_a) {
                                 switch (_a.label) {
-                                    case 0: return [4 /*yield*/, api.putConfig(app.login, {
+                                    case 0: return [4 /*yield*/, api.putConfig(app.identity.login, {
                                             jwt: exports.configs[i].config
                                         })];
                                     case 1: return [2 /*return*/, _a.sent()];

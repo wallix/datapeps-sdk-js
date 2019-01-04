@@ -28,7 +28,7 @@ describe("applicationJWT.createSession", () => {
 
       it(`A new user creates a session, algo(${algorithm}), secret(${secretType})`, async () => {
         let { session, app, new: isNew } = await ApplicationJWT.createSession(
-          ctx.apps[i].login,
+          ctx.apps[i].identity.login,
           login,
           secret,
           createConnector(secretKey, config.signAlgorithm, secret)
@@ -41,7 +41,7 @@ describe("applicationJWT.createSession", () => {
 
       it(`An already registered user creates a session, algo(${algorithm}), secret(${secretType})`, async () => {
         let { session, app, new: isNew } = await ApplicationJWT.createSession(
-          ctx.apps[i].login,
+          ctx.apps[i].identity.login,
           login,
           secret,
           createConnector(secretKey, config.signAlgorithm, secret)
@@ -62,7 +62,7 @@ describe("applicationJWT.createSession", () => {
         `A new user cannot create a session with a bad application secret key, algo(${algorithm}), secret(${secretType})`,
         async () => {
           await ApplicationJWT.createSession(
-            ctx.apps[i].login,
+            ctx.apps[i].identity.login,
             badLogin,
             secret,
             createConnector(
@@ -80,7 +80,7 @@ describe("applicationJWT.createSession", () => {
         `An already registered user cannot create a session with a bad secret, algo(${algorithm}), secret(${secretType})`,
         async () => {
           await ApplicationJWT.createSession(
-            ctx.apps[i].login,
+            ctx.apps[i].identity.login,
             login,
             badSecret,
             createConnector(secretKey, config.signAlgorithm, badSecret)
@@ -120,7 +120,7 @@ describe("applicationJWT.createSession", () => {
     `Try to create a JWT session with an application that is not configured`,
     async () => {
       await ApplicationJWT.createSession(
-        ctx.apps[ctx.apps.length - 1].login,
+        ctx.apps[ctx.apps.length - 1].identity.login,
         "appLogin",
         "secret",
         createConnector(
@@ -131,7 +131,7 @@ describe("applicationJWT.createSession", () => {
       );
     },
     ServerError.ApplicationConfigNotFound,
-    () => ({ login: ctx.apps[ctx.apps.length - 1].login })
+    () => ({ login: ctx.apps[ctx.apps.length - 1].identity.login })
   );
 });
 

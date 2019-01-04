@@ -7,6 +7,20 @@ export namespace ApplicationAPI {
   export type Config = {
     jwt?: ApplicationJWT.Config;
   };
+
+  export type UsageOverview = {
+    jwt: {
+      totalIdentities: number;
+      newIdentities: number;
+      newSessions: number;
+    };
+    delegatedAccess: {
+      newRequested: number;
+      newResolved: number;
+      newDistinctRequested: number;
+      newDistinctResolved: number;
+    };
+  };
 }
 
 export class ApplicationAPI {
@@ -73,6 +87,54 @@ export class ApplicationAPI {
             key: config.jwt.key,
             signAlgorithm: config.jwt.signAlgorithm.valueOf(),
             claimForLogin: config.jwt.claimForLogin
+          }
+        };
+      }
+    });
+  }
+
+  /**
+   * Get usage overview of an application
+   * @param appID the app ID
+   * @param options A collection of options:
+   *  - since; unix timestamp from which requests data
+   * @return(p) On success the promise will be resolved with an ApplicationAPI.UsageOverview.
+   * On error the promise will be rejected with an {@link Error} with kind:
+   * - `IdentityCannotAssumeOwnership` if cannot have right to the application.
+   * - `IdentityNotFound` if the identity `appID` doesn't exists.
+   */
+  async getUsageOverview(
+    appID: string,
+    options?: {
+      since?: number;
+    }
+  ): Promise<ApplicationAPI.UsageOverview> {
+    options = options == null ? {} : options;
+    return await this.session.doProtoRequest<ApplicationAPI.UsageOverview>({
+      method: "POST",
+      assume: { login: appID, kind: IdentityAccessKind.READ },
+      code: 200,
+      path: `/api/v4/application/${encodeURI(appID)}/usage-overview`,
+      request: () =>
+        api.ApplicationUsageOverviewRequest.encode({
+          Login: appID,
+          ...options
+        }).finish(),
+      response: r => {
+        let overview = api.ApplicationUsageOverviewResponse.decode(r).overview;
+        return <ApplicationAPI.UsageOverview>{
+          jwt: {
+            totalIdentities: 0,
+            newIdentities: 0,
+            newSessions: 0,
+            ...overview.jwt
+          },
+          delegatedAccess: {
+            newRequested: 0,
+            newResolved: 0,
+            newDistinctRequested: 0,
+            newDistinctResolved: 0,
+            ...overview.delegates
           }
         };
       }

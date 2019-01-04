@@ -29,12 +29,12 @@ describe("application.secure", () => {
     let initCtx = await Context.init();
     appADevCtx = await Context.dev(initCtx);
     let api = new ApplicationAPI(appADevCtx.dev.session);
-    await api.putConfig(appADevCtx.app.login, appAConfig);
+    await api.putConfig(appADevCtx.app.identity.login, appAConfig);
   });
 
   it("An application can create a user", async () => {
     let createAliceResp = await Application.createUser(
-      appADevCtx.app.login,
+      appADevCtx.app.identity.login,
       { jwt: { token: appAAliceLoginToken.toString() } },
       appAUserSecret
     );
@@ -42,7 +42,7 @@ describe("application.secure", () => {
       session: appAUserSession,
       secret: appAUserApplicationSecret
     } = await Application.secure(
-      appADevCtx.app.login,
+      appADevCtx.app.identity.login,
       appAAliceLogin,
       appAUserSecret
     );

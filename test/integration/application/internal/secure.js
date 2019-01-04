@@ -68,7 +68,7 @@ describe("application.secure", function () {
                 case 2:
                     appADevCtx = _a.sent();
                     api = new DataPeps_1.ApplicationAPI(appADevCtx.dev.session);
-                    return [4 /*yield*/, api.putConfig(appADevCtx.app.login, appAConfig)];
+                    return [4 /*yield*/, api.putConfig(appADevCtx.app.identity.login, appAConfig)];
                 case 3:
                     _a.sent();
                     return [2 /*return*/];
@@ -79,10 +79,10 @@ describe("application.secure", function () {
         var createAliceResp, _a, appAUserSession, appAUserApplicationSecret;
         return __generator(this, function (_b) {
             switch (_b.label) {
-                case 0: return [4 /*yield*/, Application.createUser(appADevCtx.app.login, { jwt: { token: appAAliceLoginToken.toString() } }, appAUserSecret)];
+                case 0: return [4 /*yield*/, Application.createUser(appADevCtx.app.identity.login, { jwt: { token: appAAliceLoginToken.toString() } }, appAUserSecret)];
                 case 1:
                     createAliceResp = _b.sent();
-                    return [4 /*yield*/, Application.secure(appADevCtx.app.login, appAAliceLogin, appAUserSecret)];
+                    return [4 /*yield*/, Application.secure(appADevCtx.app.identity.login, appAAliceLogin, appAUserSecret)];
                 case 2:
                     _a = _b.sent(), appAUserSession = _a.session, appAUserApplicationSecret = _a.secret;
                     chai_1.expect(appAUserApplicationSecret).to.be.deep.equals(appAUserSecret);

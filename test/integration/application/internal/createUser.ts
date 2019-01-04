@@ -34,11 +34,13 @@ describe("application.createUser", () => {
         algorithm: ApplicationJWT.Algorithm[signAlgorithm]
       });
       let createAliceResp = await Application.createUser(
-        ctx.apps[i].login,
+        ctx.apps[i].identity.login,
         { jwt: { token } },
         userSecret
       );
-      expect(createAliceResp.login).to.equal(`${login}@${ctx.apps[i].login}`);
+      expect(createAliceResp.login).to.equal(
+        `${login}@${ctx.apps[i].identity.login}`
+      );
       await DataPeps.Session.login(createAliceResp.login, userSecret);
     });
 
@@ -57,7 +59,7 @@ describe("application.createUser", () => {
           algorithm: ApplicationJWT.Algorithm[signAlgorithm]
         });
         await Application.createUser(
-          ctx.apps[i].login,
+          ctx.apps[i].identity.login,
           { jwt: { token } },
           userSecret
         );
@@ -93,12 +95,12 @@ describe("application.createUser", () => {
       let userSecret = "aSoStrongSecret";
       let token = "BimBam";
       await Application.createUser(
-        ctx.apps[configs.length].login,
+        ctx.apps[configs.length].identity.login,
         { jwt: { token } },
         userSecret
       );
     },
     ServerError.ApplicationConfigNotFound,
-    () => ({ login: ctx.apps[configs.length].login })
+    () => ({ login: ctx.apps[configs.length].identity.login })
   );
 });

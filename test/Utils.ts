@@ -2,6 +2,7 @@ import { expect } from "chai";
 import * as mocha from "mocha";
 
 import * as DataPeps from "../src/DataPeps";
+import { ResourceAPI } from "../src/DataPeps";
 
 export function itError(
   description: string,
@@ -93,26 +94,47 @@ export function checkFetchedResource(
   expect(decryptedContent).to.be.deep.equals(resourceExpected.content.plain);
 }
 
+// deprecated
+function checkError(
+  err,
+  errorOccurred: { isTrue: boolean },
+  internalCheck: () => void
+) {
+  expect(err).to.not.be.null;
+  expect(err).instanceof(DataPeps.Error);
+  internalCheck();
+  errorOccurred.isTrue = true;
+}
+
+// deprecated
 export function checkResourceNotFoundError(
   err,
   resourceId: DataPeps.ID,
   errorOccurred: { isTrue: boolean }
 ) {
-  expect(err).to.not.be.null;
-  expect(err).instanceof(DataPeps.Error);
-  expect(err.kind).equal(DataPeps.ServerError.ResourceNotFound);
-  expect(err.payload.id).to.be.deep.equals(resourceId);
-  errorOccurred.isTrue = true;
+  checkError(err, errorOccurred, () => {
+    expect(err.kind).equal(DataPeps.ServerError.ResourceNotFound);
+    expect(err.payload.id).to.be.deep.equals(resourceId);
+  });
 }
 
+// deprec
 export function checkIdentityNotFoundError(
   err,
   errorOccurred: { isTrue: boolean }
 ) {
-  expect(err).to.not.be.null;
-  expect(err).instanceof(DataPeps.Error);
-  expect(err.kind).equal(DataPeps.ServerError.IdentityNotFound);
-  errorOccurred.isTrue = true;
+  checkError(err, errorOccurred, () => {
+    expect(err.kind).equal(DataPeps.ServerError.IdentityNotFound);
+  });
+}
+
+export function checkPayloadApplicationInvalidTokenError(
+  err,
+  errorOccurred: { isTrue: boolean }
+) {
+  checkError(err, errorOccurred, () => {
+    expect(err.kind).equal(DataPeps.ServerError.ApplicationInvalidToken);
+  });
 }
 
 // FETCHING FUNCTIONS
@@ -121,7 +143,9 @@ export async function fetchAndCheckResource(
   session: DataPeps.Session,
   resource: Resource
 ): Promise<DataPeps.Resource<{}>> {
-  let resourceFecthed = await session.Resource.get(resource.resource.id);
+  let resourceFecthed = await new ResourceAPI(session).get(
+    resource.resource.id
+  );
   checkFetchedResource(resourceFecthed, resource);
   return Promise.resolve(resourceFecthed);
 }

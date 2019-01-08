@@ -41,7 +41,7 @@ export function init(): Promise<void> {
 }
 
 export function adminLogin(): Promise<DataPeps.Session> {
-  return sdk.login(admin.login, adminSecret);
+  return DataPeps.Session.login(admin.login, adminSecret);
 }
 
 declare var require: any;

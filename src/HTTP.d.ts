@@ -1,4 +1,5 @@
-export { client, webSocketURL };
+export declare let debug: boolean;
+export { client };
 export interface Request<T> {
     method: string;
     path: string;
@@ -12,12 +13,10 @@ export interface Request<T> {
 }
 export declare class Client {
     host: string;
-    wsHost: string;
     debug: boolean;
-    constructor(host: string, wsHost: string);
+    constructor(host: string);
     doRequest<T>(r: Request<T>): Promise<T>;
     private uri_query(url, params?);
 }
 export declare function configure(APIUrl: string, WSUrl?: string): void;
-declare let webSocketURL: string;
 declare let client: Client;

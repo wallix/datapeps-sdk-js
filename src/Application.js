@@ -35,13 +35,23 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var DataPeps = require("./DataPeps");
-var Resource_1 = require("./Resource");
 var proto_1 = require("./proto");
-var Interface_1 = require("./Interface");
 var Tools_1 = require("./Tools");
 var CryptoFuncs_1 = require("./CryptoFuncs");
 var HTTP = require("./HTTP");
+var ResourceInternal_1 = require("./ResourceInternal");
+var IdentityAPI_1 = require("./IdentityAPI");
+var Session_1 = require("./Session");
+/**
+ * Create a user thanks an external referential of identities
+ * @param appID The identifier of a configured application
+ * @param auth The parameter that allows DataPeps to authenticate the user
+ * @param secret The identity secret
+ * On error the promise will be rejected with an {@link Error} with kind:
+ * - `ApplicationInvalidToken` if the JWT token returned by the connector is invalid.
+ * - `IdentityNotFound` if the identity `appID` doesn't exists.
+ * - `ApplicationConfigNotFound` if the `appID` is not configured.
+ */
 function createUser(appID, auth, secret) {
     return __awaiter(this, void 0, void 0, function () {
         var encryption, secretBytes, payload, identity, resource, body;
@@ -58,7 +68,7 @@ function createUser(appID, auth, secret) {
                         kind: appID + "/application/user",
                         payload: payload
                     };
-                    resource = Resource_1.ResourceImpl.createWithEncryption("application/secret", secretBytes, encryption, { serialize: function (u) { return u; } });
+                    resource = ResourceInternal_1.createWithEncryption("application/secret", secretBytes, encryption, { serialize: function (u) { return u; } });
                     body = proto_1.api.RegisterExternalIdentityRequest.encode({
                         appID: appID,
                         auth: auth,
@@ -88,12 +98,12 @@ function secure(appID, login, secret) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    appLogin = ApplicationImpl.composeApplicationLogin(login, appID);
-                    return [4 /*yield*/, DataPeps.login(appLogin, secret)];
+                    appLogin = composeApplicationLogin(login, appID);
+                    return [4 /*yield*/, Session_1.Session.login(appLogin, secret)];
                 case 1:
                     session = _a.sent();
                     identityLogin = login.concat("@", appID);
-                    return [4 /*yield*/, session.Identity.getNamedResource(identityLogin, "appSecret", { parse: function (u) { return u; } })];
+                    return [4 /*yield*/, new IdentityAPI_1.IdentityAPI(session).getNamedResource(identityLogin, "appSecret", { parse: function (u) { return u; } })];
                 case 2:
                     appSecretResource = _a.sent();
                     return [2 /*return*/, { session: session, secret: appSecretResource.payload }];
@@ -102,117 +112,8 @@ function secure(appID, login, secret) {
     });
 }
 exports.secure = secure;
-function createJWTSession(appID, appLogin, secret, connector) {
-    return __awaiter(this, void 0, void 0, function () {
-        var _a, session, appSecret, app, e_1, app, token, session;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0:
-                    _b.trys.push([0, 3, , 9]);
-                    return [4 /*yield*/, secure(appID, appLogin, secret)];
-                case 1:
-                    _a = _b.sent(), session = _a.session, appSecret = _a.secret;
-                    // The DataPeps Identity exists, connect to the application
-                    if (secret instanceof Uint8Array) {
-                        secret = appSecret;
-                    }
-                    else {
-                        secret = new TextDecoder().decode(appSecret);
-                    }
-                    return [4 /*yield*/, connector.createSession(appLogin, secret)];
-                case 2:
-                    app = _b.sent();
-                    return [2 /*return*/, { session: session, app: app, new: false }];
-                case 3:
-                    e_1 = _b.sent();
-                    if (!(e_1.kind == proto_1.api.PepsErrorKind.IdentityNotFound)) return [3 /*break*/, 8];
-                    return [4 /*yield*/, connector.createSession(appLogin, secret)];
-                case 4:
-                    app = _b.sent();
-                    return [4 /*yield*/, connector.getToken(app)];
-                case 5:
-                    token = _b.sent();
-                    // Create the DataPeps Identity
-                    return [4 /*yield*/, createUser(appID, { jwt: { token: token } }, secret)];
-                case 6:
-                    // Create the DataPeps Identity
-                    _b.sent();
-                    return [4 /*yield*/, secure(appID, appLogin, secret)];
-                case 7:
-                    session = (_b.sent()).session;
-                    return [2 /*return*/, { session: session, app: app, new: true }];
-                case 8: throw e_1;
-                case 9: return [2 /*return*/];
-            }
-        });
-    });
+function composeApplicationLogin(login, appID) {
+    var appLogin = login.concat("@", appID);
+    return appLogin;
 }
-exports.createJWTSession = createJWTSession;
-var ApplicationImpl = /** @class */ (function () {
-    function ApplicationImpl(session) {
-        this.session = session;
-    }
-    ApplicationImpl.prototype.putConfig = function (appID, fullConfig) {
-        return __awaiter(this, void 0, void 0, function () {
-            var config, c_1;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        if (!("jwt" in fullConfig)) return [3 /*break*/, 2];
-                        config = fullConfig.jwt;
-                        c_1 = { jwt: { key: config.key, claimForLogin: config.claimForLogin } };
-                        if ("signAlgorithm" in config) {
-                            c_1.jwt["signAlgorithm"] = config.signAlgorithm.valueOf();
-                        }
-                        return [4 /*yield*/, this.session.doProtoRequest({
-                                method: "PUT",
-                                assume: { login: appID, kind: Interface_1.IdentityAccessKind.WRITE },
-                                code: 201,
-                                path: "/api/v4/identity/" + encodeURI(appID) + "/configure-as-application",
-                                request: function () {
-                                    return proto_1.api.IdentityConfigurationAsApplicationRequest.encode({
-                                        Login: appID,
-                                        config: c_1
-                                    }).finish();
-                                }
-                            })];
-                    case 1: return [2 /*return*/, _a.sent()];
-                    case 2: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    ApplicationImpl.prototype.getConfig = function (appID) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.session.doProtoRequest({
-                            method: "GET",
-                            assume: { login: appID, kind: Interface_1.IdentityAccessKind.READ },
-                            code: 200,
-                            path: "/api/v4/identity/" + encodeURI(appID) + "/configure-as-application",
-                            response: function (r) {
-                                var config = proto_1.api.IdentityConfigurationAsApplicationResponse.decode(r)
-                                    .config;
-                                return {
-                                    jwt: {
-                                        key: config.jwt.key,
-                                        signAlgorithm: config.jwt.signAlgorithm.valueOf(),
-                                        claimForLogin: config.jwt.claimForLogin
-                                    }
-                                };
-                            }
-                        })];
-                    case 1: return [2 /*return*/, _a.sent()];
-                }
-            });
-        });
-    };
-    ApplicationImpl.composeApplicationLogin = function (login, appID) {
-        var appLogin = login.concat("@", appID);
-        return appLogin;
-    };
-    return ApplicationImpl;
-}());
-exports.ApplicationImpl = ApplicationImpl;
 //# sourceMappingURL=Application.js.map

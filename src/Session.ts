@@ -1,103 +1,174 @@
 import * as nacl from "tweetnacl";
-import * as Long from "long";
 import { api } from "./proto";
-import {
-  ID,
-  Session,
-  SessionRequest,
-  PublicKeysCache,
-  TrustPolicy,
-  AccessRequestResolver,
-  DelegatedAccess,
-  debug,
-  IdentityPublicKeyWithMetadata,
-  ApplicationAPI
-} from "./DataPeps";
 import {
   IdentityPublicKey,
   IdentityPublicKeyID,
   IdentityAccessKind
-} from "./DataPeps";
-import { AccessRequest } from "./DataPeps";
-import { Resource } from "./DataPeps";
+} from "./IdentityAPI";
 import { Error, SDKKind, ServerKind } from "./Error";
 import { Uint8Tool, Base64 } from "./Tools";
-import { Client } from "./HTTP";
+import { Client, Request, client } from "./HTTP";
 import { ResolvedCipher, Encryption } from "./CryptoFuncs";
 
-import { IdentityImpl } from "./Identity";
-import { ResourceImpl, makeResourceFromResponse } from "./Resource";
-import { AdminImpl } from "./Admin";
-import { ApplicationImpl } from "./Application";
+import { IdentityAPI } from "./IdentityAPI";
+import {
+  MemoryPublicKeyCache,
+  TrustOnFirstUse,
+  TrustPolicy,
+  PublicKeysCache
+} from "./SessionUtils";
 
-export interface AssumeParams {
+/**
+ * Specify how the sdk request should be authenticated by the DataPeps service.
+ * - "RAND" means that the service generates a fresh salt for each request `n` which is used to sign request `n+1`. It is the most secure kind of salt, but implies that all requests MUST be done sequentially.
+ * - "TIME" means that the service generates a salt based on a timestamp, so a signed request can be authenticated within a time window.
+ */
+export type SessionSaltKind = api.SessionSaltKind;
+
+/**
+ * A object that can be used to make authenticated request by a {@link_Session}.
+ */
+export interface SessionRequest<T> extends Request<T> {
+  assume?: { login: string; kind: IdentityAccessKind };
+}
+
+export namespace Session {
+  /**
+   * Create a new session.
+   * @param login The login of the identity to login with.
+   * @param secret The secret of the identity.
+   * @param options A collection of initialization options that control the sessions:
+   *  - saltKind: The kind of salt used to sign authenticated requests to the DataPeps service. The default value is `TIME`. For more details see {@link SessionSaltKind}
+   * @return(p) On success the promise will be resolved with a new session.
+   * On error the promise will be rejected with an {@link Error} with kind
+   * - `IdentityNotFound` if the `login` does not exists or if the identity has no secret.
+   */
+  export async function login(
+    login: string,
+    secret: string | Uint8Array,
+    options?: { saltKind?: SessionSaltKind }
+  ): Promise<Session> {
+    return await _login(
+      client,
+      login,
+      (e, c) => {
+        let encryption = new Encryption(e);
+        encryption.recover(Uint8Tool.convert(secret), c);
+        return encryption;
+      },
+      options
+    );
+  }
+}
+
+/**
+ * A Session is used to perform authenticated requests to the DataPeps service and allows access to the authenticated API of the DataPeps service.
+ */
+export interface Session {
+  /** The login of the {@link Identity} logged into the session */
+  login: string;
+
+  /**
+   * Close the session.
+   * @return(p) On success the promise will be resolved with void.
+   */
+  close(): Promise<void>;
+
+  /**
+   * Renew keys for the identity logged along with this session.
+   * @param secret An optional secret to renew keys, if not retain the old secret as still valid.
+   * @return(p) On success the promise will be resolved with void.
+   */
+  renewKeys(secret?: string | Uint8Array): Promise<void>;
+
+  /**
+   * Get the public key of the current session.
+   * @return The public key of the current session.
+   */
+  getSessionPublicKey(): IdentityPublicKey;
+
+  /**
+   * Get the latest public key of the given identity login.
+   * @param login The login of identity to get the key.
+   * @return(p) On success the promise will be resolved with the public key of `login`.
+   * On error the promise will be rejected with an {@link Error} with kind
+   * - `IdentityNotFound` if the identity is not found.
+   */
+  getLatestPublicKey(login: string): Promise<IdentityPublicKey>;
+
+  /**
+   * Get the latest public key of a list of identities.
+   * @param logins The login of identities to get the key.
+   * @return(p) On success the promise will be resolved with list of the public key in the same order of the `logins` list.
+   * On error the promise will be rejected with an {@link Error} with kind
+   * - `IdentityNotFound` if an identity is not found.
+   */
+  getLatestPublicKeys(logins: string[]): Promise<IdentityPublicKey[]>;
+
+  /**
+   * Get a specific version of the public key of an identity.
+   * @param id The id of the key to get.
+   * @return(p) On success the promise will be resolved with the public key.
+   * On error the promise will be rejected with an {@link Error} with kind
+   * - `IdentityNotFound` if the identity is not found.
+   */
+  getPublicKey(id: IdentityPublicKeyID): Promise<IdentityPublicKey>;
+
+  /**
+   * Get specific versions of the public keys.
+   * @param ids The ids of the keys to get.
+   * @return(p) On success the promise will be resolved with a list of the public keys in the same order as the `ids` list.
+   * On error the promise will be rejected with an {@link Error} with kind
+   * - `IdentityNotFound` if an identity is not found.
+   */
+  getPublicKeys(ids: IdentityPublicKeyID[]): Promise<IdentityPublicKey[]>;
+
+  /**
+   * Create a new session for an identity that the current session identity can access.
+   * @param login The login of the identity to login with.
+   */
+  createSession(login: string): Promise<Session>;
+
+  /**
+   * Set the trust policy for the session, see {@link TrustPolicy} for more details.
+   * @param policy The trust policy to set.
+   */
+  setTrustPolicy(policy: TrustPolicy);
+
+  /**
+   * Set the public keys cache for the session, see {@link PublicKeyCache} for more details.
+   * @param cache The public key cache to set.
+   */
+  setPublicKeyCache(cache: PublicKeysCache);
+
+  /**
+   * Sign a message.
+   */
+  sign(message: Uint8Array);
+
+  /**
+   * Get the secret token of an identity.
+   */
+  getSecretToken(login: string): Promise<string>;
+
+  /**
+   * Do an authenticated request.
+   * @param request
+   */
+  doRequest<T>(request: SessionRequest<T>): Promise<T>;
+
+  /**
+   * Do an authenticated proto request.
+   * @param request
+   */
+  doProtoRequest<T>(request: SessionRequest<T>): Promise<T>;
+}
+interface AssumeParams {
   key: api.IDelegatedKeys;
   kind: IdentityAccessKind;
 }
 
-class MemoryPublicKeyCache implements PublicKeysCache {
-  private cache: { [login: string]: IdentityPublicKey[] };
-  constructor() {
-    this.cache = {};
-  }
-  latest(login: string): IdentityPublicKey {
-    let keys = this.cache[login];
-    return keys == null || keys.length == 0 ? null : keys[keys.length - 1];
-  }
-  get({ login, version }) {
-    let keys = this.cache[login];
-    return keys == null || keys.length == 0 ? null : keys[version];
-  }
-  set({ login, version }, pk) {
-    let keys = this.cache[login];
-    if (keys == null) {
-      this.cache[login] = [];
-    }
-    this.cache[login][version] = pk;
-  }
-}
-
-class TrustOnFirstUse implements TrustPolicy {
-  private session: Session;
-
-  constructor(session: Session) {
-    this.session = session;
-  }
-
-  async trust(
-    pk: IdentityPublicKey,
-    mandate?: IdentityPublicKeyID
-  ): Promise<void> {
-    if (pk.version == 1) {
-      if (debug) {
-        console.log(
-          "TrustFirstUse",
-          pk.login,
-          Base64.encode(pk.sign),
-          Base64.encode(pk.box),
-          " mandate by ",
-          mandate
-        );
-      }
-      return Promise.resolve();
-    }
-    await this.session.getPublicKey(mandate);
-    if (debug) {
-      console.log(
-        "TrustByMandate",
-        pk.login,
-        pk.version,
-        Base64.encode(pk.sign),
-        Base64.encode(pk.box),
-        " mandate by ",
-        mandate
-      );
-    }
-    return Promise.resolve();
-  }
-}
-
-async function loginWithKeys(client, keys: api.IDelegatedKeys) {
+export async function loginWithKeys(client, keys: any) {
   return await _login(client, keys.login, (e, c) => {
     let encryption = new Encryption(e);
     encryption.recoverWithKeys(keys, c);
@@ -105,7 +176,7 @@ async function loginWithKeys(client, keys: api.IDelegatedKeys) {
   });
 }
 
-export async function _login(
+async function _login(
   client: Client,
   login: string,
   recover: (e: api.IdentityEncryption, c: api.IdentityPublicKey) => Encryption,
@@ -160,7 +231,7 @@ export async function _login(
   );
 }
 
-export class SessionImpl implements Session {
+class SessionImpl implements Session {
   APIHost: string;
   WSHost: string;
 
@@ -169,8 +240,6 @@ export class SessionImpl implements Session {
 
   client: Client;
   token: string; // base64 encoded
-
-  Application: ApplicationAPI;
 
   private salt: Uint8Array;
   private saltKind: api.SessionSaltKind;
@@ -197,16 +266,9 @@ export class SessionImpl implements Session {
     this.client = client;
     this.pkCache = new MemoryPublicKeyCache();
     this.trustPolicy = new TrustOnFirstUse(this);
-    this.Application = new ApplicationImpl(this);
     this.assumeKeyCache = {};
     this.afterRequestHandleSalt();
   }
-
-  Identity = new IdentityImpl(this);
-
-  Resource = new ResourceImpl(this);
-
-  Admin = new AdminImpl(this);
 
   async close(): Promise<void> {
     return await this.doProtoRequest<void>({
@@ -217,7 +279,7 @@ export class SessionImpl implements Session {
   }
 
   async renewKeys(secret?: string | Uint8Array): Promise<void> {
-    await this.Identity.renewKeys(this.login, secret);
+    await new IdentityAPI(this).renewKeys(this.login, secret);
     if (secret != null) {
       (this.encryption as any).secret = Uint8Tool.convert(secret);
     }
@@ -297,38 +359,6 @@ export class SessionImpl implements Session {
     await this.validateChains(chains);
     return ids.map(id => this.pkCache.get(id));
   }
-
-  async resolveAccessRequest(requestId: ID): Promise<AccessRequestResolver> {
-    let { sign, resource } = await this.doProtoRequest({
-      method: "GET",
-      code: 200,
-      path: "/api/v4/delegatedAccess/" + requestId.toString(),
-      response: api.DelegatedGetResponse.decode
-    });
-    let r = await makeResourceFromResponse<null>(
-      resource,
-      api.ResourceType.ANONYMOUS,
-      this,
-      null,
-      null
-    );
-    // Verify requester's signature
-    let msg = Uint8Tool.concat(
-      new TextEncoder().encode(this.login),
-      r.publicKey()
-    );
-    if (!nacl.sign.detached.verify(msg, sign, r.creator.sign)) {
-      throw new Error({
-        kind: SDKKind.IdentitySignChainInvalid,
-        payload: {
-          requestId,
-          requester: r.creator
-        }
-      });
-    }
-    return new AccessRequestResolverImpl(requestId, r, this);
-  }
-
   async createSession(login: string): Promise<Session> {
     let keys = await this.getKeys(login);
     return loginWithKeys(this.client, keys);
@@ -345,32 +375,6 @@ export class SessionImpl implements Session {
   async getSecretToken(login: string): Promise<string> {
     let keys = await this.getKeys(login);
     return Base64.encode(keys.signKey);
-  }
-
-  async listDelegatedAccess(
-    login: string,
-    options?: {
-      limit?: number;
-      sinceID?: ID;
-      maxID?: ID;
-    }
-  ): Promise<DelegatedAccess[]> {
-    let { accesses } = await this.doProtoRequest({
-      method: "GET",
-      code: 200,
-      path: "/api/v4/delegatedAccesses",
-      response: api.DelegatedAccessListResponse.decode,
-      assume: { login, kind: IdentityAccessKind.READ },
-      params: options
-    });
-    return accesses.map(
-      access =>
-        ({
-          ...access,
-          resolved: access.resolved,
-          created: new Date((access.created as number) * 1000)
-        } as DelegatedAccess)
-    );
   }
 
   sign(message: Uint8Array): Uint8Array {
@@ -696,115 +700,4 @@ export class SessionImpl implements Session {
   clearAssumeParams(login: string) {
     delete this.assumeKeyCache[login];
   }
-}
-
-export class AccessRequestImpl implements AccessRequest {
-  id: ID;
-  login: string;
-
-  private keys: api.IDelegatedKeys;
-  private reason: any;
-  private client: Client;
-  private resource: Resource<null>;
-  private resolve: () => void;
-  private reject: (reason?: any) => void;
-
-  constructor(id: ID, login: string, client: Client, resource: Resource<null>) {
-    this.id = id;
-    this.login = login;
-    this.resolve = () => {};
-    this.reject = () => {};
-    this.client = client;
-    this.resource = resource;
-    this.init();
-  }
-
-  private async init() {
-    try {
-      let { keys } = await this.client.doRequest({
-        method: "GET",
-        code: 200,
-        path: "/api/v4/delegatedAccess/" + this.id.toString() + "/keys",
-        response: api.DelegatedGetKeysResponse.decode,
-        before: (x, b) =>
-          x.setRequestHeader("content-type", "application/x-protobuf")
-      });
-      this.keys = api.DelegatedKeys.decode(this.resource.decrypt(keys));
-      this.resolve();
-    } catch (e) {
-      this.reason = e;
-      this.reject(e);
-    }
-  }
-
-  wait(): Promise<void> {
-    if (this.keys != null) {
-      return Promise.resolve();
-    }
-    if (this.reason != null) {
-      return Promise.reject(this.reason);
-    }
-    return new Promise((resolve, reject) => {
-      let presolve = this.resolve;
-      this.resolve = () => {
-        resolve();
-        presolve();
-      };
-      let preject = this.reject;
-      this.reject = (reason?) => {
-        reject(reason);
-        preject(reason);
-      };
-    });
-  }
-
-  async waitSession(): Promise<Session> {
-    await this.wait();
-    return await loginWithKeys(this.client, this.keys);
-  }
-
-  openResolver(): any {
-    return this._openConfigured(this.id, this.login);
-  }
-
-  _openConfigured(id: ID, login: string): any {
-    throw new Error({
-      kind: SDKKind.SDKInternalError,
-      payload: {
-        reason: "AccessRequest.openResolver() function has not been configured"
-      }
-    });
-  }
-}
-
-class AccessRequestResolverImpl implements AccessRequestResolver {
-  id: ID;
-  requesterKey: IdentityPublicKey;
-  private resource: Resource<null>;
-  private session: SessionImpl;
-
-  constructor(id: ID, resource: Resource<null>, session: SessionImpl) {
-    this.id = id;
-    this.requesterKey = resource.creator;
-    this.resource = resource;
-    this.session = session;
-  }
-
-  async resolve(login: string): Promise<void> {
-    let keys = await this.session.fetchKeys(login);
-    await this.session.doProtoRequest({
-      method: "PUT",
-      code: 200,
-      path: "/api/v4/delegatedAccess/" + this.id.toString() + "/keys",
-      request: () =>
-        api.DelegatedPostKeysRequest.encode({
-          keys: this.resource.encrypt(api.DelegatedKeys.encode(keys).finish())
-        }).finish()
-    });
-  }
-}
-
-export interface Event<T> {
-  type: string;
-  payload: T;
 }

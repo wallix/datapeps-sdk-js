@@ -6,6 +6,7 @@ import { expect } from "chai";
 import * as mocha from "mocha";
 import * as Long from "long";
 import * as Utils from "../../Utils";
+import { ResourceAPI } from "../../../src/DataPeps";
 
 describe("resource.delete", () => {
   let seed = Math.floor(Math.random() * 99999);
@@ -26,7 +27,7 @@ describe("resource.delete", () => {
     ctx = await Context.aliceBobWithDeviceAndGroup(init);
     aliceChild = await Context.userAndSession(init, "aliceChild");
 
-    let resourceADataPeps = await aliceChild.session.Resource.create(
+    let resourceADataPeps = await new ResourceAPI(aliceChild.session).create(
       "test kind",
       { text: "payload A" },
       [
@@ -37,21 +38,21 @@ describe("resource.delete", () => {
     );
     resourceA = new Utils.Resource(resourceADataPeps, "Content A");
 
-    let resourceBDataPeps = await aliceChild.session.Resource.create(
+    let resourceBDataPeps = await new ResourceAPI(aliceChild.session).create(
       "test kind",
       { text: "payload B" },
       [aliceChild.identity.login, ctx.alice.identity.login]
     );
     resourceB = new Utils.Resource(resourceBDataPeps, "Content B");
 
-    let resourceCDataPeps = await aliceChild.session.Resource.create(
+    let resourceCDataPeps = await new ResourceAPI(aliceChild.session).create(
       "test kind",
       { text: "payload C" },
       [aliceChild.identity.login, ctx.alice.identity.login]
     );
-    resourceC = new Utils.Resource(resourceADataPeps, "Content C");
+    resourceC = new Utils.Resource(resourceCDataPeps, "Content C");
 
-    let resourceDDataPeps = await aliceChild.session.Resource.create(
+    let resourceDDataPeps = await new ResourceAPI(aliceChild.session).create(
       "test kind",
       { text: "payload D" },
       [
@@ -71,7 +72,7 @@ describe("resource.delete", () => {
 
   it("A sharer cannot hard delete the resource A", async () => {
     // Alice gets the resourceA (she is in its sharing group)
-    let resourceAlice = await ctx.alice.session.Resource.get(
+    let resourceAlice = await new ResourceAPI(ctx.alice.session).get(
       resourceA.resource.id
     );
     Utils.checkFetchedResource(resourceAlice, resourceA);
@@ -79,7 +80,7 @@ describe("resource.delete", () => {
     let errorOccurred = { isTrue: false };
     try {
       // Alice hard deletes the resourceA (IMPOSSIBLE because she IS NOT its creator)
-      await ctx.alice.session.Resource.delete(resourceA.resource.id);
+      await new ResourceAPI(ctx.alice.session).delete(resourceA.resource.id);
     } catch (err) {
       Utils.checkResourceNotFoundError(
         err,
@@ -91,19 +92,23 @@ describe("resource.delete", () => {
 
     // Bob gets the resourceA (he is in its sharing group)
     // (resourceA does still exist because Alice could not hard delete it)
-    let resourceBob = await ctx.bob.session.Resource.get(resourceA.resource.id);
+    let resourceBob = await new ResourceAPI(ctx.bob.session).get(
+      resourceA.resource.id
+    );
     Utils.checkFetchedResource(resourceBob, resourceA);
   });
 
   it("A sharer of the resource owner cannot hard-delete the resource A", async () => {
     // Bob gets the resourceA (he is in its sharing group)
-    let resourceBob = await ctx.bob.session.Resource.get(resourceA.resource.id);
+    let resourceBob = await new ResourceAPI(ctx.bob.session).get(
+      resourceA.resource.id
+    );
     Utils.checkFetchedResource(resourceBob, resourceA);
 
     let errorOccurred = { isTrue: false };
     try {
       // Bob hard deletes the resourceA (IMPOSSIBLE because he IS NOT its creator)
-      await ctx.bob.session.Resource.delete(resourceA.resource.id);
+      await new ResourceAPI(ctx.bob.session).delete(resourceA.resource.id);
     } catch (err) {
       Utils.checkResourceNotFoundError(
         err,
@@ -115,7 +120,7 @@ describe("resource.delete", () => {
 
     // Alice gets the resourceA (she is in its sharing group)
     // (resourceA does still exist because Bob could not hard delete it)
-    let resourceAlice = await ctx.alice.session.Resource.get(
+    let resourceAlice = await new ResourceAPI(ctx.alice.session).get(
       resourceA.resource.id
     );
     Utils.checkFetchedResource(resourceAlice, resourceA);
@@ -123,13 +128,15 @@ describe("resource.delete", () => {
 
   it("After failing to hard-delete the resource A, the sharer can still access it", async () => {
     // Bob gets the resourceA (he is in its sharing group)
-    let resourceBob = await ctx.bob.session.Resource.get(resourceA.resource.id);
+    let resourceBob = await new ResourceAPI(ctx.bob.session).get(
+      resourceA.resource.id
+    );
     Utils.checkFetchedResource(resourceBob, resourceA);
 
     let errorOccurred = { isTrue: false };
     try {
       // Bob hard deletes the resourceA (IMPOSSIBLE because he IS NOT its creator)
-      await ctx.bob.session.Resource.delete(resourceA.resource.id);
+      await new ResourceAPI(ctx.bob.session).delete(resourceA.resource.id);
     } catch (err) {
       Utils.checkResourceNotFoundError(
         err,
@@ -141,24 +148,26 @@ describe("resource.delete", () => {
 
     // Bob gets the resourceA (he is in its sharing group)
     // (resourceA does still exist because Bob could not hard delete it)
-    resourceBob = await ctx.bob.session.Resource.get(resourceA.resource.id);
+    resourceBob = await new ResourceAPI(ctx.bob.session).get(
+      resourceA.resource.id
+    );
     Utils.checkFetchedResource(resourceBob, resourceA);
   });
 
   it("A sharer can soft delete the resource A", async () => {
     // Alice gets the resourceA (she is in its sharing group)
-    let resourceAlice = await ctx.alice.session.Resource.get(
+    let resourceAlice = await new ResourceAPI(ctx.alice.session).get(
       resourceA.resource.id
     );
     Utils.checkFetchedResource(resourceAlice, resourceA);
 
     // Alice soft deletes the resourceA (she is in its sharing group)
-    await ctx.alice.session.Resource.unlink(resourceA.resource.id);
+    await new ResourceAPI(ctx.alice.session).unlink(resourceA.resource.id);
 
     let errorOccurred = { isTrue: false };
     try {
       // Alice gets the resourceA (IMPOSSIBLE because she is NO MORE in its sharing group)
-      await ctx.alice.session.Resource.get(resourceA.resource.id);
+      await new ResourceAPI(ctx.alice.session).get(resourceA.resource.id);
     } catch (err) {
       Utils.checkResourceNotFoundError(
         err,
@@ -169,24 +178,26 @@ describe("resource.delete", () => {
     expect(errorOccurred.isTrue).to.be.true;
 
     // Bob gets the resourceA (he is in its sharing group)
-    let resourceBob = await ctx.bob.session.Resource.get(resourceA.resource.id);
+    let resourceBob = await new ResourceAPI(ctx.bob.session).get(
+      resourceA.resource.id
+    );
     Utils.checkFetchedResource(resourceBob, resourceA);
   });
 
   it("The owner can hard delete the resource A", async () => {
     // AliceChild gets the resourceA (she is in its sharing group)
-    let resourceAliceChild = await aliceChild.session.Resource.get(
+    let resourceAliceChild = await new ResourceAPI(aliceChild.session).get(
       resourceA.resource.id
     );
     Utils.checkFetchedResource(resourceAliceChild, resourceA);
 
     // AliceChild hard deletes the resourceA (he is in its creator)
-    await aliceChild.session.Resource.delete(resourceA.resource.id);
+    await new ResourceAPI(aliceChild.session).delete(resourceA.resource.id);
 
     let errorOccurred = { isTrue: false };
     try {
       // AliceChild gets the resourceA (IMPOSSIBLE because it NO MORE EXISTS, AliceChild was in its sharing group)
-      let resource = await aliceChild.session.Resource.get(
+      let resource = await new ResourceAPI(aliceChild.session).get(
         resourceA.resource.id
       );
     } catch (err) {
@@ -201,7 +212,9 @@ describe("resource.delete", () => {
     errorOccurred.isTrue = false;
     try {
       // Bob gets the resourceA (IMPOSSIBLE because it NO MORE EXISTS, Bob was in its sharing group)
-      let resource = await ctx.bob.session.Resource.get(resourceA.resource.id);
+      let resource = await new ResourceAPI(ctx.bob.session).get(
+        resourceA.resource.id
+      );
     } catch (err) {
       Utils.checkResourceNotFoundError(
         err,
@@ -216,7 +229,7 @@ describe("resource.delete", () => {
     let errorOccurred = { isTrue: false };
     try {
       // Bob gets the resourceB (IMPOSSIBLE because he IS NOT in its sharing group)
-      let resourceBob = await ctx.bob.session.Resource.get(
+      let resourceBob = await new ResourceAPI(ctx.bob.session).get(
         resourceB.resource.id
       );
     } catch (err) {
@@ -231,7 +244,7 @@ describe("resource.delete", () => {
     errorOccurred.isTrue = false;
     try {
       // Bob soft deletes the resourceB (IMPOSSIBLE because he IS NOT in its sharing group)
-      await ctx.bob.session.Resource.unlink(resourceB.resource.id);
+      await new ResourceAPI(ctx.bob.session).unlink(resourceB.resource.id);
     } catch (err) {
       Utils.checkResourceNotFoundError(
         err,
@@ -242,7 +255,7 @@ describe("resource.delete", () => {
     expect(errorOccurred.isTrue).to.be.true;
 
     // AliceChild gets the resourceB (he is in its sharing group)
-    let resourceAliceChild = await aliceChild.session.Resource.get(
+    let resourceAliceChild = await new ResourceAPI(aliceChild.session).get(
       resourceB.resource.id
     );
     Utils.checkFetchedResource(resourceAliceChild, resourceB);
@@ -252,7 +265,7 @@ describe("resource.delete", () => {
     let errorOccurred = { isTrue: false };
     try {
       // Bob gets the resourceB (IMPOSSIBLE because he IS NOT in its sharing group)
-      let resourceBob = await ctx.bob.session.Resource.get(
+      let resourceBob = await new ResourceAPI(ctx.bob.session).get(
         resourceB.resource.id
       );
     } catch (err) {
@@ -267,7 +280,7 @@ describe("resource.delete", () => {
     errorOccurred.isTrue = false;
     try {
       // Bob hard deletes the resourceB (IMPOSSIBLE because he IS NOT its creator)
-      await ctx.bob.session.Resource.delete(resourceB.resource.id);
+      await new ResourceAPI(ctx.bob.session).delete(resourceB.resource.id);
     } catch (err) {
       Utils.checkResourceNotFoundError(
         err,
@@ -278,7 +291,7 @@ describe("resource.delete", () => {
     expect(errorOccurred.isTrue).to.be.true;
 
     // AliceChild gets the resourceB (he is in its sharing group)
-    let resourceAliceChild = await aliceChild.session.Resource.get(
+    let resourceAliceChild = await new ResourceAPI(aliceChild.session).get(
       resourceB.resource.id
     );
     Utils.checkFetchedResource(resourceAliceChild, resourceB);
@@ -286,18 +299,18 @@ describe("resource.delete", () => {
 
   it("When the owner soft deletes the resource B, the sharing group can still access it", async () => {
     // AliceChild gets the resourceB (he is in its sharing group)
-    let resourceAliceChild = await aliceChild.session.Resource.get(
+    let resourceAliceChild = await new ResourceAPI(aliceChild.session).get(
       resourceB.resource.id
     );
     Utils.checkFetchedResource(resourceAliceChild, resourceB);
 
     // AliceChild soft deletes the resourceB (he is in its sharing group)
-    await aliceChild.session.Resource.unlink(resourceB.resource.id);
+    await new ResourceAPI(aliceChild.session).unlink(resourceB.resource.id);
 
     let errorOccurred = { isTrue: false };
     try {
       // AliceChild gets the resourceB (IMPOSSIBLE because he is NO MORE in its sharing group)
-      let resource = await aliceChild.session.Resource.get(
+      let resource = await new ResourceAPI(aliceChild.session).get(
         resourceB.resource.id
       );
     } catch (err) {
@@ -310,7 +323,7 @@ describe("resource.delete", () => {
     expect(errorOccurred.isTrue).to.be.true;
 
     // Alice gets the resourceB (she is in its sharing group)
-    let resourceAlice = await ctx.alice.session.Resource.get(
+    let resourceAlice = await new ResourceAPI(ctx.alice.session).get(
       resourceB.resource.id
     );
     Utils.checkFetchedResource(resourceAlice, resourceB);
@@ -318,7 +331,7 @@ describe("resource.delete", () => {
 
   it("The owner can hard-delete the resource B, without being in the resource's sharing group", async () => {
     // Alice gets the resourceB (she is in its sharing group)
-    let resourceAlice = await ctx.alice.session.Resource.get(
+    let resourceAlice = await new ResourceAPI(ctx.alice.session).get(
       resourceB.resource.id
     );
     Utils.checkFetchedResource(resourceAlice, resourceB);
@@ -326,7 +339,7 @@ describe("resource.delete", () => {
     let errorOccurred = { isTrue: false };
     try {
       // AliceChild gets the resourceB (IMPOSSIBLE because he is NO MORE in its sharing group)
-      let resource = await aliceChild.session.Resource.get(
+      let resource = await new ResourceAPI(aliceChild.session).get(
         resourceB.resource.id
       );
     } catch (err) {
@@ -339,12 +352,12 @@ describe("resource.delete", () => {
     expect(errorOccurred.isTrue).to.be.true;
 
     // AliceChild hard deletes the resourceB (he is its creator)
-    await aliceChild.session.Resource.delete(resourceB.resource.id);
+    await new ResourceAPI(aliceChild.session).delete(resourceB.resource.id);
 
     errorOccurred.isTrue = false;
     try {
       // AliceChild gets the resourceB (IMPOSSIBLE because it NO MORE exists)
-      let resource = await aliceChild.session.Resource.get(
+      let resource = await new ResourceAPI(aliceChild.session).get(
         resourceB.resource.id
       );
     } catch (err) {
@@ -359,7 +372,7 @@ describe("resource.delete", () => {
     errorOccurred.isTrue = false;
     try {
       // Alice gets the resourceB (IMPOSSIBLE because it NO MORE exists)
-      let resource = await ctx.alice.session.Resource.get(
+      let resource = await new ResourceAPI(ctx.alice.session).get(
         resourceB.resource.id
       );
     } catch (err) {
@@ -377,18 +390,18 @@ describe("resource.delete", () => {
     await aliceChild.session.renewKeys();
 
     // AliceChild gets the resourceD (he is in its sharing group)
-    let resourceAliceChild = await aliceChild.session.Resource.get(
+    let resourceAliceChild = await new ResourceAPI(aliceChild.session).get(
       resourceD.resource.id
     );
     Utils.checkFetchedResource(resourceAliceChild, resourceD);
 
     // AliceChild soft deletes the resourceD (he is in its sharing group)
-    await aliceChild.session.Resource.unlink(resourceD.resource.id);
+    await new ResourceAPI(aliceChild.session).unlink(resourceD.resource.id);
 
     let errorOccurred = { isTrue: false };
     try {
       // AliceChild gets the resourceD (IMPOSSIBLE because he is NO MORE in its sharing group)
-      let resource = await aliceChild.session.Resource.get(
+      let resource = await new ResourceAPI(aliceChild.session).get(
         resourceD.resource.id
       );
     } catch (err) {
@@ -401,7 +414,7 @@ describe("resource.delete", () => {
     expect(errorOccurred.isTrue).to.be.true;
 
     // Alice gets the resourceD (she is in its sharing group)
-    let resourceAlice = await ctx.alice.session.Resource.get(
+    let resourceAlice = await new ResourceAPI(ctx.alice.session).get(
       resourceD.resource.id
     );
     Utils.checkFetchedResource(resourceAlice, resourceD);
@@ -412,18 +425,18 @@ describe("resource.delete", () => {
     await ctx.alice.session.renewKeys();
 
     // Alice gets the resourceD (she is in its sharing group)
-    let resourceAlice = await ctx.alice.session.Resource.get(
+    let resourceAlice = await new ResourceAPI(ctx.alice.session).get(
       resourceD.resource.id
     );
     Utils.checkFetchedResource(resourceAlice, resourceD);
 
     // Alice soft deletes the resourceD (she is in its sharing group)
-    await ctx.alice.session.Resource.unlink(resourceD.resource.id);
+    await new ResourceAPI(ctx.alice.session).unlink(resourceD.resource.id);
 
     let errorOccurred = { isTrue: false };
     try {
       // Alice gets the resourceD (IMPOSSIBLE because she is NO MORE in its sharing group)
-      let resource = await ctx.alice.session.Resource.get(
+      let resource = await new ResourceAPI(ctx.alice.session).get(
         resourceD.resource.id
       );
     } catch (err) {
@@ -436,13 +449,17 @@ describe("resource.delete", () => {
     expect(errorOccurred.isTrue).to.be.true;
 
     // Bob gets the resourceD (he is in its sharing group)
-    let resourceBob = await ctx.bob.session.Resource.get(resourceD.resource.id);
+    let resourceBob = await new ResourceAPI(ctx.bob.session).get(
+      resourceD.resource.id
+    );
     Utils.checkFetchedResource(resourceBob, resourceD);
   });
 
   it("The owner can hard-delete the resource D after renewing the key", async () => {
     // Bob gets the resourceD (he is in its sharing group)
-    let resourceBob = await ctx.bob.session.Resource.get(resourceD.resource.id);
+    let resourceBob = await new ResourceAPI(ctx.bob.session).get(
+      resourceD.resource.id
+    );
 
     Utils.checkFetchedResource(resourceBob, resourceD);
 
@@ -450,12 +467,12 @@ describe("resource.delete", () => {
     await aliceChild.session.renewKeys();
 
     // AliceChild hard deletes the resourceD (he is its creator)
-    await aliceChild.session.Resource.delete(resourceD.resource.id);
+    await new ResourceAPI(aliceChild.session).delete(resourceD.resource.id);
 
     let errorOccurred = { isTrue: false };
     try {
       // Bob gets the resourceD (IMPOSSIBLE because it NO MORE exists, he was in its sharing group)
-      let resourceBob = await ctx.bob.session.Resource.get(
+      let resourceBob = await new ResourceAPI(ctx.bob.session).get(
         resourceD.resource.id
       );
     } catch (err) {
@@ -470,11 +487,11 @@ describe("resource.delete", () => {
 
   it("The server returns ResourceNotFound error, when a user tries to delete an inexistant resource", async () => {
     let errorOccurred = { isTrue: false };
-    // tests if when Alice asks for a resource (that does not exists), the system does not create that resource
+    // tests if when Alice asks for a resource (that does not exist), the system does not create that resource
     for (let i = 0; i < 2; i++) {
       try {
         // Alice gets a resource (IMPOSSIBLE because it DOES NOT exist)
-        await ctx.alice.session.Resource.get(randomResourceId);
+        await new ResourceAPI(ctx.alice.session).get(randomResourceId);
       } catch (err) {
         let randomResourceIdLong = new Long(randomResourceId, 0, true);
         Utils.checkResourceNotFoundError(
@@ -492,7 +509,7 @@ describe("resource.delete", () => {
     for (let i = 0; i < 2; i++) {
       try {
         // Alice gets a resource (IMPOSSIBLE because it DOES NOT exist)
-        await ctx.alice.session.Resource.get(randomResourceIdLong);
+        await new ResourceAPI(ctx.alice.session).get(randomResourceIdLong);
       } catch (err) {
         Utils.checkResourceNotFoundError(
           err,

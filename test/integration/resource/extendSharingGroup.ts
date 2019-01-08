@@ -6,6 +6,7 @@ import { expect } from "chai";
 import * as mocha from "mocha";
 import * as Long from "long";
 import { Session } from "inspector";
+import { ResourceAPI } from "../../../src/DataPeps";
 
 class ResourceContent {
   plain: Uint8Array;
@@ -60,14 +61,16 @@ async function fetchAndCheckResource(
   session: DataPeps.Session,
   resource: Resource
 ): Promise<DataPeps.Resource<{}>> {
-  let resourceFecthed = await session.Resource.get(resource.resource.id);
+  let resourceFecthed = await new ResourceAPI(session).get(
+    resource.resource.id
+  );
   checkFetchedResource(resourceFecthed, resource);
   return Promise.resolve(resourceFecthed);
 }
 
 describe("resource.extendSharingGroup", () => {
   let alice, bob, charlie, dave: DataPeps.Identity<Uint8Array>;
-  let aliceSession, bobSession, charlieSession, daveSession;
+  let aliceSession, bobSession, charlieSession, daveSession: DataPeps.Session;
 
   let resourceA: Resource;
   let resourceB: Resource;
@@ -92,28 +95,28 @@ describe("resource.extendSharingGroup", () => {
     dave = dCtx.identity;
     daveSession = dCtx.session;
 
-    let resourceADataPeps = await aliceSession.Resource.create(
+    let resourceADataPeps = await new ResourceAPI(aliceSession).create(
       "test kind",
       { text: "payload A" },
       [alice.login]
     );
     resourceA = new Resource(resourceADataPeps, "Content A");
 
-    let resourceBDataPeps = await aliceSession.Resource.create(
+    let resourceBDataPeps = await new ResourceAPI(aliceSession).create(
       "test kind",
       { text: "payload B" },
       []
     );
     resourceB = new Resource(resourceBDataPeps, "Content B");
 
-    let resourceCDataPeps = await aliceSession.Resource.create(
+    let resourceCDataPeps = await new ResourceAPI(aliceSession).create(
       "test kind",
       { text: "payload C" },
       [alice.login]
     );
     resourceC = new Resource(resourceCDataPeps, "Content C");
 
-    let resourceDDataPeps = await aliceSession.Resource.create(
+    let resourceDDataPeps = await new ResourceAPI(aliceSession).create(
       "test kind",
       { text: "payload D" },
       [alice.login]
@@ -130,7 +133,7 @@ describe("resource.extendSharingGroup", () => {
   it("An identity that is not a Resource A sharer cannot add an himself to the resource sharers", async () => {
     let errorOccurred = { isTrue: false };
     try {
-      await bobSession.Resource.get(resourceA.resource.id);
+      await new ResourceAPI(bobSession).get(resourceA.resource.id);
     } catch (err) {
       checkResourceNotFoundError(err, resourceA.resource.id, errorOccurred);
     }
@@ -138,9 +141,10 @@ describe("resource.extendSharingGroup", () => {
 
     errorOccurred.isTrue = false;
     try {
-      await bobSession.Resource.extendSharingGroup(resourceA.resource.id, [
-        bob.login
-      ]);
+      await new ResourceAPI(bobSession).extendSharingGroup(
+        resourceA.resource.id,
+        [bob.login]
+      );
     } catch (err) {
       checkResourceNotFoundError(err, resourceA.resource.id, errorOccurred);
     }
@@ -150,7 +154,7 @@ describe("resource.extendSharingGroup", () => {
   it("An identity that is not a Resource A sharer cannot add an identity to the resource sharers", async () => {
     let errorOccurred = { isTrue: false };
     try {
-      await bobSession.Resource.get(resourceA.resource.id);
+      await new ResourceAPI(bobSession).get(resourceA.resource.id);
     } catch (err) {
       checkResourceNotFoundError(err, resourceA.resource.id, errorOccurred);
     }
@@ -158,9 +162,10 @@ describe("resource.extendSharingGroup", () => {
 
     errorOccurred.isTrue = false;
     try {
-      await bobSession.Resource.extendSharingGroup(resourceA.resource.id, [
-        charlie.login
-      ]);
+      await new ResourceAPI(bobSession).extendSharingGroup(
+        resourceA.resource.id,
+        [charlie.login]
+      );
     } catch (err) {
       checkResourceNotFoundError(err, resourceA.resource.id, errorOccurred);
     }
@@ -171,15 +176,16 @@ describe("resource.extendSharingGroup", () => {
     await fetchAndCheckResource(aliceSession, resourceA);
     let errorOccurred = { isTrue: false };
     try {
-      await bobSession.Resource.get(resourceA.resource.id);
+      await new ResourceAPI(bobSession).get(resourceA.resource.id);
     } catch (err) {
       checkResourceNotFoundError(err, resourceA.resource.id, errorOccurred);
     }
     expect(errorOccurred.isTrue).to.be.true;
 
-    await aliceSession.Resource.extendSharingGroup(resourceA.resource.id, [
-      bob.login
-    ]);
+    await new ResourceAPI(aliceSession).extendSharingGroup(
+      resourceA.resource.id,
+      [bob.login]
+    );
     fetchAndCheckResource(bobSession, resourceA);
   });
 
@@ -188,22 +194,23 @@ describe("resource.extendSharingGroup", () => {
 
     let errorOccurred = { isTrue: false };
     try {
-      await charlieSession.Resource.get(resourceA.resource.id);
+      await new ResourceAPI(charlieSession).get(resourceA.resource.id);
     } catch (err) {
       checkResourceNotFoundError(err, resourceA.resource.id, errorOccurred);
     }
     expect(errorOccurred.isTrue).to.be.true;
 
-    await bobSession.Resource.extendSharingGroup(resourceA.resource.id, [
-      charlie.login
-    ]);
+    await new ResourceAPI(bobSession).extendSharingGroup(
+      resourceA.resource.id,
+      [charlie.login]
+    );
     await fetchAndCheckResource(charlieSession, resourceA);
   });
 
   it("If the creator of Resource B is not a sharer, he cannot add himself to sharers", async () => {
     let errorOccurred = { isTrue: false };
     try {
-      await aliceSession.Resource.get(resourceB.resource.id);
+      await new ResourceAPI(aliceSession).get(resourceB.resource.id);
     } catch (err) {
       checkResourceNotFoundError(err, resourceB.resource.id, errorOccurred);
     }
@@ -211,9 +218,10 @@ describe("resource.extendSharingGroup", () => {
 
     errorOccurred.isTrue = false;
     try {
-      await aliceSession.Resource.extendSharingGroup(resourceB.resource.id, [
-        alice.login
-      ]);
+      await new ResourceAPI(aliceSession).extendSharingGroup(
+        resourceB.resource.id,
+        [alice.login]
+      );
     } catch (err) {
       checkResourceNotFoundError(err, resourceB.resource.id, errorOccurred);
     }
@@ -223,7 +231,7 @@ describe("resource.extendSharingGroup", () => {
   it("If the creator of Resource B is not a sharer, he cannot add another identity to sharers", async () => {
     let errorOccurred = { isTrue: false };
     try {
-      await aliceSession.Resource.get(resourceB.resource.id);
+      await new ResourceAPI(aliceSession).get(resourceB.resource.id);
     } catch (err) {
       checkResourceNotFoundError(err, resourceB.resource.id, errorOccurred);
     }
@@ -231,9 +239,10 @@ describe("resource.extendSharingGroup", () => {
 
     errorOccurred.isTrue = false;
     try {
-      await aliceSession.Resource.extendSharingGroup(resourceB.resource.id, [
-        bob.login
-      ]);
+      await new ResourceAPI(aliceSession).extendSharingGroup(
+        resourceB.resource.id,
+        [bob.login]
+      );
     } catch (err) {
       checkResourceNotFoundError(err, resourceB.resource.id, errorOccurred);
     }
@@ -243,7 +252,7 @@ describe("resource.extendSharingGroup", () => {
   it("An identity cannot add himself to the Resource B sharers, when the sharing group of the resource is empty", async () => {
     let errorOccurred = { isTrue: false };
     try {
-      await bobSession.Resource.get(resourceB.resource.id);
+      await new ResourceAPI(bobSession).get(resourceB.resource.id);
     } catch (err) {
       checkResourceNotFoundError(err, resourceB.resource.id, errorOccurred);
     }
@@ -251,9 +260,10 @@ describe("resource.extendSharingGroup", () => {
 
     errorOccurred.isTrue = false;
     try {
-      await bobSession.Resource.extendSharingGroup(resourceB.resource.id, [
-        bob.login
-      ]);
+      await new ResourceAPI(bobSession).extendSharingGroup(
+        resourceB.resource.id,
+        [bob.login]
+      );
     } catch (err) {
       checkResourceNotFoundError(err, resourceB.resource.id, errorOccurred);
     }
@@ -263,7 +273,7 @@ describe("resource.extendSharingGroup", () => {
   it("An identity cannot add another identity to the Resource B sharers, when the sharing group of the resource is empty", async () => {
     let errorOccurred = { isTrue: false };
     try {
-      await bobSession.Resource.get(resourceB.resource.id);
+      await new ResourceAPI(bobSession).get(resourceB.resource.id);
     } catch (err) {
       checkResourceNotFoundError(err, resourceB.resource.id, errorOccurred);
     }
@@ -271,9 +281,10 @@ describe("resource.extendSharingGroup", () => {
 
     errorOccurred.isTrue = false;
     try {
-      await bobSession.Resource.extendSharingGroup(resourceB.resource.id, [
-        charlie.login
-      ]);
+      await new ResourceAPI(bobSession).extendSharingGroup(
+        resourceB.resource.id,
+        [charlie.login]
+      );
     } catch (err) {
       checkResourceNotFoundError(err, resourceB.resource.id, errorOccurred);
     }
@@ -285,16 +296,17 @@ describe("resource.extendSharingGroup", () => {
 
     let errorOccurred = { isTrue: false };
     try {
-      await bobSession.Resource.get(resourceC.resource.id);
+      await new ResourceAPI(bobSession).get(resourceC.resource.id);
     } catch (err) {
       checkResourceNotFoundError(err, resourceC.resource.id, errorOccurred);
     }
     expect(errorOccurred.isTrue).to.be.true;
 
     for (let i = 0; i < 2; i++) {
-      await aliceSession.Resource.extendSharingGroup(resourceC.resource.id, [
-        bob.login
-      ]);
+      await new ResourceAPI(aliceSession).extendSharingGroup(
+        resourceC.resource.id,
+        [bob.login]
+      );
       await fetchAndCheckResource(bobSession, resourceC);
     }
   });
@@ -302,25 +314,25 @@ describe("resource.extendSharingGroup", () => {
   it("No error occurs when a sharer extends the sharing group of the resource C with a repeated user", async () => {
     await fetchAndCheckResource(aliceSession, resourceC);
     await fetchAndCheckResource(bobSession, resourceC);
-    await aliceSession.Resource.extendSharingGroup(resourceC.resource.id, [
-      bob.login,
-      bob.login
-    ]);
+    await new ResourceAPI(aliceSession).extendSharingGroup(
+      resourceC.resource.id,
+      [bob.login, bob.login]
+    );
     await fetchAndCheckResource(aliceSession, resourceC);
     await fetchAndCheckResource(bobSession, resourceC);
 
     let errorOccurred = { isTrue: false };
     try {
-      await charlieSession.Resource.get(resourceC.resource.id);
+      await new ResourceAPI(charlieSession).get(resourceC.resource.id);
     } catch (err) {
       checkResourceNotFoundError(err, resourceC.resource.id, errorOccurred);
     }
     expect(errorOccurred.isTrue).to.be.true;
 
-    await aliceSession.Resource.extendSharingGroup(resourceC.resource.id, [
-      charlie.login,
-      charlie.login
-    ]);
+    await new ResourceAPI(aliceSession).extendSharingGroup(
+      resourceC.resource.id,
+      [charlie.login, charlie.login]
+    );
 
     await fetchAndCheckResource(aliceSession, resourceC);
     await fetchAndCheckResource(bobSession, resourceC);
@@ -334,17 +346,16 @@ describe("resource.extendSharingGroup", () => {
 
     let errorOccurred = { isTrue: false };
     try {
-      await daveSession.Resource.get(resourceC.resource.id);
+      await new ResourceAPI(daveSession).get(resourceC.resource.id);
     } catch (err) {
       checkResourceNotFoundError(err, resourceC.resource.id, errorOccurred);
     }
     expect(errorOccurred.isTrue).to.be.true;
 
-    await aliceSession.Resource.extendSharingGroup(resourceC.resource.id, [
-      bob.login,
-      charlie.login,
-      dave.login
-    ]);
+    await new ResourceAPI(aliceSession).extendSharingGroup(
+      resourceC.resource.id,
+      [bob.login, charlie.login, dave.login]
+    );
 
     await fetchAndCheckResource(aliceSession, resourceC);
     await fetchAndCheckResource(bobSession, resourceC);
@@ -355,9 +366,10 @@ describe("resource.extendSharingGroup", () => {
   it("No error occurs when a sharer adds himself to the sharing group of the resource C", async () => {
     await fetchAndCheckResource(aliceSession, resourceC);
 
-    await aliceSession.Resource.extendSharingGroup(resourceC.resource.id, [
-      alice.login
-    ]);
+    await new ResourceAPI(aliceSession).extendSharingGroup(
+      resourceC.resource.id,
+      [alice.login]
+    );
 
     await fetchAndCheckResource(aliceSession, resourceC);
   });
@@ -366,7 +378,7 @@ describe("resource.extendSharingGroup", () => {
     for (let i = 0; i < 2; i++) {
       let errorOccurred = { isTrue: false };
       try {
-        await aliceSession.Resource.get(randomResourceId);
+        await new ResourceAPI(aliceSession).get(randomResourceId);
       } catch (err) {
         let randomResourceIdLong = new Long(randomResourceId, 0, true);
         checkResourceNotFoundError(err, randomResourceIdLong, errorOccurred);
@@ -377,7 +389,7 @@ describe("resource.extendSharingGroup", () => {
     for (let i = 0; i < 2; i++) {
       let errorOccurred = { isTrue: false };
       try {
-        await aliceSession.Resource.get(randomResourceIdLong);
+        await new ResourceAPI(aliceSession).get(randomResourceIdLong);
       } catch (err) {
         checkResourceNotFoundError(err, randomResourceIdLong, errorOccurred);
       }

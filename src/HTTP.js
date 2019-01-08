@@ -2,13 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var proto_1 = require("./proto");
 var Error_1 = require("./Error");
-var DataPeps_1 = require("./DataPeps");
 var defaultAPIURL = "https://api.datapeps.com";
-var defaultWSURL = "https://ws.datapeps.com";
+exports.debug = false;
 var Client = /** @class */ (function () {
-    function Client(host, wsHost) {
+    function Client(host) {
         this.host = host;
-        this.wsHost = wsHost;
     }
     Client.prototype.doRequest = function (r) {
         var _this = this;
@@ -23,7 +21,7 @@ var Client = /** @class */ (function () {
                 if (xmlhttp.readyState != 4 || xmlhttp.status == 0) {
                     return;
                 }
-                if (DataPeps_1.debug) {
+                if (exports.debug) {
                     console.debug("response(" + r.method + "," + host + r.path + "): ", xmlhttp.status);
                 }
                 if (xmlhttp.status != r.code) {
@@ -81,7 +79,7 @@ var Client = /** @class */ (function () {
                 }));
             };
             var body = null;
-            if (DataPeps_1.debug) {
+            if (exports.debug) {
                 console.debug("request(" + r.method + "," + host + r.path + ")");
             }
             try {
@@ -122,12 +120,9 @@ var Client = /** @class */ (function () {
 }());
 exports.Client = Client;
 function configure(APIUrl, WSUrl) {
-    exports.client = client = new Client(APIUrl, WSUrl);
-    exports.webSocketURL = webSocketURL = WSUrl;
+    exports.client = client = new Client(APIUrl);
 }
 exports.configure = configure;
-var webSocketURL = defaultWSURL;
-exports.webSocketURL = webSocketURL;
-var client = new Client(defaultAPIURL, defaultWSURL);
+var client = new Client(defaultAPIURL);
 exports.client = client;
 //# sourceMappingURL=HTTP.js.map

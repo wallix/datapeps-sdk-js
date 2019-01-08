@@ -1,11 +1,11 @@
 import { api } from "./proto";
 import { SDKKind, Error } from "./Error";
-import { debug } from "./DataPeps";
 
 const defaultAPIURL = "https://api.datapeps.com";
-const defaultWSURL = "https://ws.datapeps.com";
 
-export { client, webSocketURL };
+export let debug = false;
+
+export { client };
 
 export interface Request<T> {
   method: string;
@@ -21,12 +21,10 @@ export interface Request<T> {
 
 export class Client {
   host: string;
-  wsHost: string;
   debug: boolean;
 
-  constructor(host: string, wsHost: string) {
+  constructor(host: string) {
     this.host = host;
-    this.wsHost = wsHost;
   }
 
   doRequest<T>(r: Request<T>): Promise<T> {
@@ -148,9 +146,7 @@ export class Client {
 }
 
 export function configure(APIUrl: string, WSUrl?: string) {
-  client = new Client(APIUrl, WSUrl);
-  webSocketURL = WSUrl;
+  client = new Client(APIUrl);
 }
 
-let webSocketURL = defaultWSURL;
-let client = new Client(defaultAPIURL, defaultWSURL);
+let client = new Client(defaultAPIURL);

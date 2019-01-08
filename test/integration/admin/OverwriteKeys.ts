@@ -3,6 +3,7 @@ import * as DataPeps from "../../../src/DataPeps";
 import * as nacl from "tweetnacl";
 import { expect } from "chai";
 import { itError } from "../../Utils";
+import { AdminAPI, ResourceAPI, IdentityAPI } from "../../../src/DataPeps";
 
 describe("admin.overwriteKeys", () => {
   let seed = Math.floor(Math.random() * 99999);
@@ -52,54 +53,60 @@ describe("admin.overwriteKeys", () => {
     await Config.init();
     await DataPeps.register(alice, aliceSecret);
     await DataPeps.register(bob, bobSecret);
-    aliceSession = await DataPeps.login(alice.login, aliceSecret);
-    bobSession = await DataPeps.login(bob.login, bobSecret);
+    aliceSession = await DataPeps.Session.login(alice.login, aliceSecret);
+    bobSession = await DataPeps.Session.login(bob.login, bobSecret);
     adminSession = await Config.adminLogin();
 
-    await aliceSession.Identity.create(aliceDelegate, {
+    await new IdentityAPI(aliceSession).create(aliceDelegate, {
       sharingGroup: [alice.login]
     });
     aliceDelegateSession = await aliceSession.createSession(
       aliceDelegate.login
     );
 
-    await aliceSession.Identity.create(group, {
+    await new IdentityAPI(aliceSession).create(group, {
       sharingGroup: [alice.login, bob.login]
     });
     groupSession = await aliceSession.createSession(group.login);
 
-    aliceDelegateRes = await aliceDelegateSession.Resource.create(
+    aliceDelegateRes = await new ResourceAPI(aliceDelegateSession).create(
       "test/A",
       null,
       [aliceDelegate.login]
     );
-    groupRes = await groupSession.Resource.create("test/A", null, [
+    groupRes = await new ResourceAPI(groupSession).create("test/A", null, [
       group.login
     ]);
   });
 
   it("Before overwriteKeys Alice can access the resource of delegate, directly and with assume", async () => {
-    let res = await aliceDelegateSession.Resource.get(aliceDelegateRes.id);
+    let res = await new ResourceAPI(aliceDelegateSession).get(
+      aliceDelegateRes.id
+    );
     expect(res).to.be.deep.equal(aliceDelegateRes);
 
-    res = await aliceSession.Resource.get(aliceDelegateRes.id, {
+    res = await new ResourceAPI(aliceSession).get(aliceDelegateRes.id, {
       assume: aliceDelegate.login
     });
     expect(res).to.be.deep.equal(aliceDelegateRes);
   });
 
   it("Before overwriteKeys Alice and Bob can access the resource of group", async () => {
-    let res = await aliceSession.Resource.get(groupRes.id, {
+    let res = await new ResourceAPI(aliceSession).get(groupRes.id, {
       assume: group.login
     });
     expect(res).to.be.deep.equal(groupRes);
 
-    res = await bobSession.Resource.get(groupRes.id, { assume: group.login });
+    res = await new ResourceAPI(bobSession).get(groupRes.id, {
+      assume: group.login
+    });
     expect(res).to.be.deep.equal(groupRes);
   });
 
   it("Before overwriteKeys delegate and group identities are in access group of alice in v1", async () => {
-    let accessGroup = await aliceSession.Identity.getAccessGroup(alice.login);
+    let accessGroup = await new IdentityAPI(aliceSession).getAccessGroup(
+      alice.login
+    );
     expect(accessGroup.length).to.be.equal(2);
 
     let delegateEl = accessGroup.filter(
@@ -117,8 +124,8 @@ describe("admin.overwriteKeys", () => {
 
   it("After overwriteKeys Alice can still access to the delegate identity", async () => {
     let newPassword = "a new password";
-    await adminSession.Admin.overwriteKeys(alice.login, newPassword);
-    aliceSession = await DataPeps.login(alice.login, newPassword);
+    await new AdminAPI(adminSession).overwriteKeys(alice.login, newPassword);
+    aliceSession = await DataPeps.Session.login(alice.login, newPassword);
     aliceDelegateSession = await aliceSession.createSession(
       aliceDelegate.login
     );
@@ -129,7 +136,7 @@ describe("admin.overwriteKeys", () => {
   itError(
     "After overwriteKeys Alice can no longer access the resources of the delegate",
     async () =>
-      await aliceSession.Resource.get(aliceDelegateRes.id, {
+      await new ResourceAPI(aliceSession).get(aliceDelegateRes.id, {
         assume: aliceDelegate.login
       }),
     DataPeps.ServerError.IdentityCannotAssumeOwnership
@@ -137,21 +144,23 @@ describe("admin.overwriteKeys", () => {
   itError(
     "After overwriteKeys Alice can no longer access the resources of the group",
     async () =>
-      await aliceSession.Resource.get(groupRes.id, {
+      await new ResourceAPI(aliceSession).get(groupRes.id, {
         assume: group.login
       }),
     DataPeps.ServerError.IdentityCannotAssumeOwnership
   );
 
   it("After overwriteKeys Bob can still access the resource of group", async () => {
-    let res = await bobSession.Resource.get(groupRes.id, {
+    let res = await new ResourceAPI(bobSession).get(groupRes.id, {
       assume: group.login
     });
     expect(res).to.be.deep.equal(groupRes);
   });
 
   it("After overwriteKeys delegate identity is in access group of alice in v2 (without access to v1) but group identity stays in v1 (locked)", async () => {
-    let accessGroup = await aliceSession.Identity.getAccessGroup(alice.login);
+    let accessGroup = await new IdentityAPI(aliceSession).getAccessGroup(
+      alice.login
+    );
     expect(accessGroup.length).to.be.equal(2);
 
     let delegateEl = accessGroup.filter(
@@ -168,16 +177,16 @@ describe("admin.overwriteKeys", () => {
   });
 
   it("After overwriteKeys Alice delegate can access to newly created resources", async () => {
-    let newCreatedRes = await aliceDelegateSession.Resource.create(
+    let newCreatedRes = await new ResourceAPI(aliceDelegateSession).create(
       "test/A",
       null,
       [aliceDelegate.login]
     );
 
-    let res = await aliceDelegateSession.Resource.get(newCreatedRes.id);
+    let res = await new ResourceAPI(aliceDelegateSession).get(newCreatedRes.id);
     expect(res).to.be.deep.equal(newCreatedRes);
 
-    res = await aliceSession.Resource.get(newCreatedRes.id, {
+    res = await new ResourceAPI(aliceSession).get(newCreatedRes.id, {
       assume: aliceDelegate.login
     });
     expect(res).to.be.deep.equal(newCreatedRes);

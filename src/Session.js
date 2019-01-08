@@ -45,66 +45,41 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var nacl = require("tweetnacl");
 var proto_1 = require("./proto");
-var DataPeps_1 = require("./DataPeps");
-var DataPeps_2 = require("./DataPeps");
+var IdentityAPI_1 = require("./IdentityAPI");
 var Error_1 = require("./Error");
 var Tools_1 = require("./Tools");
+var HTTP_1 = require("./HTTP");
 var CryptoFuncs_1 = require("./CryptoFuncs");
-var Identity_1 = require("./Identity");
-var Resource_1 = require("./Resource");
-var Admin_1 = require("./Admin");
-var Application_1 = require("./Application");
-var MemoryPublicKeyCache = /** @class */ (function () {
-    function MemoryPublicKeyCache() {
-        this.cache = {};
-    }
-    MemoryPublicKeyCache.prototype.latest = function (login) {
-        var keys = this.cache[login];
-        return keys == null || keys.length == 0 ? null : keys[keys.length - 1];
-    };
-    MemoryPublicKeyCache.prototype.get = function (_a) {
-        var login = _a.login, version = _a.version;
-        var keys = this.cache[login];
-        return keys == null || keys.length == 0 ? null : keys[version];
-    };
-    MemoryPublicKeyCache.prototype.set = function (_a, pk) {
-        var login = _a.login, version = _a.version;
-        var keys = this.cache[login];
-        if (keys == null) {
-            this.cache[login] = [];
-        }
-        this.cache[login][version] = pk;
-    };
-    return MemoryPublicKeyCache;
-}());
-var TrustOnFirstUse = /** @class */ (function () {
-    function TrustOnFirstUse(session) {
-        this.session = session;
-    }
-    TrustOnFirstUse.prototype.trust = function (pk, mandate) {
+var IdentityAPI_2 = require("./IdentityAPI");
+var SessionUtils_1 = require("./SessionUtils");
+var Session;
+(function (Session) {
+    /**
+     * Create a new session.
+     * @param login The login of the identity to login with.
+     * @param secret The secret of the identity.
+     * @param options A collection of initialization options that control the sessions:
+     *  - saltKind: The kind of salt used to sign authenticated requests to the DataPeps service. The default value is `TIME`. For more details see {@link SessionSaltKind}
+     * @return(p) On success the promise will be resolved with a new session.
+     * On error the promise will be rejected with an {@link Error} with kind
+     * - `IdentityNotFound` if the `login` does not exists or if the identity has no secret.
+     */
+    function login(login, secret, options) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        if (pk.version == 1) {
-                            if (DataPeps_1.debug) {
-                                console.log("TrustFirstUse", pk.login, Tools_1.Base64.encode(pk.sign), Tools_1.Base64.encode(pk.box), " mandate by ", mandate);
-                            }
-                            return [2 /*return*/, Promise.resolve()];
-                        }
-                        return [4 /*yield*/, this.session.getPublicKey(mandate)];
-                    case 1:
-                        _a.sent();
-                        if (DataPeps_1.debug) {
-                            console.log("TrustByMandate", pk.login, pk.version, Tools_1.Base64.encode(pk.sign), Tools_1.Base64.encode(pk.box), " mandate by ", mandate);
-                        }
-                        return [2 /*return*/, Promise.resolve()];
+                    case 0: return [4 /*yield*/, _login(HTTP_1.client, login, function (e, c) {
+                            var encryption = new CryptoFuncs_1.Encryption(e);
+                            encryption.recover(Tools_1.Uint8Tool.convert(secret), c);
+                            return encryption;
+                        }, options)];
+                    case 1: return [2 /*return*/, _a.sent()];
                 }
             });
         });
-    };
-    return TrustOnFirstUse;
-}());
+    }
+    Session.login = login;
+})(Session = exports.Session || (exports.Session = {}));
 function loginWithKeys(client, keys) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -119,6 +94,7 @@ function loginWithKeys(client, keys) {
         });
     });
 }
+exports.loginWithKeys = loginWithKeys;
 function _login(client, login, recover, options) {
     return __awaiter(this, void 0, void 0, function () {
         var saltKind, createResponse, encryption, token, salt, resolveResponse;
@@ -173,21 +149,16 @@ function _login(client, login, recover, options) {
         });
     });
 }
-exports._login = _login;
 var SessionImpl = /** @class */ (function () {
     function SessionImpl(login, token, salt, saltKind, encryption, client) {
-        this.Identity = new Identity_1.IdentityImpl(this);
-        this.Resource = new Resource_1.ResourceImpl(this);
-        this.Admin = new Admin_1.AdminImpl(this);
         this.encryption = encryption;
         this.token = Tools_1.Base64.encode(token);
         this.salt = salt;
         this.saltKind = saltKind;
         this.login = login;
         this.client = client;
-        this.pkCache = new MemoryPublicKeyCache();
-        this.trustPolicy = new TrustOnFirstUse(this);
-        this.Application = new Application_1.ApplicationImpl(this);
+        this.pkCache = new SessionUtils_1.MemoryPublicKeyCache();
+        this.trustPolicy = new SessionUtils_1.TrustOnFirstUse(this);
         this.assumeKeyCache = {};
         this.afterRequestHandleSalt();
     }
@@ -209,7 +180,7 @@ var SessionImpl = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.Identity.renewKeys(this.login, secret)];
+                    case 0: return [4 /*yield*/, new IdentityAPI_2.IdentityAPI(this).renewKeys(this.login, secret)];
                     case 1:
                         _a.sent();
                         if (secret != null) {
@@ -335,37 +306,6 @@ var SessionImpl = /** @class */ (function () {
             });
         });
     };
-    SessionImpl.prototype.resolveAccessRequest = function (requestId) {
-        return __awaiter(this, void 0, void 0, function () {
-            var _a, sign, resource, r, msg;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0: return [4 /*yield*/, this.doProtoRequest({
-                            method: "GET",
-                            code: 200,
-                            path: "/api/v4/delegatedAccess/" + requestId.toString(),
-                            response: proto_1.api.DelegatedGetResponse.decode
-                        })];
-                    case 1:
-                        _a = _b.sent(), sign = _a.sign, resource = _a.resource;
-                        return [4 /*yield*/, Resource_1.makeResourceFromResponse(resource, proto_1.api.ResourceType.ANONYMOUS, this, null, null)];
-                    case 2:
-                        r = _b.sent();
-                        msg = Tools_1.Uint8Tool.concat(new TextEncoder().encode(this.login), r.publicKey());
-                        if (!nacl.sign.detached.verify(msg, sign, r.creator.sign)) {
-                            throw new Error_1.Error({
-                                kind: Error_1.SDKKind.IdentitySignChainInvalid,
-                                payload: {
-                                    requestId: requestId,
-                                    requester: r.creator
-                                }
-                            });
-                        }
-                        return [2 /*return*/, new AccessRequestResolverImpl(requestId, r, this)];
-                }
-            });
-        });
-    };
     SessionImpl.prototype.createSession = function (login) {
         return __awaiter(this, void 0, void 0, function () {
             var keys;
@@ -394,28 +334,6 @@ var SessionImpl = /** @class */ (function () {
                     case 1:
                         keys = _a.sent();
                         return [2 /*return*/, Tools_1.Base64.encode(keys.signKey)];
-                }
-            });
-        });
-    };
-    SessionImpl.prototype.listDelegatedAccess = function (login, options) {
-        return __awaiter(this, void 0, void 0, function () {
-            var accesses;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.doProtoRequest({
-                            method: "GET",
-                            code: 200,
-                            path: "/api/v4/delegatedAccesses",
-                            response: proto_1.api.DelegatedAccessListResponse.decode,
-                            assume: { login: login, kind: DataPeps_2.IdentityAccessKind.READ },
-                            params: options
-                        })];
-                    case 1:
-                        accesses = (_a.sent()).accesses;
-                        return [2 /*return*/, accesses.map(function (access) {
-                                return (__assign({}, access, { resolved: access.resolved, created: new Date(access.created * 1000) }));
-                            })];
                 }
             });
         });
@@ -620,7 +538,7 @@ var SessionImpl = /** @class */ (function () {
         }
         request.setRequestHeader("x-peps-assume-access", assume.kind.toString());
         request.setRequestHeader("x-peps-assume-identity", assume.key.login + "/" + assume.key.version);
-        var key = assume.kind == DataPeps_2.IdentityAccessKind.READ
+        var key = assume.kind == IdentityAPI_1.IdentityAccessKind.READ
             ? assume.key.readKey
             : assume.key.signKey;
         request.setRequestHeader("x-peps-assume-signature", Tools_1.Base64.encode(nacl.sign.detached(tosign, key)));
@@ -794,130 +712,5 @@ var SessionImpl = /** @class */ (function () {
         delete this.assumeKeyCache[login];
     };
     return SessionImpl;
-}());
-exports.SessionImpl = SessionImpl;
-var AccessRequestImpl = /** @class */ (function () {
-    function AccessRequestImpl(id, login, client, resource) {
-        this.id = id;
-        this.login = login;
-        this.resolve = function () { };
-        this.reject = function () { };
-        this.client = client;
-        this.resource = resource;
-        this.init();
-    }
-    AccessRequestImpl.prototype.init = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var keys, e_2;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, this.client.doRequest({
-                                method: "GET",
-                                code: 200,
-                                path: "/api/v4/delegatedAccess/" + this.id.toString() + "/keys",
-                                response: proto_1.api.DelegatedGetKeysResponse.decode,
-                                before: function (x, b) {
-                                    return x.setRequestHeader("content-type", "application/x-protobuf");
-                                }
-                            })];
-                    case 1:
-                        keys = (_a.sent()).keys;
-                        this.keys = proto_1.api.DelegatedKeys.decode(this.resource.decrypt(keys));
-                        this.resolve();
-                        return [3 /*break*/, 3];
-                    case 2:
-                        e_2 = _a.sent();
-                        this.reason = e_2;
-                        this.reject(e_2);
-                        return [3 /*break*/, 3];
-                    case 3: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    AccessRequestImpl.prototype.wait = function () {
-        var _this = this;
-        if (this.keys != null) {
-            return Promise.resolve();
-        }
-        if (this.reason != null) {
-            return Promise.reject(this.reason);
-        }
-        return new Promise(function (resolve, reject) {
-            var presolve = _this.resolve;
-            _this.resolve = function () {
-                resolve();
-                presolve();
-            };
-            var preject = _this.reject;
-            _this.reject = function (reason) {
-                reject(reason);
-                preject(reason);
-            };
-        });
-    };
-    AccessRequestImpl.prototype.waitSession = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.wait()];
-                    case 1:
-                        _a.sent();
-                        return [4 /*yield*/, loginWithKeys(this.client, this.keys)];
-                    case 2: return [2 /*return*/, _a.sent()];
-                }
-            });
-        });
-    };
-    AccessRequestImpl.prototype.openResolver = function () {
-        return this._openConfigured(this.id, this.login);
-    };
-    AccessRequestImpl.prototype._openConfigured = function (id, login) {
-        throw new Error_1.Error({
-            kind: Error_1.SDKKind.SDKInternalError,
-            payload: {
-                reason: "AccessRequest.openResolver() function has not been configured"
-            }
-        });
-    };
-    return AccessRequestImpl;
-}());
-exports.AccessRequestImpl = AccessRequestImpl;
-var AccessRequestResolverImpl = /** @class */ (function () {
-    function AccessRequestResolverImpl(id, resource, session) {
-        this.id = id;
-        this.requesterKey = resource.creator;
-        this.resource = resource;
-        this.session = session;
-    }
-    AccessRequestResolverImpl.prototype.resolve = function (login) {
-        return __awaiter(this, void 0, void 0, function () {
-            var _this = this;
-            var keys;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.session.fetchKeys(login)];
-                    case 1:
-                        keys = _a.sent();
-                        return [4 /*yield*/, this.session.doProtoRequest({
-                                method: "PUT",
-                                code: 200,
-                                path: "/api/v4/delegatedAccess/" + this.id.toString() + "/keys",
-                                request: function () {
-                                    return proto_1.api.DelegatedPostKeysRequest.encode({
-                                        keys: _this.resource.encrypt(proto_1.api.DelegatedKeys.encode(keys).finish())
-                                    }).finish();
-                                }
-                            })];
-                    case 2:
-                        _a.sent();
-                        return [2 /*return*/];
-                }
-            });
-        });
-    };
-    return AccessRequestResolverImpl;
 }());
 //# sourceMappingURL=Session.js.map

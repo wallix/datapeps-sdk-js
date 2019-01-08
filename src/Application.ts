@@ -1,23 +1,21 @@
-import {
-  ApplicationAPI,
-  ApplicationConfig,
-  Session,
-  ApplicationJwtAlgorithm,
-  IdentityFields
-} from "./DataPeps";
-import * as DataPeps from "./DataPeps";
-import { Resource, ResourceImpl } from "./Resource";
 import { api } from "./proto";
-import { IdentityAccessKind } from "./Interface";
-import { Uint8Tool, Base64 } from "./Tools";
+import { Uint8Tool } from "./Tools";
 import { Encryption } from "./CryptoFuncs";
 import * as HTTP from "./HTTP";
+import { createWithEncryption } from "./ResourceInternal";
+import { IdentityAPI, IdentityFields } from "./IdentityAPI";
+import { Session } from "./Session";
 
-export interface ApplicationJWTConnector<AppSession, Secret> {
-  createSession: (login: string, secret: Secret) => Promise<AppSession>;
-  getToken: (T) => Promise<string>;
-}
-
+/**
+ * Create a user thanks an external referential of identities
+ * @param appID The identifier of a configured application
+ * @param auth The parameter that allows DataPeps to authenticate the user
+ * @param secret The identity secret
+ * On error the promise will be rejected with an {@link Error} with kind:
+ * - `ApplicationInvalidToken` if the JWT token returned by the connector is invalid.
+ * - `IdentityNotFound` if the identity `appID` doesn't exists.
+ * - `ApplicationConfigNotFound` if the `appID` is not configured.
+ */
 export async function createUser(
   appID: string,
   auth: { jwt: { token: string } },
@@ -36,7 +34,7 @@ export async function createUser(
     payload
   };
 
-  let resource = ResourceImpl.createWithEncryption<Uint8Array>(
+  let resource = createWithEncryption<Uint8Array>(
     "application/secret",
     secretBytes,
     encryption,
@@ -65,105 +63,17 @@ export async function secure(
   login: string,
   secret: string | Uint8Array
 ): Promise<{ session: Session; secret: Uint8Array }> {
-  let appLogin = ApplicationImpl.composeApplicationLogin(login, appID);
-  let session = await DataPeps.login(appLogin, secret);
+  let appLogin = composeApplicationLogin(login, appID);
+  let session = await Session.login(appLogin, secret);
   let identityLogin = login.concat("@", appID);
 
-  let appSecretResource = await session.Identity.getNamedResource<Uint8Array>(
-    identityLogin,
-    "appSecret",
-    { parse: u => u }
-  );
+  let appSecretResource = await new IdentityAPI(session).getNamedResource<
+    Uint8Array
+  >(identityLogin, "appSecret", { parse: u => u });
   return { session, secret: appSecretResource.payload };
 }
 
-export async function createJWTSession<
-  AppSession,
-  Secret extends string | Uint8Array
->(
-  appID: string,
-  appLogin: string,
-  secret: Secret,
-  connector: ApplicationJWTConnector<AppSession, Secret>
-): Promise<{ session: Session; app: AppSession; new: boolean }> {
-  // Try to connect to DataPeps
-  try {
-    let { session, secret: appSecret } = await secure(appID, appLogin, secret);
-    // The DataPeps Identity exists, connect to the application
-    if (secret instanceof Uint8Array) {
-      secret = appSecret as Secret;
-    } else {
-      secret = new TextDecoder().decode(appSecret) as Secret;
-    }
-    let app = await connector.createSession(appLogin, secret);
-    return { session, app, new: false };
-  } catch (e) {
-    // If the DataPeps Identity doesn't exists
-    if (e.kind == api.PepsErrorKind.IdentityNotFound) {
-      // Connect to the application
-      let app = await connector.createSession(appLogin, secret);
-      // Get the jwt token to create the DataPeps Identity for the Application End-User.
-      let token = await connector.getToken(app);
-      // Create the DataPeps Identity
-      await createUser(appID, { jwt: { token } }, secret);
-      // Login to DataPeps
-      let { session } = await secure(appID, appLogin, secret);
-      return { session, app, new: true };
-    }
-    throw e;
-  }
-}
-
-export class ApplicationImpl implements ApplicationAPI {
-  private session: Session;
-
-  constructor(session: Session) {
-    this.session = session;
-  }
-
-  async putConfig(appID: string, fullConfig: ApplicationConfig): Promise<void> {
-    if ("jwt" in fullConfig) {
-      const config = fullConfig.jwt;
-      let c = { jwt: { key: config.key, claimForLogin: config.claimForLogin } };
-      if ("signAlgorithm" in config) {
-        c.jwt["signAlgorithm"] = config.signAlgorithm.valueOf();
-      }
-      return await this.session.doProtoRequest<void>({
-        method: "PUT",
-        assume: { login: appID, kind: IdentityAccessKind.WRITE },
-        code: 201,
-        path: `/api/v4/identity/${encodeURI(appID)}/configure-as-application`,
-        request: () =>
-          api.IdentityConfigurationAsApplicationRequest.encode({
-            Login: appID,
-            config: c
-          }).finish()
-      });
-    }
-  }
-
-  async getConfig(appID: string): Promise<ApplicationConfig> {
-    return await this.session.doProtoRequest<ApplicationConfig>({
-      method: "GET",
-      assume: { login: appID, kind: IdentityAccessKind.READ },
-      code: 200,
-      path: `/api/v4/identity/${encodeURI(appID)}/configure-as-application`,
-      response: r => {
-        let config = api.IdentityConfigurationAsApplicationResponse.decode(r)
-          .config;
-        return <ApplicationConfig>{
-          jwt: {
-            key: config.jwt.key,
-            signAlgorithm: config.jwt.signAlgorithm.valueOf(),
-            claimForLogin: config.jwt.claimForLogin
-          }
-        };
-      }
-    });
-  }
-
-  static composeApplicationLogin(login: string, appID: string): string {
-    let appLogin = login.concat("@", appID);
-    return appLogin;
-  }
+function composeApplicationLogin(login: string, appID: string): string {
+  let appLogin = login.concat("@", appID);
+  return appLogin;
 }

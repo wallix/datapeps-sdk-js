@@ -20,7 +20,7 @@ export async function createUser(
   appID: string,
   auth: { jwt: { token: string } },
   secret: string | Uint8Array
-): Promise<api.RegisterExternalIdentityResponse> {
+): Promise<api.RegisterApplicationIdentityResponse> {
   let encryption = new Encryption();
   let secretBytes = Uint8Tool.convert(secret);
   encryption.generate(secretBytes, null);
@@ -40,19 +40,19 @@ export async function createUser(
     encryption,
     { serialize: u => u }
   );
-  let body = api.RegisterExternalIdentityRequest.encode({
+  let body = api.RegisterApplicationIdentityRequest.encode({
     appID,
     auth,
     encryption,
     identity,
     resources: { appSecret: resource.resourceRequestBody }
   }).finish();
-  return await HTTP.client.doRequest<api.RegisterExternalIdentityResponse>({
+  return await HTTP.client.doRequest<api.RegisterApplicationIdentityResponse>({
     method: "POST",
     code: 201,
-    path: `/api/v4/register/external-identity`,
+    path: `/api/v4/application/${appID}/identity`,
     request: () => body,
-    response: api.RegisterExternalIdentityResponse.decode,
+    response: api.RegisterApplicationIdentityResponse.decode,
     before: (x, b) =>
       x.setRequestHeader("content-type", "application/x-protobuf")
   });

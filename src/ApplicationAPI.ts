@@ -1,7 +1,7 @@
 import { ApplicationJWT } from "./ApplicationJWT";
 import { api } from "./proto";
 import { Session } from "./Session";
-import { IdentityAccessKind } from "./IdentityAPI";
+import { IdentityAccessKind, Identity } from "./IdentityAPI";
 
 export namespace ApplicationAPI {
   export type Config = {
@@ -139,5 +139,49 @@ export class ApplicationAPI {
         };
       }
     });
+  }
+
+  /**
+   * List identities that has been created on behalf of an application
+   * @param appID the app ID
+   * @param options A collection of options:
+   *  - offset: Skip this number of results.
+   *  - limit: Limit the length of the result (default: 10).
+   *  - loginPrefix: Filter only logins that containing this string
+   * @return(p) On success the promise will be resolved with the list of identities
+   * and the total of identities that should match the query.
+   * On error the promise will be rejected with an {@link Error} with kind:
+   * - `IdentityCannotAssumeOwnership` if cannot have right to the application.
+   * - `IdentityNotFound` if the identity `appID` doesn't exists.
+   */
+  async listIdentities(
+    appID: string,
+    options?: {
+      offset?: number;
+      limit?: number;
+      loginPrefix?: string;
+    }
+  ): Promise<{
+    identities: { identity: Identity<Uint8Array>; auth: any }[];
+    totalIdentitiesCount: number;
+  }> {
+    options = !!options ? options : {};
+    return (await this.session.doProtoRequest({
+      method: "POST",
+      code: 200,
+      path: `/api/v4/application/${encodeURI(appID)}/identities/list`,
+      assume: {login: appID, kind: IdentityAccessKind.READ},
+      request: () => 
+        api.ApplicationListIdentitiesRequest.encode({
+          options: {
+            limit: options.limit,
+            offset: options.offset,
+            loginPrefix: options.loginPrefix,
+          }
+        }).finish(),
+      response: r => {
+        return api.ApplicationListIdentitiesResponse.decode(r)
+      }
+    })) as any;
   }
 }

@@ -149,24 +149,6 @@ describe("applicationAPI.config.JWT", function () {
     ///////////////////////////////////////////////
     // Error cases: putConfig
     ///////////////////////////////////////////////
-    function invalidKey(signAlgorithm) {
-        switch (signAlgorithm) {
-            case DataPeps_1.ApplicationJWT.Algorithm.HS256:
-            case DataPeps_1.ApplicationJWT.Algorithm.HS384:
-            case DataPeps_1.ApplicationJWT.Algorithm.HS512:
-                return new Uint8Array(0);
-            case DataPeps_1.ApplicationJWT.Algorithm.RS256:
-            case DataPeps_1.ApplicationJWT.Algorithm.RS384:
-            case DataPeps_1.ApplicationJWT.Algorithm.RS512:
-                return Utils_2.ESKey;
-            case DataPeps_1.ApplicationJWT.Algorithm.ES256:
-            case DataPeps_1.ApplicationJWT.Algorithm.ES384:
-            case DataPeps_1.ApplicationJWT.Algorithm.ES512:
-                return Utils_2.RSKey;
-            default:
-                throw "Unknown JWTAlgorithm(" + signAlgorithm + ")";
-        }
-    }
     // `IdentityCannotAssumeAccess` if cannot have right to write the configuration.
     Utils_1.itError("should not configure an application of someone else", function () {
         return new DataPeps_1.ApplicationAPI(ctx.otherDev.session).putConfig(ctx.app.identity.login, {
@@ -198,7 +180,7 @@ describe("applicationAPI.config.JWT", function () {
         Utils_1.itError("should not configure with a invalid type of key for the signAlgorithm(" + DataPeps_1.ApplicationJWT.Algorithm[signAlgorithm] + ")", function () {
             return new DataPeps_1.ApplicationAPI(ctx.dev.session).putConfig(ctx.app.identity.login, {
                 jwt: {
-                    key: invalidKey(signAlgorithm),
+                    key: Utils_2.invalidKey(signAlgorithm),
                     signAlgorithm: signAlgorithm,
                     claimForLogin: "login"
                 }

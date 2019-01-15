@@ -164,6 +164,48 @@ var ApplicationAPI = /** @class */ (function () {
             });
         });
     };
+    /**
+     * List identities that has been created on behalf of an application
+     * @param appID the app ID
+     * @param options A collection of options:
+     *  - offset: Skip this number of results.
+     *  - limit: Limit the length of the result (default: 10).
+     *  - loginPrefix: Filter only logins that containing this string
+     * @return(p) On success the promise will be resolved with the list of identities
+     * and the total of identities that should match the query.
+     * On error the promise will be rejected with an {@link Error} with kind:
+     * - `IdentityCannotAssumeOwnership` if cannot have right to the application.
+     * - `IdentityNotFound` if the identity `appID` doesn't exists.
+     */
+    ApplicationAPI.prototype.listIdentities = function (appID, options) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        options = !!options ? options : {};
+                        return [4 /*yield*/, this.session.doProtoRequest({
+                                method: "POST",
+                                code: 200,
+                                path: "/api/v4/application/" + encodeURI(appID) + "/identities/list",
+                                assume: { login: appID, kind: IdentityAPI_1.IdentityAccessKind.READ },
+                                request: function () {
+                                    return proto_1.api.ApplicationListIdentitiesRequest.encode({
+                                        options: {
+                                            limit: options.limit,
+                                            offset: options.offset,
+                                            loginPrefix: options.loginPrefix,
+                                        }
+                                    }).finish();
+                                },
+                                response: function (r) {
+                                    return proto_1.api.ApplicationListIdentitiesResponse.decode(r);
+                                }
+                            })];
+                    case 1: return [2 /*return*/, (_a.sent())];
+                }
+            });
+        });
+    };
     return ApplicationAPI;
 }());
 exports.ApplicationAPI = ApplicationAPI;

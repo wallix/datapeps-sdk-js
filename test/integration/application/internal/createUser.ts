@@ -1,13 +1,12 @@
 import * as Application from "../../../../src/Application";
 import { ApplicationJWT, ServerError } from "../../../../src/DataPeps";
 import * as DataPeps from "../../../../src/DataPeps";
-import { Uint8Tool } from "../../../../src/Tools";
-import * as nacl from "tweetnacl";
 import { expect } from "chai";
 import * as JWT from "jsonwebtoken";
-import { configs, devWithAllConfigs, getBadAlgoKey } from "../Utils";
+import { configs, getBadAlgoKey } from "../Utils";
 import { init, initCtx, devCtx } from "../../../Context";
 import { itError } from "../../../Utils";
+import { devWithAllConfigs } from "../Context";
 
 describe("application.createUser", () => {
   let ctx: initCtx & devCtx;

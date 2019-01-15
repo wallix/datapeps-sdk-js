@@ -49,7 +49,9 @@ var chai_1 = require("chai");
 var Utils_1 = require("../../Utils");
 var DataPeps_1 = require("../../../src/DataPeps");
 var IdentityAPI_1 = require("../../../src/IdentityAPI");
+var utils_1 = require("./utils");
 describe("identity.list", function () {
+    var defaultLimit = 10;
     var n = 10;
     var kind;
     var ctx;
@@ -64,10 +66,10 @@ describe("identity.list", function () {
                     return [4 /*yield*/, Context.admin()];
                 case 2:
                     admin = _a.sent();
-                    return [4 /*yield*/, Context.identities(init, n, { kind: kind, name: "alice" })];
+                    return [4 /*yield*/, Context.registerIdentities(init, n, { kind: kind, name: "alice" })];
                 case 3:
                     A = _a.sent();
-                    return [4 /*yield*/, Context.identities(init, n, { kind: kind, name: "bob" })];
+                    return [4 /*yield*/, Context.registerIdentities(init, n, { kind: kind, name: "bob" })];
                 case 4:
                     B = _a.sent();
                     ctx = __assign({}, admin, { A: A, B: B });
@@ -98,7 +100,7 @@ describe("identity.list", function () {
                             })];
                     case 1:
                         result = _a.sent();
-                        expectIdentitiesListAreEquals(sortIdentities(field, order, expected), result.identities);
+                        utils_1.expectIdentitiesListAreEquals(utils_1.sortIdentities(field, order, expected), result.identities);
                         chai_1.expect(expected.length).to.be.equal(result.totalIdentitiesCount);
                         return [2 /*return*/];
                 }
@@ -113,10 +115,38 @@ describe("identity.list", function () {
     var sortingOrders = Object.keys(IdentityAPI_1.IdentitySortingOrder)
         .map(function (key) { return Number(key); })
         .filter(function (key) { return !isNaN(key); });
+    // Tests with sorting fields
     sortingFields.forEach(function (field) {
         return sortingOrders.forEach(function (order) { return itWithSortingOptions(field, order); });
     });
     // Test with prefix filtering
+    function itWithPage(expectedF, options) {
+        var _this = this;
+        options = options == null ? {} : options;
+        it("list page(limit=" + options.limit + ", offset=" + options.offset + ", expected=" + options.expectedIdentitiesLength + ") users with prefix search '" + options.search + "'", function () { return __awaiter(_this, void 0, void 0, function () {
+            var expected, result;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        expected = expectedF();
+                        return [4 /*yield*/, new IdentityAPI_1.IdentityAPI(ctx.adminSession).list({
+                                offset: options.offset,
+                                limit: options.limit,
+                                kind: kind,
+                                search: options.search
+                            })];
+                    case 1:
+                        result = _a.sent();
+                        utils_1.expectContainsAllIdentities(result.identities, expected, false);
+                        chai_1.expect(expected.length).to.be.equal(result.totalIdentitiesCount);
+                        if (options.expectedIdentitiesLength != null) {
+                            chai_1.expect(result.identities.length).to.equal(options.expectedIdentitiesLength);
+                        }
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+    }
     function itWithPrefixSearch(name, expectedF) {
         var _this = this;
         it("list all users with prefix search '" + name + "'", function () { return __awaiter(_this, void 0, void 0, function () {
@@ -133,39 +163,42 @@ describe("identity.list", function () {
                             })];
                     case 1:
                         result = _a.sent();
-                        expectContainsAllIdentities(expected, result.identities);
+                        utils_1.expectContainsAllIdentities(expected, result.identities);
                         chai_1.expect(expected.length).to.be.equal(result.totalIdentitiesCount);
                         return [2 /*return*/];
                 }
             });
         }); });
-        function itWithPage(limit, offset) {
-            var _this = this;
-            it("list page(" + offset + ", " + limit + ") users with prefix search '" + name + "'", function () { return __awaiter(_this, void 0, void 0, function () {
-                var expected, result;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            expected = expectedF();
-                            return [4 /*yield*/, new IdentityAPI_1.IdentityAPI(ctx.adminSession).list({
-                                    offset: offset,
-                                    limit: limit,
-                                    kind: kind,
-                                    search: name
-                                })];
-                        case 1:
-                            result = _a.sent();
-                            expectContainsAllIdentities(result.identities, expected, false);
-                            chai_1.expect(expected.length).to.be.equal(result.totalIdentitiesCount);
-                            return [2 /*return*/];
-                    }
-                });
-            }); });
+        function itWithPageInternal(options) {
+            itWithPage(expectedF, __assign({}, options, { search: name }));
         }
-        itWithPage(Math.ceil(n / 2), 0);
-        itWithPage(0, Math.ceil(n / 2));
-        itWithPage(Math.ceil(n / 4), Math.ceil(n / 2));
-        itWithPage(n * 3, 0);
+        itWithPageInternal({
+            limit: Math.ceil(n / 2),
+            expectedIdentitiesLength: Math.ceil(n / 2)
+        });
+        // the default limit is assumed to be larger than Math.ceil(n/2); if it is not, the test fails
+        itWithPageInternal({
+            offset: Math.ceil(n / 2),
+            expectedIdentitiesLength: defaultLimit - Math.ceil(n / 2)
+        });
+        itWithPageInternal({
+            limit: Math.ceil(n / 4),
+            offset: Math.ceil(n / 2),
+            expectedIdentitiesLength: Math.ceil(n / 4)
+        });
+        itWithPageInternal({
+            limit: n * 3,
+            expectedIdentitiesLength: n
+        });
+        itWithPageInternal({
+            limit: Math.ceil(n / 2),
+            offset: n * 2,
+            expectedIdentitiesLength: 0
+        });
+        itWithPageInternal({
+            limit: Math.ceil(n * 2),
+            expectedIdentitiesLength: n
+        });
     }
     itWithPrefixSearch("alice", function () { return ctx.A.identities; });
     itWithPrefixSearch("bob", function () { return ctx.B.identities; });
@@ -190,54 +223,5 @@ describe("identity.list", function () {
             sortingOrder: -1
         });
     }, DataPeps_1.ServerError.RequestBadRequest);
-    ///////////////////////////////////////////////
-    // Tools
-    ///////////////////////////////////////////////
-    function expectContainsAllIdentities(expected, result, both) {
-        if (both === void 0) { both = true; }
-        if (both) {
-            chai_1.expect(result.length, "identities list hasn't the same length").to.be.equals(expected.length);
-        }
-        expected.forEach(function (e) {
-            chai_1.expect(result.find(function (r) { return r.login === e.login; }), "cannot find '" + e.login + "' in result").to.be.not.null;
-        });
-    }
-    function expectIdentitiesListAreEquals(expected, result) {
-        chai_1.expect(result.length, "identities list hasn't the same length").to.be.equals(expected.length);
-        expected.forEach(function (e, i) {
-            var r = result[i];
-            chai_1.expect(e.login, "expected[" + i + "](" + e.login + ") != result[" + i + "](" + r.login).to.be.deep.equal(r.login);
-        });
-    }
-    function sortIdentities(sortingField, sortingOrder, identities) {
-        return identities.sort(compareIdentity(sortingField, sortingOrder));
-    }
-    function compareIdentity(sortingField, sortingOrder) {
-        return function (a, b) {
-            var afield, bfield;
-            switch (sortingField) {
-                case IdentityAPI_1.IdentitySortingField.CREATED:
-                    afield = a.created;
-                    bfield = b.created;
-                    break;
-                case IdentityAPI_1.IdentitySortingField.KIND:
-                    afield = a.created;
-                    bfield = b.created;
-                    break;
-                case IdentityAPI_1.IdentitySortingField.LOGIN:
-                    afield = a.created;
-                    bfield = b.created;
-                    break;
-                default:
-                    throw new Error("sortingField not found");
-            }
-            switch (sortingOrder) {
-                case IdentityAPI_1.IdentitySortingOrder.ASC:
-                    return afield < bfield ? -1 : afield > bfield ? 1 : 0;
-                case IdentityAPI_1.IdentitySortingOrder.DESC:
-                    return afield < bfield ? 1 : afield > bfield ? -1 : 0;
-            }
-        };
-    }
 });
 //# sourceMappingURL=list.js.map

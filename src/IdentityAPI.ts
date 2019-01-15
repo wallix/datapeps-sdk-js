@@ -211,17 +211,35 @@ export class IdentityAPI {
     identities: Identity<Uint8Array>[]
     totalIdentitiesCount: number
   }> {
-    if (options.sortingField === undefined) {
+    options = options == null ? {} : options;
+    if (options.sortingField == null) {
       options.sortingField = IdentitySortingField.CREATED;
     }
-    if (options.sortingOrder === undefined) {
+    if (options.sortingOrder == null) {
       options.sortingOrder = IdentitySortingOrder.ASC;
     }
+    let sortingOrder: api.SortingOrder = api.SortingOrder.ASC
+    if (options.sortingOrder === IdentitySortingOrder.DESC) {
+      sortingOrder = api.SortingOrder.DESC
+    } else if (options.sortingOrder != null
+        && options.sortingOrder != IdentitySortingOrder.ASC) {
+      sortingOrder = options.sortingOrder as api.SortingOrder
+    }
     return await this.session.doProtoRequest({
-      method: "GET",
+      method: "POST",
       code: 200,
       path: "/api/v4/identities/list",
-      params: options,
+      request: () => 
+        api.IdentityListRequest.encode({
+          options: {
+            offset: options.offset,
+            limit: options.limit,
+            loginPrefix: options.search,
+            kind: options.kind,
+            sortedBy: options.sortingField,
+            order: sortingOrder,
+          }
+        }).finish(),
       response: r => {
         let { identities, totalIdentitiesCount } = api.IdentityListResponse.decode(r);
         return {

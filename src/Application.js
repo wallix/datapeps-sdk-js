@@ -69,7 +69,7 @@ function createUser(appID, auth, secret) {
                         payload: payload
                     };
                     resource = ResourceInternal_1.createWithEncryption("application/secret", secretBytes, encryption, { serialize: function (u) { return u; } });
-                    body = proto_1.api.RegisterExternalIdentityRequest.encode({
+                    body = proto_1.api.RegisterApplicationIdentityRequest.encode({
                         appID: appID,
                         auth: auth,
                         encryption: encryption,
@@ -79,9 +79,9 @@ function createUser(appID, auth, secret) {
                     return [4 /*yield*/, HTTP.client.doRequest({
                             method: "POST",
                             code: 201,
-                            path: "/api/v4/register/external-identity",
+                            path: "/api/v4/application/" + appID + "/identity",
                             request: function () { return body; },
-                            response: proto_1.api.RegisterExternalIdentityResponse.decode,
+                            response: proto_1.api.RegisterApplicationIdentityResponse.decode,
                             before: function (x, b) {
                                 return x.setRequestHeader("content-type", "application/x-protobuf");
                             }

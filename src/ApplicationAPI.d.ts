@@ -1,5 +1,6 @@
 import { ApplicationJWT } from "./ApplicationJWT";
 import { Session } from "./Session";
+import { Identity } from "./IdentityAPI";
 export declare namespace ApplicationAPI {
     type Config = {
         jwt?: ApplicationJWT.Config;
@@ -55,4 +56,28 @@ export declare class ApplicationAPI {
     getUsageOverview(appID: string, options?: {
         since?: number;
     }): Promise<ApplicationAPI.UsageOverview>;
+    /**
+     * List identities that has been created on behalf of an application
+     * @param appID the app ID
+     * @param options A collection of options:
+     *  - offset: Skip this number of results.
+     *  - limit: Limit the length of the result (default: 10).
+     *  - loginPrefix: Filter only logins that containing this string
+     * @return(p) On success the promise will be resolved with the list of identities
+     * and the total of identities that should match the query.
+     * On error the promise will be rejected with an {@link Error} with kind:
+     * - `IdentityCannotAssumeOwnership` if cannot have right to the application.
+     * - `IdentityNotFound` if the identity `appID` doesn't exists.
+     */
+    listIdentities(appID: string, options?: {
+        offset?: number;
+        limit?: number;
+        loginPrefix?: string;
+    }): Promise<{
+        identities: {
+            identity: Identity<Uint8Array>;
+            auth: any;
+        }[];
+        totalIdentitiesCount: number;
+    }>;
 }

@@ -14,7 +14,7 @@ export declare function createUser(appID: string, auth: {
     jwt: {
         token: string;
     };
-}, secret: string | Uint8Array): Promise<api.RegisterExternalIdentityResponse>;
+}, secret: string | Uint8Array): Promise<api.RegisterApplicationIdentityResponse>;
 export declare function secure(appID: string, login: string, secret: string | Uint8Array): Promise<{
     session: Session;
     secret: Uint8Array;

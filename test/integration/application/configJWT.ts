@@ -13,7 +13,7 @@ import {
 import * as nacl from "tweetnacl";
 import { expect } from "chai";
 import { itError } from "../../Utils";
-import { configs, ESKey, RSKey } from "./Utils";
+import { configs, invalidKey } from "./Utils";
 
 describe("applicationAPI.config.JWT", () => {
   let ctx: devCtx & { otherDev: userAndSessionCtx };
@@ -80,25 +80,6 @@ describe("applicationAPI.config.JWT", () => {
   ///////////////////////////////////////////////
   // Error cases: putConfig
   ///////////////////////////////////////////////
-
-  function invalidKey(signAlgorithm: ApplicationJWT.Algorithm): Uint8Array {
-    switch (signAlgorithm) {
-      case ApplicationJWT.Algorithm.HS256:
-      case ApplicationJWT.Algorithm.HS384:
-      case ApplicationJWT.Algorithm.HS512:
-        return new Uint8Array(0);
-      case ApplicationJWT.Algorithm.RS256:
-      case ApplicationJWT.Algorithm.RS384:
-      case ApplicationJWT.Algorithm.RS512:
-        return ESKey;
-      case ApplicationJWT.Algorithm.ES256:
-      case ApplicationJWT.Algorithm.ES384:
-      case ApplicationJWT.Algorithm.ES512:
-        return RSKey;
-      default:
-        throw `Unknown JWTAlgorithm(${signAlgorithm})`;
-    }
-  }
 
   // `IdentityCannotAssumeAccess` if cannot have right to write the configuration.
   itError(

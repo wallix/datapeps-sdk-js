@@ -331,7 +331,7 @@ function dev(init, n) {
     });
 }
 exports.dev = dev;
-function identities(init, n, options) {
+function generateIdentities(init, n, create, options) {
     return __awaiter(this, void 0, void 0, function () {
         var identities, promises, name, i, secret, identity_1;
         return __generator(this, function (_a) {
@@ -344,7 +344,7 @@ function identities(init, n, options) {
                     for (i = 0; i < n; i++) {
                         secret = nacl.randomBytes(128);
                         identity_1 = generateIdentityFields(init, __assign({}, options, { name: "" + name + i }));
-                        promises.push(DataPeps.register(identity_1, secret));
+                        promises.push(create(identity_1, secret));
                         identities.push(__assign({}, identity_1, { created: new Date(), admin: false, active: true }));
                     }
                     return [4 /*yield*/, Promise.all(promises)];
@@ -355,7 +355,18 @@ function identities(init, n, options) {
         });
     });
 }
-exports.identities = identities;
+exports.generateIdentities = generateIdentities;
+function registerIdentities(init, n, options) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, generateIdentities(init, n, DataPeps.register, options)];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        });
+    });
+}
+exports.registerIdentities = registerIdentities;
 var identityDefaultKind = "kind/test-default";
 function generateIdentityFields(init, options) {
     options = options ? options : {};

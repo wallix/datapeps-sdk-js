@@ -51,6 +51,7 @@ var JWT = require("jsonwebtoken");
 var Utils_1 = require("./Utils");
 var Context_1 = require("../../Context");
 var Utils_2 = require("../../Utils");
+var Context_2 = require("./Context");
 describe("applicationJWT.createSession", function () {
     var ctx;
     before(function () { return __awaiter(_this, void 0, void 0, function () {
@@ -60,7 +61,7 @@ describe("applicationJWT.createSession", function () {
                 case 0: return [4 /*yield*/, Context_1.init()];
                 case 1:
                     initCtx = _a.sent();
-                    return [4 /*yield*/, Utils_1.devWithAllConfigs(initCtx)];
+                    return [4 /*yield*/, Context_2.devWithAllConfigs(initCtx)];
                 case 2:
                     devCtx = _a.sent();
                     ctx = __assign({}, devCtx, initCtx);

@@ -1,7 +1,7 @@
 import * as DataPeps from "../src/DataPeps";
 import * as Config from "./Config";
 import * as nacl from "tweetnacl";
-import { IdentityAPI } from "../src/DataPeps";
+import { IdentityAPI, IdentityFields } from "../src/DataPeps";
 
 export interface initCtx {
   seed: number;
@@ -282,9 +282,10 @@ export interface identitiesCtx {
   identities: DataPeps.Identity<Uint8Array>[];
 }
 
-export async function identities(
+export async function generateIdentities(
   init: initCtx,
   n: number,
+  create: (field: IdentityFields, secret: Uint8Array) => Promise<any>,
   options?: identityOptions
 ): Promise<identitiesCtx> {
   let identities = [];
@@ -297,7 +298,7 @@ export async function identities(
       ...options,
       name: `${name}${i}`
     });
-    promises.push(DataPeps.register(identity, secret));
+    promises.push(create(identity, secret));
     identities.push({
       ...identity,
       created: new Date(),
@@ -307,6 +308,14 @@ export async function identities(
   }
   await Promise.all(promises);
   return { identities };
+}
+
+export async function registerIdentities(
+  init: initCtx,
+  n: number,
+  options?: identityOptions
+): Promise<identitiesCtx> {
+  return await generateIdentities(init, n, DataPeps.register, options);
 }
 
 const identityDefaultKind = "kind/test-default";

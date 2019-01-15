@@ -1,4 +1,5 @@
 import * as DataPeps from "../src/DataPeps";
+import { IdentityFields } from "../src/DataPeps";
 export interface initCtx {
     seed: number;
 }
@@ -79,4 +80,5 @@ export declare function dev(init: initCtx, n?: number): Promise<devCtx>;
 export interface identitiesCtx {
     identities: DataPeps.Identity<Uint8Array>[];
 }
-export declare function identities(init: initCtx, n: number, options?: identityOptions): Promise<identitiesCtx>;
+export declare function generateIdentities(init: initCtx, n: number, create: (field: IdentityFields, secret: Uint8Array) => Promise<any>, options?: identityOptions): Promise<identitiesCtx>;
+export declare function registerIdentities(init: initCtx, n: number, options?: identityOptions): Promise<identitiesCtx>;

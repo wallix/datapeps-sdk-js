@@ -182,20 +182,41 @@ var IdentityAPI = /** @class */ (function () {
      */
     IdentityAPI.prototype.list = function (options) {
         return __awaiter(this, void 0, void 0, function () {
+            var sortingOrder;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (options.sortingField === undefined) {
+                        options = options == null ? {} : options;
+                        if (options.sortingField == null) {
                             options.sortingField = IdentitySortingField.CREATED;
                         }
-                        if (options.sortingOrder === undefined) {
+                        if (options.sortingOrder == null) {
                             options.sortingOrder = IdentitySortingOrder.ASC;
                         }
+                        sortingOrder = proto_1.api.SortingOrder.ASC;
+                        if (options.sortingOrder === IdentitySortingOrder.DESC) {
+                            sortingOrder = proto_1.api.SortingOrder.DESC;
+                        }
+                        else if (options.sortingOrder != null
+                            && options.sortingOrder != IdentitySortingOrder.ASC) {
+                            sortingOrder = options.sortingOrder;
+                        }
                         return [4 /*yield*/, this.session.doProtoRequest({
-                                method: "GET",
+                                method: "POST",
                                 code: 200,
                                 path: "/api/v4/identities/list",
-                                params: options,
+                                request: function () {
+                                    return proto_1.api.IdentityListRequest.encode({
+                                        options: {
+                                            offset: options.offset,
+                                            limit: options.limit,
+                                            loginPrefix: options.search,
+                                            kind: options.kind,
+                                            sortedBy: options.sortingField,
+                                            order: sortingOrder,
+                                        }
+                                    }).finish();
+                                },
                                 response: function (r) {
                                     var _a = proto_1.api.IdentityListResponse.decode(r), identities = _a.identities, totalIdentitiesCount = _a.totalIdentitiesCount;
                                     return {

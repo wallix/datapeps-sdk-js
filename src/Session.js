@@ -1,12 +1,4 @@
 "use strict";
-var __assign = (this && this.__assign) || Object.assign || function(t) {
-    for (var s, i = 1, n = arguments.length; i < n; i++) {
-        s = arguments[i];
-        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-            t[p] = s[p];
-    }
-    return t;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -50,7 +42,6 @@ var Error_1 = require("./Error");
 var Tools_1 = require("./Tools");
 var HTTP_1 = require("./HTTP");
 var CryptoFuncs_1 = require("./CryptoFuncs");
-var IdentityAPI_2 = require("./IdentityAPI");
 var SessionUtils_1 = require("./SessionUtils");
 var Session;
 (function (Session) {
@@ -106,57 +97,57 @@ function _login(client, login, recover, options) {
                         : proto_1.api.SessionSaltKind.TIME;
                     return [4 /*yield*/, client.doRequest({
                             method: "POST",
-                            code: 201,
+                            expectedCode: 201,
                             path: "/api/v4/session/challenge/create",
-                            request: function () {
-                                return proto_1.api.SessionCreateChallengeRequest.encode({
-                                    login: login,
-                                    saltKind: saltKind
-                                }).finish();
-                            },
+                            body: proto_1.api.SessionCreateChallengeRequest.encode({
+                                login: login,
+                                saltKind: saltKind
+                            }).finish(),
                             response: proto_1.api.SessionCreateChallengeResponse.decode,
-                            before: function (x, b) {
-                                return x.setRequestHeader("content-type", "application/x-protobuf");
-                            }
+                            headers: new Headers({
+                                "content-type": "application/x-protobuf"
+                            })
                         })];
                 case 1:
-                    createResponse = _a.sent();
+                    createResponse = (_a.sent()).body;
                     encryption = recover(proto_1.api.IdentityEncryption.create(createResponse.encryption), proto_1.api.IdentityPublicKey.create(createResponse.creator));
                     token = createResponse.token;
                     salt = createResponse.salt;
                     return [4 /*yield*/, client.doRequest({
                             method: "POST",
-                            code: 200,
+                            expectedCode: 200,
                             path: "/api/v4/session/challenge/resolve",
-                            request: function () {
-                                return proto_1.api.SessionResolveChallengeRequest.encode({
-                                    token: token,
-                                    salt: salt,
-                                    signature: encryption.sign(salt)
-                                }).finish();
-                            },
+                            body: proto_1.api.SessionResolveChallengeRequest.encode({
+                                token: token,
+                                salt: salt,
+                                signature: encryption.sign(salt)
+                            }).finish(),
                             response: proto_1.api.SessionResolveChallengeResponse.decode,
-                            before: function (x, b) {
-                                return x.setRequestHeader("content-type", "application/x-protobuf");
-                            }
+                            headers: new Headers({
+                                "content-type": "application/x-protobuf"
+                            })
                         })];
                 case 2:
-                    resolveResponse = _a.sent();
+                    resolveResponse = (_a.sent()).body;
                     saltKind = createResponse.saltKind;
                     salt = createResponse.salt;
-                    return [2 /*return*/, new SessionImpl(resolveResponse.login, token, salt, saltKind, encryption, client)];
+                    return [2 /*return*/, new SessionImpl({
+                            token: token,
+                            login: resolveResponse.login,
+                            salt: salt,
+                            saltKind: saltKind
+                        }, encryption, client)];
             }
         });
     });
 }
 var SessionImpl = /** @class */ (function () {
-    function SessionImpl(login, token, salt, saltKind, encryption, client) {
+    function SessionImpl(params, encryption, client) {
+        this.login = params.login;
+        this.params = params;
         this.encryption = encryption;
-        this.token = Tools_1.Base64.encode(token);
-        this.salt = salt;
-        this.saltKind = saltKind;
-        this.login = login;
         this.client = client;
+        this.b64token = Tools_1.Base64.encode(params.token);
         this.pkCache = new SessionUtils_1.MemoryPublicKeyCache();
         this.trustPolicy = new SessionUtils_1.TrustOnFirstUse(this);
         this.assumeKeyCache = {};
@@ -168,7 +159,7 @@ var SessionImpl = /** @class */ (function () {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.doProtoRequest({
                             method: "PUT",
-                            code: 200,
+                            expectedCode: 200,
                             path: "/api/v4/session/close"
                         })];
                     case 1: return [2 /*return*/, _a.sent()];
@@ -180,7 +171,7 @@ var SessionImpl = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, new IdentityAPI_2.IdentityAPI(this).renewKeys(this.login, secret)];
+                    case 0: return [4 /*yield*/, new IdentityAPI_1.IdentityAPI(this).renewKeys(this.login, secret)];
                     case 1:
                         _a.sent();
                         if (secret != null) {
@@ -224,16 +215,14 @@ var SessionImpl = /** @class */ (function () {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.doProtoRequest({
                             method: "POST",
-                            code: 200,
+                            expectedCode: 200,
                             path: "/api/v4/identities/latestPublicChains",
-                            request: function () {
-                                return proto_1.api.IdentityGetLatestPublicChainsRequest.encode({
-                                    ids: logins.map(function (login) {
-                                        var pk = _this.pkCache.latest(login);
-                                        return { login: login, since: pk == null ? 0 : pk.version };
-                                    })
-                                }).finish();
-                            },
+                            body: proto_1.api.IdentityGetLatestPublicChainsRequest.encode({
+                                ids: logins.map(function (login) {
+                                    var pk = _this.pkCache.latest(login);
+                                    return { login: login, since: pk == null ? 0 : pk.version };
+                                })
+                            }).finish(),
                             response: proto_1.api.IdentityGetLatestPublicChainsResponse.decode
                         })];
                     case 1:
@@ -282,18 +271,16 @@ var SessionImpl = /** @class */ (function () {
                         }
                         return [4 /*yield*/, this.doProtoRequest({
                                 method: "POST",
-                                code: 200,
+                                expectedCode: 200,
                                 path: "/api/v4/identities/publicChains",
-                                request: function () {
-                                    return proto_1.api.IdentityGetPublicChainsRequest.encode({
-                                        ids: Object.keys(requestIds).map(function (login) {
-                                            var pk = _this.pkCache.latest(login);
-                                            var since = pk == null ? 0 : pk.version;
-                                            var version = requestIds[login];
-                                            return { id: { login: login, version: version }, since: since };
-                                        })
-                                    }).finish();
-                                },
+                                body: proto_1.api.IdentityGetPublicChainsRequest.encode({
+                                    ids: Object.keys(requestIds).map(function (login) {
+                                        var pk = _this.pkCache.latest(login);
+                                        var since = pk == null ? 0 : pk.version;
+                                        var version = requestIds[login];
+                                        return { id: { login: login, version: version }, since: since };
+                                    })
+                                }).finish(),
                                 response: proto_1.api.IdentityGetPublicChainsResponse.decode
                             })];
                     case 1:
@@ -341,30 +328,23 @@ var SessionImpl = /** @class */ (function () {
     SessionImpl.prototype.sign = function (message) {
         return this.encryption.sign(message);
     };
-    SessionImpl.prototype.doRequest = function (r) {
+    SessionImpl.prototype.doRequest = function (request) {
         return __awaiter(this, void 0, void 0, function () {
-            var _this = this;
-            var assumeParams, xhr, r2, resp, err_1, _a, e_1;
+            var assumeParams, response, err_1, _a, e_1;
             return __generator(this, function (_b) {
                 switch (_b.label) {
-                    case 0: return [4 /*yield*/, this.getAssumeParams(r.assume)];
+                    case 0: return [4 /*yield*/, this.getAssumeParams(request.assume)];
                     case 1:
                         assumeParams = _b.sent();
-                        r2 = __assign({}, r, { before: function (x, body) {
-                                xhr = x;
-                                if (r.before != null) {
-                                    r.before(x, body);
-                                }
-                                _this.beforeRequest(x, body, assumeParams);
-                            } });
+                        this.addAuthHeaders(request.headers, request.body, assumeParams);
                         _b.label = 2;
                     case 2:
                         _b.trys.push([2, 4, , 11]);
-                        return [4 /*yield*/, this.client.doRequest(r2)];
+                        return [4 /*yield*/, this.client.doRequest(request)];
                     case 3:
-                        resp = _b.sent();
-                        this.afterRequest(xhr);
-                        return [2 /*return*/, resp];
+                        response = _b.sent();
+                        this.handleResponseHeaders(response.headers);
+                        return [2 /*return*/, response.body];
                     case 4:
                         err_1 = _b.sent();
                         _a = err_1.kind;
@@ -385,16 +365,11 @@ var SessionImpl = /** @class */ (function () {
                             throw err_1;
                         }
                         throw e_1;
-                    case 8: return [2 /*return*/, this.doRequest(r)];
+                    case 8: return [2 /*return*/, this.doRequest(request)];
                     case 9:
-                        this.clearAssumeParams(r.assume.login);
-                        return [2 /*return*/, this.doRequest(r)];
-                    case 10:
-                        if (xhr != null) {
-                            // Ensure that request was done before validating salt
-                            this.afterRequest(xhr);
-                        }
-                        throw err_1;
+                        this.clearAssumeParams(request.assume.login);
+                        return [2 /*return*/, this.doRequest(request)];
+                    case 10: throw err_1;
                     case 11: return [2 /*return*/];
                 }
             });
@@ -403,12 +378,13 @@ var SessionImpl = /** @class */ (function () {
     SessionImpl.prototype.doProtoRequest = function (r) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                return [2 /*return*/, this.doRequest(__assign({}, r, { before: function (x, b) {
-                            x.setRequestHeader("content-type", "application/x-protobuf");
-                            if (r.before != null) {
-                                r.before(x, b);
-                            }
-                        } }))];
+                switch (_a.label) {
+                    case 0:
+                        r.headers = r.headers != null ? r.headers : new Headers();
+                        r.headers.set("content-type", "application/x-protobuf");
+                        return [4 /*yield*/, this.doRequest(r)];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
             });
         });
     };
@@ -505,48 +481,45 @@ var SessionImpl = /** @class */ (function () {
             });
         });
     };
-    SessionImpl.prototype.afterRequest = function (request) {
-        var salt = request.getResponseHeader("x-peps-salt");
+    SessionImpl.prototype.handleResponseHeaders = function (headers) {
+        var salt = headers.get("x-peps-salt");
         if (salt == null) {
             throw new Error_1.Error({
                 kind: Error_1.SDKKind.ProtocolError,
-                payload: {
-                    missing: "x-peps-salt",
-                    headers: request.getAllResponseHeaders()
-                }
+                payload: { missing: "x-peps-salt", headers: headers }
             });
         }
-        this.salt = Tools_1.Base64.decode(salt);
+        this.params.salt = Tools_1.Base64.decode(salt);
         this.afterRequestHandleSalt();
     };
     SessionImpl.prototype.afterRequestHandleSalt = function () {
-        var secondsServer = (this.salt[0] << 24) +
-            (this.salt[1] << 16) +
-            (this.salt[2] << 8) +
-            this.salt[3];
+        var secondsServer = (this.params.salt[0] << 24) +
+            (this.params.salt[1] << 16) +
+            (this.params.salt[2] << 8) +
+            this.params.salt[3];
         var secondsLocal = Math.floor(Date.now() / 1000);
         this.deltaSaltTime = secondsServer - secondsLocal;
     };
-    SessionImpl.prototype.beforeRequest = function (request, body, assume) {
+    SessionImpl.prototype.addAuthHeaders = function (headers, body, assume) {
         var salt = this.getSalt();
         var tosign = body == null ? salt : Tools_1.Uint8Tool.concat(body, salt);
-        request.setRequestHeader("x-peps-token", this.token);
-        request.setRequestHeader("x-peps-signature", Tools_1.Base64.encode(this.encryption.sign(tosign)));
-        request.setRequestHeader("x-peps-salt", Tools_1.Base64.encode(salt));
+        headers.set("x-peps-token", this.b64token);
+        headers.set("x-peps-signature", Tools_1.Base64.encode(this.encryption.sign(tosign)));
+        headers.set("x-peps-salt", Tools_1.Base64.encode(salt));
         if (assume == null) {
             return;
         }
-        request.setRequestHeader("x-peps-assume-access", assume.kind.toString());
-        request.setRequestHeader("x-peps-assume-identity", assume.key.login + "/" + assume.key.version);
+        headers.set("x-peps-assume-access", assume.kind.toString());
+        headers.set("x-peps-assume-identity", assume.key.login + "/" + assume.key.version);
         var key = assume.kind == IdentityAPI_1.IdentityAccessKind.READ
             ? assume.key.readKey
             : assume.key.signKey;
-        request.setRequestHeader("x-peps-assume-signature", Tools_1.Base64.encode(nacl.sign.detached(tosign, key)));
+        headers.set("x-peps-assume-signature", Tools_1.Base64.encode(nacl.sign.detached(tosign, key)));
     };
     SessionImpl.prototype.getSalt = function () {
-        switch (this.saltKind) {
+        switch (this.params.saltKind) {
             case proto_1.api.SessionSaltKind.RAND:
-                return this.salt;
+                return this.params.salt;
             case proto_1.api.SessionSaltKind.TIME:
                 var seconds = Math.floor(Date.now() / 1000) + this.deltaSaltTime;
                 var salt = new Uint8Array(4);
@@ -561,7 +534,7 @@ var SessionImpl = /** @class */ (function () {
         var _this = this;
         return this.doProtoRequest({
             method: "PUT",
-            code: 200,
+            expectedCode: 200,
             path: "/api/v4/session/unStale",
             response: proto_1.api.SessionUnStaleResponse.decode
         }).then(function (_a) {
@@ -675,7 +648,7 @@ var SessionImpl = /** @class */ (function () {
                         return [4 /*yield*/, this.doProtoRequest({
                                 method: "GET",
                                 path: "/api/v4/identity/" + encodeURI(login) + "/keys",
-                                code: 200,
+                                expectedCode: 200,
                                 response: proto_1.api.IdentityGetKeysResponse.decode,
                                 params: params
                             })];

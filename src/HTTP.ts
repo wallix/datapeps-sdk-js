@@ -1,5 +1,6 @@
 import { api } from "./proto";
 import { SDKKind, Error } from "./Error";
+import { Uint8Tool } from "./Tools";
 
 const defaultAPIURL = "https://api.datapeps.com";
 
@@ -8,14 +9,13 @@ export let debug = false;
 export { client };
 
 export interface Request<T> {
+  headers?: Headers;
+  body?: Uint8Array;
   method: string;
   path: string;
-  code: number;
   params?: any;
-  body?: any;
-  request?: () => Uint8Array;
+  expectedCode: number;
   response?: (responseBinary: Uint8Array) => T;
-  before?: (r: XMLHttpRequest, body: Uint8Array) => void;
   host?: string;
 }
 
@@ -27,103 +27,62 @@ export class Client {
     this.host = host;
   }
 
-  doRequest<T>(r: Request<T>): Promise<T> {
-    let host = r.host != null ? r.host : this.host;
-    return new Promise((resolve, reject) => {
-      let xmlhttp = new XMLHttpRequest();
-      let uri = host + this.uri_query(r.path, r.params);
-      xmlhttp.open(r.method, uri, true);
-      xmlhttp.responseType = "arraybuffer";
-      xmlhttp.setRequestHeader("Cache-Control", "no-cache");
-      xmlhttp.onreadystatechange = e => {
-        if (xmlhttp.readyState != 4 || xmlhttp.status == 0) {
-          return;
-        }
-        if (debug) {
-          console.debug(
-            "response(" + r.method + "," + host + r.path + "): ",
-            xmlhttp.status
-          );
-        }
-        if (xmlhttp.status != r.code) {
-          if (xmlhttp.response == null || xmlhttp.response.byteLength == 0) {
-            return reject(
-              new Error({
-                kind: SDKKind.BadStatusCode,
-                code: xmlhttp.status
-              })
-            );
-          }
-          let r;
-          try {
-            let err = api.ProtoError.decode(new Uint8Array(xmlhttp.response));
-            let payload;
-            if (err.payload != null) {
-              let X = api[err.payload.type_url.split(".").pop()];
-              payload = X.decode(err.payload.value);
-            }
-            r = new Error({
-              kind: err.kind,
-              code: err.code,
-              payload: payload
-            });
-          } catch (e) {
-            r = new Error({
-              kind: SDKKind.BadStatusCode,
-              code: xmlhttp.status,
-              payload: new TextDecoder().decode(xmlhttp.response)
-            });
-          }
-          return reject(r);
-        }
-        if (r.response == null) {
-          if (xmlhttp.response == null || xmlhttp.response.length == 0) {
-            console.debug("WARNING: response is not used", xmlhttp.response);
-          }
-          return resolve();
-        }
-        let resp;
-        try {
-          resp = r.response(new Uint8Array(xmlhttp.response));
-        } catch (e) {
-          return reject(
-            new Error({
-              kind: SDKKind.BadResponse,
-              payload: { error: e, response: xmlhttp.response }
-            })
-          );
-        }
-        resolve(resp);
-      };
-      xmlhttp.onerror = e => {
-        reject(
-          new Error({
-            kind: SDKKind.NetworkException,
-            payload: { error: e }
-          })
-        );
-      };
-      let body: Uint8Array = null;
-      if (debug) {
-        console.debug("request(" + r.method + "," + host + r.path + ")");
-      }
-      try {
-        if (r.request != null) {
-          body = r.request();
-        }
-        if (r.before != null) {
-          r.before(xmlhttp, body);
-        }
-      } catch (e) {
-        return reject(
-          new Error({
-            kind: SDKKind.SDKInternalError,
-            payload: { error: e }
-          })
-        );
-      }
-      xmlhttp.send(body);
+  async doRequest<T>(
+    request: Request<T>
+  ): Promise<{ body: T; headers: Headers }> {
+    let host = request.host != null ? request.host : this.host;
+    let uri = host + this.uri_query(request.path, request.params);
+    if (debug) {
+      console.log("HTTP", uri, request);
+    }
+    let response = await fetch(uri, {
+      method: request.method,
+      body: request.body,
+      headers: request.headers
     });
+    let body = new Uint8Array(await response.arrayBuffer());
+    // Unexpected code
+    if (response.status != request.expectedCode) {
+      // Unexpected code & no response body
+      if (body == null || body.length == 0) {
+        throw new Error({
+          kind: SDKKind.BadStatusCode,
+          code: response.status
+        });
+      }
+      // Unexpected code & response body
+      let err;
+      try {
+        err = api.ProtoError.decode(new Uint8Array(body));
+      } catch (e) {
+        throw new Error({
+          kind: SDKKind.BadStatusCode,
+          code: response.status,
+          payload: Uint8Tool.decode(body)
+        });
+      }
+      let payload;
+      if (err.payload != null) {
+        let X = api[err.payload.type_url.split(".").pop()];
+        payload = X.decode(err.payload.value);
+      }
+      throw new Error({ kind: err.kind, code: err.code, payload });
+    }
+    if (request.response == null) {
+      if (body == null && body.length != 0) {
+        console.debug("WARNING: response is not used", body.length);
+      }
+      return { body: null, headers: response.headers };
+    }
+    // Expected code match
+    try {
+      return { body: request.response(body), headers: response.headers };
+    } catch (e) {
+      throw new Error({
+        kind: SDKKind.BadResponse,
+        payload: { error: e, response }
+      });
+    }
   }
 
   private uri_query(url: string, params?: any): string {

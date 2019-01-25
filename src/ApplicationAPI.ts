@@ -54,13 +54,12 @@ export class ApplicationAPI {
     return await this.session.doProtoRequest<void>({
       method: "PUT",
       assume: { login: appID, kind: IdentityAccessKind.WRITE },
-      code: 201,
+      expectedCode: 201,
       path: `/api/v4/identity/${encodeURI(appID)}/configure-as-application`,
-      request: () =>
-        api.IdentityConfigurationAsApplicationRequest.encode({
-          Login: appID,
-          config: c
-        }).finish()
+      body: api.IdentityConfigurationAsApplicationRequest.encode({
+        Login: appID,
+        config: c
+      }).finish()
     });
   }
 
@@ -77,7 +76,7 @@ export class ApplicationAPI {
     return await this.session.doProtoRequest<ApplicationAPI.Config>({
       method: "GET",
       assume: { login: appID, kind: IdentityAccessKind.READ },
-      code: 200,
+      expectedCode: 200,
       path: `/api/v4/identity/${encodeURI(appID)}/configure-as-application`,
       response: r => {
         let config = api.IdentityConfigurationAsApplicationResponse.decode(r)
@@ -113,13 +112,12 @@ export class ApplicationAPI {
     return await this.session.doProtoRequest<ApplicationAPI.UsageOverview>({
       method: "POST",
       assume: { login: appID, kind: IdentityAccessKind.READ },
-      code: 200,
+      expectedCode: 200,
       path: `/api/v4/application/${encodeURI(appID)}/usage-overview`,
-      request: () =>
-        api.ApplicationUsageOverviewRequest.encode({
-          Login: appID,
-          ...options
-        }).finish(),
+      body: api.ApplicationUsageOverviewRequest.encode({
+        Login: appID,
+        ...options
+      }).finish(),
       response: r => {
         let overview = api.ApplicationUsageOverviewResponse.decode(r).overview;
         return <ApplicationAPI.UsageOverview>{
@@ -168,19 +166,18 @@ export class ApplicationAPI {
     options = !!options ? options : {};
     return (await this.session.doProtoRequest({
       method: "POST",
-      code: 200,
+      expectedCode: 200,
       path: `/api/v4/application/${encodeURI(appID)}/identities/list`,
-      assume: {login: appID, kind: IdentityAccessKind.READ},
-      request: () => 
-        api.ApplicationListIdentitiesRequest.encode({
-          options: {
-            limit: options.limit,
-            offset: options.offset,
-            loginPrefix: options.loginPrefix,
-          }
-        }).finish(),
+      assume: { login: appID, kind: IdentityAccessKind.READ },
+      body: api.ApplicationListIdentitiesRequest.encode({
+        options: {
+          limit: options.limit,
+          offset: options.offset,
+          loginPrefix: options.loginPrefix
+        }
+      }).finish(),
       response: r => {
-        return api.ApplicationListIdentitiesResponse.decode(r)
+        return api.ApplicationListIdentitiesResponse.decode(r);
       }
     })) as any;
   }

@@ -3,14 +3,14 @@ import { api } from "./proto";
 import {
   IdentityPublicKey,
   IdentityPublicKeyID,
-  IdentityAccessKind
+  IdentityAccessKind,
+  IdentityAPI
 } from "./IdentityAPI";
 import { Error, SDKKind, ServerKind } from "./Error";
 import { Uint8Tool, Base64 } from "./Tools";
 import { Client, Request, client } from "./HTTP";
 import { ResolvedCipher, Encryption } from "./CryptoFuncs";
 
-import { IdentityAPI } from "./IdentityAPI";
 import {
   MemoryPublicKeyCache,
   TrustOnFirstUse,
@@ -186,18 +186,18 @@ async function _login(
     options != null && options.saltKind != null
       ? options.saltKind
       : api.SessionSaltKind.TIME;
-  let createResponse = await client.doRequest({
+  let { body: createResponse } = await client.doRequest({
     method: "POST",
-    code: 201,
+    expectedCode: 201,
     path: "/api/v4/session/challenge/create",
-    request: () =>
-      api.SessionCreateChallengeRequest.encode({
-        login: login,
-        saltKind: saltKind
-      }).finish(),
+    body: api.SessionCreateChallengeRequest.encode({
+      login: login,
+      saltKind: saltKind
+    }).finish(),
     response: api.SessionCreateChallengeResponse.decode,
-    before: (x, b) =>
-      x.setRequestHeader("content-type", "application/x-protobuf")
+    headers: new Headers({
+      "content-type": "application/x-protobuf"
+    })
   });
   let encryption = recover(
     api.IdentityEncryption.create(createResponse.encryption),
@@ -205,44 +205,49 @@ async function _login(
   );
   let token = createResponse.token;
   let salt = createResponse.salt;
-  let resolveResponse = await client.doRequest({
+  let { body: resolveResponse } = await client.doRequest({
     method: "POST",
-    code: 200,
+    expectedCode: 200,
     path: "/api/v4/session/challenge/resolve",
-    request: () =>
-      api.SessionResolveChallengeRequest.encode({
-        token,
-        salt,
-        signature: encryption.sign(salt)
-      }).finish(),
+    body: api.SessionResolveChallengeRequest.encode({
+      token,
+      salt,
+      signature: encryption.sign(salt)
+    }).finish(),
     response: api.SessionResolveChallengeResponse.decode,
-    before: (x, b) =>
-      x.setRequestHeader("content-type", "application/x-protobuf")
+    headers: new Headers({
+      "content-type": "application/x-protobuf"
+    })
   });
   saltKind = createResponse.saltKind;
   salt = createResponse.salt;
   return new SessionImpl(
-    resolveResponse.login,
-    token,
-    salt,
-    saltKind,
+    {
+      token,
+      login: resolveResponse.login,
+      salt,
+      saltKind
+    },
     encryption,
     client
   );
 }
 
-class SessionImpl implements Session {
-  APIHost: string;
-  WSHost: string;
-
+export interface SessionParameters {
+  token: Uint8Array;
   login: string;
-  encryption: Encryption;
+  salt: Uint8Array;
+  saltKind: api.SessionSaltKind;
+}
 
-  client: Client;
-  token: string; // base64 encoded
+class SessionImpl implements Session {
+  login: string;
 
-  private salt: Uint8Array;
-  private saltKind: api.SessionSaltKind;
+  private params: SessionParameters;
+  private encryption: Encryption;
+  private client: Client;
+
+  private b64token: string; // base64 encoded
   private deltaSaltTime: number;
 
   private pkCache: PublicKeysCache;
@@ -250,20 +255,18 @@ class SessionImpl implements Session {
   private assumeKeyCache: { [login: string]: api.IDelegatedKeys };
 
   constructor(
-    login: string,
-    token: Uint8Array,
-    salt: Uint8Array,
-    saltKind: api.SessionSaltKind,
+    params: SessionParameters,
     encryption: Encryption,
     client: Client
   ) {
-    this.encryption = encryption;
-    this.token = Base64.encode(token);
-    this.salt = salt;
-    this.saltKind = saltKind;
+    this.login = params.login;
 
-    this.login = login;
+    this.params = params;
+    this.encryption = encryption;
     this.client = client;
+
+    this.b64token = Base64.encode(params.token);
+
     this.pkCache = new MemoryPublicKeyCache();
     this.trustPolicy = new TrustOnFirstUse(this);
     this.assumeKeyCache = {};
@@ -273,7 +276,7 @@ class SessionImpl implements Session {
   async close(): Promise<void> {
     return await this.doProtoRequest<void>({
       method: "PUT",
-      code: 200,
+      expectedCode: 200,
       path: "/api/v4/session/close"
     });
   }
@@ -304,15 +307,14 @@ class SessionImpl implements Session {
   async getLatestPublicKeys(logins: string[]): Promise<IdentityPublicKey[]> {
     let { chains } = await this.doProtoRequest({
       method: "POST",
-      code: 200,
+      expectedCode: 200,
       path: "/api/v4/identities/latestPublicChains",
-      request: () =>
-        api.IdentityGetLatestPublicChainsRequest.encode({
-          ids: logins.map(login => {
-            let pk = this.pkCache.latest(login);
-            return { login, since: pk == null ? 0 : pk.version };
-          })
-        }).finish(),
+      body: api.IdentityGetLatestPublicChainsRequest.encode({
+        ids: logins.map(login => {
+          let pk = this.pkCache.latest(login);
+          return { login, since: pk == null ? 0 : pk.version };
+        })
+      }).finish(),
       response: api.IdentityGetLatestPublicChainsResponse.decode
     });
     await this.validateChains(chains);
@@ -343,17 +345,16 @@ class SessionImpl implements Session {
     }
     let { chains } = await this.doProtoRequest({
       method: "POST",
-      code: 200,
+      expectedCode: 200,
       path: "/api/v4/identities/publicChains",
-      request: () =>
-        api.IdentityGetPublicChainsRequest.encode({
-          ids: Object.keys(requestIds).map(login => {
-            let pk = this.pkCache.latest(login);
-            let since = pk == null ? 0 : pk.version;
-            let version = requestIds[login];
-            return { id: { login, version }, since };
-          })
-        }).finish(),
+      body: api.IdentityGetPublicChainsRequest.encode({
+        ids: Object.keys(requestIds).map(login => {
+          let pk = this.pkCache.latest(login);
+          let since = pk == null ? 0 : pk.version;
+          let version = requestIds[login];
+          return { id: { login, version }, since };
+        })
+      }).finish(),
       response: api.IdentityGetPublicChainsResponse.decode
     });
     await this.validateChains(chains);
@@ -381,23 +382,13 @@ class SessionImpl implements Session {
     return this.encryption.sign(message);
   }
 
-  async doRequest<T>(r: SessionRequest<T>): Promise<T> {
-    let assumeParams = await this.getAssumeParams(r.assume);
-    let xhr: XMLHttpRequest;
-    let r2 = {
-      ...r,
-      before: (x: XMLHttpRequest, body: Uint8Array) => {
-        xhr = x;
-        if (r.before != null) {
-          r.before(x, body);
-        }
-        this.beforeRequest(x, body, assumeParams);
-      }
-    };
+  async doRequest<T>(request: SessionRequest<T>): Promise<T> {
+    let assumeParams = await this.getAssumeParams(request.assume);
+    this.addAuthHeaders(request.headers, request.body, assumeParams);
     try {
-      let resp = await this.client.doRequest(r2);
-      this.afterRequest(xhr);
-      return resp;
+      let response = await this.client.doRequest(request);
+      this.handleResponseHeaders(response.headers);
+      return response.body;
     } catch (err) {
       switch (err.kind) {
         case ServerKind.SessionStale:
@@ -409,29 +400,19 @@ class SessionImpl implements Session {
             }
             throw e;
           }
-          return this.doRequest(r);
+          return this.doRequest(request);
         case ServerKind.AssumeStale:
-          this.clearAssumeParams(r.assume.login);
-          return this.doRequest(r);
-      }
-      if (xhr != null) {
-        // Ensure that request was done before validating salt
-        this.afterRequest(xhr);
+          this.clearAssumeParams(request.assume.login);
+          return this.doRequest(request);
       }
       throw err;
     }
   }
 
   async doProtoRequest<T>(r: SessionRequest<T>): Promise<T> {
-    return this.doRequest({
-      ...r,
-      before(x, b) {
-        x.setRequestHeader("content-type", "application/x-protobuf");
-        if (r.before != null) {
-          r.before(x, b);
-        }
-      }
-    });
+    r.headers = r.headers != null ? r.headers : new Headers();
+    r.headers.set("content-type", "application/x-protobuf");
+    return await this.doRequest(r);
   }
 
   private async validateChains(chains: api.IIdentityPublicChain[]) {
@@ -496,49 +477,46 @@ class SessionImpl implements Session {
     }, Promise.resolve(pk));
   }
 
-  private afterRequest(request: XMLHttpRequest) {
-    let salt = request.getResponseHeader("x-peps-salt");
+  private handleResponseHeaders(headers: Headers) {
+    let salt = headers.get("x-peps-salt");
     if (salt == null) {
       throw new Error({
         kind: SDKKind.ProtocolError,
-        payload: {
-          missing: "x-peps-salt",
-          headers: request.getAllResponseHeaders()
-        }
+        payload: { missing: "x-peps-salt", headers }
       });
     }
-    this.salt = Base64.decode(salt);
+    this.params.salt = Base64.decode(salt);
     this.afterRequestHandleSalt();
   }
 
   private afterRequestHandleSalt() {
     let secondsServer =
-      (this.salt[0] << 24) +
-      (this.salt[1] << 16) +
-      (this.salt[2] << 8) +
-      this.salt[3];
+      (this.params.salt[0] << 24) +
+      (this.params.salt[1] << 16) +
+      (this.params.salt[2] << 8) +
+      this.params.salt[3];
     let secondsLocal = Math.floor(Date.now() / 1000);
     this.deltaSaltTime = secondsServer - secondsLocal;
   }
 
-  private beforeRequest(
-    request: XMLHttpRequest,
+  private addAuthHeaders(
+    headers: Headers,
     body: Uint8Array,
     assume?: AssumeParams
   ) {
     let salt = this.getSalt();
     let tosign = body == null ? salt : Uint8Tool.concat(body, salt);
-    request.setRequestHeader("x-peps-token", this.token);
-    request.setRequestHeader(
+    headers.set("x-peps-token", this.b64token);
+    headers.set(
       "x-peps-signature",
       Base64.encode(this.encryption.sign(tosign))
     );
-    request.setRequestHeader("x-peps-salt", Base64.encode(salt));
+    headers.set("x-peps-salt", Base64.encode(salt));
     if (assume == null) {
       return;
     }
-    request.setRequestHeader("x-peps-assume-access", assume.kind.toString());
-    request.setRequestHeader(
+    headers.set("x-peps-assume-access", assume.kind.toString());
+    headers.set(
       "x-peps-assume-identity",
       assume.key.login + "/" + assume.key.version
     );
@@ -546,16 +524,16 @@ class SessionImpl implements Session {
       assume.kind == IdentityAccessKind.READ
         ? assume.key.readKey
         : assume.key.signKey;
-    request.setRequestHeader(
+    headers.set(
       "x-peps-assume-signature",
       Base64.encode(nacl.sign.detached(tosign, key))
     );
   }
 
   getSalt(): Uint8Array {
-    switch (this.saltKind) {
+    switch (this.params.saltKind) {
       case api.SessionSaltKind.RAND:
-        return this.salt;
+        return this.params.salt;
       case api.SessionSaltKind.TIME:
         let seconds = Math.floor(Date.now() / 1000) + this.deltaSaltTime;
         let salt = new Uint8Array(4);
@@ -570,7 +548,7 @@ class SessionImpl implements Session {
   private unStale(): Promise<void> {
     return this.doProtoRequest({
       method: "PUT",
-      code: 200,
+      expectedCode: 200,
       path: "/api/v4/session/unStale",
       response: api.SessionUnStaleResponse.decode
     }).then(({ encryption, creator }) => {
@@ -665,7 +643,7 @@ class SessionImpl implements Session {
     } = await this.doProtoRequest({
       method: "GET",
       path: "/api/v4/identity/" + encodeURI(login) + "/keys",
-      code: 200,
+      expectedCode: 200,
       response: api.IdentityGetKeysResponse.decode,
       params
     });

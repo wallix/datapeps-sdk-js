@@ -1,5 +1,7 @@
 import { api } from "./proto";
 import { Session } from "./Session";
+export declare const RegisterTokenStatus: typeof api.RegisterTokenStatus;
+export declare type RegisterEmailValidationToken = api.IRegisterEmailValidationToken;
 export declare class AdminAPI {
     private session;
     constructor(session: Session);
@@ -44,5 +46,5 @@ export declare class AdminAPI {
     listRegisterTokens(options?: {
         offset?: number;
         limit?: number;
-    }): Promise<api.IRegisterEmailValidationToken[]>;
+    }): Promise<RegisterEmailValidationToken[]>;
 }

@@ -4,6 +4,7 @@ import * as nacl from "tweetnacl";
 import { expect } from "chai";
 import { itError } from "../Utils";
 import { AdminAPI, IdentityAPI } from "../../src/DataPeps";
+import { Uint8Tool } from "../../src/Tools";
 
 describe("identity.main", () => {
   let seed = Math.floor(Math.random() * 99999);
@@ -12,7 +13,7 @@ describe("identity.main", () => {
     login: "alice.deviceA." + seed,
     name: "An alice device, TS",
     kind: "device",
-    payload: new TextEncoder().encode(
+    payload: Uint8Tool.encode(
       JSON.stringify({
         uuid: "0987654321",
         type: "Test"
@@ -24,7 +25,7 @@ describe("identity.main", () => {
     login: "alice.deviceB." + seed,
     name: "Another alice device, TS",
     kind: "device",
-    payload: new TextEncoder().encode(
+    payload: Uint8Tool.encode(
       JSON.stringify({
         uuid: "1234567890",
         type: "Test"
@@ -36,7 +37,7 @@ describe("identity.main", () => {
     login: "alice." + seed,
     name: "alice test identity, TS",
     kind: "user",
-    payload: new TextEncoder().encode(
+    payload: Uint8Tool.encode(
       JSON.stringify({
         firstname: "Alice",
         lastname: "TypeScript",
@@ -49,7 +50,7 @@ describe("identity.main", () => {
     login: "bob." + seed,
     name: "bob test identity, TS",
     kind: "user",
-    payload: new TextEncoder().encode(
+    payload: Uint8Tool.encode(
       JSON.stringify({
         firstname: "Bob",
         lastname: "TypeScript",
@@ -61,7 +62,7 @@ describe("identity.main", () => {
     login: "group." + seed,
     name: "A group for the Identity test, TS",
     kind: "group",
-    payload: new TextEncoder().encode(
+    payload: Uint8Tool.encode(
       JSON.stringify({
         description: "This is an awsome group!!!"
       })

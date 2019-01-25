@@ -122,14 +122,13 @@ export class ResourceAPI {
     );
     let { id } = await this.session.doProtoRequest({
       method: "POST",
-      code: 201,
+      expectedCode: 201,
       path: "/api/v4/resources",
-      request: () =>
-        api.ResourcePostRequest.encode({
-          ...body,
-          type,
-          kind
-        }).finish(),
+      body: api.ResourcePostRequest.encode({
+        ...body,
+        type,
+        kind
+      }).finish(),
       response: api.ResourcePostResponse.decode
     });
     return new ResourceBox(id, kind, payload, keypair, creator);
@@ -155,14 +154,16 @@ export class ResourceAPI {
   }): Promise<Resource<T>[]> {
     options = options != null ? options : {};
     let assume = options.assume != null ? options.assume : this.session.login;
+    let parse = options.parse;
     let params =
       options.reason != null
         ? { ...options, access_reason: options.reason }
         : options;
+    delete params.parse;
     return await this.session
       .doProtoRequest({
         method: "GET",
-        code: 200,
+        expectedCode: 200,
         path: "/api/v4/resources",
         assume: { login: assume, kind: IdentityAccessKind.READ },
         params,
@@ -170,7 +171,7 @@ export class ResourceAPI {
           api.ResourceListResponse.decode(r).resources as api.IResourceWithKey[]
       })
       .then(resources =>
-        makeResourcesFromResponses<T>(resources, this.session, options.parse)
+        makeResourcesFromResponses<T>(resources, this.session, parse)
       );
   }
 
@@ -199,7 +200,7 @@ export class ResourceAPI {
       options.reason != null ? { access_reason: options.reason } : undefined;
     let response = await this.session.doProtoRequest({
       method: "GET",
-      code: 200,
+      expectedCode: 200,
       path: "/api/v4/resource/" + id,
       assume: { login: assume, kind: IdentityAccessKind.READ },
       params,
@@ -215,6 +216,72 @@ export class ResourceAPI {
   }
 
   /**
+   * Get the resource associated with the tuple <identityLogin, resourceName>.
+   * @param login The login of the identity involved in the association
+   * @param resourceName The resource name involved in the association
+   * @return(p) On success the promise will be resolved with resource associated with the tuple <identityLogin, resourceName>. On error the promise will be rejected with an {@link Error} with kind:
+   * - `DataPeps.ServerError.IdentityNotFound` if the identity cannot be assumed or if the identity does not exist.
+   * - `DataPeps.ServerError.NamedResourceNotFound` if the NamedResource does not exist.
+   */
+  async getNamed<T>(
+    login: string,
+    resourceName: string,
+    options?: {
+      parse?: ((u: Uint8Array) => T);
+    }
+  ): Promise<Resource<T>> {
+    options = options != null ? options : {};
+    let assume = { login, kind: IdentityAccessKind.READ };
+    let resp = await this.session.doProtoRequest({
+      method: "GET",
+      expectedCode: 200,
+      assume,
+      path:
+        "/api/v4/identity/" +
+        encodeURIComponent(login) +
+        "/resource/" +
+        encodeURIComponent(resourceName),
+      response: r => api.IdentityGetNamedResourceResponse.decode(r)
+    });
+    return makeResourceFromResponse<T>(
+      resp.resource,
+      api.ResourceType.SES,
+      this.session,
+      options.parse,
+      assume.login
+    );
+  }
+
+  /**
+   * Save a one-to-one association between the key <login, resourceName> and a resourceID.
+   * @param login The login of the identity involved in the association
+   * @param resourceName The desired resource name involved in the association
+   * @param resourceID The ID of the resource involved in the association
+   * @return(p) On success the promise will be resolved with void. On error the promise will be rejected with an {@link Error} with kind:
+   * - `DataPeps.ServerError.IdentityNotFound` if the identity cannot be assumed or if the identity does not exist.
+   * - `DataPeps.ServerError.ResourceNotFound` if the resource does not exist.
+   */
+  async setNamed(
+    login: string,
+    resourceName: string,
+    resourceID: ID
+  ): Promise<void> {
+    let assume = { login, kind: IdentityAccessKind.WRITE };
+    let res = await this.session.doProtoRequest<void>({
+      method: "PUT",
+      expectedCode: 200,
+      assume,
+      path: `/api/v4/identity/${encodeURI(login)}/resource/${encodeURIComponent(
+        resourceName
+      )}`,
+      body: api.IdentitySetNamedResourceRequest.encode({
+        resourceID
+      }).finish()
+    });
+    return res;
+  }
+
+  /**
    * Soft-delete a resource thanks its identifier. It deletes only the copy.
    * @param id The identifier of the resource to delete.
    * @param options A collection of options:
@@ -227,7 +294,7 @@ export class ResourceAPI {
     let assume = options.assume != null ? options.assume : this.session.login;
     return await this.session.doProtoRequest<void>({
       method: "DELETE",
-      code: 200,
+      expectedCode: 200,
       path: "/api/v4/resource/" + id,
       assume: { login: assume, kind: IdentityAccessKind.WRITE },
       params: { soft: true }
@@ -247,7 +314,7 @@ export class ResourceAPI {
     let assume = options.assume != null ? options.assume : this.session.login;
     return await this.session.doProtoRequest<void>({
       method: "DELETE",
-      code: 200,
+      expectedCode: 200,
       path: "/api/v4/resource/" + id,
       assume: { login: assume, kind: IdentityAccessKind.WRITE },
       params: { soft: false }
@@ -273,7 +340,7 @@ export class ResourceAPI {
     let assume = options.assume != null ? options.assume : this.session.login;
     let { encryptedKey, type } = await this.session.doProtoRequest({
       method: "GET",
-      code: 200,
+      expectedCode: 200,
       path: "/api/v4/resource/" + id + "/key",
       response: api.ResourceGetKeyResponse.decode
     });
@@ -297,13 +364,12 @@ export class ResourceAPI {
     );
     return await this.session.doProtoRequest<void>({
       method: "PATCH",
-      code: 201,
+      expectedCode: 201,
       path: "/api/v4/resource/" + id + "/sharingGroup",
       assume: { login: assume, kind: IdentityAccessKind.WRITE },
-      request: () =>
-        api.ResourceExtendSharingGroupRequest.encode({
-          sharingGroup: encryptedSharingGroup
-        }).finish()
+      body: api.ResourceExtendSharingGroupRequest.encode({
+        sharingGroup: encryptedSharingGroup
+      }).finish()
     });
   }
 
@@ -327,9 +393,9 @@ export class ResourceAPI {
     let assume = options.assume != null ? options.assume : this.session.login;
     let { logs } = await this.session.doProtoRequest({
       method: "POST",
-      code: 200,
+      expectedCode: 200,
       path: "/api/v4/resources/accessLogs",
-      request: () => api.ResourceGetAccessLogsRequest.encode(options).finish(),
+      body: api.ResourceGetAccessLogsRequest.encode(options).finish(),
       response: api.ResourceGetAccessLogsResponse.decode,
       assume: {
         login: assume,
@@ -361,7 +427,7 @@ export class ResourceAPI {
     let assume = options.assume != null ? options.assume : this.session.login;
     return await this.session.doProtoRequest({
       method: "GET",
-      code: 200,
+      expectedCode: 200,
       path: "/api/v4/resource/" + id + "/sharingGroup",
       assume: { login: assume, kind: IdentityAccessKind.READ },
       response: r =>

@@ -1,21 +1,23 @@
 export declare let debug: boolean;
 export { client };
 export interface Request<T> {
+    headers?: Headers;
+    body?: Uint8Array;
     method: string;
     path: string;
-    code: number;
     params?: any;
-    body?: any;
-    request?: () => Uint8Array;
+    expectedCode: number;
     response?: (responseBinary: Uint8Array) => T;
-    before?: (r: XMLHttpRequest, body: Uint8Array) => void;
     host?: string;
 }
 export declare class Client {
     host: string;
     debug: boolean;
     constructor(host: string);
-    doRequest<T>(r: Request<T>): Promise<T>;
+    doRequest<T>(request: Request<T>): Promise<{
+        body: T;
+        headers: Headers;
+    }>;
     private uri_query(url, params?);
 }
 export declare function configure(APIUrl: string, WSUrl?: string): void;

@@ -2,13 +2,15 @@ export declare class Base64 {
     /**
      * Decode a base64 string to an Uint8Array
      */
-    static decode(s: string): Uint8Array;
+    static decode(sBase64: string): Uint8Array;
     /**
      * Encode a Uint8Array to a base64 string
      */
-    static encode(arr: Uint8Array): string;
+    static encode(aBytes: any): string;
 }
 export declare class Uint8Tool {
+    static encode(s: string): Uint8Array;
+    static decode(u: Uint8Array): string;
     static convert(arg: string | Uint8Array): Uint8Array;
     /**
      * Fill the whole array with value

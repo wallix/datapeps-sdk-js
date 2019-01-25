@@ -3,6 +3,7 @@ import * as DataPeps from "../../../src/DataPeps";
 import * as nacl from "tweetnacl";
 import { expect } from "chai";
 import { AdminAPI, IdentityAPI } from "../../../src/DataPeps";
+import { Uint8Tool } from "../../../src/Tools";
 
 describe("identity.Update", () => {
   let seed = Math.floor(Math.random() * 99999);
@@ -12,7 +13,7 @@ describe("identity.Update", () => {
     login: "alice." + seed,
     name: "alice 1",
     kind: "user",
-    payload: new TextEncoder().encode(
+    payload: Uint8Tool.encode(
       JSON.stringify({
         test: 1
       })
@@ -24,7 +25,7 @@ describe("identity.Update", () => {
     login: "bob." + seed,
     name: "bob 1",
     kind: "user",
-    payload: new TextEncoder().encode(
+    payload: Uint8Tool.encode(
       JSON.stringify({
         test: 1
       })
@@ -68,7 +69,10 @@ describe("identity.Update", () => {
       email: totoAdminEmail
     });
     await new AdminAPI(adminSession).setAdmin(totoAdmin.login, true);
-    totoAdminSession = await DataPeps.Session.login(totoAdmin.login, totoAdminSecret);
+    totoAdminSession = await DataPeps.Session.login(
+      totoAdmin.login,
+      totoAdminSecret
+    );
     await new IdentityAPI(adminSession).create(totoUser, {
       secret: totoAdminSecret,
       email: totoUserEmail
@@ -91,7 +95,7 @@ describe("identity.Update", () => {
 
   it("Alice should update its fields", async () => {
     alice.name = "alice 2";
-    alice.payload = new TextEncoder().encode(
+    alice.payload = Uint8Tool.encode(
       JSON.stringify({
         toto: 2
       })
@@ -116,7 +120,7 @@ describe("identity.Update", () => {
 
   it("Peps admin should update alice fields", async () => {
     alice.name = "alice 3";
-    alice.payload = new TextEncoder().encode(
+    alice.payload = Uint8Tool.encode(
       JSON.stringify({
         titi: 3
       })

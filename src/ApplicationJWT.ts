@@ -1,6 +1,7 @@
 import { api } from "./proto";
 import { secure, createUser } from "./Application";
 import { Session } from "./Session";
+import { Uint8Tool } from "./Tools";
 
 /**
  * Expose all specific types and functions for JWT application.
@@ -93,7 +94,7 @@ export namespace ApplicationJWT {
       if (secret instanceof Uint8Array) {
         secret = appSecret as Secret;
       } else {
-        secret = new TextDecoder().decode(appSecret) as Secret;
+        secret = Uint8Tool.decode(appSecret) as Secret;
       }
       let app = await connector.createSession(appLogin, secret);
       return { session, app, new: false };

@@ -40,8 +40,8 @@ var Tools_1 = require("./Tools");
 var CryptoFuncs_1 = require("./CryptoFuncs");
 var HTTP = require("./HTTP");
 var ResourceInternal_1 = require("./ResourceInternal");
-var IdentityAPI_1 = require("./IdentityAPI");
 var Session_1 = require("./Session");
+var ResourceAPI_1 = require("./ResourceAPI");
 /**
  * Create a user thanks an external referential of identities
  * @param appID The identifier of a configured application
@@ -69,24 +69,23 @@ function createUser(appID, auth, secret) {
                         payload: payload
                     };
                     resource = ResourceInternal_1.createWithEncryption("application/secret", secretBytes, encryption, { serialize: function (u) { return u; } });
-                    body = proto_1.api.RegisterApplicationIdentityRequest.encode({
-                        appID: appID,
-                        auth: auth,
-                        encryption: encryption,
-                        identity: identity,
-                        resources: { appSecret: resource.resourceRequestBody }
-                    }).finish();
                     return [4 /*yield*/, HTTP.client.doRequest({
                             method: "POST",
-                            code: 201,
+                            expectedCode: 201,
                             path: "/api/v4/application/" + appID + "/identity",
-                            request: function () { return body; },
+                            body: proto_1.api.RegisterApplicationIdentityRequest.encode({
+                                appID: appID,
+                                auth: auth,
+                                encryption: encryption,
+                                identity: identity,
+                                resources: { appSecret: resource.resourceRequestBody }
+                            }).finish(),
                             response: proto_1.api.RegisterApplicationIdentityResponse.decode,
-                            before: function (x, b) {
-                                return x.setRequestHeader("content-type", "application/x-protobuf");
-                            }
+                            headers: new Headers({ "content-type": "application/x-protobuf" })
                         })];
-                case 1: return [2 /*return*/, _a.sent()];
+                case 1:
+                    body = (_a.sent()).body;
+                    return [2 /*return*/, body];
             }
         });
     });
@@ -103,7 +102,7 @@ function secure(appID, login, secret) {
                 case 1:
                     session = _a.sent();
                     identityLogin = login.concat("@", appID);
-                    return [4 /*yield*/, new IdentityAPI_1.IdentityAPI(session).getNamedResource(identityLogin, "appSecret", { parse: function (u) { return u; } })];
+                    return [4 /*yield*/, new ResourceAPI_1.ResourceAPI(session).getNamed(identityLogin, "appSecret", { parse: function (u) { return u; } })];
                 case 2:
                     appSecretResource = _a.sent();
                     return [2 /*return*/, { session: session, secret: appSecretResource.payload }];

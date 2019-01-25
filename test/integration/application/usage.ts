@@ -20,6 +20,7 @@ import { itError } from "../../Utils";
 import * as JWT from "jsonwebtoken";
 import { createUser } from "../../../src/Application";
 import * as nacl from "tweetnacl";
+import { Uint8Tool } from "../../../src/Tools";
 
 describe("applicationAPI.usage", () => {
   let ctx: initCtx & devCtx & aliceBobCtx;
@@ -132,7 +133,7 @@ describe("applicationAPI.usage", () => {
 
     let api = new ApplicationAPI(ctx.dev.session);
     await api.putConfig(ctx.app.identity.login, {
-      jwt: { key: new TextEncoder().encode(key) }
+      jwt: { key: Uint8Tool.encode(key) }
     });
 
     // Let's enroll David, David don't really use the app
@@ -195,7 +196,7 @@ class DelegatedAccessRequestsHandler {
   }
 
   delegatedAccessSignatureFunction = ({ login, publicKey }) => {
-    let ulogin = new TextEncoder().encode(login);
+    let ulogin = Uint8Tool.encode(login);
     let toSign = new Uint8Array(ulogin.byteLength + publicKey.byteLength);
     toSign.set(ulogin, 0);
     toSign.set(publicKey, ulogin.byteLength);

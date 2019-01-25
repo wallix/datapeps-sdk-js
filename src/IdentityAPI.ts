@@ -1,10 +1,8 @@
 import * as nacl from "tweetnacl";
 import { api } from "./proto";
-import { makeResourceFromResponse } from "./ResourceInternal";
 import { Error, SDKKind } from "./Error";
 import { Encryption } from "./CryptoFuncs";
 import { Uint8Tool } from "./Tools";
-import { Resource } from "./ResourceAPI";
 import { Session } from "./Session";
 import { ID } from "./ID";
 import { client } from "./HTTP";
@@ -147,16 +145,17 @@ export class IdentityAPI {
   static async getLatestPublicKeys(
     logins: string[]
   ): Promise<IdentityPublicKey[]> {
-    let { publicKeys } = await client.doRequest({
+    let {
+      body: { publicKeys }
+    } = await client.doRequest({
       method: "POST",
-      code: 200,
+      expectedCode: 200,
       path: "/api/v4/identities/latestPublicKeys",
-      request: () =>
-        api.IdentityGetLatestPublicKeysRequest.encode({ logins }).finish(),
+      body: api.IdentityGetLatestPublicKeysRequest.encode({ logins }).finish(),
       response: api.IdentityGetLatestPublicKeysResponse.decode,
-      before(x, b) {
-        x.setRequestHeader("content-type", "application/x-protobuf");
-      }
+      headers: new Headers({
+        "content-type": "application/x-protobuf"
+      })
     });
     return publicKeys as IdentityPublicKey[];
   }
@@ -183,7 +182,7 @@ export class IdentityAPI {
   async get(login: string): Promise<Identity<Uint8Array>> {
     return await this.session.doProtoRequest({
       method: "GET",
-      code: 200,
+      expectedCode: 200,
       path: "/api/v4/identity/" + encodeURI(login),
       response: r => IdentityX.fromapi(api.Identity.decode(r))
     });
@@ -208,8 +207,8 @@ export class IdentityAPI {
     sortingField?: IdentitySortingField;
     sortingOrder?: IdentitySortingOrder;
   }): Promise<{
-    identities: Identity<Uint8Array>[]
-    totalIdentitiesCount: number
+    identities: Identity<Uint8Array>[];
+    totalIdentitiesCount: number;
   }> {
     options = options == null ? {} : options;
     if (options.sortingField == null) {
@@ -218,34 +217,38 @@ export class IdentityAPI {
     if (options.sortingOrder == null) {
       options.sortingOrder = IdentitySortingOrder.ASC;
     }
-    let sortingOrder: api.SortingOrder = api.SortingOrder.ASC
+    let sortingOrder: api.SortingOrder = api.SortingOrder.ASC;
     if (options.sortingOrder === IdentitySortingOrder.DESC) {
-      sortingOrder = api.SortingOrder.DESC
-    } else if (options.sortingOrder != null
-        && options.sortingOrder != IdentitySortingOrder.ASC) {
-      sortingOrder = options.sortingOrder as api.SortingOrder
+      sortingOrder = api.SortingOrder.DESC;
+    } else if (
+      options.sortingOrder != null &&
+      options.sortingOrder != IdentitySortingOrder.ASC
+    ) {
+      sortingOrder = options.sortingOrder as api.SortingOrder;
     }
     return await this.session.doProtoRequest({
       method: "POST",
-      code: 200,
+      expectedCode: 200,
       path: "/api/v4/identities/list",
-      request: () => 
-        api.IdentityListRequest.encode({
-          options: {
-            offset: options.offset,
-            limit: options.limit,
-            loginPrefix: options.search,
-            kind: options.kind,
-            sortedBy: options.sortingField,
-            order: sortingOrder,
-          }
-        }).finish(),
+      body: api.IdentityListRequest.encode({
+        options: {
+          offset: options.offset,
+          limit: options.limit,
+          loginPrefix: options.search,
+          kind: options.kind,
+          sortedBy: options.sortingField,
+          order: sortingOrder
+        }
+      }).finish(),
       response: r => {
-        let { identities, totalIdentitiesCount } = api.IdentityListResponse.decode(r);
+        let {
+          identities,
+          totalIdentitiesCount
+        } = api.IdentityListResponse.decode(r);
         return {
           identities: identities.map(IdentityX.fromapi),
           totalIdentitiesCount
-        }
+        };
       }
     });
   }
@@ -297,21 +300,20 @@ export class IdentityAPI {
     let epub = encryption.getPublic();
     return await this.session.doProtoRequest<void>({
       method: "POST",
-      code: 201,
+      expectedCode: 201,
       path: "/api/v4/identity",
-      request: () =>
-        api.IdentityCreateRequest.encode({
-          identity,
-          sharingGroup,
-          encryption,
-          email: options.email,
-          signChain: (this.session as any).encryption.sign(
-            Uint8Tool.concat(
-              epub.boxEncrypted.publicKey,
-              epub.signEncrypted.publicKey
-            )
+      body: api.IdentityCreateRequest.encode({
+        identity,
+        sharingGroup,
+        encryption,
+        email: options.email,
+        signChain: (this.session as any).encryption.sign(
+          Uint8Tool.concat(
+            epub.boxEncrypted.publicKey,
+            epub.signEncrypted.publicKey
           )
-        }).finish()
+        )
+      }).finish()
     });
   }
 
@@ -325,9 +327,9 @@ export class IdentityAPI {
   async update(identity: IdentityFields): Promise<void> {
     return await this.session.doProtoRequest<void>({
       method: "PUT",
-      code: 200,
+      expectedCode: 200,
       path: "/api/v4/identity/" + encodeURI(identity.login),
-      request: () => api.IdentityFields.encode(identity).finish()
+      body: api.IdentityFields.encode(identity).finish()
     });
   }
 
@@ -348,7 +350,7 @@ export class IdentityAPI {
       sharingGroup
     } = await this.session.doProtoRequest({
       method: "GET",
-      code: 200,
+      expectedCode: 200,
       path: "/api/v4/identity/" + encodeURIComponent(login) + "/keysToRenew",
       response: api.IdentityGetKeysToRenewResponse.decode,
       assume
@@ -379,34 +381,33 @@ export class IdentityAPI {
     let backward = { nonce, encryptedKey: message };
     await this.session.doProtoRequest({
       method: "POST",
-      code: 201,
+      expectedCode: 201,
       path: "/api/v4/identity/" + encodeURIComponent(login) + "/keysToRenew",
-      request: () =>
-        api.IdentityPostKeysToRenewRequest.encode({
-          encryption: epub,
-          backward,
-          signChain: nacl.sign.detached(
-            Uint8Tool.concat(
-              epub.boxEncrypted.publicKey,
-              epub.signEncrypted.publicKey
-            ),
-            key.signKey
+      body: api.IdentityPostKeysToRenewRequest.encode({
+        encryption: epub,
+        backward,
+        signChain: nacl.sign.detached(
+          Uint8Tool.concat(
+            epub.boxEncrypted.publicKey,
+            epub.signEncrypted.publicKey
           ),
-          sharingGroup: sharingGroup.map(({ login, version, box, sign }) => {
-            let { message, nonce } = next.encryptKey(
-              kind,
-              (this.session as any).encryption,
-              box
-            );
-            return {
-              login,
-              version,
-              encryptedKey: message,
-              nonce,
-              kind
-            };
-          })
-        }).finish(),
+          key.signKey
+        ),
+        sharingGroup: sharingGroup.map(({ login, version, box, sign }) => {
+          let { message, nonce } = next.encryptKey(
+            kind,
+            (this.session as any).encryption,
+            box
+          );
+          return {
+            login,
+            version,
+            encryptedKey: message,
+            nonce,
+            kind
+          };
+        })
+      }).finish(),
       assume
     });
     (this.session as any).clearAssumeParams(login);
@@ -423,7 +424,7 @@ export class IdentityAPI {
   async getSharingGroup(login: string): Promise<IdentityShareLink[]> {
     return await this.session.doProtoRequest({
       method: "GET",
-      code: 200,
+      expectedCode: 200,
       path: "/api/v4/identity/" + encodeURIComponent(login) + "/sharingGroup",
       response: r =>
         api.IdentityGetSharingGroupResponse.decode(r)
@@ -451,26 +452,25 @@ export class IdentityAPI {
     let publicKeys = await this.session.getLatestPublicKeys(sharingGroup);
     return await this.session.doProtoRequest<void>({
       method: "PATCH",
-      code: 201,
+      expectedCode: 201,
       path: "/api/v4/identity/" + encodeURI(login) + "/sharingGroup",
       assume: { login, kind: IdentityAccessKind.WRITE },
-      request: () =>
-        api.IdentityShareRequest.encode({
-          version: key.version,
-          sharingGroup: publicKeys.map(({ login, version, box, sign }) => {
-            let kind = api.IdentityShareKind.SHARING;
-            let { message, nonce } = (this.session as any).encryption
-              .encrypt(api.ResourceType.SES)
-              .encrypt(box, key.sharingKey);
-            return {
-              login,
-              version,
-              nonce,
-              kind,
-              encryptedKey: message
-            };
-          })
-        }).finish()
+      body: api.IdentityShareRequest.encode({
+        version: key.version,
+        sharingGroup: publicKeys.map(({ login, version, box, sign }) => {
+          let kind = api.IdentityShareKind.SHARING;
+          let { message, nonce } = (this.session as any).encryption
+            .encrypt(api.ResourceType.SES)
+            .encrypt(box, key.sharingKey);
+          return {
+            login,
+            version,
+            nonce,
+            kind,
+            encryptedKey: message
+          };
+        })
+      }).finish()
     });
   }
 
@@ -606,16 +606,15 @@ export class IdentityAPI {
       });
     return await this.session.doProtoRequest<void>({
       method: "POST",
-      code: 201,
+      expectedCode: 201,
       path: "/api/v4/identity/" + encodeURIComponent(login) + "/sharingGraph",
       assume:
         options.overwriteKeys != null
           ? undefined
           : { login, kind: IdentityAccessKind.WRITE },
-      request: () =>
-        api.IdentityPostSharingGraphRequest.encode({
-          graph: encryptedGraph
-        }).finish()
+      body: api.IdentityPostSharingGraphRequest.encode({
+        graph: encryptedGraph
+      }).finish()
     });
   }
 
@@ -630,7 +629,7 @@ export class IdentityAPI {
   async getAccessGroup(login: string): Promise<IdentityShareLink[]> {
     return await this.session.doProtoRequest({
       method: "GET",
-      code: 200,
+      expectedCode: 200,
       path: "/api/v4/identity/" + encodeURIComponent(login) + "/accessGroup",
       response: r =>
         api.IdentityGetAccessGroupResponse.decode(r)
@@ -649,12 +648,11 @@ export class IdentityAPI {
   async getPublicKeyHistory(login: string): Promise<IdentityPublicKey[]> {
     let { chains } = await this.session.doProtoRequest({
       method: "POST",
-      code: 200,
+      expectedCode: 200,
       path: "/api/v4/identities/latestPublicChains",
-      request: () =>
-        api.IdentityGetLatestPublicChainsRequest.encode({
-          ids: [{ login, since: 0 }]
-        }).finish(),
+      body: api.IdentityGetLatestPublicChainsRequest.encode({
+        ids: [{ login, since: 0 }]
+      }).finish(),
       response: api.IdentityGetLatestPublicChainsResponse.decode
     });
     if (chains.length != 1 || chains[0].login !== login) {
@@ -694,7 +692,7 @@ export class IdentityAPI {
     options = options != null ? options : {};
     return await this.session.doProtoRequest({
       method: "GET",
-      code: 200,
+      expectedCode: 200,
       path: "/api/v4/identity/" + encodeURI(login) + "/lockedVersions",
       params: options,
       assume:
@@ -786,87 +784,19 @@ export class IdentityAPI {
     if (unlockedVersions.length > 0) {
       await this.session.doProtoRequest({
         method: "POST",
-        code: 200,
+        expectedCode: 200,
         assume:
           login == this.session.login
             ? null
             : { login, kind: IdentityAccessKind.WRITE },
         path: "/api/v4/identity/" + encodeURI(login) + "/unlockVersions",
-        request: () =>
-          api.UnlockVersionsRequest.encode({
-            unlockedVersions: resolvedChallengesWithEncryptedKeys
-          }).finish(),
+        body: api.UnlockVersionsRequest.encode({
+          unlockedVersions: resolvedChallengesWithEncryptedKeys
+        }).finish(),
         response: api.SessionResolveChallengeResponse.decode
       });
     }
     return unlockedVersions;
-  }
-
-  /**
-   * Save a one-to-one association between a tuple <identityLogin, resourceName> and a resourceID.
-   * @param login The login of the identity involved in the association
-   * @param resourceName The desired resource name involved in the association
-   * @param resourceID The ID of the resource involved in the association
-   * @return(p) On success the promise will be resolved with void. On error the promise will be rejected with an {@link Error} with kind:
-   * - `DataPeps.ServerError.IdentityNotFound` if the identity cannot be assumed or if the identity does not exist.
-   * - `DataPeps.ServerError.ResourceNotFound` if the resource does not exist.
-   */
-  async setNamedResource(
-    login: string,
-    resourceName: string,
-    resourceID: ID
-  ): Promise<void> {
-    let assume = { login, kind: IdentityAccessKind.WRITE };
-    let res = await this.session.doProtoRequest<void>({
-      method: "PUT",
-      code: 200,
-      assume,
-      path: `/api/v4/identity/${encodeURI(login)}/resource/${encodeURIComponent(
-        resourceName
-      )}`,
-      request: () =>
-        api.IdentitySetNamedResourceRequest.encode({
-          resourceID
-        }).finish()
-    });
-    return res;
-  }
-
-  /**
-   * Get the resource associated with the tuple <identityLogin, resourceName>.
-   * @param login The login of the identity involved in the association
-   * @param resourceName The resource name involved in the association
-   * @return(p) On success the promise will be resolved with resource associated with the tuple <identityLogin, resourceName>. On error the promise will be rejected with an {@link Error} with kind:
-   * - `DataPeps.ServerError.IdentityNotFound` if the identity cannot be assumed or if the identity does not exist.
-   * - `DataPeps.ServerError.NamedResourceNotFound` if the NamedResource does not exist.
-   */
-  async getNamedResource<T>(
-    login: string,
-    resourceName: string,
-    options?: {
-      parse?: ((u: Uint8Array) => T);
-    }
-  ): Promise<Resource<T>> {
-    options = options != null ? options : {};
-    let assume = { login, kind: IdentityAccessKind.READ };
-    let resp = await this.session.doProtoRequest({
-      method: "GET",
-      code: 200,
-      assume,
-      path:
-        "/api/v4/identity/" +
-        encodeURIComponent(login) +
-        "/resource/" +
-        encodeURIComponent(resourceName),
-      response: r => api.IdentityGetNamedResourceResponse.decode(r)
-    });
-    return makeResourceFromResponse<T>(
-      resp.resource,
-      api.ResourceType.SES,
-      this.session,
-      options.parse,
-      assume.login
-    );
   }
 
   private async getSharingGraph(
@@ -877,7 +807,7 @@ export class IdentityAPI {
     let withKeys = options.withKeys == null ? true : options.withKeys;
     let { graph } = await this.session.doProtoRequest({
       method: "GET",
-      code: 200,
+      expectedCode: 200,
       path: "/api/v4/identity/" + encodeURIComponent(login) + "/sharingGraph",
       assume: withKeys ? { login, kind: IdentityAccessKind.WRITE } : null,
       response: api.IdentityGetSharingGraphResponse.decode

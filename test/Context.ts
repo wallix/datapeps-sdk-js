@@ -2,6 +2,7 @@ import * as DataPeps from "../src/DataPeps";
 import * as Config from "./Config";
 import * as nacl from "tweetnacl";
 import { IdentityAPI, IdentityFields } from "../src/DataPeps";
+import { Uint8Tool } from "../src/Tools";
 
 export interface initCtx {
   seed: number;
@@ -20,7 +21,7 @@ export interface adminCtx {
 
 export async function admin(): Promise<adminCtx> {
   let admin = Config.admin;
-  let adminSecret = new TextEncoder().encode(Config.adminSecret);
+  let adminSecret = Uint8Tool.encode(Config.adminSecret);
   try {
     await DataPeps.register(admin, adminSecret);
   } catch (e) {
@@ -132,7 +133,7 @@ export async function user(
   name: string,
   domain?: string
 ): Promise<userCtx> {
-  let payload = new TextEncoder().encode(
+  let payload = Uint8Tool.encode(
     JSON.stringify({
       firstname: name,
       lastname: "typescript",
@@ -206,7 +207,7 @@ export async function aliceBobWithDeviceAndGroup(
     login: `aliceBob.${init.seed}`,
     name: `Alice&Bob's`,
     kind: "test/group",
-    payload: new TextEncoder().encode(
+    payload: Uint8Tool.encode(
       JSON.stringify({
         description: `A group shared by alice & bob`
       } as groupPayload)
@@ -247,7 +248,7 @@ export async function dev(init: initCtx, n = 1): Promise<devCtx> {
             login: `app${i}.${init.seed}`,
             name: "A killer app",
             kind: "pepsswarm/3",
-            payload: new TextEncoder().encode(
+            payload: Uint8Tool.encode(
               JSON.stringify({
                 description: `app allows you to do awesome stuff and respect your privacy`
               })

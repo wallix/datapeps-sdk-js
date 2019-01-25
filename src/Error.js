@@ -20,9 +20,9 @@ var SDKKind;
  */
 var Error = /** @class */ (function () {
     function Error(properties) {
-        // console.log("error", properties)
+        // console.log("error", properties);
         // var err = new global.Error();
-        // console.log("stack", err.stack)
+        // console.log("stack", err.stack);
         this.name = "DataPepsError";
         var kname = proto_1.api.PepsErrorKind[properties.kind];
         if (kname == null) {

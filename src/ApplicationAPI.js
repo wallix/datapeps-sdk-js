@@ -78,14 +78,12 @@ var ApplicationAPI = /** @class */ (function () {
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "PUT",
                                 assume: { login: appID, kind: IdentityAPI_1.IdentityAccessKind.WRITE },
-                                code: 201,
+                                expectedCode: 201,
                                 path: "/api/v4/identity/" + encodeURI(appID) + "/configure-as-application",
-                                request: function () {
-                                    return proto_1.api.IdentityConfigurationAsApplicationRequest.encode({
-                                        Login: appID,
-                                        config: c
-                                    }).finish();
-                                }
+                                body: proto_1.api.IdentityConfigurationAsApplicationRequest.encode({
+                                    Login: appID,
+                                    config: c
+                                }).finish()
                             })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
@@ -108,7 +106,7 @@ var ApplicationAPI = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "GET",
                             assume: { login: appID, kind: IdentityAPI_1.IdentityAccessKind.READ },
-                            code: 200,
+                            expectedCode: 200,
                             path: "/api/v4/identity/" + encodeURI(appID) + "/configure-as-application",
                             response: function (r) {
                                 var config = proto_1.api.IdentityConfigurationAsApplicationResponse.decode(r)
@@ -146,11 +144,9 @@ var ApplicationAPI = /** @class */ (function () {
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "POST",
                                 assume: { login: appID, kind: IdentityAPI_1.IdentityAccessKind.READ },
-                                code: 200,
+                                expectedCode: 200,
                                 path: "/api/v4/application/" + encodeURI(appID) + "/usage-overview",
-                                request: function () {
-                                    return proto_1.api.ApplicationUsageOverviewRequest.encode(__assign({ Login: appID }, options)).finish();
-                                },
+                                body: proto_1.api.ApplicationUsageOverviewRequest.encode(__assign({ Login: appID }, options)).finish(),
                                 response: function (r) {
                                     var overview = proto_1.api.ApplicationUsageOverviewResponse.decode(r).overview;
                                     return {
@@ -185,18 +181,16 @@ var ApplicationAPI = /** @class */ (function () {
                         options = !!options ? options : {};
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "POST",
-                                code: 200,
+                                expectedCode: 200,
                                 path: "/api/v4/application/" + encodeURI(appID) + "/identities/list",
                                 assume: { login: appID, kind: IdentityAPI_1.IdentityAccessKind.READ },
-                                request: function () {
-                                    return proto_1.api.ApplicationListIdentitiesRequest.encode({
-                                        options: {
-                                            limit: options.limit,
-                                            offset: options.offset,
-                                            loginPrefix: options.loginPrefix,
-                                        }
-                                    }).finish();
-                                },
+                                body: proto_1.api.ApplicationListIdentitiesRequest.encode({
+                                    options: {
+                                        limit: options.limit,
+                                        offset: options.offset,
+                                        loginPrefix: options.loginPrefix
+                                    }
+                                }).finish(),
                                 response: function (r) {
                                     return proto_1.api.ApplicationListIdentitiesResponse.decode(r);
                                 }

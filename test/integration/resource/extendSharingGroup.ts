@@ -7,14 +7,14 @@ import * as mocha from "mocha";
 import * as Long from "long";
 import { Session } from "inspector";
 import { ResourceAPI } from "../../../src/DataPeps";
+import { Uint8Tool } from "../../../src/Tools";
 
 class ResourceContent {
   plain: Uint8Array;
   encrypted: Uint8Array;
 
   constructor(resource: DataPeps.Resource<{}>, content: string) {
-    let textEncoder = new TextEncoder();
-    this.plain = textEncoder.encode(content);
+    this.plain = Uint8Tool.encode(content);
     this.encrypted = resource.encrypt(this.plain);
   }
 }

@@ -53,7 +53,7 @@ export class ResourceBox<T> implements Resource<T> {
   }
 
   private encryptString(clear: string): string {
-    let uClear = new TextEncoder().encode(clear);
+    let uClear = Uint8Tool.encode(clear);
     let uEncrypted = this.encryptUint8Array(uClear);
     return Base64.encode(uEncrypted);
   }
@@ -81,7 +81,7 @@ export class ResourceBox<T> implements Resource<T> {
   private decryptString(cipher: string): string {
     let uEncrypted = Base64.decode(cipher);
     let clear = this.decryptUint8Array(uEncrypted);
-    return new TextDecoder().decode(clear);
+    return Uint8Tool.decode(clear);
   }
 }
 
@@ -98,7 +98,7 @@ export function createWithEncryption<T>(
   let serialize =
     options.serialize != null
       ? options.serialize
-      : p => new TextEncoder().encode(JSON.stringify(p));
+      : p => Uint8Tool.encode(JSON.stringify(p));
   let encryptionPK: IdentityPublicKey = {
     login: null,
     version: null,
@@ -180,7 +180,7 @@ export async function makeResource<T>(
   );
   let keypair = nacl.box.keyPair.fromSecretKey(secretKey);
 
-  parse = parse != null ? parse : u => JSON.parse(new TextDecoder().decode(u));
+  parse = parse != null ? parse : u => JSON.parse(Uint8Tool.decode(u));
   let payload =
     resource.payload.length == 0
       ? null
@@ -278,7 +278,7 @@ export async function createBodyRequest<T>(
   let serialize =
     options.serialize != null
       ? options.serialize
-      : p => new TextEncoder().encode(JSON.stringify(p));
+      : p => Uint8Tool.encode(JSON.stringify(p));
   let keypair = nacl.box.keyPair();
   let encryptedSharingGroup = await encryptForSharingGroup(
     keypair.secretKey,

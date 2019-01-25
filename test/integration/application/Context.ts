@@ -14,6 +14,7 @@ import {
   ApplicationJWT,
   ApplicationAPI
 } from "../../../src/DataPeps";
+import { Uint8Tool } from "../../../src/Tools";
 
 /**
  * Create a devCtx with n applications that are configured with all different
@@ -59,14 +60,10 @@ async function registerIdentitiesWithApp(
     async (field, secret) => {
       let token = JWT.sign(
         { [config.config.claimForLogin]: field.login },
-        new TextDecoder().decode(config.secretKey),
+        Uint8Tool.decode(config.secretKey),
         { algorithm: ApplicationJWT.Algorithm[config.config.signAlgorithm] }
       );
-      await Application.createUser(
-        app.login,
-        { jwt: { token } },
-        secret
-      );
+      await Application.createUser(app.login, { jwt: { token } }, secret);
     },
     options
   );

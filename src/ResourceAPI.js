@@ -80,12 +80,10 @@ var ResourceAPI = /** @class */ (function () {
                         _a = _b.sent(), body = _a.body, keypair = _a.keypair;
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "POST",
-                                code: 201,
+                                expectedCode: 201,
                                 path: "/api/v4/resources",
-                                request: function () {
-                                    return proto_1.api.ResourcePostRequest.encode(__assign({}, body, { type: type,
-                                        kind: kind })).finish();
-                                },
+                                body: proto_1.api.ResourcePostRequest.encode(__assign({}, body, { type: type,
+                                    kind: kind })).finish(),
                                 response: proto_1.api.ResourcePostResponse.decode
                             })];
                     case 2:
@@ -109,18 +107,20 @@ var ResourceAPI = /** @class */ (function () {
     ResourceAPI.prototype.list = function (options) {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
-            var assume, params;
+            var assume, parse, params;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         options = options != null ? options : {};
                         assume = options.assume != null ? options.assume : this.session.login;
+                        parse = options.parse;
                         params = options.reason != null
                             ? __assign({}, options, { access_reason: options.reason }) : options;
+                        delete params.parse;
                         return [4 /*yield*/, this.session
                                 .doProtoRequest({
                                 method: "GET",
-                                code: 200,
+                                expectedCode: 200,
                                 path: "/api/v4/resources",
                                 assume: { login: assume, kind: IdentityAPI_1.IdentityAccessKind.READ },
                                 params: params,
@@ -129,7 +129,7 @@ var ResourceAPI = /** @class */ (function () {
                                 }
                             })
                                 .then(function (resources) {
-                                return ResourceInternal_1.makeResourcesFromResponses(resources, _this.session, options.parse);
+                                return ResourceInternal_1.makeResourcesFromResponses(resources, _this.session, parse);
                             })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
@@ -158,7 +158,7 @@ var ResourceAPI = /** @class */ (function () {
                         params = options.reason != null ? { access_reason: options.reason } : undefined;
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "GET",
-                                code: 200,
+                                expectedCode: 200,
                                 path: "/api/v4/resource/" + id,
                                 assume: { login: assume, kind: IdentityAPI_1.IdentityAccessKind.READ },
                                 params: params,
@@ -167,6 +167,71 @@ var ResourceAPI = /** @class */ (function () {
                     case 1:
                         response = _a.sent();
                         return [2 /*return*/, ResourceInternal_1.makeResourceFromResponse(response, proto_1.api.ResourceType.SES, this.session, options.parse, assume)];
+                }
+            });
+        });
+    };
+    /**
+     * Get the resource associated with the tuple <identityLogin, resourceName>.
+     * @param login The login of the identity involved in the association
+     * @param resourceName The resource name involved in the association
+     * @return(p) On success the promise will be resolved with resource associated with the tuple <identityLogin, resourceName>. On error the promise will be rejected with an {@link Error} with kind:
+     * - `DataPeps.ServerError.IdentityNotFound` if the identity cannot be assumed or if the identity does not exist.
+     * - `DataPeps.ServerError.NamedResourceNotFound` if the NamedResource does not exist.
+     */
+    ResourceAPI.prototype.getNamed = function (login, resourceName, options) {
+        return __awaiter(this, void 0, void 0, function () {
+            var assume, resp;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        options = options != null ? options : {};
+                        assume = { login: login, kind: IdentityAPI_1.IdentityAccessKind.READ };
+                        return [4 /*yield*/, this.session.doProtoRequest({
+                                method: "GET",
+                                expectedCode: 200,
+                                assume: assume,
+                                path: "/api/v4/identity/" +
+                                    encodeURIComponent(login) +
+                                    "/resource/" +
+                                    encodeURIComponent(resourceName),
+                                response: function (r) { return proto_1.api.IdentityGetNamedResourceResponse.decode(r); }
+                            })];
+                    case 1:
+                        resp = _a.sent();
+                        return [2 /*return*/, ResourceInternal_1.makeResourceFromResponse(resp.resource, proto_1.api.ResourceType.SES, this.session, options.parse, assume.login)];
+                }
+            });
+        });
+    };
+    /**
+     * Save a one-to-one association between the key <login, resourceName> and a resourceID.
+     * @param login The login of the identity involved in the association
+     * @param resourceName The desired resource name involved in the association
+     * @param resourceID The ID of the resource involved in the association
+     * @return(p) On success the promise will be resolved with void. On error the promise will be rejected with an {@link Error} with kind:
+     * - `DataPeps.ServerError.IdentityNotFound` if the identity cannot be assumed or if the identity does not exist.
+     * - `DataPeps.ServerError.ResourceNotFound` if the resource does not exist.
+     */
+    ResourceAPI.prototype.setNamed = function (login, resourceName, resourceID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var assume, res;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        assume = { login: login, kind: IdentityAPI_1.IdentityAccessKind.WRITE };
+                        return [4 /*yield*/, this.session.doProtoRequest({
+                                method: "PUT",
+                                expectedCode: 200,
+                                assume: assume,
+                                path: "/api/v4/identity/" + encodeURI(login) + "/resource/" + encodeURIComponent(resourceName),
+                                body: proto_1.api.IdentitySetNamedResourceRequest.encode({
+                                    resourceID: resourceID
+                                }).finish()
+                            })];
+                    case 1:
+                        res = _a.sent();
+                        return [2 /*return*/, res];
                 }
             });
         });
@@ -189,7 +254,7 @@ var ResourceAPI = /** @class */ (function () {
                         assume = options.assume != null ? options.assume : this.session.login;
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "DELETE",
-                                code: 200,
+                                expectedCode: 200,
                                 path: "/api/v4/resource/" + id,
                                 assume: { login: assume, kind: IdentityAPI_1.IdentityAccessKind.WRITE },
                                 params: { soft: true }
@@ -217,7 +282,7 @@ var ResourceAPI = /** @class */ (function () {
                         assume = options.assume != null ? options.assume : this.session.login;
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "DELETE",
-                                code: 200,
+                                expectedCode: 200,
                                 path: "/api/v4/resource/" + id,
                                 assume: { login: assume, kind: IdentityAPI_1.IdentityAccessKind.WRITE },
                                 params: { soft: false }
@@ -247,7 +312,7 @@ var ResourceAPI = /** @class */ (function () {
                         assume = options.assume != null ? options.assume : this.session.login;
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "GET",
-                                code: 200,
+                                expectedCode: 200,
                                 path: "/api/v4/resource/" + id + "/key",
                                 response: proto_1.api.ResourceGetKeyResponse.decode
                             })];
@@ -268,14 +333,12 @@ var ResourceAPI = /** @class */ (function () {
                         encryptedSharingGroup = _b.sent();
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "PATCH",
-                                code: 201,
+                                expectedCode: 201,
                                 path: "/api/v4/resource/" + id + "/sharingGroup",
                                 assume: { login: assume, kind: IdentityAPI_1.IdentityAccessKind.WRITE },
-                                request: function () {
-                                    return proto_1.api.ResourceExtendSharingGroupRequest.encode({
-                                        sharingGroup: encryptedSharingGroup
-                                    }).finish();
-                                }
+                                body: proto_1.api.ResourceExtendSharingGroupRequest.encode({
+                                    sharingGroup: encryptedSharingGroup
+                                }).finish()
                             })];
                     case 5: return [2 /*return*/, _b.sent()];
                 }
@@ -302,9 +365,9 @@ var ResourceAPI = /** @class */ (function () {
                         assume = options.assume != null ? options.assume : this.session.login;
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "POST",
-                                code: 200,
+                                expectedCode: 200,
                                 path: "/api/v4/resources/accessLogs",
-                                request: function () { return proto_1.api.ResourceGetAccessLogsRequest.encode(options).finish(); },
+                                body: proto_1.api.ResourceGetAccessLogsRequest.encode(options).finish(),
                                 response: proto_1.api.ResourceGetAccessLogsResponse.decode,
                                 assume: {
                                     login: assume,
@@ -338,7 +401,7 @@ var ResourceAPI = /** @class */ (function () {
                         assume = options.assume != null ? options.assume : this.session.login;
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "GET",
-                                code: 200,
+                                expectedCode: 200,
                                 path: "/api/v4/resource/" + id + "/sharingGroup",
                                 assume: { login: assume, kind: IdentityAPI_1.IdentityAccessKind.READ },
                                 response: function (r) {

@@ -7,6 +7,7 @@ import { configs, getBadAlgoKey } from "../Utils";
 import { init, initCtx, devCtx } from "../../../Context";
 import { itError } from "../../../Utils";
 import { devWithAllConfigs } from "../Context";
+import { Uint8Tool } from "../../../../src/Tools";
 
 describe("application.createUser", () => {
   let ctx: initCtx & devCtx;
@@ -29,7 +30,7 @@ describe("application.createUser", () => {
     })`, async () => {
       const login = `alice${Math.random()}`;
       let userSecret = "aSoStrongSecret";
-      let token = JWT.sign({ login }, new TextDecoder().decode(secretKey), {
+      let token = JWT.sign({ login }, Uint8Tool.decode(secretKey), {
         algorithm: ApplicationJWT.Algorithm[signAlgorithm]
       });
       let createAliceResp = await Application.createUser(

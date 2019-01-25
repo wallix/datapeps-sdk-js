@@ -31,7 +31,7 @@ describe("application.listIdentities", () => {
   const defaultExpectedLimit = 10;
   const numberOfIdentitiesByPrefix = 5;
   const numberOfIdentities = numberOfIdentitiesByPrefix * 2;
-  const loginPrefixA = "alice"
+  const loginPrefixA = "alice";
 
   before(async () => {
     let initCtx = await init();
@@ -66,21 +66,22 @@ describe("application.listIdentities", () => {
   ///////////////////////////////////////////////
 
   configs.forEach(({ config, secretKey }, i) => {
-
-    function itWithPage(expectedFn: () => Identity<Uint8Array>[], options?: { offset?: number; limit?: number, loginPrefix?: string }) {
+    function itWithPage(
+      expectedFn: () => Identity<Uint8Array>[],
+      options?: { offset?: number; limit?: number; loginPrefix?: string }
+    ) {
       options = options == null ? {} : options;
 
       it(`list application users, for app(${
         ApplicationJWT.Algorithm[config.signAlgorithm]
-      }), page(limit=${options.limit}, offset=${options.offset}, loginPrefix=${options.loginPrefix})`, async () => {
+      }), page(limit=${options.limit}, offset=${options.offset}, loginPrefix=${
+        options.loginPrefix
+      })`, async () => {
         let {
           identities,
           totalIdentitiesCount
-        } = await devAppAPI.listIdentities(
-          ctx.apps[i].identity.login,
-          options
-        );
-        let expected = expectedFn()
+        } = await devAppAPI.listIdentities(ctx.apps[i].identity.login, options);
+        let expected = expectedFn();
         expectContainsAllIdentities(
           expected,
           identities.map(({ identity }) => identity),
@@ -104,20 +105,23 @@ describe("application.listIdentities", () => {
       }
     }
 
-    function itWithPageTogglePrefix(options?: { offset?: number; limit?: number }) {
+    function itWithPageTogglePrefix(options?: {
+      offset?: number;
+      limit?: number;
+    }) {
       itWithPage(() => {
-        let aUnionB: Identity<Uint8Array>[] = []
-        aUnionB.push(...ctx.A[i].identities, ...ctx.B[i].identities) 
-        return aUnionB
-      }, options)
+        let aUnionB: Identity<Uint8Array>[] = [];
+        aUnionB.push(...ctx.A[i].identities, ...ctx.B[i].identities);
+        return aUnionB;
+      }, options);
       itWithPage(() => ctx.A[i].identities, {
         ...options,
-        loginPrefix: loginPrefixA,
-      })
+        loginPrefix: loginPrefixA
+      });
     }
 
     // List identities without page parameters
-    itWithPageTogglePrefix()
+    itWithPageTogglePrefix();
 
     // List identities with an offset
     itWithPageTogglePrefix({ offset: Math.floor(numberOfIdentities / 2) });
@@ -126,12 +130,10 @@ describe("application.listIdentities", () => {
     itWithPageTogglePrefix({ limit: Math.floor(numberOfIdentities / 2) });
 
     // List identities with offset and limit
-    itWithPageTogglePrefix(
-      {
-        offset: Math.floor(numberOfIdentities / 4),
-        limit: Math.floor(numberOfIdentities / 4)
-      }
-    );
+    itWithPageTogglePrefix({
+      offset: Math.floor(numberOfIdentities / 4),
+      limit: Math.floor(numberOfIdentities / 4)
+    });
 
     // List identities with an offset higher than number of identities
     itWithPageTogglePrefix({ offset: numberOfIdentities * 2 });
@@ -148,7 +150,10 @@ describe("application.listIdentities", () => {
     });
 
     // List identities with a limit and an offset higher than number of identities
-    itWithPageTogglePrefix({ limit: numberOfIdentities * 2, offset: numberOfIdentities * 2 });
+    itWithPageTogglePrefix({
+      limit: numberOfIdentities * 2,
+      offset: numberOfIdentities * 2
+    });
   });
 
   ///////////////////////////////////////////////
@@ -157,8 +162,7 @@ describe("application.listIdentities", () => {
 
   itError(
     `cannot list an application that doesn't exists`,
-    async () =>
-      await devAppAPI.listIdentities("my.app.does.not.exists"),
+    async () => await devAppAPI.listIdentities("my.app.does.not.exists"),
     ServerError.IdentityNotFound
   );
 

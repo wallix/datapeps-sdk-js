@@ -2,6 +2,10 @@ import { api } from "./proto";
 import { Session } from "./Session";
 import { IdentityAPI } from "./IdentityAPI";
 
+export const RegisterTokenStatus = api.RegisterTokenStatus;
+
+export type RegisterEmailValidationToken = api.IRegisterEmailValidationToken;
+
 export class AdminAPI {
   private session: Session;
 
@@ -21,12 +25,11 @@ export class AdminAPI {
   async setAdmin(login: string, admin: boolean): Promise<void> {
     return await this.session.doProtoRequest<void>({
       method: "POST",
-      code: 200,
+      expectedCode: 200,
       path: "/api/v4/identity/" + encodeURIComponent(login) + "/promote",
-      request: () =>
-        api.IdentityPromoteRequest.encode({
-          admin
-        }).finish()
+      body: api.IdentityPromoteRequest.encode({
+        admin
+      }).finish()
     });
   }
 
@@ -42,13 +45,12 @@ export class AdminAPI {
   async setActive(login: string, active: boolean): Promise<void> {
     return await this.session.doProtoRequest<void>({
       method: "POST",
-      code: 200,
+      expectedCode: 200,
       path: "/api/v4/identity/" + encodeURI(login) + "/active",
-      request: () =>
-        api.IdentityToggleActiveStatusRequest.encode({
-          login,
-          active
-        }).finish()
+      body: api.IdentityToggleActiveStatusRequest.encode({
+        login,
+        active
+      }).finish()
     });
   }
 
@@ -81,10 +83,10 @@ export class AdminAPI {
   async listRegisterTokens(options?: {
     offset?: number;
     limit?: number;
-  }): Promise<api.IRegisterEmailValidationToken[]> {
+  }): Promise<RegisterEmailValidationToken[]> {
     let { links } = await this.session.doProtoRequest({
       method: "GET",
-      code: 200,
+      expectedCode: 200,
       path: "/api/v4/register/links",
       params: options,
       response: api.LinksGetResponse.decode

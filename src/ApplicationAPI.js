@@ -234,7 +234,11 @@ var ApplicationAPI = /** @class */ (function () {
      */
     ApplicationAPI.extractLoginFromDataPepsLogin = function (dataPepsLogin) {
         dataPepsLogin = dataPepsLogin == null ? "" : dataPepsLogin;
-        return dataPepsLogin.split("@", 1)[0];
+        var i = dataPepsLogin.lastIndexOf("@");
+        if (i == -1) {
+            return "";
+        }
+        return dataPepsLogin.substr(0, i);
     };
     return ApplicationAPI;
 }());

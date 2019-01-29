@@ -95,5 +95,5 @@ export declare class ApplicationAPI {
      * @return Returns the user's application login used to generate the given DataPeps login.
      * If the dataPepsLogin is null, undefined, empty or malformatted returns an empty string.
      */
-    static extractLoginFromDataPepsLogin(dataPepsLogin: string): string;
+    static extractLoginFromDataPepsLogin(dataPepsLogin: any): any;
 }

@@ -44,7 +44,7 @@ export async function registerIdentitiesForEachApp(
   let promises = configs.map((config, i) =>
     registerIdentitiesWithApp(init, dev.apps[i].identity, config, n, options)
   );
-  return Promise.all(promises);
+  return await Promise.all(promises);
 }
 
 async function registerIdentitiesWithApp(
@@ -63,7 +63,11 @@ async function registerIdentitiesWithApp(
         Uint8Tool.decode(config.secretKey),
         { algorithm: ApplicationJWT.Algorithm[config.config.signAlgorithm] }
       );
-      await Application.createUser(app.login, { jwt: { token } }, secret);
+      return await Application.createUser(
+        app.login,
+        { jwt: { token } },
+        secret
+      );
     },
     options
   );

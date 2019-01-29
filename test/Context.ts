@@ -1,7 +1,7 @@
 import * as DataPeps from "../src/DataPeps";
 import * as Config from "./Config";
 import * as nacl from "tweetnacl";
-import { IdentityAPI, IdentityFields } from "../src/DataPeps";
+import { IdentityAPI, IdentityFields, Identity } from "../src/DataPeps";
 import { Uint8Tool } from "../src/Tools";
 
 export interface initCtx {
@@ -286,11 +286,13 @@ export interface identitiesCtx {
 export async function generateIdentities(
   init: initCtx,
   n: number,
-  create: (field: IdentityFields, secret: Uint8Array) => Promise<any>,
+  create: (
+    field: IdentityFields,
+    secret: Uint8Array
+  ) => Promise<{ login: string }>,
   options?: identityOptions
 ): Promise<identitiesCtx> {
-  let identities = [];
-  let promises = [];
+  let promises: Promise<Identity<any>>[] = [];
   options = options ? options : {};
   let name = options.name == null ? "id" : options.name;
   for (let i = 0; i < n; i++) {
@@ -300,16 +302,20 @@ export async function generateIdentities(
       ...options,
       name: `${name}${nameSuffix}`
     });
-    promises.push(create(identity, secret));
-    identities.push({
-      ...identity,
-      created: new Date(),
-      admin: false,
-      active: true
-    });
+    promises.push(
+      (async () => {
+        let { login } = await create(identity, secret);
+        return {
+          ...identity,
+          login,
+          created: new Date(),
+          admin: false,
+          active: true
+        };
+      })()
+    );
   }
-  await Promise.all(promises);
-  return { identities };
+  return { identities: await Promise.all(promises) };
 }
 
 export async function registerIdentities(
@@ -317,7 +323,15 @@ export async function registerIdentities(
   n: number,
   options?: identityOptions
 ): Promise<identitiesCtx> {
-  return await generateIdentities(init, n, DataPeps.register, options);
+  return await generateIdentities(
+    init,
+    n,
+    async (fields, secret) => {
+      await DataPeps.register(fields, secret);
+      return { login: fields.login };
+    },
+    options
+  );
 }
 
 const identityDefaultKind = "kind/test-default";

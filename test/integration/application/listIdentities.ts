@@ -3,13 +3,11 @@ import { expect } from "chai";
 import {
   ApplicationAPI,
   ApplicationJWT,
-  Identity,
-  ServerError,
-} from "../../../src/DataPeps";
-import {
   ApplicationIdentitySortingField,
-  ApplicationIdentitySortingOrder
-} from "../../../src/ApplicationAPI";
+  ApplicationIdentitySortingOrder,
+  Identity,
+  ServerError
+} from "../../../src/DataPeps";
 import { configs } from "./Utils";
 import {
   initCtx,
@@ -93,9 +91,7 @@ describe("application.listIdentities", () => {
         } = await devAppAPI.listIdentities(ctx.apps[i].identity.login, options);
         let expected = expectedFn();
         expect(expected.map(i => i.login)).to.include.members(
-          identities.map(i =>
-            ApplicationAPI.extractLoginFromDataPepsLogin(i.identity.login)
-          )
+          identities.map(i => i.identity.login)
         );
         expect(identities.length).to.equal(
           expectedResultSize(expected, options.offset, options.limit),
@@ -114,84 +110,6 @@ describe("application.listIdentities", () => {
           );
         }
       });
-
-      function expectInOrder(
-        identities: Identity<Uint8Array>[],
-        sortingField: ApplicationIdentitySortingField,
-        order: ApplicationIdentitySortingOrder,
-        msg?: string
-      ) {
-        sortingField =
-          sortingField == null
-            ? ApplicationIdentitySortingField.CREATED
-            : sortingField;
-        order = order == null ? ApplicationIdentitySortingOrder.ASC : order;
-        let identitiesFields: Date[] | string[];
-        switch (sortingField) {
-          case ApplicationIdentitySortingField.LOGIN:
-            identitiesFields = identities.map(i => i.login);
-            break;
-          case ApplicationIdentitySortingField.CREATED:
-            identitiesFields = identities.map(i => i.created);
-            break;
-          default:
-            throw Error(
-              "unknown application identity sorting field type: " + sortingField
-            );
-        }
-        let secondaryFields = identities.map(i => i.login);
-        if (order === ApplicationIdentitySortingOrder.DESC) {
-          identitiesFields = identitiesFields.reverse();
-          secondaryFields = secondaryFields.reverse();
-        }
-        let errorMessageGenerator = (
-          first: Date | string,
-          second: Date | string,
-          index: number,
-          isSecondary: boolean
-        ) => {
-          let secondaryMsg = isSecondary ? " (secondary field)" : "";
-          msg =
-            msg == null
-              ? "identities returned are not ordered as expected"
-              : msg;
-          return `${msg}: ${first} (${index}) < ${second} (${index -
-            1}) ${secondaryMsg}`;
-        };
-        for (let i = 1; i < identitiesFields.length; i++) {
-          expect(
-            identitiesFields[i] >= identitiesFields[i - 1],
-            errorMessageGenerator(
-              identitiesFields[i],
-              identitiesFields[i - 1],
-              i,
-              false
-            )
-          ).to.be.true;
-          if (identitiesFields[i] == identitiesFields[i - 1]) {
-            expect(
-              secondaryFields[i] >= secondaryFields[i],
-              errorMessageGenerator(
-                secondaryFields[i],
-                secondaryFields[i - 1],
-                i,
-                false
-              )
-            ).to.be.true;
-          }
-        }
-      }
-
-      function expectedResultSize(
-        expected: any[],
-        offset?: number,
-        limit?: number
-      ) {
-        offset = offset == null ? 0 : offset;
-        limit = limit == null ? defaultExpectedLimit : limit;
-        let size = expected.length - offset;
-        return size > limit ? limit : size > 0 ? size : 0;
-      }
     }
 
     function itWithPageTogglePrefix(options?: {
@@ -280,4 +198,84 @@ describe("application.listIdentities", () => {
     },
     ServerError.IdentityCannotAssumeOwnership
   );
+
+  ///////////////////////////////////////////////
+  // Tools
+  ///////////////////////////////////////////////
+
+  function expectInOrder(
+    identities: Identity<Uint8Array>[],
+    sortingField: ApplicationIdentitySortingField,
+    order: ApplicationIdentitySortingOrder,
+    msg?: string
+  ) {
+    sortingField =
+      sortingField == null
+        ? ApplicationIdentitySortingField.CREATED
+        : sortingField;
+    order = order == null ? ApplicationIdentitySortingOrder.ASC : order;
+    let identitiesFields: Date[] | string[];
+    switch (sortingField) {
+      case ApplicationIdentitySortingField.LOGIN:
+        identitiesFields = identities.map(i => i.login);
+        break;
+      case ApplicationIdentitySortingField.CREATED:
+        identitiesFields = identities.map(i => i.created);
+        break;
+      default:
+        throw Error(
+          "unknown application identity sorting field type: " + sortingField
+        );
+    }
+    let secondaryFields = identities.map(i => i.login);
+    if (order === ApplicationIdentitySortingOrder.DESC) {
+      identitiesFields = identitiesFields.reverse();
+      secondaryFields = secondaryFields.reverse();
+    }
+    let errorMessageGenerator = (
+      first: Date | string,
+      second: Date | string,
+      index: number,
+      isSecondary: boolean
+    ) => {
+      let secondaryMsg = isSecondary ? " (secondary field)" : "";
+      msg =
+        msg == null ? "identities returned are not ordered as expected" : msg;
+      return `${msg}: ${first} (${index}) < ${second} (${index -
+        1}) ${secondaryMsg}`;
+    };
+    for (let i = 1; i < identitiesFields.length; i++) {
+      expect(
+        identitiesFields[i] >= identitiesFields[i - 1],
+        errorMessageGenerator(
+          identitiesFields[i],
+          identitiesFields[i - 1],
+          i,
+          false
+        )
+      ).to.be.true;
+      if (identitiesFields[i] == identitiesFields[i - 1]) {
+        expect(
+          secondaryFields[i] >= secondaryFields[i],
+          errorMessageGenerator(
+            secondaryFields[i],
+            secondaryFields[i - 1],
+            i,
+            false
+          )
+        ).to.be.true;
+      }
+    }
+  }
+
+  function expectedResultSize(
+    expected: any[],
+    offset?: number,
+    limit?: number
+  ) {
+    offset = offset == null ? 0 : offset;
+    limit = limit == null ? defaultExpectedLimit : limit;
+    let size = expected.length - offset;
+    return size > limit ? limit : size > 0 ? size : 0;
+  }
 });

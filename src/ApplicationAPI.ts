@@ -229,8 +229,12 @@ export class ApplicationAPI {
    * @return Returns the user's application login used to generate the given DataPeps login.
    * If the dataPepsLogin is null, undefined, empty or malformatted returns an empty string.
    */
-  static extractLoginFromDataPepsLogin(dataPepsLogin: string): string {
+  static extractLoginFromDataPepsLogin(dataPepsLogin) {
     dataPepsLogin = dataPepsLogin == null ? "" : dataPepsLogin;
-    return dataPepsLogin.split("@", 1)[0];
+    let i = dataPepsLogin.lastIndexOf("@");
+    if (i == -1) {
+      return "";
+    }
+    return dataPepsLogin.substr(0, i);
   }
 }

@@ -61,11 +61,13 @@ function createUser(appID, auth, secret) {
                     encryption = new CryptoFuncs_1.Encryption();
                     secretBytes = Tools_1.Uint8Tool.convert(secret);
                     encryption.generate(secretBytes, null);
-                    payload = Tools_1.Uint8Tool.convert(JSON.stringify({}));
+                    payload = Tools_1.Uint8Tool.convert(JSON.stringify({
+                        appID: appID
+                    }));
                     identity = {
                         login: null,
                         name: null,
-                        kind: appID + "/application/user",
+                        kind: "pepsswarm/4",
                         payload: payload
                     };
                     resource = ResourceInternal_1.createWithEncryption("application/secret", secretBytes, encryption, { serialize: function (u) { return u; } });

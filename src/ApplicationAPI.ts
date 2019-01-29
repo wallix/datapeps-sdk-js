@@ -2,6 +2,7 @@ import { ApplicationJWT } from "./ApplicationJWT";
 import { api } from "./proto";
 import { Session } from "./Session";
 import { IdentityAccessKind, Identity } from "./IdentityAPI";
+import { IdentityX } from "./IdentityInternal";
 
 export namespace ApplicationAPI {
   export type Config = {
@@ -164,7 +165,7 @@ export class ApplicationAPI {
     totalIdentitiesCount: number;
   }> {
     options = !!options ? options : {};
-    return (await this.session.doProtoRequest({
+    return await this.session.doProtoRequest({
       method: "POST",
       expectedCode: 200,
       path: `/api/v4/application/${encodeURI(appID)}/identities/list`,
@@ -177,8 +178,32 @@ export class ApplicationAPI {
         }
       }).finish(),
       response: r => {
-        return api.ApplicationListIdentitiesResponse.decode(r);
+        let {
+          identities: _identities,
+          totalIdentitiesCount
+        } = api.ApplicationListIdentitiesResponse.decode(r);
+        return {
+          identities: _identities.map(i => {
+            let identity = IdentityX.fromapi(i.identity);
+            return {
+              identity,
+              auth: i.auth
+            };
+          }),
+          totalIdentitiesCount
+        };
       }
-    })) as any;
+    });
+  }
+
+  /**
+   * Get user's application login from the user's DataPeps login
+   * @param dataPepsLogin the user's login in DataPeps
+   * @return Returns the user's application login used to generate the given DataPeps login.
+   * If the dataPepsLogin is null, undefined, empty or malformatted returns an empty string.
+   */
+  static extractLoginFromDataPepsLogin(dataPepsLogin: string): string {
+    dataPepsLogin = dataPepsLogin == null ? "" : dataPepsLogin;
+    return dataPepsLogin.split("@", 1)[0];
   }
 }

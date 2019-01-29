@@ -49,6 +49,7 @@ var Error_1 = require("./Error");
 var CryptoFuncs_1 = require("./CryptoFuncs");
 var Tools_1 = require("./Tools");
 var HTTP_1 = require("./HTTP");
+var IdentityInternal_1 = require("./IdentityInternal");
 var IdentityPublicKey;
 (function (IdentityPublicKey) {
     var bs58 = require("bs58");
@@ -159,7 +160,7 @@ var IdentityAPI = /** @class */ (function () {
                             method: "GET",
                             expectedCode: 200,
                             path: "/api/v4/identity/" + encodeURI(login),
-                            response: function (r) { return IdentityX.fromapi(proto_1.api.Identity.decode(r)); }
+                            response: function (r) { return IdentityInternal_1.IdentityX.fromapi(proto_1.api.Identity.decode(r)); }
                         })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
@@ -215,7 +216,7 @@ var IdentityAPI = /** @class */ (function () {
                                 response: function (r) {
                                     var _a = proto_1.api.IdentityListResponse.decode(r), identities = _a.identities, totalIdentitiesCount = _a.totalIdentitiesCount;
                                     return {
-                                        identities: identities.map(IdentityX.fromapi),
+                                        identities: identities.map(IdentityInternal_1.IdentityX.fromapi),
                                         totalIdentitiesCount: totalIdentitiesCount
                                     };
                                 }
@@ -849,16 +850,4 @@ var IdentityAPI = /** @class */ (function () {
     return IdentityAPI;
 }());
 exports.IdentityAPI = IdentityAPI;
-var IdentityX = /** @class */ (function () {
-    function IdentityX() {
-    }
-    IdentityX.fromapi = function (t) {
-        var x = proto_1.api.Identity.create(t);
-        return __assign({}, x, { created: new Date(t.created * 1000) });
-    };
-    IdentityX.toapi = function (i) {
-        return __assign({}, i, { created: null });
-    };
-    return IdentityX;
-}());
 //# sourceMappingURL=IdentityAPI.js.map

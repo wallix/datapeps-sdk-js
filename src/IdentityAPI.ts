@@ -4,8 +4,8 @@ import { Error, SDKKind } from "./Error";
 import { Encryption } from "./CryptoFuncs";
 import { Uint8Tool } from "./Tools";
 import { Session } from "./Session";
-import { ID } from "./ID";
 import { client } from "./HTTP";
+import { IdentityX } from "./IdentityInternal";
 
 /**
  * An {@Identity} owns several keys, this is a reference to the unique version of an identity public key.
@@ -875,21 +875,4 @@ interface IdentitySharingElt {
   boxKey: Uint8Array;
   sharingGroup: IdentityPublicKey[];
   latest: boolean;
-}
-
-class IdentityX {
-  static fromapi(t: api.IIdentity): Identity<Uint8Array> {
-    let x = api.Identity.create(t);
-    return {
-      ...x,
-      created: new Date((t.created as number) * 1000)
-    };
-  }
-
-  static toapi(i: Identity<Uint8Array>): api.IIdentity {
-    return {
-      ...i,
-      created: null
-    };
-  }
 }

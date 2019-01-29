@@ -45,6 +45,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var proto_1 = require("./proto");
 var IdentityAPI_1 = require("./IdentityAPI");
+var IdentityInternal_1 = require("./IdentityInternal");
 var ApplicationAPI = /** @class */ (function () {
     function ApplicationAPI(session) {
         this.session = session;
@@ -192,13 +193,33 @@ var ApplicationAPI = /** @class */ (function () {
                                     }
                                 }).finish(),
                                 response: function (r) {
-                                    return proto_1.api.ApplicationListIdentitiesResponse.decode(r);
+                                    var _a = proto_1.api.ApplicationListIdentitiesResponse.decode(r), _identities = _a.identities, totalIdentitiesCount = _a.totalIdentitiesCount;
+                                    return {
+                                        identities: _identities.map(function (i) {
+                                            var identity = IdentityInternal_1.IdentityX.fromapi(i.identity);
+                                            return {
+                                                identity: identity,
+                                                auth: i.auth
+                                            };
+                                        }),
+                                        totalIdentitiesCount: totalIdentitiesCount
+                                    };
                                 }
                             })];
-                    case 1: return [2 /*return*/, (_a.sent())];
+                    case 1: return [2 /*return*/, _a.sent()];
                 }
             });
         });
+    };
+    /**
+     * Get user's application login from the user's DataPeps login
+     * @param dataPepsLogin the user's login in DataPeps
+     * @return Returns the user's application login used to generate the given DataPeps login.
+     * If the dataPepsLogin is null, undefined, empty or malformatted returns an empty string.
+     */
+    ApplicationAPI.extractLoginFromDataPepsLogin = function (dataPepsLogin) {
+        dataPepsLogin = dataPepsLogin == null ? "" : dataPepsLogin;
+        return dataPepsLogin.split("@", 1)[0];
     };
     return ApplicationAPI;
 }());

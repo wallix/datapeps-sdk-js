@@ -80,4 +80,11 @@ export declare class ApplicationAPI {
         }[];
         totalIdentitiesCount: number;
     }>;
+    /**
+     * Get user's application login from the user's DataPeps login
+     * @param dataPepsLogin the user's login in DataPeps
+     * @return Returns the user's application login used to generate the given DataPeps login.
+     * If the dataPepsLogin is null, undefined, empty or malformatted returns an empty string.
+     */
+    static extractLoginFromDataPepsLogin(dataPepsLogin: string): string;
 }

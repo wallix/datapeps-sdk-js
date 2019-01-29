@@ -3,7 +3,7 @@ import { Uint8Tool } from "./Tools";
 import { Encryption } from "./CryptoFuncs";
 import * as HTTP from "./HTTP";
 import { createWithEncryption } from "./ResourceInternal";
-import { IdentityAPI, IdentityFields } from "./IdentityAPI";
+import { IdentityFields } from "./IdentityAPI";
 import { Session } from "./Session";
 import { ResourceAPI } from "./ResourceAPI";
 
@@ -26,12 +26,16 @@ export async function createUser(
   let secretBytes = Uint8Tool.convert(secret);
   encryption.generate(secretBytes, null);
 
-  let payload = Uint8Tool.convert(JSON.stringify({}));
+  let payload = Uint8Tool.convert(
+    JSON.stringify({
+      appID
+    })
+  );
 
   let identity: IdentityFields = {
     login: null, // ignored by backend
     name: null, // ignored by backend
-    kind: `${appID}/application/user`,
+    kind: `pepsswarm/4`,
     payload
   };
 

@@ -50,6 +50,7 @@ var CryptoFuncs_1 = require("./CryptoFuncs");
 var Tools_1 = require("./Tools");
 var HTTP_1 = require("./HTTP");
 var IdentityInternal_1 = require("./IdentityInternal");
+exports.IdentitySortingOrder = IdentityInternal_1.IdentitySortingOrder;
 var IdentityPublicKey;
 (function (IdentityPublicKey) {
     var bs58 = require("bs58");
@@ -87,11 +88,6 @@ var IdentitySortingField;
     IdentitySortingField[IdentitySortingField["CREATED"] = 1] = "CREATED";
     IdentitySortingField[IdentitySortingField["KIND"] = 2] = "KIND";
 })(IdentitySortingField = exports.IdentitySortingField || (exports.IdentitySortingField = {}));
-var IdentitySortingOrder;
-(function (IdentitySortingOrder) {
-    IdentitySortingOrder[IdentitySortingOrder["DESC"] = 0] = "DESC";
-    IdentitySortingOrder[IdentitySortingOrder["ASC"] = 1] = "ASC";
-})(IdentitySortingOrder = exports.IdentitySortingOrder || (exports.IdentitySortingOrder = {}));
 var IdentityAPI = /** @class */ (function () {
     function IdentityAPI(session) {
         this.session = session;
@@ -160,7 +156,7 @@ var IdentityAPI = /** @class */ (function () {
                             method: "GET",
                             expectedCode: 200,
                             path: "/api/v4/identity/" + encodeURI(login),
-                            response: function (r) { return IdentityInternal_1.IdentityX.fromapi(proto_1.api.Identity.decode(r)); }
+                            response: function (r) { return IdentityInternal_1.IdentitySerializer.deserialize(proto_1.api.Identity.decode(r)); }
                         })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
@@ -188,17 +184,7 @@ var IdentityAPI = /** @class */ (function () {
                         if (options.sortingField == null) {
                             options.sortingField = IdentitySortingField.CREATED;
                         }
-                        if (options.sortingOrder == null) {
-                            options.sortingOrder = IdentitySortingOrder.ASC;
-                        }
-                        sortingOrder = proto_1.api.SortingOrder.ASC;
-                        if (options.sortingOrder === IdentitySortingOrder.DESC) {
-                            sortingOrder = proto_1.api.SortingOrder.DESC;
-                        }
-                        else if (options.sortingOrder != null &&
-                            options.sortingOrder != IdentitySortingOrder.ASC) {
-                            sortingOrder = options.sortingOrder;
-                        }
+                        sortingOrder = IdentityInternal_1.IdentityRequestsUtils.resolveSortingOrder(options.sortingOrder);
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "POST",
                                 expectedCode: 200,
@@ -216,7 +202,7 @@ var IdentityAPI = /** @class */ (function () {
                                 response: function (r) {
                                     var _a = proto_1.api.IdentityListResponse.decode(r), identities = _a.identities, totalIdentitiesCount = _a.totalIdentitiesCount;
                                     return {
-                                        identities: identities.map(IdentityInternal_1.IdentityX.fromapi),
+                                        identities: identities.map(IdentityInternal_1.IdentitySerializer.deserialize),
                                         totalIdentitiesCount: totalIdentitiesCount
                                     };
                                 }

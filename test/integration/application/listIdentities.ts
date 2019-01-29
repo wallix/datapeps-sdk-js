@@ -4,8 +4,12 @@ import {
   ApplicationAPI,
   ApplicationJWT,
   Identity,
-  ServerError
+  ServerError,
 } from "../../../src/DataPeps";
+import {
+  ApplicationIdentitySortingField,
+  ApplicationIdentitySortingOrder
+} from "../../../src/ApplicationAPI";
 import { configs } from "./Utils";
 import {
   initCtx,
@@ -15,8 +19,7 @@ import {
   userAndSessionCtx,
   userAndSession
 } from "../../Context";
-import { expectContainsAllIdentities } from "../identity/utils";
-import { registerIdentitiesForEachApps, devWithAllConfigs } from "./Context";
+import { registerIdentitiesForEachApp, devWithAllConfigs } from "./Context";
 import { itError } from "../../Utils";
 
 describe("application.listIdentities", () => {
@@ -37,7 +40,7 @@ describe("application.listIdentities", () => {
     let initCtx = await init();
     let devCtx = await devWithAllConfigs(initCtx);
     let [A, B] = await Promise.all([
-      await registerIdentitiesForEachApps(
+      await registerIdentitiesForEachApp(
         initCtx,
         devCtx,
         configs,
@@ -46,7 +49,7 @@ describe("application.listIdentities", () => {
           name: loginPrefixA
         }
       ),
-      await registerIdentitiesForEachApps(
+      await registerIdentitiesForEachApp(
         initCtx,
         devCtx,
         configs,
@@ -68,30 +71,116 @@ describe("application.listIdentities", () => {
   configs.forEach(({ config, secretKey }, i) => {
     function itWithPage(
       expectedFn: () => Identity<Uint8Array>[],
-      options?: { offset?: number; limit?: number; loginPrefix?: string }
+      options?: {
+        offset?: number;
+        limit?: number;
+        loginPrefix?: string;
+        sortingField?: ApplicationIdentitySortingField;
+        sortingOrder?: ApplicationIdentitySortingOrder;
+      }
     ) {
       options = options == null ? {} : options;
-
       it(`list application users, for app(${
         ApplicationJWT.Algorithm[config.signAlgorithm]
       }), page(limit=${options.limit}, offset=${options.offset}, loginPrefix=${
         options.loginPrefix
+      }, sortingField=${options.sortingField}, sortingOrder=${
+        options.sortingOrder
       })`, async () => {
         let {
           identities,
           totalIdentitiesCount
         } = await devAppAPI.listIdentities(ctx.apps[i].identity.login, options);
         let expected = expectedFn();
-        expectContainsAllIdentities(
-          expected,
-          identities.map(({ identity }) => identity),
-          false
+        expect(expected.map(i => i.login)).to.include.members(
+          identities.map(i =>
+            ApplicationAPI.extractLoginFromDataPepsLogin(i.identity.login)
+          )
         );
         expect(identities.length).to.equal(
-          expectedResultSize(expected, options.offset, options.limit)
+          expectedResultSize(expected, options.offset, options.limit),
+          `the actual size of identities list is different from the expected`
         );
-        expect(totalIdentitiesCount).to.equal(expected.length);
+        expect(totalIdentitiesCount).to.equal(
+          expected.length,
+          `actual identities: ${identities}`
+        );
+        if (options.sortingField != null || options.sortingOrder != null) {
+          expectInOrder(
+            identities.map(i => i.identity),
+            options.sortingField,
+            options.sortingOrder,
+            `listed identities are sorted in an unexpected way`
+          );
+        }
       });
+
+      function expectInOrder(
+        identities: Identity<Uint8Array>[],
+        sortingField: ApplicationIdentitySortingField,
+        order: ApplicationIdentitySortingOrder,
+        msg?: string
+      ) {
+        sortingField =
+          sortingField == null
+            ? ApplicationIdentitySortingField.CREATED
+            : sortingField;
+        order = order == null ? ApplicationIdentitySortingOrder.ASC : order;
+        let identitiesFields: Date[] | string[];
+        switch (sortingField) {
+          case ApplicationIdentitySortingField.LOGIN:
+            identitiesFields = identities.map(i => i.login);
+            break;
+          case ApplicationIdentitySortingField.CREATED:
+            identitiesFields = identities.map(i => i.created);
+            break;
+          default:
+            throw Error(
+              "unknown application identity sorting field type: " + sortingField
+            );
+        }
+        let secondaryFields = identities.map(i => i.login);
+        if (order === ApplicationIdentitySortingOrder.DESC) {
+          identitiesFields = identitiesFields.reverse();
+          secondaryFields = secondaryFields.reverse();
+        }
+        let errorMessageGenerator = (
+          first: Date | string,
+          second: Date | string,
+          index: number,
+          isSecondary: boolean
+        ) => {
+          let secondaryMsg = isSecondary ? " (secondary field)" : "";
+          msg =
+            msg == null
+              ? "identities returned are not ordered as expected"
+              : msg;
+          return `${msg}: ${first} (${index}) < ${second} (${index -
+            1}) ${secondaryMsg}`;
+        };
+        for (let i = 1; i < identitiesFields.length; i++) {
+          expect(
+            identitiesFields[i] >= identitiesFields[i - 1],
+            errorMessageGenerator(
+              identitiesFields[i],
+              identitiesFields[i - 1],
+              i,
+              false
+            )
+          ).to.be.true;
+          if (identitiesFields[i] == identitiesFields[i - 1]) {
+            expect(
+              secondaryFields[i] >= secondaryFields[i],
+              errorMessageGenerator(
+                secondaryFields[i],
+                secondaryFields[i - 1],
+                i,
+                false
+              )
+            ).to.be.true;
+          }
+        }
+      }
 
       function expectedResultSize(
         expected: any[],
@@ -108,6 +197,8 @@ describe("application.listIdentities", () => {
     function itWithPageTogglePrefix(options?: {
       offset?: number;
       limit?: number;
+      sortingField?: ApplicationIdentitySortingField;
+      sortingOrder?: ApplicationIdentitySortingOrder;
     }) {
       itWithPage(() => {
         let aUnionB: Identity<Uint8Array>[] = [];
@@ -120,8 +211,23 @@ describe("application.listIdentities", () => {
       });
     }
 
-    // List identities without page parameters
-    itWithPageTogglePrefix();
+    // All sorting fields
+    let sortingFields = Object.keys(ApplicationIdentitySortingField)
+      .map(key => Number(key) as ApplicationIdentitySortingField)
+      .filter(key => !isNaN(key));
+    sortingFields.push(null);
+    // All sorting orders
+    let sortingOrders = Object.keys(ApplicationIdentitySortingOrder)
+      .map(key => Number(key) as ApplicationIdentitySortingOrder)
+      .filter(key => !isNaN(key));
+    sortingOrders.push(null);
+
+    sortingFields.forEach(field => {
+      sortingOrders.forEach(order => {
+        // List identities without page parameters
+        itWithPageTogglePrefix({ sortingField: field, sortingOrder: order });
+      });
+    });
 
     // List identities with an offset
     itWithPageTogglePrefix({ offset: Math.floor(numberOfIdentities / 2) });

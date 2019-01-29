@@ -34,7 +34,7 @@ export async function devWithAllConfigs(init: initCtx): Promise<devCtx> {
   return devCtx;
 }
 
-export async function registerIdentitiesForEachApps(
+export async function registerIdentitiesForEachApp(
   init: initCtx,
   dev: devCtx,
   configs: JWTConfig[],

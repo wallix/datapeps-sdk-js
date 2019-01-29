@@ -295,9 +295,10 @@ export async function generateIdentities(
   let name = options.name == null ? "id" : options.name;
   for (let i = 0; i < n; i++) {
     let secret = nacl.randomBytes(128);
+    let nameSuffix = Math.floor(Math.random() * (Math.pow(10, 6) - 1));
     let identity: DataPeps.IdentityFields = generateIdentityFields(init, {
       ...options,
-      name: `${name}${i}`
+      name: `${name}${nameSuffix}`
     });
     promises.push(create(identity, secret));
     identities.push({

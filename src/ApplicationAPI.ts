@@ -1,8 +1,24 @@
 import { ApplicationJWT } from "./ApplicationJWT";
 import { api } from "./proto";
 import { Session } from "./Session";
-import { IdentityAccessKind, Identity } from "./IdentityAPI";
-import { IdentityX } from "./IdentityInternal";
+import {
+  IdentityAccessKind,
+  Identity,
+  IdentitySortingField
+} from "./IdentityAPI";
+import {
+  IdentitySerializer,
+  IdentitySortingOrder as ApplicationIdentitySortingOrder,
+  IdentityRequestsUtils
+} from "./IdentityInternal";
+
+export { ApplicationIdentitySortingOrder };
+
+/** Allows to indicate which kind of field should be sorted. */
+export enum ApplicationIdentitySortingField {
+  LOGIN = 0,
+  CREATED = 1
+}
 
 export namespace ApplicationAPI {
   export type Config = {
@@ -159,12 +175,21 @@ export class ApplicationAPI {
       offset?: number;
       limit?: number;
       loginPrefix?: string;
+      sortingField?: ApplicationIdentitySortingField;
+      sortingOrder?: ApplicationIdentitySortingOrder;
     }
   ): Promise<{
     identities: { identity: Identity<Uint8Array>; auth: any }[];
     totalIdentitiesCount: number;
   }> {
-    options = !!options ? options : {};
+    options = options == null ? {} : options;
+    if (options.sortingField == null) {
+      options.sortingField = ApplicationIdentitySortingField.CREATED;
+    }
+    let sortingField = (options.sortingField as {}) as IdentitySortingField;
+    let sortingOrder = IdentityRequestsUtils.resolveSortingOrder(
+      options.sortingOrder
+    );
     return await this.session.doProtoRequest({
       method: "POST",
       expectedCode: 200,
@@ -174,7 +199,9 @@ export class ApplicationAPI {
         options: {
           limit: options.limit,
           offset: options.offset,
-          loginPrefix: options.loginPrefix
+          loginPrefix: options.loginPrefix,
+          sortedBy: sortingField,
+          order: sortingOrder
         }
       }).finish(),
       response: r => {
@@ -184,7 +211,7 @@ export class ApplicationAPI {
         } = api.ApplicationListIdentitiesResponse.decode(r);
         return {
           identities: _identities.map(i => {
-            let identity = IdentityX.fromapi(i.identity);
+            let identity = IdentitySerializer.deserialize(i.identity);
             return {
               identity,
               auth: i.auth

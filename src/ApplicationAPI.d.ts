@@ -1,6 +1,13 @@
 import { ApplicationJWT } from "./ApplicationJWT";
 import { Session } from "./Session";
 import { Identity } from "./IdentityAPI";
+import { IdentitySortingOrder as ApplicationIdentitySortingOrder } from "./IdentityInternal";
+export { ApplicationIdentitySortingOrder };
+/** Allows to indicate which kind of field should be sorted. */
+export declare enum ApplicationIdentitySortingField {
+    LOGIN = 0,
+    CREATED = 1,
+}
 export declare namespace ApplicationAPI {
     type Config = {
         jwt?: ApplicationJWT.Config;
@@ -73,6 +80,8 @@ export declare class ApplicationAPI {
         offset?: number;
         limit?: number;
         loginPrefix?: string;
+        sortingField?: ApplicationIdentitySortingField;
+        sortingOrder?: ApplicationIdentitySortingOrder;
     }): Promise<{
         identities: {
             identity: Identity<Uint8Array>;

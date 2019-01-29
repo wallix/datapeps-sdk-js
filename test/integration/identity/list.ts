@@ -8,11 +8,6 @@ import {
   IdentitySortingField,
   IdentitySortingOrder
 } from "../../../src/IdentityAPI";
-import {
-  expectIdentitiesListAreEquals,
-  sortIdentities,
-  expectContainsAllIdentities
-} from "./utils";
 
 describe("identity.list", () => {
   const defaultLimit = 10;
@@ -28,8 +23,8 @@ describe("identity.list", () => {
     let init = await Context.init();
     kind = `list/${init.seed}`;
     let admin = await Context.admin();
-    let A = await Context.registerIdentities(init, n, { kind, name: "alice" });
     let B = await Context.registerIdentities(init, n, { kind, name: "bob" });
+    let A = await Context.registerIdentities(init, n, { kind, name: "alice" });
     ctx = { ...admin, A, B };
   });
 
@@ -46,7 +41,7 @@ describe("identity.list", () => {
     return it(`list users in an ordered way (${IdentitySortingField[field]}, ${
       IdentitySortingOrder[order]
     })`, async () => {
-      let expected = [];
+      let expected: Identity<Uint8Array>[] = [];
       expected.push(...ctx.A.identities);
       expected.push(...ctx.B.identities);
       let result = await new IdentityAPI(ctx.adminSession).list({
@@ -56,12 +51,78 @@ describe("identity.list", () => {
         sortingField: field,
         sortingOrder: order
       });
-      expectIdentitiesListAreEquals(
-        sortIdentities(field, order, expected),
-        result.identities
-      );
+      let resultsLogins = result.identities.map(i => i.login);
+      let expectedLogins = expected.map(i => i.login);
+      expect(resultsLogins).to.have.members(expectedLogins);
+      expectInOrder(result.identities, field, order);
       expect(expected.length).to.be.equal(result.totalIdentitiesCount);
     });
+  }
+
+  function expectInOrder(
+    identities: Identity<Uint8Array>[],
+    sortingField: IdentitySortingField,
+    order: IdentitySortingOrder,
+    msg?: string
+  ) {
+    sortingField =
+      sortingField == null ? IdentitySortingField.CREATED : sortingField;
+    order = order == null ? IdentitySortingOrder.ASC : order;
+    let identitiesFields: Date[] | string[];
+    switch (sortingField) {
+      case IdentitySortingField.LOGIN:
+        identitiesFields = identities.map(i => i.login);
+        break;
+      case IdentitySortingField.CREATED:
+        identitiesFields = identities.map(i => i.created);
+        break;
+      case IdentitySortingField.KIND:
+        identitiesFields = identities.map(i => i.kind);
+        break;
+      default:
+        throw Error(
+          "unknown application identity sorting field type: " + sortingField
+        );
+    }
+    let secondaryFields = identities.map(i => i.login);
+    if (order === IdentitySortingOrder.DESC) {
+      identitiesFields = identitiesFields.reverse();
+      secondaryFields = secondaryFields.reverse();
+    }
+    let errorMessageGenerator = (
+      first: Date | string,
+      second: Date | string,
+      index: number,
+      isSecondary: boolean
+    ) => {
+      let secondaryMsg = isSecondary ? " (secondary field)" : "";
+      msg =
+        msg == null ? "identities returned are not ordered as expected" : msg;
+      return `${msg}: ${first} (${index}) < ${second} (${index -
+        1}) ${secondaryMsg}`;
+    };
+    for (let i = 1; i < identitiesFields.length; i++) {
+      expect(
+        identitiesFields[i] >= identitiesFields[i - 1],
+        errorMessageGenerator(
+          identitiesFields[i],
+          identitiesFields[i - 1],
+          i,
+          false
+        )
+      ).to.be.true;
+      if (identitiesFields[i] == identitiesFields[i - 1]) {
+        expect(
+          secondaryFields[i] >= secondaryFields[i],
+          errorMessageGenerator(
+            secondaryFields[i],
+            secondaryFields[i - 1],
+            i,
+            false
+          )
+        ).to.be.true;
+      }
+    }
   }
 
   // All sorting fields
@@ -101,7 +162,9 @@ describe("identity.list", () => {
         kind: kind,
         search: options.search
       });
-      expectContainsAllIdentities(result.identities, expected, false);
+      expect(expected.map(i => i.login)).to.include.members(
+        result.identities.map(i => i.login)
+      );
       expect(expected.length).to.be.equal(result.totalIdentitiesCount);
       if (options.expectedIdentitiesLength != null) {
         expect(result.identities.length).to.equal(
@@ -120,7 +183,9 @@ describe("identity.list", () => {
         kind: kind,
         search: name
       });
-      expectContainsAllIdentities(expected, result.identities);
+      expect(result.identities.map(i => i.login)).to.have.members(
+        expected.map(i => i.login)
+      );
       expect(expected.length).to.be.equal(result.totalIdentitiesCount);
     });
 

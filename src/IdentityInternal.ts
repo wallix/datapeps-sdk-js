@@ -1,19 +1,35 @@
 import { api } from "./proto";
 import { Identity } from './IdentityAPI';
 
-export class IdentityX {
-  static fromapi(t: api.IIdentity): Identity<Uint8Array> {
+export class IdentitySerializer {
+  static deserialize(t: api.IIdentity): Identity<Uint8Array> {
     let x = api.Identity.create(t);
     return {
       ...x,
       created: new Date((t.created as number) * 1000)
     };
   }
+}
 
-  static toapi(i: Identity<Uint8Array>): api.IIdentity {
-    return {
-      ...i,
-      created: null
-    };
+/** Allows to specify whether the results should be sorted in ascending or descending order. */
+export enum IdentitySortingOrder {
+  DESC = 0,
+  ASC = 1
+}
+
+export class IdentityRequestsUtils {
+
+  static resolveSortingOrder(order: IdentitySortingOrder): api.SortingOrder {
+    let resolvedSortingOrder: api.SortingOrder = api.SortingOrder.ASC
+    if (order == null) {
+      return resolvedSortingOrder
+    }
+    if (order === IdentitySortingOrder.DESC) {
+      resolvedSortingOrder = api.SortingOrder.DESC
+    } else if (order != IdentitySortingOrder.ASC) {
+      resolvedSortingOrder = order as api.SortingOrder
+    }
+    return resolvedSortingOrder
   }
+  
 }

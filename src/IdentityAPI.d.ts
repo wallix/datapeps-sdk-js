@@ -1,5 +1,7 @@
 import { api } from "./proto";
 import { Session } from "./Session";
+import { IdentitySortingOrder } from './IdentityInternal';
+export { IdentitySortingOrder };
 /**
  * An {@Identity} owns several keys, this is a reference to the unique version of an identity public key.
  */
@@ -96,10 +98,6 @@ export declare enum IdentitySortingField {
     LOGIN = 0,
     CREATED = 1,
     KIND = 2,
-}
-export declare enum IdentitySortingOrder {
-    DESC = 0,
-    ASC = 1,
 }
 export declare class IdentityAPI {
     private session;

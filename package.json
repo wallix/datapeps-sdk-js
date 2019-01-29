@@ -1,6 +1,6 @@
 {
   "name": "datapeps-sdk",
-  "version": "0.0.44-dev-f55d99",
+  "version": "0.0.44-dev-5356fa",
   "description": "DataPeps SDK enables safe end-to-end-encryption for any application",
   "main": "./src/DataPeps.js",
   "types": "./src/DataPeps.d.ts",
@@ -16,8 +16,8 @@
     "pack": "webpack",
     "doc": "typedoc --mode modules --out doc/ src/DataPeps.ts --tsconfig ./tsconfig.json --excludeExternals --excludeNotExported --readme ./README.md --sourcefile-url-prefix \"https://github.com/wallix/datapeps-sdk-js/blob/master/src/\" --ignoreCompilerErrors",
     "ut": "mocha test/ut/*.js",
-    "clean": "find src test -type f -name '*.d.ts' -o -name '*.js' -o -name '*.js.map' | grep -v 'proto' | xargs rm",
-    "integration": "mocha --require ts-node/register test/integration/*.ts test/integration/**/*.ts --timeout 600s"
+    "clean": "find src test -type f -name '*.d.ts' -o -name '*.js' -o -name '*.js.map' | grep -v 'proto' | xargs -r rm",
+    "integration": "find test/integration -name '*.ts' | xargs mocha --require ts-node/register --timeout 80s"
   },
   "devDependencies": {
     "@types/chai": "^4.1.2",

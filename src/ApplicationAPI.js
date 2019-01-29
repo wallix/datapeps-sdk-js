@@ -46,6 +46,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var proto_1 = require("./proto");
 var IdentityAPI_1 = require("./IdentityAPI");
 var IdentityInternal_1 = require("./IdentityInternal");
+exports.ApplicationIdentitySortingOrder = IdentityInternal_1.IdentitySortingOrder;
+/** Allows to indicate which kind of field should be sorted. */
+var ApplicationIdentitySortingField;
+(function (ApplicationIdentitySortingField) {
+    ApplicationIdentitySortingField[ApplicationIdentitySortingField["LOGIN"] = 0] = "LOGIN";
+    ApplicationIdentitySortingField[ApplicationIdentitySortingField["CREATED"] = 1] = "CREATED";
+})(ApplicationIdentitySortingField = exports.ApplicationIdentitySortingField || (exports.ApplicationIdentitySortingField = {}));
 var ApplicationAPI = /** @class */ (function () {
     function ApplicationAPI(session) {
         this.session = session;
@@ -176,10 +183,16 @@ var ApplicationAPI = /** @class */ (function () {
      */
     ApplicationAPI.prototype.listIdentities = function (appID, options) {
         return __awaiter(this, void 0, void 0, function () {
+            var sortingField, sortingOrder;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        options = !!options ? options : {};
+                        options = options == null ? {} : options;
+                        if (options.sortingField == null) {
+                            options.sortingField = ApplicationIdentitySortingField.CREATED;
+                        }
+                        sortingField = options.sortingField;
+                        sortingOrder = IdentityInternal_1.IdentityRequestsUtils.resolveSortingOrder(options.sortingOrder);
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "POST",
                                 expectedCode: 200,
@@ -189,14 +202,16 @@ var ApplicationAPI = /** @class */ (function () {
                                     options: {
                                         limit: options.limit,
                                         offset: options.offset,
-                                        loginPrefix: options.loginPrefix
+                                        loginPrefix: options.loginPrefix,
+                                        sortedBy: sortingField,
+                                        order: sortingOrder
                                     }
                                 }).finish(),
                                 response: function (r) {
                                     var _a = proto_1.api.ApplicationListIdentitiesResponse.decode(r), _identities = _a.identities, totalIdentitiesCount = _a.totalIdentitiesCount;
                                     return {
                                         identities: _identities.map(function (i) {
-                                            var identity = IdentityInternal_1.IdentityX.fromapi(i.identity);
+                                            var identity = IdentityInternal_1.IdentitySerializer.deserialize(i.identity);
                                             return {
                                                 identity: identity,
                                                 auth: i.auth

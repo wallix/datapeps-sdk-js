@@ -5,7 +5,13 @@ import { Encryption } from "./CryptoFuncs";
 import { Uint8Tool } from "./Tools";
 import { Session } from "./Session";
 import { client } from "./HTTP";
-import { IdentityX } from "./IdentityInternal";
+import {
+  IdentitySerializer,
+  IdentitySortingOrder,
+  IdentityRequestsUtils
+} from './IdentityInternal';
+
+export { IdentitySortingOrder }
 
 /**
  * An {@Identity} owns several keys, this is a reference to the unique version of an identity public key.
@@ -123,11 +129,6 @@ export enum IdentitySortingField {
   KIND = 2
 }
 
-export enum IdentitySortingOrder {
-  DESC = 0,
-  ASC = 1
-}
-
 export class IdentityAPI {
   private session: Session;
 
@@ -184,7 +185,7 @@ export class IdentityAPI {
       method: "GET",
       expectedCode: 200,
       path: "/api/v4/identity/" + encodeURI(login),
-      response: r => IdentityX.fromapi(api.Identity.decode(r))
+      response: r => IdentitySerializer.deserialize(api.Identity.decode(r))
     });
   }
 
@@ -214,18 +215,7 @@ export class IdentityAPI {
     if (options.sortingField == null) {
       options.sortingField = IdentitySortingField.CREATED;
     }
-    if (options.sortingOrder == null) {
-      options.sortingOrder = IdentitySortingOrder.ASC;
-    }
-    let sortingOrder: api.SortingOrder = api.SortingOrder.ASC;
-    if (options.sortingOrder === IdentitySortingOrder.DESC) {
-      sortingOrder = api.SortingOrder.DESC;
-    } else if (
-      options.sortingOrder != null &&
-      options.sortingOrder != IdentitySortingOrder.ASC
-    ) {
-      sortingOrder = options.sortingOrder as api.SortingOrder;
-    }
+    let sortingOrder = IdentityRequestsUtils.resolveSortingOrder(options.sortingOrder)
     return await this.session.doProtoRequest({
       method: "POST",
       expectedCode: 200,
@@ -246,7 +236,7 @@ export class IdentityAPI {
           totalIdentitiesCount
         } = api.IdentityListResponse.decode(r);
         return {
-          identities: identities.map(IdentityX.fromapi),
+          identities: identities.map(IdentitySerializer.deserialize),
           totalIdentitiesCount
         };
       }

@@ -3,9 +3,10 @@ import { ApplicationJWT, ServerError, SDKError } from "../../../src/DataPeps";
 import * as nacl from "tweetnacl";
 import { expect } from "chai";
 import * as JWT from "jsonwebtoken";
-import { devWithAllConfigs, configs, getBadAlgoKey } from "./Utils";
+import { configs, getBadAlgoKey } from "./Utils";
 import { initCtx, devCtx, init } from "../../Context";
 import { itError } from "../../Utils";
+import { devWithAllConfigs } from "./Context";
 
 describe("applicationJWT.createSession", () => {
   let ctx: initCtx & devCtx;

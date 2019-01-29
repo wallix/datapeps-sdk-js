@@ -27,9 +27,9 @@ export class Error {
   code: number;
 
   constructor(properties: { kind: ErrorKind; payload?: any; code?: number }) {
-    // console.log("error", properties)
+    // console.log("error", properties);
     // var err = new global.Error();
-    // console.log("stack", err.stack)
+    // console.log("stack", err.stack);
     this.name = "DataPepsError";
     let kname = api.PepsErrorKind[properties.kind];
     if (kname == null) {

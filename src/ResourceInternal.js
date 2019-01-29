@@ -66,7 +66,7 @@ var ResourceBox = /** @class */ (function () {
         return Tools_1.Uint8Tool.concat(nonce, cipher);
     };
     ResourceBox.prototype.encryptString = function (clear) {
-        var uClear = new TextEncoder().encode(clear);
+        var uClear = Tools_1.Uint8Tool.encode(clear);
         var uEncrypted = this.encryptUint8Array(uClear);
         return Tools_1.Base64.encode(uEncrypted);
     };
@@ -91,7 +91,7 @@ var ResourceBox = /** @class */ (function () {
     ResourceBox.prototype.decryptString = function (cipher) {
         var uEncrypted = Tools_1.Base64.decode(cipher);
         var clear = this.decryptUint8Array(uEncrypted);
-        return new TextDecoder().decode(clear);
+        return Tools_1.Uint8Tool.decode(clear);
     };
     return ResourceBox;
 }());
@@ -100,7 +100,7 @@ function createWithEncryption(kind, payload, encryption, options) {
     options = options == null ? {} : options;
     var serialize = options.serialize != null
         ? options.serialize
-        : function (p) { return new TextEncoder().encode(JSON.stringify(p)); };
+        : function (p) { return Tools_1.Uint8Tool.encode(JSON.stringify(p)); };
     var encryptionPK = {
         login: null,
         version: null,
@@ -161,7 +161,7 @@ function makeResource(_a, typeOfKey, session, boxKey, parse) {
                 case 1:
                     secretKey = _d.sent();
                     keypair = nacl.box.keyPair.fromSecretKey(secretKey);
-                    parse = parse != null ? parse : function (u) { return JSON.parse(new TextDecoder().decode(u)); };
+                    parse = parse != null ? parse : function (u) { return JSON.parse(Tools_1.Uint8Tool.decode(u)); };
                     if (!(resource.payload.length == 0)) return [3 /*break*/, 2];
                     _b = null;
                     return [3 /*break*/, 4];
@@ -266,7 +266,7 @@ function createBodyRequest(payload, sharingGroup, crypto, session, options) {
                     options = options != null ? options : {};
                     serialize = options.serialize != null
                         ? options.serialize
-                        : function (p) { return new TextEncoder().encode(JSON.stringify(p)); };
+                        : function (p) { return Tools_1.Uint8Tool.encode(JSON.stringify(p)); };
                     keypair = nacl.box.keyPair();
                     return [4 /*yield*/, encryptForSharingGroup(keypair.secretKey, sharingGroup, crypto, session)];
                 case 1:

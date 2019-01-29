@@ -68,7 +68,7 @@ export class DelegatedAccessAPI {
   ): Promise<DelegatedAccess.RequestResolver> {
     let { sign, resource } = await this.session.doProtoRequest({
       method: "GET",
-      code: 200,
+      expectedCode: 200,
       path: "/api/v4/delegatedAccess/" + requestId.toString(),
       response: api.DelegatedGetResponse.decode
     });
@@ -81,7 +81,7 @@ export class DelegatedAccessAPI {
     );
     // Verify requester's signature
     let msg = Uint8Tool.concat(
-      new TextEncoder().encode(this.session.login),
+      Uint8Tool.encode(this.session.login),
       r.publicKey()
     );
     if (!nacl.sign.detached.verify(msg, sign, r.creator.sign)) {
@@ -110,14 +110,11 @@ export class DelegatedAccessAPI {
         let keys = await (this.session as any).fetchKeys(login);
         await this.session.doProtoRequest({
           method: "PUT",
-          code: 200,
+          expectedCode: 200,
           path: "/api/v4/delegatedAccess/" + this.id.toString() + "/keys",
-          request: () =>
-            api.DelegatedPostKeysRequest.encode({
-              keys: this.resource.encrypt(
-                api.DelegatedKeys.encode(keys).finish()
-              )
-            }).finish()
+          body: api.DelegatedPostKeysRequest.encode({
+            keys: this.resource.encrypt(api.DelegatedKeys.encode(keys).finish())
+          }).finish()
         });
       }
     }
@@ -137,7 +134,7 @@ export class DelegatedAccessAPI {
   ): Promise<DelegatedAccess[]> {
     let { accesses } = await this.session.doProtoRequest({
       method: "GET",
-      code: 200,
+      expectedCode: 200,
       path: "/api/v4/delegatedAccesses",
       response: api.DelegatedAccessListResponse.decode,
       assume: { login, kind: IdentityAccessKind.READ },
@@ -222,26 +219,25 @@ export namespace DelegatedAccess {
       login,
       publicKey: keypair.publicKey
     });
-    let { id } = await client.doRequest({
+    let {
+      body: { id }
+    } = await client.doRequest({
       method: "POST",
-      code: 201,
+      expectedCode: 201,
       path: "/api/v4/delegatedAccess",
-      request: () =>
-        api.DelegatedPostRequest.encode({
-          publicKey: keypair.publicKey,
-          sign: signResult.sign,
-          requester: signResult.requester,
-          sharing: {
-            encryptedKey: encryptedKey.message,
-            nonce: encryptedKey.nonce,
-            login,
-            version
-          }
-        }).finish(),
+      body: api.DelegatedPostRequest.encode({
+        publicKey: keypair.publicKey,
+        sign: signResult.sign,
+        requester: signResult.requester,
+        sharing: {
+          encryptedKey: encryptedKey.message,
+          nonce: encryptedKey.nonce,
+          login,
+          version
+        }
+      }).finish(),
       response: api.DelegatedPostResponse.decode,
-      before(x, b) {
-        x.setRequestHeader("content-type", "application/x-protobuf");
-      }
+      headers: new Headers({ "content-type": "application/x-protobuf" })
     });
     let resource = new ResourceBox(0, null, null, keypair, null);
     return new AccessRequestImpl(id, login, client, resource);
@@ -275,13 +271,14 @@ export namespace DelegatedAccess {
 
     private async init() {
       try {
-        let { keys } = await this.client.doRequest({
+        let {
+          body: { keys }
+        } = await this.client.doRequest({
           method: "GET",
-          code: 200,
+          expectedCode: 200,
           path: "/api/v4/delegatedAccess/" + this.id.toString() + "/keys",
           response: api.DelegatedGetKeysResponse.decode,
-          before: (x, b) =>
-            x.setRequestHeader("content-type", "application/x-protobuf")
+          headers: new Headers({ "content-type": "application/x-protobuf" })
         });
         this.keys = api.DelegatedKeys.decode(this.resource.decrypt(keys));
         this.resolve();

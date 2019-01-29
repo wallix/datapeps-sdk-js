@@ -8,6 +8,7 @@ import {
   DelegatedAccess,
   DelegatedAccessAPI
 } from "../../src/DataPeps";
+import { Uint8Tool } from "../../src/Tools";
 
 describe("delegatedAccess", () => {
   let seed = Math.floor(Math.random() * 99999);
@@ -19,7 +20,7 @@ describe("delegatedAccess", () => {
     active: true,
     kind: "user",
     created: new Date(),
-    payload: new TextEncoder().encode(
+    payload: Uint8Tool.encode(
       JSON.stringify({
         firstname: "Alice",
         lastname: "TypeScript",
@@ -35,7 +36,7 @@ describe("delegatedAccess", () => {
     active: true,
     kind: "user",
     created: new Date(),
-    payload: new TextEncoder().encode(
+    payload: Uint8Tool.encode(
       JSON.stringify({
         firstname: "Bob",
         lastname: "TypeScript",
@@ -77,7 +78,7 @@ describe("delegatedAccess", () => {
     accessRequest = await DelegatedAccess.request(
       bob.login,
       ({ login, publicKey }) => {
-        let ulogin = new TextEncoder().encode(login);
+        let ulogin = Uint8Tool.encode(login);
         let toSign = new Uint8Array(ulogin.byteLength + publicKey.byteLength);
         toSign.set(ulogin, 0);
         toSign.set(publicKey, ulogin.byteLength);

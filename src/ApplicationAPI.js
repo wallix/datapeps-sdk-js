@@ -45,6 +45,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var proto_1 = require("./proto");
 var IdentityAPI_1 = require("./IdentityAPI");
+var IdentityInternal_1 = require("./IdentityInternal");
+exports.ApplicationIdentitySortingOrder = IdentityInternal_1.IdentitySortingOrder;
+/** Allows to indicate which kind of field should be sorted. */
+var ApplicationIdentitySortingField;
+(function (ApplicationIdentitySortingField) {
+    ApplicationIdentitySortingField[ApplicationIdentitySortingField["LOGIN"] = 0] = "LOGIN";
+    ApplicationIdentitySortingField[ApplicationIdentitySortingField["CREATED"] = 1] = "CREATED";
+})(ApplicationIdentitySortingField = exports.ApplicationIdentitySortingField || (exports.ApplicationIdentitySortingField = {}));
 var ApplicationAPI = /** @class */ (function () {
     function ApplicationAPI(session) {
         this.session = session;
@@ -78,14 +86,12 @@ var ApplicationAPI = /** @class */ (function () {
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "PUT",
                                 assume: { login: appID, kind: IdentityAPI_1.IdentityAccessKind.WRITE },
-                                code: 201,
+                                expectedCode: 201,
                                 path: "/api/v4/identity/" + encodeURI(appID) + "/configure-as-application",
-                                request: function () {
-                                    return proto_1.api.IdentityConfigurationAsApplicationRequest.encode({
-                                        Login: appID,
-                                        config: c
-                                    }).finish();
-                                }
+                                body: proto_1.api.IdentityConfigurationAsApplicationRequest.encode({
+                                    Login: appID,
+                                    config: c
+                                }).finish()
                             })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
@@ -108,7 +114,7 @@ var ApplicationAPI = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "GET",
                             assume: { login: appID, kind: IdentityAPI_1.IdentityAccessKind.READ },
-                            code: 200,
+                            expectedCode: 200,
                             path: "/api/v4/identity/" + encodeURI(appID) + "/configure-as-application",
                             response: function (r) {
                                 var config = proto_1.api.IdentityConfigurationAsApplicationResponse.decode(r)
@@ -146,11 +152,9 @@ var ApplicationAPI = /** @class */ (function () {
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "POST",
                                 assume: { login: appID, kind: IdentityAPI_1.IdentityAccessKind.READ },
-                                code: 200,
+                                expectedCode: 200,
                                 path: "/api/v4/application/" + encodeURI(appID) + "/usage-overview",
-                                request: function () {
-                                    return proto_1.api.ApplicationUsageOverviewRequest.encode(__assign({ Login: appID }, options)).finish();
-                                },
+                                body: proto_1.api.ApplicationUsageOverviewRequest.encode(__assign({ Login: appID }, options)).finish(),
                                 response: function (r) {
                                     var overview = proto_1.api.ApplicationUsageOverviewResponse.decode(r).overview;
                                     return {
@@ -163,6 +167,78 @@ var ApplicationAPI = /** @class */ (function () {
                 }
             });
         });
+    };
+    /**
+     * List identities that has been created on behalf of an application
+     * @param appID the app ID
+     * @param options A collection of options:
+     *  - offset: Skip this number of results.
+     *  - limit: Limit the length of the result (default: 10).
+     *  - loginPrefix: Filter only logins that containing this string
+     * @return(p) On success the promise will be resolved with the list of identities
+     * and the total of identities that should match the query.
+     * On error the promise will be rejected with an {@link Error} with kind:
+     * - `IdentityCannotAssumeOwnership` if cannot have right to the application.
+     * - `IdentityNotFound` if the identity `appID` doesn't exists.
+     */
+    ApplicationAPI.prototype.listIdentities = function (appID, options) {
+        return __awaiter(this, void 0, void 0, function () {
+            var sortingField, sortingOrder;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        options = options == null ? {} : options;
+                        if (options.sortingField == null) {
+                            options.sortingField = ApplicationIdentitySortingField.CREATED;
+                        }
+                        sortingField = options.sortingField;
+                        sortingOrder = IdentityInternal_1.IdentityRequestsUtils.resolveSortingOrder(options.sortingOrder);
+                        return [4 /*yield*/, this.session.doProtoRequest({
+                                method: "POST",
+                                expectedCode: 200,
+                                path: "/api/v4/application/" + encodeURI(appID) + "/identities/list",
+                                assume: { login: appID, kind: IdentityAPI_1.IdentityAccessKind.READ },
+                                body: proto_1.api.ApplicationListIdentitiesRequest.encode({
+                                    options: {
+                                        limit: options.limit,
+                                        offset: options.offset,
+                                        loginPrefix: options.loginPrefix,
+                                        sortedBy: sortingField,
+                                        order: sortingOrder
+                                    }
+                                }).finish(),
+                                response: function (r) {
+                                    var _a = proto_1.api.ApplicationListIdentitiesResponse.decode(r), _identities = _a.identities, totalIdentitiesCount = _a.totalIdentitiesCount;
+                                    return {
+                                        identities: _identities.map(function (i) {
+                                            var identity = IdentityInternal_1.IdentitySerializer.deserialize(i.identity);
+                                            return {
+                                                identity: identity,
+                                                auth: i.auth
+                                            };
+                                        }),
+                                        totalIdentitiesCount: totalIdentitiesCount
+                                    };
+                                }
+                            })];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
+    /**
+     * Get user's application login from the user's DataPeps login
+     * @param dataPepsLogin the user's login in DataPeps
+     * @return Returns the user's application login used to generate the given DataPeps login.
+     * If the dataPepsLogin is null, undefined, empty or malformatted returns an empty string.
+     */
+    ApplicationAPI.extractLoginFromDataPepsLogin = function (dataPepsLogin) {
+        dataPepsLogin = dataPepsLogin == null ? "" : dataPepsLogin;
+        var i = dataPepsLogin.lastIndexOf("@");
+        if (i == -1) {
+            return "";
+        }
+        return dataPepsLogin.substr(0, i);
     };
     return ApplicationAPI;
 }());

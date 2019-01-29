@@ -97,17 +97,23 @@ function _register(path, identity, secret, request) {
     return __awaiter(this, void 0, void 0, function () {
         var encryption;
         return __generator(this, function (_a) {
-            encryption = new CryptoFuncs_1.Encryption();
-            encryption.generate(Tools_1.Uint8Tool.convert(secret), null);
-            return [2 /*return*/, HTTP.client.doRequest({
-                    method: "POST",
-                    code: 201,
-                    path: path,
-                    request: function () { return request({ identity: identity, encryption: encryption }); },
-                    before: function (x, b) {
-                        return x.setRequestHeader("content-type", "application/x-protobuf");
-                    }
-                })];
+            switch (_a.label) {
+                case 0:
+                    encryption = new CryptoFuncs_1.Encryption();
+                    encryption.generate(Tools_1.Uint8Tool.convert(secret), null);
+                    return [4 /*yield*/, HTTP.client.doRequest({
+                            method: "POST",
+                            expectedCode: 201,
+                            path: path,
+                            body: request({ identity: identity, encryption: encryption }),
+                            headers: new Headers({
+                                "content-type": "application/x-protobuf"
+                            })
+                        })];
+                case 1:
+                    _a.sent();
+                    return [2 /*return*/];
+            }
         });
     });
 }
@@ -126,18 +132,18 @@ function sendRegisterLink(email) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, HTTP.client.doRequest({
                         method: "POST",
-                        code: 201,
+                        expectedCode: 201,
                         path: "/api/v4/register/link",
-                        request: function () {
-                            return proto_1.api.RegisterLinkRequest.encode({
-                                email: email
-                            }).finish();
-                        },
-                        before: function (x, b) {
-                            return x.setRequestHeader("content-type", "application/x-protobuf");
-                        }
+                        body: proto_1.api.RegisterLinkRequest.encode({
+                            email: email
+                        }).finish(),
+                        headers: new Headers({
+                            "content-type": "application/x-protobuf"
+                        })
                     })];
-                case 1: return [2 /*return*/, _a.sent()];
+                case 1:
+                    _a.sent();
+                    return [2 /*return*/];
             }
         });
     });

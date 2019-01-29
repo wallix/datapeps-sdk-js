@@ -4,6 +4,7 @@ import * as nacl from "tweetnacl";
 import { expect } from "chai";
 import "mocha";
 import { ResourceAPI, IdentityAPI } from "../../../src/DataPeps";
+import { Uint8Tool } from "../../../src/Tools";
 
 type TestResource = DataPeps.Resource<{ description: string }>;
 
@@ -15,7 +16,7 @@ describe("resource.list", () => {
     login: "alice." + seed,
     name: "alice 1",
     kind: "user",
-    payload: new TextEncoder().encode(
+    payload: Uint8Tool.encode(
       JSON.stringify({
         test: 1
       })
@@ -27,7 +28,7 @@ describe("resource.list", () => {
     login: "bob." + seed,
     name: "bob 1",
     kind: "user",
-    payload: new TextEncoder().encode(
+    payload: Uint8Tool.encode(
       JSON.stringify({
         test: 1
       })
@@ -39,7 +40,7 @@ describe("resource.list", () => {
     login: "charlie." + seed,
     name: "charlie 1",
     kind: "user",
-    payload: new TextEncoder().encode(
+    payload: Uint8Tool.encode(
       JSON.stringify({
         test: 1
       })
@@ -158,7 +159,7 @@ describe("resource.list", () => {
     let contentRes1 = "Hello World!";
     let contentRes2 = "Hello Charlie!";
     let options = {
-      serialize: (payload: string) => new TextEncoder().encode(payload)
+      serialize: (payload: string) => Uint8Tool.encode(payload)
     };
     await new ResourceAPI(charlieSession).create<string>(
       "test/A",
@@ -175,7 +176,7 @@ describe("resource.list", () => {
     let got = await new ResourceAPI(charlieSession).list<string>({
       parse: (bytes: Uint8Array) => {
         try {
-          return new TextDecoder("utf-8").decode(bytes);
+          return Uint8Tool.decode(bytes);
         } catch (e) {
           return "";
         }

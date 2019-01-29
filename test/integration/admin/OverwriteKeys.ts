@@ -4,6 +4,7 @@ import * as nacl from "tweetnacl";
 import { expect } from "chai";
 import { itError } from "../../Utils";
 import { AdminAPI, ResourceAPI, IdentityAPI } from "../../../src/DataPeps";
+import { Uint8Tool } from "../../../src/Tools";
 
 describe("admin.overwriteKeys", () => {
   let seed = Math.floor(Math.random() * 99999);
@@ -27,7 +28,7 @@ describe("admin.overwriteKeys", () => {
     login: "bob." + seed,
     name: "bob 1",
     kind: "user",
-    payload: new TextEncoder().encode(
+    payload: Uint8Tool.encode(
       JSON.stringify({
         test: 1
       })

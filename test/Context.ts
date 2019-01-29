@@ -1,7 +1,8 @@
 import * as DataPeps from "../src/DataPeps";
 import * as Config from "./Config";
 import * as nacl from "tweetnacl";
-import { IdentityAPI } from "../src/DataPeps";
+import { IdentityAPI, IdentityFields, Identity } from "../src/DataPeps";
+import { Uint8Tool } from "../src/Tools";
 
 export interface initCtx {
   seed: number;
@@ -20,7 +21,7 @@ export interface adminCtx {
 
 export async function admin(): Promise<adminCtx> {
   let admin = Config.admin;
-  let adminSecret = new TextEncoder().encode(Config.adminSecret);
+  let adminSecret = Uint8Tool.encode(Config.adminSecret);
   try {
     await DataPeps.register(admin, adminSecret);
   } catch (e) {
@@ -132,7 +133,7 @@ export async function user(
   name: string,
   domain?: string
 ): Promise<userCtx> {
-  let payload = new TextEncoder().encode(
+  let payload = Uint8Tool.encode(
     JSON.stringify({
       firstname: name,
       lastname: "typescript",
@@ -206,7 +207,7 @@ export async function aliceBobWithDeviceAndGroup(
     login: `aliceBob.${init.seed}`,
     name: `Alice&Bob's`,
     kind: "test/group",
-    payload: new TextEncoder().encode(
+    payload: Uint8Tool.encode(
       JSON.stringify({
         description: `A group shared by alice & bob`
       } as groupPayload)
@@ -247,7 +248,7 @@ export async function dev(init: initCtx, n = 1): Promise<devCtx> {
             login: `app${i}.${init.seed}`,
             name: "A killer app",
             kind: "pepsswarm/3",
-            payload: new TextEncoder().encode(
+            payload: Uint8Tool.encode(
               JSON.stringify({
                 description: `app allows you to do awesome stuff and respect your privacy`
               })
@@ -282,31 +283,55 @@ export interface identitiesCtx {
   identities: DataPeps.Identity<Uint8Array>[];
 }
 
-export async function identities(
+export async function generateIdentities(
   init: initCtx,
   n: number,
+  create: (
+    field: IdentityFields,
+    secret: Uint8Array
+  ) => Promise<{ login: string }>,
   options?: identityOptions
 ): Promise<identitiesCtx> {
-  let identities = [];
-  let promises = [];
+  let promises: Promise<Identity<any>>[] = [];
   options = options ? options : {};
   let name = options.name == null ? "id" : options.name;
   for (let i = 0; i < n; i++) {
     let secret = nacl.randomBytes(128);
+    let nameSuffix = Math.floor(Math.random() * (Math.pow(10, 6) - 1));
     let identity: DataPeps.IdentityFields = generateIdentityFields(init, {
       ...options,
-      name: `${name}${i}`
+      name: `${name}${nameSuffix}`
     });
-    promises.push(DataPeps.register(identity, secret));
-    identities.push({
-      ...identity,
-      created: new Date(),
-      admin: false,
-      active: true
-    });
+    promises.push(
+      (async () => {
+        let { login } = await create(identity, secret);
+        return {
+          ...identity,
+          login,
+          created: new Date(),
+          admin: false,
+          active: true
+        };
+      })()
+    );
   }
-  await Promise.all(promises);
-  return { identities };
+  return { identities: await Promise.all(promises) };
+}
+
+export async function registerIdentities(
+  init: initCtx,
+  n: number,
+  options?: identityOptions
+): Promise<identitiesCtx> {
+  return await generateIdentities(
+    init,
+    n,
+    async (fields, secret) => {
+      await DataPeps.register(fields, secret);
+      return { login: fields.login };
+    },
+    options
+  );
 }
 
 const identityDefaultKind = "kind/test-default";

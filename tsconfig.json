@@ -6,5 +6,5 @@
     "sourceMap": true,
     "declaration": true
   },
-  "exclude": ["./test/ut", "./node_modules"]
+  "exclude": ["./test", "./node_modules"]
 }

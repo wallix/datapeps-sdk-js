@@ -121,3 +121,9 @@ export interface Session {
     doProtoRequest<T>(request: SessionRequest<T>): Promise<T>;
 }
 export declare function loginWithKeys(client: any, keys: any): Promise<Session>;
+export interface SessionParameters {
+    token: Uint8Array;
+    login: string;
+    salt: Uint8Array;
+    saltKind: api.SessionSaltKind;
+}

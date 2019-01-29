@@ -68,7 +68,7 @@ var DelegatedAccessAPI = /** @class */ (function () {
                 switch (_b.label) {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "GET",
-                            code: 200,
+                            expectedCode: 200,
                             path: "/api/v4/delegatedAccess/" + requestId.toString(),
                             response: proto_1.api.DelegatedGetResponse.decode
                         })];
@@ -77,7 +77,7 @@ var DelegatedAccessAPI = /** @class */ (function () {
                         return [4 /*yield*/, ResourceInternal_1.makeResourceFromResponse(resource, proto_1.api.ResourceType.ANONYMOUS, this.session, null, null)];
                     case 2:
                         r = _b.sent();
-                        msg = Tools_1.Uint8Tool.concat(new TextEncoder().encode(this.session.login), r.publicKey());
+                        msg = Tools_1.Uint8Tool.concat(Tools_1.Uint8Tool.encode(this.session.login), r.publicKey());
                         if (!nacl.sign.detached.verify(msg, sign, r.creator.sign)) {
                             throw new Error_1.Error({
                                 kind: Error_1.SDKKind.IdentitySignChainInvalid,
@@ -96,7 +96,6 @@ var DelegatedAccessAPI = /** @class */ (function () {
                             }
                             AccessRequestResolverImpl.prototype.resolve = function (login) {
                                 return __awaiter(this, void 0, void 0, function () {
-                                    var _this = this;
                                     var keys;
                                     return __generator(this, function (_a) {
                                         switch (_a.label) {
@@ -105,13 +104,11 @@ var DelegatedAccessAPI = /** @class */ (function () {
                                                 keys = _a.sent();
                                                 return [4 /*yield*/, this.session.doProtoRequest({
                                                         method: "PUT",
-                                                        code: 200,
+                                                        expectedCode: 200,
                                                         path: "/api/v4/delegatedAccess/" + this.id.toString() + "/keys",
-                                                        request: function () {
-                                                            return proto_1.api.DelegatedPostKeysRequest.encode({
-                                                                keys: _this.resource.encrypt(proto_1.api.DelegatedKeys.encode(keys).finish())
-                                                            }).finish();
-                                                        }
+                                                        body: proto_1.api.DelegatedPostKeysRequest.encode({
+                                                            keys: this.resource.encrypt(proto_1.api.DelegatedKeys.encode(keys).finish())
+                                                        }).finish()
                                                     })];
                                             case 2:
                                                 _a.sent();
@@ -137,7 +134,7 @@ var DelegatedAccessAPI = /** @class */ (function () {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "GET",
-                            code: 200,
+                            expectedCode: 200,
                             path: "/api/v4/delegatedAccesses",
                             response: proto_1.api.DelegatedAccessListResponse.decode,
                             assume: { login: login, kind: IdentityAPI_1.IdentityAccessKind.READ },
@@ -194,28 +191,24 @@ var DelegatedAccess;
                         signResult = _b.sent();
                         return [4 /*yield*/, HTTP_1.client.doRequest({
                                 method: "POST",
-                                code: 201,
+                                expectedCode: 201,
                                 path: "/api/v4/delegatedAccess",
-                                request: function () {
-                                    return proto_1.api.DelegatedPostRequest.encode({
-                                        publicKey: keypair.publicKey,
-                                        sign: signResult.sign,
-                                        requester: signResult.requester,
-                                        sharing: {
-                                            encryptedKey: encryptedKey.message,
-                                            nonce: encryptedKey.nonce,
-                                            login: login,
-                                            version: version
-                                        }
-                                    }).finish();
-                                },
+                                body: proto_1.api.DelegatedPostRequest.encode({
+                                    publicKey: keypair.publicKey,
+                                    sign: signResult.sign,
+                                    requester: signResult.requester,
+                                    sharing: {
+                                        encryptedKey: encryptedKey.message,
+                                        nonce: encryptedKey.nonce,
+                                        login: login,
+                                        version: version
+                                    }
+                                }).finish(),
                                 response: proto_1.api.DelegatedPostResponse.decode,
-                                before: function (x, b) {
-                                    x.setRequestHeader("content-type", "application/x-protobuf");
-                                }
+                                headers: new Headers({ "content-type": "application/x-protobuf" })
                             })];
                     case 3:
-                        id = (_b.sent()).id;
+                        id = (_b.sent()).body.id;
                         resource = new ResourceInternal_1.ResourceBox(0, null, null, keypair, null);
                         return [2 /*return*/, new AccessRequestImpl(id, login, HTTP_1.client, resource)];
                 }
@@ -242,15 +235,13 @@ var DelegatedAccess;
                             _a.trys.push([0, 2, , 3]);
                             return [4 /*yield*/, this.client.doRequest({
                                     method: "GET",
-                                    code: 200,
+                                    expectedCode: 200,
                                     path: "/api/v4/delegatedAccess/" + this.id.toString() + "/keys",
                                     response: proto_1.api.DelegatedGetKeysResponse.decode,
-                                    before: function (x, b) {
-                                        return x.setRequestHeader("content-type", "application/x-protobuf");
-                                    }
+                                    headers: new Headers({ "content-type": "application/x-protobuf" })
                                 })];
                         case 1:
-                            keys = (_a.sent()).keys;
+                            keys = (_a.sent()).body.keys;
                             this.keys = proto_1.api.DelegatedKeys.decode(this.resource.decrypt(keys));
                             this.resolve();
                             return [3 /*break*/, 3];

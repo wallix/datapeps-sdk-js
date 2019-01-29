@@ -1097,6 +1097,102 @@ export namespace api {
         WRITE = 1
     }
 
+    /** Properties of an ApplicationIdentity. */
+    interface IApplicationIdentity {
+
+        /** ApplicationIdentity identity */
+        identity?: (api.IIdentity|null);
+
+        /** ApplicationIdentity auth */
+        auth?: (api.IIdentityExternalAuth|null);
+    }
+
+    /** Represents an ApplicationIdentity. */
+    class ApplicationIdentity implements IApplicationIdentity {
+
+        /**
+         * Constructs a new ApplicationIdentity.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: api.IApplicationIdentity);
+
+        /** ApplicationIdentity identity. */
+        public identity?: (api.IIdentity|null);
+
+        /** ApplicationIdentity auth. */
+        public auth?: (api.IIdentityExternalAuth|null);
+
+        /**
+         * Creates a new ApplicationIdentity instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ApplicationIdentity instance
+         */
+        public static create(properties?: api.IApplicationIdentity): api.ApplicationIdentity;
+
+        /**
+         * Encodes the specified ApplicationIdentity message. Does not implicitly {@link api.ApplicationIdentity.verify|verify} messages.
+         * @param message ApplicationIdentity message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: api.IApplicationIdentity, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ApplicationIdentity message, length delimited. Does not implicitly {@link api.ApplicationIdentity.verify|verify} messages.
+         * @param message ApplicationIdentity message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: api.IApplicationIdentity, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an ApplicationIdentity message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ApplicationIdentity
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.ApplicationIdentity;
+
+        /**
+         * Decodes an ApplicationIdentity message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ApplicationIdentity
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.ApplicationIdentity;
+
+        /**
+         * Verifies an ApplicationIdentity message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an ApplicationIdentity message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ApplicationIdentity
+         */
+        public static fromObject(object: { [k: string]: any }): api.ApplicationIdentity;
+
+        /**
+         * Creates a plain object from an ApplicationIdentity message. Also converts values to other types if specified.
+         * @param message ApplicationIdentity
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: api.ApplicationIdentity, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ApplicationIdentity to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of an IdentityRegisterRequest. */
     interface IIdentityRegisterRequest {
 
@@ -1193,391 +1289,388 @@ export namespace api {
         public toJSON(): { [k: string]: any };
     }
 
-    /** Properties of a RegisterExternalIdentityRequest. */
-    interface IRegisterExternalIdentityRequest {
+    /** Properties of an IdentityExternalAuth. */
+    interface IIdentityExternalAuth {
 
-        /** RegisterExternalIdentityRequest appID */
-        appID?: (string|null);
-
-        /** RegisterExternalIdentityRequest identity */
-        identity?: (api.IIdentityFields|null);
-
-        /** RegisterExternalIdentityRequest encryption */
-        encryption?: (api.IIdentityEncryption|null);
-
-        /** RegisterExternalIdentityRequest resources */
-        resources?: ({ [k: string]: api.IResourcePostRequest }|null);
-
-        /** RegisterExternalIdentityRequest auth */
-        auth?: (api.RegisterExternalIdentityRequest.IAuth|null);
+        /** IdentityExternalAuth jwt */
+        jwt?: (api.IdentityExternalAuth.IJWT|null);
     }
 
-    /** Represents a RegisterExternalIdentityRequest. */
-    class RegisterExternalIdentityRequest implements IRegisterExternalIdentityRequest {
+    /** Represents an IdentityExternalAuth. */
+    class IdentityExternalAuth implements IIdentityExternalAuth {
 
         /**
-         * Constructs a new RegisterExternalIdentityRequest.
+         * Constructs a new IdentityExternalAuth.
          * @param [properties] Properties to set
          */
-        constructor(properties?: api.IRegisterExternalIdentityRequest);
+        constructor(properties?: api.IIdentityExternalAuth);
 
-        /** RegisterExternalIdentityRequest appID. */
-        public appID: string;
-
-        /** RegisterExternalIdentityRequest identity. */
-        public identity?: (api.IIdentityFields|null);
-
-        /** RegisterExternalIdentityRequest encryption. */
-        public encryption?: (api.IIdentityEncryption|null);
-
-        /** RegisterExternalIdentityRequest resources. */
-        public resources: { [k: string]: api.IResourcePostRequest };
-
-        /** RegisterExternalIdentityRequest auth. */
-        public auth?: (api.RegisterExternalIdentityRequest.IAuth|null);
+        /** IdentityExternalAuth jwt. */
+        public jwt?: (api.IdentityExternalAuth.IJWT|null);
 
         /**
-         * Creates a new RegisterExternalIdentityRequest instance using the specified properties.
+         * Creates a new IdentityExternalAuth instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns RegisterExternalIdentityRequest instance
+         * @returns IdentityExternalAuth instance
          */
-        public static create(properties?: api.IRegisterExternalIdentityRequest): api.RegisterExternalIdentityRequest;
+        public static create(properties?: api.IIdentityExternalAuth): api.IdentityExternalAuth;
 
         /**
-         * Encodes the specified RegisterExternalIdentityRequest message. Does not implicitly {@link api.RegisterExternalIdentityRequest.verify|verify} messages.
-         * @param message RegisterExternalIdentityRequest message or plain object to encode
+         * Encodes the specified IdentityExternalAuth message. Does not implicitly {@link api.IdentityExternalAuth.verify|verify} messages.
+         * @param message IdentityExternalAuth message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: api.IRegisterExternalIdentityRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: api.IIdentityExternalAuth, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified RegisterExternalIdentityRequest message, length delimited. Does not implicitly {@link api.RegisterExternalIdentityRequest.verify|verify} messages.
-         * @param message RegisterExternalIdentityRequest message or plain object to encode
+         * Encodes the specified IdentityExternalAuth message, length delimited. Does not implicitly {@link api.IdentityExternalAuth.verify|verify} messages.
+         * @param message IdentityExternalAuth message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: api.IRegisterExternalIdentityRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: api.IIdentityExternalAuth, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes a RegisterExternalIdentityRequest message from the specified reader or buffer.
+         * Decodes an IdentityExternalAuth message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns RegisterExternalIdentityRequest
+         * @returns IdentityExternalAuth
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.RegisterExternalIdentityRequest;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.IdentityExternalAuth;
 
         /**
-         * Decodes a RegisterExternalIdentityRequest message from the specified reader or buffer, length delimited.
+         * Decodes an IdentityExternalAuth message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns RegisterExternalIdentityRequest
+         * @returns IdentityExternalAuth
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.RegisterExternalIdentityRequest;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.IdentityExternalAuth;
 
         /**
-         * Verifies a RegisterExternalIdentityRequest message.
+         * Verifies an IdentityExternalAuth message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates a RegisterExternalIdentityRequest message from a plain object. Also converts values to their respective internal types.
+         * Creates an IdentityExternalAuth message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns RegisterExternalIdentityRequest
+         * @returns IdentityExternalAuth
          */
-        public static fromObject(object: { [k: string]: any }): api.RegisterExternalIdentityRequest;
+        public static fromObject(object: { [k: string]: any }): api.IdentityExternalAuth;
 
         /**
-         * Creates a plain object from a RegisterExternalIdentityRequest message. Also converts values to other types if specified.
-         * @param message RegisterExternalIdentityRequest
+         * Creates a plain object from an IdentityExternalAuth message. Also converts values to other types if specified.
+         * @param message IdentityExternalAuth
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: api.RegisterExternalIdentityRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: api.IdentityExternalAuth, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this RegisterExternalIdentityRequest to JSON.
+         * Converts this IdentityExternalAuth to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
     }
 
-    namespace RegisterExternalIdentityRequest {
+    namespace IdentityExternalAuth {
 
-        /** Properties of an Auth. */
-        interface IAuth {
+        /** Properties of a JWT. */
+        interface IJWT {
 
-            /** Auth jwt */
-            jwt?: (api.RegisterExternalIdentityRequest.Auth.IJWT|null);
+            /** JWT token */
+            token?: (string|null);
         }
 
-        /** Represents an Auth. */
-        class Auth implements IAuth {
+        /** Represents a JWT. */
+        class JWT implements IJWT {
 
             /**
-             * Constructs a new Auth.
+             * Constructs a new JWT.
              * @param [properties] Properties to set
              */
-            constructor(properties?: api.RegisterExternalIdentityRequest.IAuth);
+            constructor(properties?: api.IdentityExternalAuth.IJWT);
 
-            /** Auth jwt. */
-            public jwt?: (api.RegisterExternalIdentityRequest.Auth.IJWT|null);
+            /** JWT token. */
+            public token: string;
 
             /**
-             * Creates a new Auth instance using the specified properties.
+             * Creates a new JWT instance using the specified properties.
              * @param [properties] Properties to set
-             * @returns Auth instance
+             * @returns JWT instance
              */
-            public static create(properties?: api.RegisterExternalIdentityRequest.IAuth): api.RegisterExternalIdentityRequest.Auth;
+            public static create(properties?: api.IdentityExternalAuth.IJWT): api.IdentityExternalAuth.JWT;
 
             /**
-             * Encodes the specified Auth message. Does not implicitly {@link api.RegisterExternalIdentityRequest.Auth.verify|verify} messages.
-             * @param message Auth message or plain object to encode
+             * Encodes the specified JWT message. Does not implicitly {@link api.IdentityExternalAuth.JWT.verify|verify} messages.
+             * @param message JWT message or plain object to encode
              * @param [writer] Writer to encode to
              * @returns Writer
              */
-            public static encode(message: api.RegisterExternalIdentityRequest.IAuth, writer?: $protobuf.Writer): $protobuf.Writer;
+            public static encode(message: api.IdentityExternalAuth.IJWT, writer?: $protobuf.Writer): $protobuf.Writer;
 
             /**
-             * Encodes the specified Auth message, length delimited. Does not implicitly {@link api.RegisterExternalIdentityRequest.Auth.verify|verify} messages.
-             * @param message Auth message or plain object to encode
+             * Encodes the specified JWT message, length delimited. Does not implicitly {@link api.IdentityExternalAuth.JWT.verify|verify} messages.
+             * @param message JWT message or plain object to encode
              * @param [writer] Writer to encode to
              * @returns Writer
              */
-            public static encodeDelimited(message: api.RegisterExternalIdentityRequest.IAuth, writer?: $protobuf.Writer): $protobuf.Writer;
+            public static encodeDelimited(message: api.IdentityExternalAuth.IJWT, writer?: $protobuf.Writer): $protobuf.Writer;
 
             /**
-             * Decodes an Auth message from the specified reader or buffer.
+             * Decodes a JWT message from the specified reader or buffer.
              * @param reader Reader or buffer to decode from
              * @param [length] Message length if known beforehand
-             * @returns Auth
+             * @returns JWT
              * @throws {Error} If the payload is not a reader or valid buffer
              * @throws {$protobuf.util.ProtocolError} If required fields are missing
              */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.RegisterExternalIdentityRequest.Auth;
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.IdentityExternalAuth.JWT;
 
             /**
-             * Decodes an Auth message from the specified reader or buffer, length delimited.
+             * Decodes a JWT message from the specified reader or buffer, length delimited.
              * @param reader Reader or buffer to decode from
-             * @returns Auth
+             * @returns JWT
              * @throws {Error} If the payload is not a reader or valid buffer
              * @throws {$protobuf.util.ProtocolError} If required fields are missing
              */
-            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.RegisterExternalIdentityRequest.Auth;
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.IdentityExternalAuth.JWT;
 
             /**
-             * Verifies an Auth message.
+             * Verifies a JWT message.
              * @param message Plain object to verify
              * @returns `null` if valid, otherwise the reason why it is not
              */
             public static verify(message: { [k: string]: any }): (string|null);
 
             /**
-             * Creates an Auth message from a plain object. Also converts values to their respective internal types.
+             * Creates a JWT message from a plain object. Also converts values to their respective internal types.
              * @param object Plain object
-             * @returns Auth
+             * @returns JWT
              */
-            public static fromObject(object: { [k: string]: any }): api.RegisterExternalIdentityRequest.Auth;
+            public static fromObject(object: { [k: string]: any }): api.IdentityExternalAuth.JWT;
 
             /**
-             * Creates a plain object from an Auth message. Also converts values to other types if specified.
-             * @param message Auth
+             * Creates a plain object from a JWT message. Also converts values to other types if specified.
+             * @param message JWT
              * @param [options] Conversion options
              * @returns Plain object
              */
-            public static toObject(message: api.RegisterExternalIdentityRequest.Auth, options?: $protobuf.IConversionOptions): { [k: string]: any };
+            public static toObject(message: api.IdentityExternalAuth.JWT, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
             /**
-             * Converts this Auth to JSON.
+             * Converts this JWT to JSON.
              * @returns JSON object
              */
             public toJSON(): { [k: string]: any };
         }
-
-        namespace Auth {
-
-            /** Properties of a JWT. */
-            interface IJWT {
-
-                /** JWT token */
-                token?: (string|null);
-            }
-
-            /** Represents a JWT. */
-            class JWT implements IJWT {
-
-                /**
-                 * Constructs a new JWT.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: api.RegisterExternalIdentityRequest.Auth.IJWT);
-
-                /** JWT token. */
-                public token: string;
-
-                /**
-                 * Creates a new JWT instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns JWT instance
-                 */
-                public static create(properties?: api.RegisterExternalIdentityRequest.Auth.IJWT): api.RegisterExternalIdentityRequest.Auth.JWT;
-
-                /**
-                 * Encodes the specified JWT message. Does not implicitly {@link api.RegisterExternalIdentityRequest.Auth.JWT.verify|verify} messages.
-                 * @param message JWT message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: api.RegisterExternalIdentityRequest.Auth.IJWT, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Encodes the specified JWT message, length delimited. Does not implicitly {@link api.RegisterExternalIdentityRequest.Auth.JWT.verify|verify} messages.
-                 * @param message JWT message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encodeDelimited(message: api.RegisterExternalIdentityRequest.Auth.IJWT, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a JWT message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns JWT
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.RegisterExternalIdentityRequest.Auth.JWT;
-
-                /**
-                 * Decodes a JWT message from the specified reader or buffer, length delimited.
-                 * @param reader Reader or buffer to decode from
-                 * @returns JWT
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.RegisterExternalIdentityRequest.Auth.JWT;
-
-                /**
-                 * Verifies a JWT message.
-                 * @param message Plain object to verify
-                 * @returns `null` if valid, otherwise the reason why it is not
-                 */
-                public static verify(message: { [k: string]: any }): (string|null);
-
-                /**
-                 * Creates a JWT message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns JWT
-                 */
-                public static fromObject(object: { [k: string]: any }): api.RegisterExternalIdentityRequest.Auth.JWT;
-
-                /**
-                 * Creates a plain object from a JWT message. Also converts values to other types if specified.
-                 * @param message JWT
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: api.RegisterExternalIdentityRequest.Auth.JWT, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this JWT to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-            }
-        }
     }
 
-    /** Properties of a RegisterExternalIdentityResponse. */
-    interface IRegisterExternalIdentityResponse {
+    /** Properties of a RegisterApplicationIdentityRequest. */
+    interface IRegisterApplicationIdentityRequest {
 
-        /** RegisterExternalIdentityResponse login */
-        login?: (string|null);
+        /** RegisterApplicationIdentityRequest appID */
+        appID?: (string|null);
+
+        /** RegisterApplicationIdentityRequest identity */
+        identity?: (api.IIdentityFields|null);
+
+        /** RegisterApplicationIdentityRequest encryption */
+        encryption?: (api.IIdentityEncryption|null);
+
+        /** RegisterApplicationIdentityRequest resources */
+        resources?: ({ [k: string]: api.IResourcePostRequest }|null);
+
+        /** RegisterApplicationIdentityRequest auth */
+        auth?: (api.IIdentityExternalAuth|null);
     }
 
-    /** Represents a RegisterExternalIdentityResponse. */
-    class RegisterExternalIdentityResponse implements IRegisterExternalIdentityResponse {
+    /** Represents a RegisterApplicationIdentityRequest. */
+    class RegisterApplicationIdentityRequest implements IRegisterApplicationIdentityRequest {
 
         /**
-         * Constructs a new RegisterExternalIdentityResponse.
+         * Constructs a new RegisterApplicationIdentityRequest.
          * @param [properties] Properties to set
          */
-        constructor(properties?: api.IRegisterExternalIdentityResponse);
+        constructor(properties?: api.IRegisterApplicationIdentityRequest);
 
-        /** RegisterExternalIdentityResponse login. */
-        public login: string;
+        /** RegisterApplicationIdentityRequest appID. */
+        public appID: string;
+
+        /** RegisterApplicationIdentityRequest identity. */
+        public identity?: (api.IIdentityFields|null);
+
+        /** RegisterApplicationIdentityRequest encryption. */
+        public encryption?: (api.IIdentityEncryption|null);
+
+        /** RegisterApplicationIdentityRequest resources. */
+        public resources: { [k: string]: api.IResourcePostRequest };
+
+        /** RegisterApplicationIdentityRequest auth. */
+        public auth?: (api.IIdentityExternalAuth|null);
 
         /**
-         * Creates a new RegisterExternalIdentityResponse instance using the specified properties.
+         * Creates a new RegisterApplicationIdentityRequest instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns RegisterExternalIdentityResponse instance
+         * @returns RegisterApplicationIdentityRequest instance
          */
-        public static create(properties?: api.IRegisterExternalIdentityResponse): api.RegisterExternalIdentityResponse;
+        public static create(properties?: api.IRegisterApplicationIdentityRequest): api.RegisterApplicationIdentityRequest;
 
         /**
-         * Encodes the specified RegisterExternalIdentityResponse message. Does not implicitly {@link api.RegisterExternalIdentityResponse.verify|verify} messages.
-         * @param message RegisterExternalIdentityResponse message or plain object to encode
+         * Encodes the specified RegisterApplicationIdentityRequest message. Does not implicitly {@link api.RegisterApplicationIdentityRequest.verify|verify} messages.
+         * @param message RegisterApplicationIdentityRequest message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: api.IRegisterExternalIdentityResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: api.IRegisterApplicationIdentityRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified RegisterExternalIdentityResponse message, length delimited. Does not implicitly {@link api.RegisterExternalIdentityResponse.verify|verify} messages.
-         * @param message RegisterExternalIdentityResponse message or plain object to encode
+         * Encodes the specified RegisterApplicationIdentityRequest message, length delimited. Does not implicitly {@link api.RegisterApplicationIdentityRequest.verify|verify} messages.
+         * @param message RegisterApplicationIdentityRequest message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: api.IRegisterExternalIdentityResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: api.IRegisterApplicationIdentityRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes a RegisterExternalIdentityResponse message from the specified reader or buffer.
+         * Decodes a RegisterApplicationIdentityRequest message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns RegisterExternalIdentityResponse
+         * @returns RegisterApplicationIdentityRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.RegisterExternalIdentityResponse;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.RegisterApplicationIdentityRequest;
 
         /**
-         * Decodes a RegisterExternalIdentityResponse message from the specified reader or buffer, length delimited.
+         * Decodes a RegisterApplicationIdentityRequest message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns RegisterExternalIdentityResponse
+         * @returns RegisterApplicationIdentityRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.RegisterExternalIdentityResponse;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.RegisterApplicationIdentityRequest;
 
         /**
-         * Verifies a RegisterExternalIdentityResponse message.
+         * Verifies a RegisterApplicationIdentityRequest message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates a RegisterExternalIdentityResponse message from a plain object. Also converts values to their respective internal types.
+         * Creates a RegisterApplicationIdentityRequest message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns RegisterExternalIdentityResponse
+         * @returns RegisterApplicationIdentityRequest
          */
-        public static fromObject(object: { [k: string]: any }): api.RegisterExternalIdentityResponse;
+        public static fromObject(object: { [k: string]: any }): api.RegisterApplicationIdentityRequest;
 
         /**
-         * Creates a plain object from a RegisterExternalIdentityResponse message. Also converts values to other types if specified.
-         * @param message RegisterExternalIdentityResponse
+         * Creates a plain object from a RegisterApplicationIdentityRequest message. Also converts values to other types if specified.
+         * @param message RegisterApplicationIdentityRequest
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: api.RegisterExternalIdentityResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: api.RegisterApplicationIdentityRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this RegisterExternalIdentityResponse to JSON.
+         * Converts this RegisterApplicationIdentityRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a RegisterApplicationIdentityResponse. */
+    interface IRegisterApplicationIdentityResponse {
+
+        /** RegisterApplicationIdentityResponse login */
+        login?: (string|null);
+    }
+
+    /** Represents a RegisterApplicationIdentityResponse. */
+    class RegisterApplicationIdentityResponse implements IRegisterApplicationIdentityResponse {
+
+        /**
+         * Constructs a new RegisterApplicationIdentityResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: api.IRegisterApplicationIdentityResponse);
+
+        /** RegisterApplicationIdentityResponse login. */
+        public login: string;
+
+        /**
+         * Creates a new RegisterApplicationIdentityResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RegisterApplicationIdentityResponse instance
+         */
+        public static create(properties?: api.IRegisterApplicationIdentityResponse): api.RegisterApplicationIdentityResponse;
+
+        /**
+         * Encodes the specified RegisterApplicationIdentityResponse message. Does not implicitly {@link api.RegisterApplicationIdentityResponse.verify|verify} messages.
+         * @param message RegisterApplicationIdentityResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: api.IRegisterApplicationIdentityResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RegisterApplicationIdentityResponse message, length delimited. Does not implicitly {@link api.RegisterApplicationIdentityResponse.verify|verify} messages.
+         * @param message RegisterApplicationIdentityResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: api.IRegisterApplicationIdentityResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RegisterApplicationIdentityResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RegisterApplicationIdentityResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.RegisterApplicationIdentityResponse;
+
+        /**
+         * Decodes a RegisterApplicationIdentityResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RegisterApplicationIdentityResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.RegisterApplicationIdentityResponse;
+
+        /**
+         * Verifies a RegisterApplicationIdentityResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RegisterApplicationIdentityResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RegisterApplicationIdentityResponse
+         */
+        public static fromObject(object: { [k: string]: any }): api.RegisterApplicationIdentityResponse;
+
+        /**
+         * Creates a plain object from a RegisterApplicationIdentityResponse message. Also converts values to other types if specified.
+         * @param message RegisterApplicationIdentityResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: api.RegisterApplicationIdentityResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RegisterApplicationIdentityResponse to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -1805,6 +1898,216 @@ export namespace api {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of an IdentityListOptions. */
+    interface IIdentityListOptions {
+
+        /** IdentityListOptions offset */
+        offset?: (number|null);
+
+        /** IdentityListOptions limit */
+        limit?: (number|null);
+
+        /** IdentityListOptions loginPrefix */
+        loginPrefix?: (string|null);
+
+        /** IdentityListOptions kind */
+        kind?: (string|null);
+
+        /** IdentityListOptions sortedBy */
+        sortedBy?: (api.IdentitySortingField|null);
+
+        /** IdentityListOptions order */
+        order?: (api.SortingOrder|null);
+    }
+
+    /** Represents an IdentityListOptions. */
+    class IdentityListOptions implements IIdentityListOptions {
+
+        /**
+         * Constructs a new IdentityListOptions.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: api.IIdentityListOptions);
+
+        /** IdentityListOptions offset. */
+        public offset: number;
+
+        /** IdentityListOptions limit. */
+        public limit: number;
+
+        /** IdentityListOptions loginPrefix. */
+        public loginPrefix: string;
+
+        /** IdentityListOptions kind. */
+        public kind: string;
+
+        /** IdentityListOptions sortedBy. */
+        public sortedBy: api.IdentitySortingField;
+
+        /** IdentityListOptions order. */
+        public order: api.SortingOrder;
+
+        /**
+         * Creates a new IdentityListOptions instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns IdentityListOptions instance
+         */
+        public static create(properties?: api.IIdentityListOptions): api.IdentityListOptions;
+
+        /**
+         * Encodes the specified IdentityListOptions message. Does not implicitly {@link api.IdentityListOptions.verify|verify} messages.
+         * @param message IdentityListOptions message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: api.IIdentityListOptions, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified IdentityListOptions message, length delimited. Does not implicitly {@link api.IdentityListOptions.verify|verify} messages.
+         * @param message IdentityListOptions message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: api.IIdentityListOptions, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an IdentityListOptions message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns IdentityListOptions
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.IdentityListOptions;
+
+        /**
+         * Decodes an IdentityListOptions message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns IdentityListOptions
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.IdentityListOptions;
+
+        /**
+         * Verifies an IdentityListOptions message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an IdentityListOptions message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns IdentityListOptions
+         */
+        public static fromObject(object: { [k: string]: any }): api.IdentityListOptions;
+
+        /**
+         * Creates a plain object from an IdentityListOptions message. Also converts values to other types if specified.
+         * @param message IdentityListOptions
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: api.IdentityListOptions, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this IdentityListOptions to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an IdentityListRequest. */
+    interface IIdentityListRequest {
+
+        /** IdentityListRequest options */
+        options?: (api.IIdentityListOptions|null);
+    }
+
+    /** Represents an IdentityListRequest. */
+    class IdentityListRequest implements IIdentityListRequest {
+
+        /**
+         * Constructs a new IdentityListRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: api.IIdentityListRequest);
+
+        /** IdentityListRequest options. */
+        public options?: (api.IIdentityListOptions|null);
+
+        /**
+         * Creates a new IdentityListRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns IdentityListRequest instance
+         */
+        public static create(properties?: api.IIdentityListRequest): api.IdentityListRequest;
+
+        /**
+         * Encodes the specified IdentityListRequest message. Does not implicitly {@link api.IdentityListRequest.verify|verify} messages.
+         * @param message IdentityListRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: api.IIdentityListRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified IdentityListRequest message, length delimited. Does not implicitly {@link api.IdentityListRequest.verify|verify} messages.
+         * @param message IdentityListRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: api.IIdentityListRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an IdentityListRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns IdentityListRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.IdentityListRequest;
+
+        /**
+         * Decodes an IdentityListRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns IdentityListRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.IdentityListRequest;
+
+        /**
+         * Verifies an IdentityListRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an IdentityListRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns IdentityListRequest
+         */
+        public static fromObject(object: { [k: string]: any }): api.IdentityListRequest;
+
+        /**
+         * Creates a plain object from an IdentityListRequest message. Also converts values to other types if specified.
+         * @param message IdentityListRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: api.IdentityListRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this IdentityListRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of an IdentityListResponse. */
     interface IIdentityListResponse {
 
@@ -1896,6 +2199,198 @@ export namespace api {
 
         /**
          * Converts this IdentityListResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an ApplicationListIdentitiesRequest. */
+    interface IApplicationListIdentitiesRequest {
+
+        /** ApplicationListIdentitiesRequest appID */
+        appID?: (string|null);
+
+        /** ApplicationListIdentitiesRequest options */
+        options?: (api.IIdentityListOptions|null);
+    }
+
+    /** Represents an ApplicationListIdentitiesRequest. */
+    class ApplicationListIdentitiesRequest implements IApplicationListIdentitiesRequest {
+
+        /**
+         * Constructs a new ApplicationListIdentitiesRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: api.IApplicationListIdentitiesRequest);
+
+        /** ApplicationListIdentitiesRequest appID. */
+        public appID: string;
+
+        /** ApplicationListIdentitiesRequest options. */
+        public options?: (api.IIdentityListOptions|null);
+
+        /**
+         * Creates a new ApplicationListIdentitiesRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ApplicationListIdentitiesRequest instance
+         */
+        public static create(properties?: api.IApplicationListIdentitiesRequest): api.ApplicationListIdentitiesRequest;
+
+        /**
+         * Encodes the specified ApplicationListIdentitiesRequest message. Does not implicitly {@link api.ApplicationListIdentitiesRequest.verify|verify} messages.
+         * @param message ApplicationListIdentitiesRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: api.IApplicationListIdentitiesRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ApplicationListIdentitiesRequest message, length delimited. Does not implicitly {@link api.ApplicationListIdentitiesRequest.verify|verify} messages.
+         * @param message ApplicationListIdentitiesRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: api.IApplicationListIdentitiesRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an ApplicationListIdentitiesRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ApplicationListIdentitiesRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.ApplicationListIdentitiesRequest;
+
+        /**
+         * Decodes an ApplicationListIdentitiesRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ApplicationListIdentitiesRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.ApplicationListIdentitiesRequest;
+
+        /**
+         * Verifies an ApplicationListIdentitiesRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an ApplicationListIdentitiesRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ApplicationListIdentitiesRequest
+         */
+        public static fromObject(object: { [k: string]: any }): api.ApplicationListIdentitiesRequest;
+
+        /**
+         * Creates a plain object from an ApplicationListIdentitiesRequest message. Also converts values to other types if specified.
+         * @param message ApplicationListIdentitiesRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: api.ApplicationListIdentitiesRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ApplicationListIdentitiesRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an ApplicationListIdentitiesResponse. */
+    interface IApplicationListIdentitiesResponse {
+
+        /** ApplicationListIdentitiesResponse identities */
+        identities?: (api.IApplicationIdentity[]|null);
+
+        /** ApplicationListIdentitiesResponse totalIdentitiesCount */
+        totalIdentitiesCount?: (number|null);
+    }
+
+    /** Represents an ApplicationListIdentitiesResponse. */
+    class ApplicationListIdentitiesResponse implements IApplicationListIdentitiesResponse {
+
+        /**
+         * Constructs a new ApplicationListIdentitiesResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: api.IApplicationListIdentitiesResponse);
+
+        /** ApplicationListIdentitiesResponse identities. */
+        public identities: api.IApplicationIdentity[];
+
+        /** ApplicationListIdentitiesResponse totalIdentitiesCount. */
+        public totalIdentitiesCount: number;
+
+        /**
+         * Creates a new ApplicationListIdentitiesResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ApplicationListIdentitiesResponse instance
+         */
+        public static create(properties?: api.IApplicationListIdentitiesResponse): api.ApplicationListIdentitiesResponse;
+
+        /**
+         * Encodes the specified ApplicationListIdentitiesResponse message. Does not implicitly {@link api.ApplicationListIdentitiesResponse.verify|verify} messages.
+         * @param message ApplicationListIdentitiesResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: api.IApplicationListIdentitiesResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ApplicationListIdentitiesResponse message, length delimited. Does not implicitly {@link api.ApplicationListIdentitiesResponse.verify|verify} messages.
+         * @param message ApplicationListIdentitiesResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: api.IApplicationListIdentitiesResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an ApplicationListIdentitiesResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ApplicationListIdentitiesResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.ApplicationListIdentitiesResponse;
+
+        /**
+         * Decodes an ApplicationListIdentitiesResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ApplicationListIdentitiesResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.ApplicationListIdentitiesResponse;
+
+        /**
+         * Verifies an ApplicationListIdentitiesResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an ApplicationListIdentitiesResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ApplicationListIdentitiesResponse
+         */
+        public static fromObject(object: { [k: string]: any }): api.ApplicationListIdentitiesResponse;
+
+        /**
+         * Creates a plain object from an ApplicationListIdentitiesResponse message. Also converts values to other types if specified.
+         * @param message ApplicationListIdentitiesResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: api.ApplicationListIdentitiesResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ApplicationListIdentitiesResponse to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };

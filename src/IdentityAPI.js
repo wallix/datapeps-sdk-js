@@ -45,11 +45,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var nacl = require("tweetnacl");
 var proto_1 = require("./proto");
-var ResourceInternal_1 = require("./ResourceInternal");
 var Error_1 = require("./Error");
 var CryptoFuncs_1 = require("./CryptoFuncs");
 var Tools_1 = require("./Tools");
 var HTTP_1 = require("./HTTP");
+var IdentityInternal_1 = require("./IdentityInternal");
+exports.IdentitySortingOrder = IdentityInternal_1.IdentitySortingOrder;
 var IdentityPublicKey;
 (function (IdentityPublicKey) {
     var bs58 = require("bs58");
@@ -87,11 +88,6 @@ var IdentitySortingField;
     IdentitySortingField[IdentitySortingField["CREATED"] = 1] = "CREATED";
     IdentitySortingField[IdentitySortingField["KIND"] = 2] = "KIND";
 })(IdentitySortingField = exports.IdentitySortingField || (exports.IdentitySortingField = {}));
-var IdentitySortingOrder;
-(function (IdentitySortingOrder) {
-    IdentitySortingOrder[IdentitySortingOrder["DESC"] = 0] = "DESC";
-    IdentitySortingOrder[IdentitySortingOrder["ASC"] = 1] = "ASC";
-})(IdentitySortingOrder = exports.IdentitySortingOrder || (exports.IdentitySortingOrder = {}));
 var IdentityAPI = /** @class */ (function () {
     function IdentityAPI(session) {
         this.session = session;
@@ -110,18 +106,16 @@ var IdentityAPI = /** @class */ (function () {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, HTTP_1.client.doRequest({
                             method: "POST",
-                            code: 200,
+                            expectedCode: 200,
                             path: "/api/v4/identities/latestPublicKeys",
-                            request: function () {
-                                return proto_1.api.IdentityGetLatestPublicKeysRequest.encode({ logins: logins }).finish();
-                            },
+                            body: proto_1.api.IdentityGetLatestPublicKeysRequest.encode({ logins: logins }).finish(),
                             response: proto_1.api.IdentityGetLatestPublicKeysResponse.decode,
-                            before: function (x, b) {
-                                x.setRequestHeader("content-type", "application/x-protobuf");
-                            }
+                            headers: new Headers({
+                                "content-type": "application/x-protobuf"
+                            })
                         })];
                     case 1:
-                        publicKeys = (_a.sent()).publicKeys;
+                        publicKeys = (_a.sent()).body.publicKeys;
                         return [2 /*return*/, publicKeys];
                 }
             });
@@ -160,9 +154,9 @@ var IdentityAPI = /** @class */ (function () {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "GET",
-                            code: 200,
+                            expectedCode: 200,
                             path: "/api/v4/identity/" + encodeURI(login),
-                            response: function (r) { return IdentityX.fromapi(proto_1.api.Identity.decode(r)); }
+                            response: function (r) { return IdentityInternal_1.IdentitySerializer.deserialize(proto_1.api.Identity.decode(r)); }
                         })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
@@ -182,24 +176,33 @@ var IdentityAPI = /** @class */ (function () {
      */
     IdentityAPI.prototype.list = function (options) {
         return __awaiter(this, void 0, void 0, function () {
+            var sortingOrder;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (options.sortingField === undefined) {
+                        options = options == null ? {} : options;
+                        if (options.sortingField == null) {
                             options.sortingField = IdentitySortingField.CREATED;
                         }
-                        if (options.sortingOrder === undefined) {
-                            options.sortingOrder = IdentitySortingOrder.ASC;
-                        }
+                        sortingOrder = IdentityInternal_1.IdentityRequestsUtils.resolveSortingOrder(options.sortingOrder);
                         return [4 /*yield*/, this.session.doProtoRequest({
-                                method: "GET",
-                                code: 200,
+                                method: "POST",
+                                expectedCode: 200,
                                 path: "/api/v4/identities/list",
-                                params: options,
+                                body: proto_1.api.IdentityListRequest.encode({
+                                    options: {
+                                        offset: options.offset,
+                                        limit: options.limit,
+                                        loginPrefix: options.search,
+                                        kind: options.kind,
+                                        sortedBy: options.sortingField,
+                                        order: sortingOrder
+                                    }
+                                }).finish(),
                                 response: function (r) {
                                     var _a = proto_1.api.IdentityListResponse.decode(r), identities = _a.identities, totalIdentitiesCount = _a.totalIdentitiesCount;
                                     return {
-                                        identities: identities.map(IdentityX.fromapi),
+                                        identities: identities.map(IdentityInternal_1.IdentitySerializer.deserialize),
                                         totalIdentitiesCount: totalIdentitiesCount
                                     };
                                 }
@@ -250,17 +253,15 @@ var IdentityAPI = /** @class */ (function () {
                         epub = encryption.getPublic();
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "POST",
-                                code: 201,
+                                expectedCode: 201,
                                 path: "/api/v4/identity",
-                                request: function () {
-                                    return proto_1.api.IdentityCreateRequest.encode({
-                                        identity: identity,
-                                        sharingGroup: sharingGroup,
-                                        encryption: encryption,
-                                        email: options.email,
-                                        signChain: _this.session.encryption.sign(Tools_1.Uint8Tool.concat(epub.boxEncrypted.publicKey, epub.signEncrypted.publicKey))
-                                    }).finish();
-                                }
+                                body: proto_1.api.IdentityCreateRequest.encode({
+                                    identity: identity,
+                                    sharingGroup: sharingGroup,
+                                    encryption: encryption,
+                                    email: options.email,
+                                    signChain: this.session.encryption.sign(Tools_1.Uint8Tool.concat(epub.boxEncrypted.publicKey, epub.signEncrypted.publicKey))
+                                }).finish()
                             })];
                     case 2: return [2 /*return*/, _a.sent()];
                 }
@@ -280,9 +281,9 @@ var IdentityAPI = /** @class */ (function () {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "PUT",
-                            code: 200,
+                            expectedCode: 200,
                             path: "/api/v4/identity/" + encodeURI(identity.login),
-                            request: function () { return proto_1.api.IdentityFields.encode(identity).finish(); }
+                            body: proto_1.api.IdentityFields.encode(identity).finish()
                         })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
@@ -308,7 +309,7 @@ var IdentityAPI = /** @class */ (function () {
                         assume = { login: login, kind: IdentityAccessKind.WRITE };
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "GET",
-                                code: 200,
+                                expectedCode: 200,
                                 path: "/api/v4/identity/" + encodeURIComponent(login) + "/keysToRenew",
                                 response: proto_1.api.IdentityGetKeysToRenewResponse.decode,
                                 assume: assume
@@ -336,26 +337,24 @@ var IdentityAPI = /** @class */ (function () {
                         backward = { nonce: nonce, encryptedKey: message };
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "POST",
-                                code: 201,
+                                expectedCode: 201,
                                 path: "/api/v4/identity/" + encodeURIComponent(login) + "/keysToRenew",
-                                request: function () {
-                                    return proto_1.api.IdentityPostKeysToRenewRequest.encode({
-                                        encryption: epub,
-                                        backward: backward,
-                                        signChain: nacl.sign.detached(Tools_1.Uint8Tool.concat(epub.boxEncrypted.publicKey, epub.signEncrypted.publicKey), key.signKey),
-                                        sharingGroup: sharingGroup.map(function (_a) {
-                                            var login = _a.login, version = _a.version, box = _a.box, sign = _a.sign;
-                                            var _b = next.encryptKey(kind, _this.session.encryption, box), message = _b.message, nonce = _b.nonce;
-                                            return {
-                                                login: login,
-                                                version: version,
-                                                encryptedKey: message,
-                                                nonce: nonce,
-                                                kind: kind
-                                            };
-                                        })
-                                    }).finish();
-                                },
+                                body: proto_1.api.IdentityPostKeysToRenewRequest.encode({
+                                    encryption: epub,
+                                    backward: backward,
+                                    signChain: nacl.sign.detached(Tools_1.Uint8Tool.concat(epub.boxEncrypted.publicKey, epub.signEncrypted.publicKey), key.signKey),
+                                    sharingGroup: sharingGroup.map(function (_a) {
+                                        var login = _a.login, version = _a.version, box = _a.box, sign = _a.sign;
+                                        var _b = next.encryptKey(kind, _this.session.encryption, box), message = _b.message, nonce = _b.nonce;
+                                        return {
+                                            login: login,
+                                            version: version,
+                                            encryptedKey: message,
+                                            nonce: nonce,
+                                            kind: kind
+                                        };
+                                    })
+                                }).finish(),
                                 assume: assume
                             })];
                     case 3:
@@ -380,7 +379,7 @@ var IdentityAPI = /** @class */ (function () {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "GET",
-                            code: 200,
+                            expectedCode: 200,
                             path: "/api/v4/identity/" + encodeURIComponent(login) + "/sharingGroup",
                             response: function (r) {
                                 return proto_1.api.IdentityGetSharingGroupResponse.decode(r)
@@ -419,28 +418,26 @@ var IdentityAPI = /** @class */ (function () {
                         publicKeys = _a.sent();
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "PATCH",
-                                code: 201,
+                                expectedCode: 201,
                                 path: "/api/v4/identity/" + encodeURI(login) + "/sharingGroup",
                                 assume: { login: login, kind: IdentityAccessKind.WRITE },
-                                request: function () {
-                                    return proto_1.api.IdentityShareRequest.encode({
-                                        version: key.version,
-                                        sharingGroup: publicKeys.map(function (_a) {
-                                            var login = _a.login, version = _a.version, box = _a.box, sign = _a.sign;
-                                            var kind = proto_1.api.IdentityShareKind.SHARING;
-                                            var _b = _this.session.encryption
-                                                .encrypt(proto_1.api.ResourceType.SES)
-                                                .encrypt(box, key.sharingKey), message = _b.message, nonce = _b.nonce;
-                                            return {
-                                                login: login,
-                                                version: version,
-                                                nonce: nonce,
-                                                kind: kind,
-                                                encryptedKey: message
-                                            };
-                                        })
-                                    }).finish();
-                                }
+                                body: proto_1.api.IdentityShareRequest.encode({
+                                    version: key.version,
+                                    sharingGroup: publicKeys.map(function (_a) {
+                                        var login = _a.login, version = _a.version, box = _a.box, sign = _a.sign;
+                                        var kind = proto_1.api.IdentityShareKind.SHARING;
+                                        var _b = _this.session.encryption
+                                            .encrypt(proto_1.api.ResourceType.SES)
+                                            .encrypt(box, key.sharingKey), message = _b.message, nonce = _b.nonce;
+                                        return {
+                                            login: login,
+                                            version: version,
+                                            nonce: nonce,
+                                            kind: kind,
+                                            encryptedKey: message
+                                        };
+                                    })
+                                }).finish()
                             })];
                     case 3: return [2 /*return*/, _a.sent()];
                 }
@@ -562,16 +559,14 @@ var IdentityAPI = /** @class */ (function () {
                         });
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "POST",
-                                code: 201,
+                                expectedCode: 201,
                                 path: "/api/v4/identity/" + encodeURIComponent(login) + "/sharingGraph",
                                 assume: options.overwriteKeys != null
                                     ? undefined
                                     : { login: login, kind: IdentityAccessKind.WRITE },
-                                request: function () {
-                                    return proto_1.api.IdentityPostSharingGraphRequest.encode({
-                                        graph: encryptedGraph
-                                    }).finish();
-                                }
+                                body: proto_1.api.IdentityPostSharingGraphRequest.encode({
+                                    graph: encryptedGraph
+                                }).finish()
                             })];
                     case 4: return [2 /*return*/, _b.sent()];
                 }
@@ -592,7 +587,7 @@ var IdentityAPI = /** @class */ (function () {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "GET",
-                            code: 200,
+                            expectedCode: 200,
                             path: "/api/v4/identity/" + encodeURIComponent(login) + "/accessGroup",
                             response: function (r) {
                                 return proto_1.api.IdentityGetAccessGroupResponse.decode(r)
@@ -619,13 +614,11 @@ var IdentityAPI = /** @class */ (function () {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "POST",
-                            code: 200,
+                            expectedCode: 200,
                             path: "/api/v4/identities/latestPublicChains",
-                            request: function () {
-                                return proto_1.api.IdentityGetLatestPublicChainsRequest.encode({
-                                    ids: [{ login: login, since: 0 }]
-                                }).finish();
-                            },
+                            body: proto_1.api.IdentityGetLatestPublicChainsRequest.encode({
+                                ids: [{ login: login, since: 0 }]
+                            }).finish(),
                             response: proto_1.api.IdentityGetLatestPublicChainsResponse.decode
                         })];
                     case 1:
@@ -669,7 +662,7 @@ var IdentityAPI = /** @class */ (function () {
                         options = options != null ? options : {};
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "GET",
-                                code: 200,
+                                expectedCode: 200,
                                 path: "/api/v4/identity/" + encodeURI(login) + "/lockedVersions",
                                 params: options,
                                 assume: login == this.session.login
@@ -746,89 +739,20 @@ var IdentityAPI = /** @class */ (function () {
                         if (!(unlockedVersions.length > 0)) return [3 /*break*/, 6];
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "POST",
-                                code: 200,
+                                expectedCode: 200,
                                 assume: login == this.session.login
                                     ? null
                                     : { login: login, kind: IdentityAccessKind.WRITE },
                                 path: "/api/v4/identity/" + encodeURI(login) + "/unlockVersions",
-                                request: function () {
-                                    return proto_1.api.UnlockVersionsRequest.encode({
-                                        unlockedVersions: resolvedChallengesWithEncryptedKeys
-                                    }).finish();
-                                },
+                                body: proto_1.api.UnlockVersionsRequest.encode({
+                                    unlockedVersions: resolvedChallengesWithEncryptedKeys
+                                }).finish(),
                                 response: proto_1.api.SessionResolveChallengeResponse.decode
                             })];
                     case 5:
                         _a.sent();
                         _a.label = 6;
                     case 6: return [2 /*return*/, unlockedVersions];
-                }
-            });
-        });
-    };
-    /**
-     * Save a one-to-one association between a tuple <identityLogin, resourceName> and a resourceID.
-     * @param login The login of the identity involved in the association
-     * @param resourceName The desired resource name involved in the association
-     * @param resourceID The ID of the resource involved in the association
-     * @return(p) On success the promise will be resolved with void. On error the promise will be rejected with an {@link Error} with kind:
-     * - `DataPeps.ServerError.IdentityNotFound` if the identity cannot be assumed or if the identity does not exist.
-     * - `DataPeps.ServerError.ResourceNotFound` if the resource does not exist.
-     */
-    IdentityAPI.prototype.setNamedResource = function (login, resourceName, resourceID) {
-        return __awaiter(this, void 0, void 0, function () {
-            var assume, res;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        assume = { login: login, kind: IdentityAccessKind.WRITE };
-                        return [4 /*yield*/, this.session.doProtoRequest({
-                                method: "PUT",
-                                code: 200,
-                                assume: assume,
-                                path: "/api/v4/identity/" + encodeURI(login) + "/resource/" + encodeURIComponent(resourceName),
-                                request: function () {
-                                    return proto_1.api.IdentitySetNamedResourceRequest.encode({
-                                        resourceID: resourceID
-                                    }).finish();
-                                }
-                            })];
-                    case 1:
-                        res = _a.sent();
-                        return [2 /*return*/, res];
-                }
-            });
-        });
-    };
-    /**
-     * Get the resource associated with the tuple <identityLogin, resourceName>.
-     * @param login The login of the identity involved in the association
-     * @param resourceName The resource name involved in the association
-     * @return(p) On success the promise will be resolved with resource associated with the tuple <identityLogin, resourceName>. On error the promise will be rejected with an {@link Error} with kind:
-     * - `DataPeps.ServerError.IdentityNotFound` if the identity cannot be assumed or if the identity does not exist.
-     * - `DataPeps.ServerError.NamedResourceNotFound` if the NamedResource does not exist.
-     */
-    IdentityAPI.prototype.getNamedResource = function (login, resourceName, options) {
-        return __awaiter(this, void 0, void 0, function () {
-            var assume, resp;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        options = options != null ? options : {};
-                        assume = { login: login, kind: IdentityAccessKind.READ };
-                        return [4 /*yield*/, this.session.doProtoRequest({
-                                method: "GET",
-                                code: 200,
-                                assume: assume,
-                                path: "/api/v4/identity/" +
-                                    encodeURIComponent(login) +
-                                    "/resource/" +
-                                    encodeURIComponent(resourceName),
-                                response: function (r) { return proto_1.api.IdentityGetNamedResourceResponse.decode(r); }
-                            })];
-                    case 1:
-                        resp = _a.sent();
-                        return [2 /*return*/, ResourceInternal_1.makeResourceFromResponse(resp.resource, proto_1.api.ResourceType.SES, this.session, options.parse, assume.login)];
                 }
             });
         });
@@ -844,7 +768,7 @@ var IdentityAPI = /** @class */ (function () {
                         withKeys = options.withKeys == null ? true : options.withKeys;
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "GET",
-                                code: 200,
+                                expectedCode: 200,
                                 path: "/api/v4/identity/" + encodeURIComponent(login) + "/sharingGraph",
                                 assume: withKeys ? { login: login, kind: IdentityAccessKind.WRITE } : null,
                                 response: proto_1.api.IdentityGetSharingGraphResponse.decode
@@ -912,16 +836,4 @@ var IdentityAPI = /** @class */ (function () {
     return IdentityAPI;
 }());
 exports.IdentityAPI = IdentityAPI;
-var IdentityX = /** @class */ (function () {
-    function IdentityX() {
-    }
-    IdentityX.fromapi = function (t) {
-        var x = proto_1.api.Identity.create(t);
-        return __assign({}, x, { created: new Date(t.created * 1000) });
-    };
-    IdentityX.toapi = function (i) {
-        return __assign({}, i, { created: null });
-    };
-    return IdentityX;
-}());
 //# sourceMappingURL=IdentityAPI.js.map

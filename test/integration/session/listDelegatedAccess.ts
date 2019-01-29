@@ -8,6 +8,7 @@ import {
   DelegatedAccess,
   DelegatedAccessAPI
 } from "../../../src/DataPeps";
+import { Uint8Tool } from "../../../src/Tools";
 
 describe("session.listDelegatedAccess", () => {
   let seed = Math.floor(Math.random() * 99999);
@@ -49,7 +50,7 @@ describe("session.listDelegatedAccess", () => {
     });
     let appSession = await aliceSession.createSession(aliceApp.login);
     let sign = ({ login, publicKey }) => {
-      let ulogin = new TextEncoder().encode(login);
+      let ulogin = Uint8Tool.encode(login);
       let toSign = new Uint8Array(ulogin.byteLength + publicKey.byteLength);
       toSign.set(ulogin, 0);
       toSign.set(publicKey, ulogin.byteLength);

@@ -5,7 +5,7 @@ import * as Long from "long";
 import * as Utils from "../../Utils";
 import { itError } from "../../Utils";
 import * as DataPeps from "../../../src/DataPeps";
-import { ResourceAPI, IdentityAPI } from "../../../src/DataPeps";
+import { ResourceAPI } from "../../../src/DataPeps";
 
 describe("identity.namedResource", () => {
   let resourceA: Utils.Resource,
@@ -49,16 +49,17 @@ describe("identity.namedResource", () => {
 
   it("Creation and access to a named resource", async () => {
     // creation of the named resource (Alice, resourceName, resourceA)
-    await new IdentityAPI(ctx.alice.session).setNamedResource(
+    await new ResourceAPI(ctx.alice.session).setNamed(
       ctx.alice.identity.login,
       resourceName,
       resourceA.resource.id
     );
 
     // access to the created named resource
-    let namedResourceA = await new IdentityAPI(
-      ctx.alice.session
-    ).getNamedResource(ctx.alice.identity.login, resourceName);
+    let namedResourceA = await new ResourceAPI(ctx.alice.session).getNamed(
+      ctx.alice.identity.login,
+      resourceName
+    );
 
     // verification that the obtained resource is the same as the original
     Utils.checkFetchedResource(namedResourceA, resourceA);
@@ -66,33 +67,34 @@ describe("identity.namedResource", () => {
 
   it("Get a named resource when created by an identity in the sharing graph", async () => {
     // AliceDevice creates a named resoure  (Alice, resourceName, resourceA)
-    await new IdentityAPI(ctx.aliceDevice.session).setNamedResource(
+    await new ResourceAPI(ctx.aliceDevice.session).setNamed(
       ctx.alice.identity.login,
       resourceName,
       resourceA.resource.id
     );
 
     // AliceDevice access to the created named resource
-    let namedResourceA1 = await new IdentityAPI(
+    let namedResourceA1 = await new ResourceAPI(
       ctx.aliceDevice.session
-    ).getNamedResource(ctx.alice.identity.login, resourceName);
+    ).getNamed(ctx.alice.identity.login, resourceName);
 
     // Alice access to the created named resource
-    let namedResourceA2 = await new IdentityAPI(
-      ctx.alice.session
-    ).getNamedResource(ctx.alice.identity.login, resourceName);
+    let namedResourceA2 = await new ResourceAPI(ctx.alice.session).getNamed(
+      ctx.alice.identity.login,
+      resourceName
+    );
   });
 
   it("Overwrite a named resource", async () => {
     // Alice creates the named resource (Alice, resourceName, resourceB) she overwrites (Alice, resourceName, resourceA)
-    await new IdentityAPI(ctx.alice.session).setNamedResource(
+    await new ResourceAPI(ctx.alice.session).setNamed(
       ctx.alice.identity.login,
       resourceName,
       resourceB.resource.id
     );
 
     // Alice creates the named resource (Alice, resourceName, resourceA) she overwrites (Alice, resourceName, resourceB)
-    await new IdentityAPI(ctx.alice.session).setNamedResource(
+    await new ResourceAPI(ctx.alice.session).setNamed(
       ctx.alice.identity.login,
       resourceName,
       resourceA.resource.id
@@ -102,7 +104,7 @@ describe("identity.namedResource", () => {
   itError(
     "Put a named resource with a login that cannot be assumed",
     () =>
-      new IdentityAPI(ctx.alice.session).setNamedResource(
+      new ResourceAPI(ctx.alice.session).setNamed(
         ctx.bob.identity.login,
         resourceName,
         resourceA.resource.id
@@ -114,7 +116,7 @@ describe("identity.namedResource", () => {
     "Put a named resource with a login that does not exist",
     () =>
       // Bob tries to creat the named resource (randomId, resourceName, resourceB) but he is not allowed to assume Alice identity
-      new IdentityAPI(ctx.bob.session).setNamedResource(
+      new ResourceAPI(ctx.bob.session).setNamed(
         randomIdentity,
         resourceName,
         resourceB.resource.id
@@ -138,7 +140,7 @@ describe("identity.namedResource", () => {
 
     // Alice tries to create of the named resource (Alice, resourceName, idNotExisting) with a resource id that does not exist (from deleted resourceB)
     await Utils.expectError(
-      new IdentityAPI(ctx.alice.session).setNamedResource(
+      new ResourceAPI(ctx.alice.session).setNamed(
         ctx.alice.identity.login,
         resourceName,
         idNotExisting
@@ -151,7 +153,7 @@ describe("identity.namedResource", () => {
     "Get a named resource with a name that has not been associated",
     () =>
       // Alice tries to get the named resource (alice,resourceName+"difference") that does not exist
-      new IdentityAPI(ctx.alice.session).getNamedResource(
+      new ResourceAPI(ctx.alice.session).getNamed(
         ctx.alice.identity.login,
         resourceName + "difference"
       ),
@@ -166,7 +168,7 @@ describe("identity.namedResource", () => {
     "Get a named resource with an identity that cannot be assumed",
     () =>
       // Bob tries to get the named resource (alice,resourceName) but he cannot assume Alice identity
-      new IdentityAPI(ctx.bob.session).getNamedResource(
+      new ResourceAPI(ctx.bob.session).getNamed(
         ctx.alice.identity.login,
         resourceName
       ),
@@ -177,7 +179,7 @@ describe("identity.namedResource", () => {
     "Put a named resource with a resource ID that does not exist",
     () =>
       // Alice tries to create the named resource (Alice, resourceName, fakeId) with a resource id that does not exist: 1
-      new IdentityAPI(ctx.alice.session).setNamedResource(
+      new ResourceAPI(ctx.alice.session).setNamed(
         ctx.alice.identity.login,
         resourceName,
         fakeId
@@ -192,10 +194,7 @@ describe("identity.namedResource", () => {
     "Get a named resource with a identity that does not exist",
     () =>
       // Alice tries to get the named resource (Alice, resourceName, fakeId) with a resource id that does not exist: 1
-      new IdentityAPI(ctx.alice.session).getNamedResource(
-        randomIdentity,
-        resourceName
-      ),
+      new ResourceAPI(ctx.alice.session).getNamed(randomIdentity, resourceName),
     DataPeps.ServerError.IdentityNotFound
   );
 
@@ -203,7 +202,7 @@ describe("identity.namedResource", () => {
     "Get a named resource that could exist but does not",
     () =>
       // Bob tries to get the named resource (Bob,resourceName) that does not exist
-      new IdentityAPI(ctx.bob.session).getNamedResource(
+      new ResourceAPI(ctx.bob.session).getNamed(
         ctx.bob.identity.login,
         resourceName
       ),
@@ -216,16 +215,17 @@ describe("identity.namedResource", () => {
 
   it("Overwrite a named resource", async () => {
     // Alice overwrites the named resource (Alice, resourceName, resourceA) with (Alice, resourceName, resourceC)
-    await new IdentityAPI(ctx.alice.session).setNamedResource(
+    await new ResourceAPI(ctx.alice.session).setNamed(
       ctx.alice.identity.login,
       resourceName,
       resourceC.resource.id
     );
 
     // access to the overwrited named resource
-    let namedResource = await new IdentityAPI(
-      ctx.alice.session
-    ).getNamedResource(ctx.alice.identity.login, resourceName);
+    let namedResource = await new ResourceAPI(ctx.alice.session).getNamed(
+      ctx.alice.identity.login,
+      resourceName
+    );
 
     // verification that the obtained resource is the same as the original
     Utils.checkFetchedResource(namedResource, resourceC);

@@ -37,6 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var proto_1 = require("./proto");
 var Application_1 = require("./Application");
+var Tools_1 = require("./Tools");
 /**
  * Expose all specific types and functions for JWT application.
  */
@@ -87,7 +88,7 @@ var ApplicationJWT;
                             secret = appSecret;
                         }
                         else {
-                            secret = new TextDecoder().decode(appSecret);
+                            secret = Tools_1.Uint8Tool.decode(appSecret);
                         }
                         return [4 /*yield*/, connector.createSession(appLogin, secret)];
                     case 2:

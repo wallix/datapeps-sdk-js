@@ -1,7 +1,7 @@
 import { api } from "./proto";
-import { Resource } from "./ResourceAPI";
 import { Session } from "./Session";
-import { ID } from "./ID";
+import { IdentitySortingOrder } from './IdentityInternal';
+export { IdentitySortingOrder };
 /**
  * An {@Identity} owns several keys, this is a reference to the unique version of an identity public key.
  */
@@ -98,10 +98,6 @@ export declare enum IdentitySortingField {
     LOGIN = 0,
     CREATED = 1,
     KIND = 2,
-}
-export declare enum IdentitySortingOrder {
-    DESC = 0,
-    ASC = 1,
 }
 export declare class IdentityAPI {
     private session;
@@ -259,26 +255,5 @@ export declare class IdentityAPI {
      * @return(p) On success the promise will be resolved with the list of unlocked identities.
      */
     unlockVersions(login: string, secret: string | Uint8Array): Promise<IdentityPublicKeyWithMetadata[]>;
-    /**
-     * Save a one-to-one association between a tuple <identityLogin, resourceName> and a resourceID.
-     * @param login The login of the identity involved in the association
-     * @param resourceName The desired resource name involved in the association
-     * @param resourceID The ID of the resource involved in the association
-     * @return(p) On success the promise will be resolved with void. On error the promise will be rejected with an {@link Error} with kind:
-     * - `DataPeps.ServerError.IdentityNotFound` if the identity cannot be assumed or if the identity does not exist.
-     * - `DataPeps.ServerError.ResourceNotFound` if the resource does not exist.
-     */
-    setNamedResource(login: string, resourceName: string, resourceID: ID): Promise<void>;
-    /**
-     * Get the resource associated with the tuple <identityLogin, resourceName>.
-     * @param login The login of the identity involved in the association
-     * @param resourceName The resource name involved in the association
-     * @return(p) On success the promise will be resolved with resource associated with the tuple <identityLogin, resourceName>. On error the promise will be rejected with an {@link Error} with kind:
-     * - `DataPeps.ServerError.IdentityNotFound` if the identity cannot be assumed or if the identity does not exist.
-     * - `DataPeps.ServerError.NamedResourceNotFound` if the NamedResource does not exist.
-     */
-    getNamedResource<T>(login: string, resourceName: string, options?: {
-        parse?: ((u: Uint8Array) => T);
-    }): Promise<Resource<T>>;
     private getSharingGraph(login, options?);
 }

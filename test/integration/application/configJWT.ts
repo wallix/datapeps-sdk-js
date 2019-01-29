@@ -13,7 +13,8 @@ import {
 import * as nacl from "tweetnacl";
 import { expect } from "chai";
 import { itError } from "../../Utils";
-import { configs, ESKey, RSKey } from "./Utils";
+import { configs, invalidKey } from "./Utils";
+import { Uint8Tool } from "../../../src/Tools";
 
 describe("applicationAPI.config.JWT", () => {
   let ctx: devCtx & { otherDev: userAndSessionCtx };
@@ -81,25 +82,6 @@ describe("applicationAPI.config.JWT", () => {
   // Error cases: putConfig
   ///////////////////////////////////////////////
 
-  function invalidKey(signAlgorithm: ApplicationJWT.Algorithm): Uint8Array {
-    switch (signAlgorithm) {
-      case ApplicationJWT.Algorithm.HS256:
-      case ApplicationJWT.Algorithm.HS384:
-      case ApplicationJWT.Algorithm.HS512:
-        return new Uint8Array(0);
-      case ApplicationJWT.Algorithm.RS256:
-      case ApplicationJWT.Algorithm.RS384:
-      case ApplicationJWT.Algorithm.RS512:
-        return ESKey;
-      case ApplicationJWT.Algorithm.ES256:
-      case ApplicationJWT.Algorithm.ES384:
-      case ApplicationJWT.Algorithm.ES512:
-        return RSKey;
-      default:
-        throw `Unknown JWTAlgorithm(${signAlgorithm})`;
-    }
-  }
-
   // `IdentityCannotAssumeAccess` if cannot have right to write the configuration.
   itError(
     `should not configure an application of someone else`,
@@ -118,7 +100,7 @@ describe("applicationAPI.config.JWT", () => {
     () =>
       new ApplicationAPI(ctx.dev.session).putConfig(ctx.app.identity.login, {
         jwt: {
-          key: new TextEncoder().encode(
+          key: Uint8Tool.encode(
             `-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAy2kQaxIDLw6vXEmSyDIU
 W2+7zumTbO9KE2o5/afE55lUyTV8lY+kVZDoRToP6yfiUKYC9t3fFBui50rBdtXJ
@@ -140,7 +122,7 @@ fwIDAQAB
     () =>
       new ApplicationAPI(ctx.dev.session).putConfig(ctx.app.identity.login, {
         jwt: {
-          key: new TextEncoder().encode(
+          key: Uint8Tool.encode(
             `-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEQ4/x3bCZotGA3n+5CxFmuNZnzB7L\nZUd9C885FDhZN8+oRavvPrWSiGKv72hMKsfL9wVpEygSzZWXqZW+H/w7Jw==
             -----END PUBLIC KEY-----` // Invalid because spaces in front of last line
           ),

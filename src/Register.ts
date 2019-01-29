@@ -68,14 +68,16 @@ async function _register(
 ): Promise<void> {
   let encryption = new Encryption();
   encryption.generate(Uint8Tool.convert(secret), null);
-  return HTTP.client.doRequest<void>({
+  await HTTP.client.doRequest<void>({
     method: "POST",
-    code: 201,
+    expectedCode: 201,
     path,
-    request: () => request({ identity, encryption }),
-    before: (x, b) =>
-      x.setRequestHeader("content-type", "application/x-protobuf")
+    body: request({ identity, encryption }),
+    headers: new Headers({
+      "content-type": "application/x-protobuf"
+    })
   });
+  return;
 }
 
 /**
@@ -88,15 +90,16 @@ async function _register(
  * - `RegisterInvalidEmail` if the `email` is badly formatted.
  */
 export async function sendRegisterLink(email: string): Promise<void> {
-  return await HTTP.client.doRequest<void>({
+  await HTTP.client.doRequest<void>({
     method: "POST",
-    code: 201,
+    expectedCode: 201,
     path: "/api/v4/register/link",
-    request: () =>
-      api.RegisterLinkRequest.encode({
-        email
-      }).finish(),
-    before: (x, b) =>
-      x.setRequestHeader("content-type", "application/x-protobuf")
+    body: api.RegisterLinkRequest.encode({
+      email
+    }).finish(),
+    headers: new Headers({
+      "content-type": "application/x-protobuf"
+    })
   });
+  return;
 }

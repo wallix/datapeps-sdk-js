@@ -15453,6 +15453,737 @@ $root.api = (function() {
         return SessionResolveChallengeResponse;
     })();
 
+    api.IdentitySession = (function() {
+
+        /**
+         * Properties of an IdentitySession.
+         * @memberof api
+         * @interface IIdentitySession
+         * @property {string|null} [owner] IdentitySession owner
+         * @property {Uint8Array|null} [token] IdentitySession token
+         * @property {number|Long|null} [created] IdentitySession created
+         * @property {number|Long|null} [expires] IdentitySession expires
+         */
+
+        /**
+         * Constructs a new IdentitySession.
+         * @memberof api
+         * @classdesc Represents an IdentitySession.
+         * @implements IIdentitySession
+         * @constructor
+         * @param {api.IIdentitySession=} [properties] Properties to set
+         */
+        function IdentitySession(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * IdentitySession owner.
+         * @member {string} owner
+         * @memberof api.IdentitySession
+         * @instance
+         */
+        IdentitySession.prototype.owner = "";
+
+        /**
+         * IdentitySession token.
+         * @member {Uint8Array} token
+         * @memberof api.IdentitySession
+         * @instance
+         */
+        IdentitySession.prototype.token = $util.newBuffer([]);
+
+        /**
+         * IdentitySession created.
+         * @member {number|Long} created
+         * @memberof api.IdentitySession
+         * @instance
+         */
+        IdentitySession.prototype.created = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
+
+        /**
+         * IdentitySession expires.
+         * @member {number|Long} expires
+         * @memberof api.IdentitySession
+         * @instance
+         */
+        IdentitySession.prototype.expires = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
+
+        /**
+         * Creates a new IdentitySession instance using the specified properties.
+         * @function create
+         * @memberof api.IdentitySession
+         * @static
+         * @param {api.IIdentitySession=} [properties] Properties to set
+         * @returns {api.IdentitySession} IdentitySession instance
+         */
+        IdentitySession.create = function create(properties) {
+            return new IdentitySession(properties);
+        };
+
+        /**
+         * Encodes the specified IdentitySession message. Does not implicitly {@link api.IdentitySession.verify|verify} messages.
+         * @function encode
+         * @memberof api.IdentitySession
+         * @static
+         * @param {api.IIdentitySession} message IdentitySession message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        IdentitySession.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.owner != null && message.hasOwnProperty("owner"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.owner);
+            if (message.token != null && message.hasOwnProperty("token"))
+                writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.token);
+            if (message.created != null && message.hasOwnProperty("created"))
+                writer.uint32(/* id 3, wireType 0 =*/24).uint64(message.created);
+            if (message.expires != null && message.hasOwnProperty("expires"))
+                writer.uint32(/* id 4, wireType 0 =*/32).uint64(message.expires);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified IdentitySession message, length delimited. Does not implicitly {@link api.IdentitySession.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof api.IdentitySession
+         * @static
+         * @param {api.IIdentitySession} message IdentitySession message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        IdentitySession.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an IdentitySession message from the specified reader or buffer.
+         * @function decode
+         * @memberof api.IdentitySession
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {api.IdentitySession} IdentitySession
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        IdentitySession.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.IdentitySession();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.owner = reader.string();
+                    break;
+                case 2:
+                    message.token = reader.bytes();
+                    break;
+                case 3:
+                    message.created = reader.uint64();
+                    break;
+                case 4:
+                    message.expires = reader.uint64();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an IdentitySession message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof api.IdentitySession
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {api.IdentitySession} IdentitySession
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        IdentitySession.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an IdentitySession message.
+         * @function verify
+         * @memberof api.IdentitySession
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        IdentitySession.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.owner != null && message.hasOwnProperty("owner"))
+                if (!$util.isString(message.owner))
+                    return "owner: string expected";
+            if (message.token != null && message.hasOwnProperty("token"))
+                if (!(message.token && typeof message.token.length === "number" || $util.isString(message.token)))
+                    return "token: buffer expected";
+            if (message.created != null && message.hasOwnProperty("created"))
+                if (!$util.isInteger(message.created) && !(message.created && $util.isInteger(message.created.low) && $util.isInteger(message.created.high)))
+                    return "created: integer|Long expected";
+            if (message.expires != null && message.hasOwnProperty("expires"))
+                if (!$util.isInteger(message.expires) && !(message.expires && $util.isInteger(message.expires.low) && $util.isInteger(message.expires.high)))
+                    return "expires: integer|Long expected";
+            return null;
+        };
+
+        /**
+         * Creates an IdentitySession message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof api.IdentitySession
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {api.IdentitySession} IdentitySession
+         */
+        IdentitySession.fromObject = function fromObject(object) {
+            if (object instanceof $root.api.IdentitySession)
+                return object;
+            var message = new $root.api.IdentitySession();
+            if (object.owner != null)
+                message.owner = String(object.owner);
+            if (object.token != null)
+                if (typeof object.token === "string")
+                    $util.base64.decode(object.token, message.token = $util.newBuffer($util.base64.length(object.token)), 0);
+                else if (object.token.length)
+                    message.token = object.token;
+            if (object.created != null)
+                if ($util.Long)
+                    (message.created = $util.Long.fromValue(object.created)).unsigned = true;
+                else if (typeof object.created === "string")
+                    message.created = parseInt(object.created, 10);
+                else if (typeof object.created === "number")
+                    message.created = object.created;
+                else if (typeof object.created === "object")
+                    message.created = new $util.LongBits(object.created.low >>> 0, object.created.high >>> 0).toNumber(true);
+            if (object.expires != null)
+                if ($util.Long)
+                    (message.expires = $util.Long.fromValue(object.expires)).unsigned = true;
+                else if (typeof object.expires === "string")
+                    message.expires = parseInt(object.expires, 10);
+                else if (typeof object.expires === "number")
+                    message.expires = object.expires;
+                else if (typeof object.expires === "object")
+                    message.expires = new $util.LongBits(object.expires.low >>> 0, object.expires.high >>> 0).toNumber(true);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an IdentitySession message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof api.IdentitySession
+         * @static
+         * @param {api.IdentitySession} message IdentitySession
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        IdentitySession.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.owner = "";
+                if (options.bytes === String)
+                    object.token = "";
+                else {
+                    object.token = [];
+                    if (options.bytes !== Array)
+                        object.token = $util.newBuffer(object.token);
+                }
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, true);
+                    object.created = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.created = options.longs === String ? "0" : 0;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, true);
+                    object.expires = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.expires = options.longs === String ? "0" : 0;
+            }
+            if (message.owner != null && message.hasOwnProperty("owner"))
+                object.owner = message.owner;
+            if (message.token != null && message.hasOwnProperty("token"))
+                object.token = options.bytes === String ? $util.base64.encode(message.token, 0, message.token.length) : options.bytes === Array ? Array.prototype.slice.call(message.token) : message.token;
+            if (message.created != null && message.hasOwnProperty("created"))
+                if (typeof message.created === "number")
+                    object.created = options.longs === String ? String(message.created) : message.created;
+                else
+                    object.created = options.longs === String ? $util.Long.prototype.toString.call(message.created) : options.longs === Number ? new $util.LongBits(message.created.low >>> 0, message.created.high >>> 0).toNumber(true) : message.created;
+            if (message.expires != null && message.hasOwnProperty("expires"))
+                if (typeof message.expires === "number")
+                    object.expires = options.longs === String ? String(message.expires) : message.expires;
+                else
+                    object.expires = options.longs === String ? $util.Long.prototype.toString.call(message.expires) : options.longs === Number ? new $util.LongBits(message.expires.low >>> 0, message.expires.high >>> 0).toNumber(true) : message.expires;
+            return object;
+        };
+
+        /**
+         * Converts this IdentitySession to JSON.
+         * @function toJSON
+         * @memberof api.IdentitySession
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        IdentitySession.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return IdentitySession;
+    })();
+
+    api.ApplicationIdentitySessionListRequest = (function() {
+
+        /**
+         * Properties of an ApplicationIdentitySessionListRequest.
+         * @memberof api
+         * @interface IApplicationIdentitySessionListRequest
+         * @property {string|null} [appID] ApplicationIdentitySessionListRequest appID
+         * @property {number|null} [offset] ApplicationIdentitySessionListRequest offset
+         * @property {number|null} [limit] ApplicationIdentitySessionListRequest limit
+         */
+
+        /**
+         * Constructs a new ApplicationIdentitySessionListRequest.
+         * @memberof api
+         * @classdesc Represents an ApplicationIdentitySessionListRequest.
+         * @implements IApplicationIdentitySessionListRequest
+         * @constructor
+         * @param {api.IApplicationIdentitySessionListRequest=} [properties] Properties to set
+         */
+        function ApplicationIdentitySessionListRequest(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * ApplicationIdentitySessionListRequest appID.
+         * @member {string} appID
+         * @memberof api.ApplicationIdentitySessionListRequest
+         * @instance
+         */
+        ApplicationIdentitySessionListRequest.prototype.appID = "";
+
+        /**
+         * ApplicationIdentitySessionListRequest offset.
+         * @member {number} offset
+         * @memberof api.ApplicationIdentitySessionListRequest
+         * @instance
+         */
+        ApplicationIdentitySessionListRequest.prototype.offset = 0;
+
+        /**
+         * ApplicationIdentitySessionListRequest limit.
+         * @member {number} limit
+         * @memberof api.ApplicationIdentitySessionListRequest
+         * @instance
+         */
+        ApplicationIdentitySessionListRequest.prototype.limit = 0;
+
+        /**
+         * Creates a new ApplicationIdentitySessionListRequest instance using the specified properties.
+         * @function create
+         * @memberof api.ApplicationIdentitySessionListRequest
+         * @static
+         * @param {api.IApplicationIdentitySessionListRequest=} [properties] Properties to set
+         * @returns {api.ApplicationIdentitySessionListRequest} ApplicationIdentitySessionListRequest instance
+         */
+        ApplicationIdentitySessionListRequest.create = function create(properties) {
+            return new ApplicationIdentitySessionListRequest(properties);
+        };
+
+        /**
+         * Encodes the specified ApplicationIdentitySessionListRequest message. Does not implicitly {@link api.ApplicationIdentitySessionListRequest.verify|verify} messages.
+         * @function encode
+         * @memberof api.ApplicationIdentitySessionListRequest
+         * @static
+         * @param {api.IApplicationIdentitySessionListRequest} message ApplicationIdentitySessionListRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ApplicationIdentitySessionListRequest.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.appID != null && message.hasOwnProperty("appID"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.appID);
+            if (message.offset != null && message.hasOwnProperty("offset"))
+                writer.uint32(/* id 2, wireType 0 =*/16).uint32(message.offset);
+            if (message.limit != null && message.hasOwnProperty("limit"))
+                writer.uint32(/* id 3, wireType 0 =*/24).uint32(message.limit);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified ApplicationIdentitySessionListRequest message, length delimited. Does not implicitly {@link api.ApplicationIdentitySessionListRequest.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof api.ApplicationIdentitySessionListRequest
+         * @static
+         * @param {api.IApplicationIdentitySessionListRequest} message ApplicationIdentitySessionListRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ApplicationIdentitySessionListRequest.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an ApplicationIdentitySessionListRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof api.ApplicationIdentitySessionListRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {api.ApplicationIdentitySessionListRequest} ApplicationIdentitySessionListRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ApplicationIdentitySessionListRequest.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.ApplicationIdentitySessionListRequest();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.appID = reader.string();
+                    break;
+                case 2:
+                    message.offset = reader.uint32();
+                    break;
+                case 3:
+                    message.limit = reader.uint32();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an ApplicationIdentitySessionListRequest message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof api.ApplicationIdentitySessionListRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {api.ApplicationIdentitySessionListRequest} ApplicationIdentitySessionListRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ApplicationIdentitySessionListRequest.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an ApplicationIdentitySessionListRequest message.
+         * @function verify
+         * @memberof api.ApplicationIdentitySessionListRequest
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        ApplicationIdentitySessionListRequest.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.appID != null && message.hasOwnProperty("appID"))
+                if (!$util.isString(message.appID))
+                    return "appID: string expected";
+            if (message.offset != null && message.hasOwnProperty("offset"))
+                if (!$util.isInteger(message.offset))
+                    return "offset: integer expected";
+            if (message.limit != null && message.hasOwnProperty("limit"))
+                if (!$util.isInteger(message.limit))
+                    return "limit: integer expected";
+            return null;
+        };
+
+        /**
+         * Creates an ApplicationIdentitySessionListRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof api.ApplicationIdentitySessionListRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {api.ApplicationIdentitySessionListRequest} ApplicationIdentitySessionListRequest
+         */
+        ApplicationIdentitySessionListRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.api.ApplicationIdentitySessionListRequest)
+                return object;
+            var message = new $root.api.ApplicationIdentitySessionListRequest();
+            if (object.appID != null)
+                message.appID = String(object.appID);
+            if (object.offset != null)
+                message.offset = object.offset >>> 0;
+            if (object.limit != null)
+                message.limit = object.limit >>> 0;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an ApplicationIdentitySessionListRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof api.ApplicationIdentitySessionListRequest
+         * @static
+         * @param {api.ApplicationIdentitySessionListRequest} message ApplicationIdentitySessionListRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        ApplicationIdentitySessionListRequest.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.appID = "";
+                object.offset = 0;
+                object.limit = 0;
+            }
+            if (message.appID != null && message.hasOwnProperty("appID"))
+                object.appID = message.appID;
+            if (message.offset != null && message.hasOwnProperty("offset"))
+                object.offset = message.offset;
+            if (message.limit != null && message.hasOwnProperty("limit"))
+                object.limit = message.limit;
+            return object;
+        };
+
+        /**
+         * Converts this ApplicationIdentitySessionListRequest to JSON.
+         * @function toJSON
+         * @memberof api.ApplicationIdentitySessionListRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        ApplicationIdentitySessionListRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return ApplicationIdentitySessionListRequest;
+    })();
+
+    api.ApplicationIdentitySessionListResponse = (function() {
+
+        /**
+         * Properties of an ApplicationIdentitySessionListResponse.
+         * @memberof api
+         * @interface IApplicationIdentitySessionListResponse
+         * @property {Array.<api.IIdentitySession>|null} [sessions] ApplicationIdentitySessionListResponse sessions
+         */
+
+        /**
+         * Constructs a new ApplicationIdentitySessionListResponse.
+         * @memberof api
+         * @classdesc Represents an ApplicationIdentitySessionListResponse.
+         * @implements IApplicationIdentitySessionListResponse
+         * @constructor
+         * @param {api.IApplicationIdentitySessionListResponse=} [properties] Properties to set
+         */
+        function ApplicationIdentitySessionListResponse(properties) {
+            this.sessions = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * ApplicationIdentitySessionListResponse sessions.
+         * @member {Array.<api.IIdentitySession>} sessions
+         * @memberof api.ApplicationIdentitySessionListResponse
+         * @instance
+         */
+        ApplicationIdentitySessionListResponse.prototype.sessions = $util.emptyArray;
+
+        /**
+         * Creates a new ApplicationIdentitySessionListResponse instance using the specified properties.
+         * @function create
+         * @memberof api.ApplicationIdentitySessionListResponse
+         * @static
+         * @param {api.IApplicationIdentitySessionListResponse=} [properties] Properties to set
+         * @returns {api.ApplicationIdentitySessionListResponse} ApplicationIdentitySessionListResponse instance
+         */
+        ApplicationIdentitySessionListResponse.create = function create(properties) {
+            return new ApplicationIdentitySessionListResponse(properties);
+        };
+
+        /**
+         * Encodes the specified ApplicationIdentitySessionListResponse message. Does not implicitly {@link api.ApplicationIdentitySessionListResponse.verify|verify} messages.
+         * @function encode
+         * @memberof api.ApplicationIdentitySessionListResponse
+         * @static
+         * @param {api.IApplicationIdentitySessionListResponse} message ApplicationIdentitySessionListResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ApplicationIdentitySessionListResponse.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.sessions != null && message.sessions.length)
+                for (var i = 0; i < message.sessions.length; ++i)
+                    $root.api.IdentitySession.encode(message.sessions[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified ApplicationIdentitySessionListResponse message, length delimited. Does not implicitly {@link api.ApplicationIdentitySessionListResponse.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof api.ApplicationIdentitySessionListResponse
+         * @static
+         * @param {api.IApplicationIdentitySessionListResponse} message ApplicationIdentitySessionListResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ApplicationIdentitySessionListResponse.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an ApplicationIdentitySessionListResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof api.ApplicationIdentitySessionListResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {api.ApplicationIdentitySessionListResponse} ApplicationIdentitySessionListResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ApplicationIdentitySessionListResponse.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.ApplicationIdentitySessionListResponse();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    if (!(message.sessions && message.sessions.length))
+                        message.sessions = [];
+                    message.sessions.push($root.api.IdentitySession.decode(reader, reader.uint32()));
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an ApplicationIdentitySessionListResponse message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof api.ApplicationIdentitySessionListResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {api.ApplicationIdentitySessionListResponse} ApplicationIdentitySessionListResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ApplicationIdentitySessionListResponse.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an ApplicationIdentitySessionListResponse message.
+         * @function verify
+         * @memberof api.ApplicationIdentitySessionListResponse
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        ApplicationIdentitySessionListResponse.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.sessions != null && message.hasOwnProperty("sessions")) {
+                if (!Array.isArray(message.sessions))
+                    return "sessions: array expected";
+                for (var i = 0; i < message.sessions.length; ++i) {
+                    var error = $root.api.IdentitySession.verify(message.sessions[i]);
+                    if (error)
+                        return "sessions." + error;
+                }
+            }
+            return null;
+        };
+
+        /**
+         * Creates an ApplicationIdentitySessionListResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof api.ApplicationIdentitySessionListResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {api.ApplicationIdentitySessionListResponse} ApplicationIdentitySessionListResponse
+         */
+        ApplicationIdentitySessionListResponse.fromObject = function fromObject(object) {
+            if (object instanceof $root.api.ApplicationIdentitySessionListResponse)
+                return object;
+            var message = new $root.api.ApplicationIdentitySessionListResponse();
+            if (object.sessions) {
+                if (!Array.isArray(object.sessions))
+                    throw TypeError(".api.ApplicationIdentitySessionListResponse.sessions: array expected");
+                message.sessions = [];
+                for (var i = 0; i < object.sessions.length; ++i) {
+                    if (typeof object.sessions[i] !== "object")
+                        throw TypeError(".api.ApplicationIdentitySessionListResponse.sessions: object expected");
+                    message.sessions[i] = $root.api.IdentitySession.fromObject(object.sessions[i]);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an ApplicationIdentitySessionListResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof api.ApplicationIdentitySessionListResponse
+         * @static
+         * @param {api.ApplicationIdentitySessionListResponse} message ApplicationIdentitySessionListResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        ApplicationIdentitySessionListResponse.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.arrays || options.defaults)
+                object.sessions = [];
+            if (message.sessions && message.sessions.length) {
+                object.sessions = [];
+                for (var j = 0; j < message.sessions.length; ++j)
+                    object.sessions[j] = $root.api.IdentitySession.toObject(message.sessions[j], options);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this ApplicationIdentitySessionListResponse to JSON.
+         * @function toJSON
+         * @memberof api.ApplicationIdentitySessionListResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        ApplicationIdentitySessionListResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return ApplicationIdentitySessionListResponse;
+    })();
+
     /**
      * JwtAlgorithm enum.
      * @name api.JwtAlgorithm

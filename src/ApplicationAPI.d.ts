@@ -25,6 +25,12 @@ export declare namespace ApplicationAPI {
             newDistinctResolved: number;
         };
     };
+    type IdentitySession = {
+        owner: string;
+        token: Uint8Array;
+        created: number;
+        expires: number;
+    };
 }
 export declare class ApplicationAPI {
     private session;
@@ -96,4 +102,14 @@ export declare class ApplicationAPI {
      * If the dataPepsLogin is null, undefined, empty or malformatted returns an empty string.
      */
     static extractLoginFromDataPepsLogin(dataPepsLogin: any): any;
+    /** Returns all sessions that been created on behalf of the application.
+     * @param appID the app ID
+     * @param offset the offset
+     * @param limit the limit
+     * @return(p) On success the promise will be resolved with an ApplicationAPI.IdentitySession[].
+     * On error the promise will be rejected with an {@link Error} with kind:
+     * - `IdentityCannotAssumeOwnership` if cannot have right to the application.
+     * - `IdentityNotFound` if the identity `appID` doesn't exists.
+     */
+    listSessions(appID: string, offset: number, limit: number): Promise<ApplicationAPI.IdentitySession[]>;
 }

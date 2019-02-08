@@ -240,6 +240,39 @@ var ApplicationAPI = /** @class */ (function () {
         }
         return dataPepsLogin.substr(0, i);
     };
+    /** Returns all sessions that been created on behalf of the application.
+     * @param appID the app ID
+     * @param offset the offset
+     * @param limit the limit
+     * @return(p) On success the promise will be resolved with an ApplicationAPI.IdentitySession[].
+     * On error the promise will be rejected with an {@link Error} with kind:
+     * - `IdentityCannotAssumeOwnership` if cannot have right to the application.
+     * - `IdentityNotFound` if the identity `appID` doesn't exists.
+     */
+    ApplicationAPI.prototype.listSessions = function (appID, offset, limit) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.session.doProtoRequest({
+                            path: "/api/v4/application/" + encodeURI(appID) + "/identities-session/list",
+                            method: "POST",
+                            expectedCode: 200,
+                            assume: { login: appID, kind: IdentityAPI_1.IdentityAccessKind.READ },
+                            body: proto_1.api.ApplicationIdentitySessionListRequest.encode({
+                                appID: appID,
+                                offset: offset,
+                                limit: limit
+                            }).finish(),
+                            response: function (r) {
+                                var list = proto_1.api.ApplicationIdentitySessionListResponse.decode(r);
+                                return list.sessions;
+                            }
+                        })];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
     return ApplicationAPI;
 }());
 exports.ApplicationAPI = ApplicationAPI;

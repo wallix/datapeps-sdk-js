@@ -38,6 +38,13 @@ export namespace ApplicationAPI {
       newDistinctResolved: number;
     };
   };
+
+  export type IdentitySession = {
+    owner: string;
+    token: Uint8Array;
+    created: number;
+    expires: number;
+  };
 }
 
 export class ApplicationAPI {
@@ -236,5 +243,37 @@ export class ApplicationAPI {
       return "";
     }
     return dataPepsLogin.substr(0, i);
+  }
+
+  /** Returns all sessions that been created on behalf of the application.
+   * @param appID the app ID
+   * @param offset the offset
+   * @param limit the limit
+   * @return(p) On success the promise will be resolved with an ApplicationAPI.IdentitySession[].
+   * On error the promise will be rejected with an {@link Error} with kind:
+   * - `IdentityCannotAssumeOwnership` if cannot have right to the application.
+   * - `IdentityNotFound` if the identity `appID` doesn't exists.
+   */
+
+  async listSessions(
+    appID: string,
+    offset: number,
+    limit: number
+  ): Promise<ApplicationAPI.IdentitySession[]> {
+    return await this.session.doProtoRequest<ApplicationAPI.IdentitySession[]>({
+      path: `/api/v4/application/${encodeURI(appID)}/identities-session/list`,
+      method: "POST",
+      expectedCode: 200,
+      assume: { login: appID, kind: IdentityAccessKind.READ },
+      body: api.ApplicationIdentitySessionListRequest.encode({
+        appID,
+        offset,
+        limit
+      }).finish(),
+      response: r => {
+        let list = api.ApplicationIdentitySessionListResponse.decode(r);
+        return <ApplicationAPI.IdentitySession[]>list.sessions;
+      }
+    });
   }
 }

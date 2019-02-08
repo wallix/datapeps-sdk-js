@@ -123,7 +123,7 @@ describe("applicationAPI.usage", () => {
     });
   });
 
-  it("Get jwt usage of an active dev", async () => {
+  it("Get jwt usage of an active dev and list sessions", async () => {
     /*
     * create J identity thanks jwt
     * use some jwt identities to create some session

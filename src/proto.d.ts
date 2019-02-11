@@ -7068,6 +7068,9 @@ export namespace api {
 
         /** ApplicationUsageOverview delegates */
         delegates?: (api.ApplicationUsageOverview.IDelegatedAccess|null);
+
+        /** ApplicationUsageOverview start */
+        start?: (number|null);
     }
 
     /** Represents an ApplicationUsageOverview. */
@@ -7084,6 +7087,9 @@ export namespace api {
 
         /** ApplicationUsageOverview delegates. */
         public delegates?: (api.ApplicationUsageOverview.IDelegatedAccess|null);
+
+        /** ApplicationUsageOverview start. */
+        public start: number;
 
         /**
          * Creates a new ApplicationUsageOverview instance using the specified properties.
@@ -7161,14 +7167,11 @@ export namespace api {
         /** Properties of a JWT. */
         interface IJWT {
 
-            /** JWT totalIdentities */
-            totalIdentities?: (number|null);
+            /** JWT identities */
+            identities?: (number|null);
 
-            /** JWT newIdentities */
-            newIdentities?: (number|null);
-
-            /** JWT newSessions */
-            newSessions?: (number|null);
+            /** JWT sessions */
+            sessions?: (number|null);
         }
 
         /** Represents a JWT. */
@@ -7180,14 +7183,11 @@ export namespace api {
              */
             constructor(properties?: api.ApplicationUsageOverview.IJWT);
 
-            /** JWT totalIdentities. */
-            public totalIdentities: number;
+            /** JWT identities. */
+            public identities: number;
 
-            /** JWT newIdentities. */
-            public newIdentities: number;
-
-            /** JWT newSessions. */
-            public newSessions: number;
+            /** JWT sessions. */
+            public sessions: number;
 
             /**
              * Creates a new JWT instance using the specified properties.
@@ -7263,17 +7263,17 @@ export namespace api {
         /** Properties of a DelegatedAccess. */
         interface IDelegatedAccess {
 
-            /** DelegatedAccess newRequested */
-            newRequested?: (number|null);
+            /** DelegatedAccess requested */
+            requested?: (number|null);
 
-            /** DelegatedAccess newResolved */
-            newResolved?: (number|null);
+            /** DelegatedAccess resolved */
+            resolved?: (number|null);
 
-            /** DelegatedAccess newDistinctRequested */
-            newDistinctRequested?: (number|null);
+            /** DelegatedAccess distinctRequested */
+            distinctRequested?: (number|null);
 
-            /** DelegatedAccess newDistinctResolved */
-            newDistinctResolved?: (number|null);
+            /** DelegatedAccess distinctResolved */
+            distinctResolved?: (number|null);
         }
 
         /** Represents a DelegatedAccess. */
@@ -7285,17 +7285,17 @@ export namespace api {
              */
             constructor(properties?: api.ApplicationUsageOverview.IDelegatedAccess);
 
-            /** DelegatedAccess newRequested. */
-            public newRequested: number;
+            /** DelegatedAccess requested. */
+            public requested: number;
 
-            /** DelegatedAccess newResolved. */
-            public newResolved: number;
+            /** DelegatedAccess resolved. */
+            public resolved: number;
 
-            /** DelegatedAccess newDistinctRequested. */
-            public newDistinctRequested: number;
+            /** DelegatedAccess distinctRequested. */
+            public distinctRequested: number;
 
-            /** DelegatedAccess newDistinctResolved. */
-            public newDistinctResolved: number;
+            /** DelegatedAccess distinctResolved. */
+            public distinctResolved: number;
 
             /**
              * Creates a new DelegatedAccess instance using the specified properties.
@@ -7369,14 +7369,27 @@ export namespace api {
         }
     }
 
+    /** Period enum. */
+    enum Period {
+        DAY = 0,
+        MONTH = 1,
+        YEAR = 2
+    }
+
     /** Properties of an ApplicationUsageOverviewRequest. */
     interface IApplicationUsageOverviewRequest {
 
         /** ApplicationUsageOverviewRequest Login */
         Login?: (string|null);
 
-        /** ApplicationUsageOverviewRequest since */
-        since?: (number|null);
+        /** ApplicationUsageOverviewRequest from */
+        from?: (number|null);
+
+        /** ApplicationUsageOverviewRequest to */
+        to?: (number|null);
+
+        /** ApplicationUsageOverviewRequest by */
+        by?: (api.Period|null);
     }
 
     /** Represents an ApplicationUsageOverviewRequest. */
@@ -7391,8 +7404,14 @@ export namespace api {
         /** ApplicationUsageOverviewRequest Login. */
         public Login: string;
 
-        /** ApplicationUsageOverviewRequest since. */
-        public since: number;
+        /** ApplicationUsageOverviewRequest from. */
+        public from: number;
+
+        /** ApplicationUsageOverviewRequest to. */
+        public to: number;
+
+        /** ApplicationUsageOverviewRequest by. */
+        public by: api.Period;
 
         /**
          * Creates a new ApplicationUsageOverviewRequest instance using the specified properties.
@@ -7469,7 +7488,7 @@ export namespace api {
     interface IApplicationUsageOverviewResponse {
 
         /** ApplicationUsageOverviewResponse overview */
-        overview?: (api.IApplicationUsageOverview|null);
+        overview?: (api.IApplicationUsageOverview[]|null);
     }
 
     /** Represents an ApplicationUsageOverviewResponse. */
@@ -7482,7 +7501,7 @@ export namespace api {
         constructor(properties?: api.IApplicationUsageOverviewResponse);
 
         /** ApplicationUsageOverviewResponse overview. */
-        public overview?: (api.IApplicationUsageOverview|null);
+        public overview: api.IApplicationUsageOverview[];
 
         /**
          * Creates a new ApplicationUsageOverviewResponse instance using the specified properties.

@@ -24,10 +24,21 @@ import { Uint8Tool } from "../../../src/Tools";
 
 describe("applicationAPI.usage", () => {
   let ctx: initCtx & devCtx & aliceBobCtx;
+  let midnight: number;
+  let startOfMonth: number;
+  let startOfYear: number;
 
   before(async () => {
     let initCtx = await init();
     ctx = { ...initCtx, ...(await dev(initCtx)), ...(await aliceBob(initCtx)) };
+
+    let d = new Date();
+    d.setUTCHours(0, 0, 0, 0);
+    midnight = d.getTime() / 1000;
+    d.setUTCDate(1);
+    startOfMonth = d.getTime() / 1000;
+    d.setUTCMonth(0);
+    startOfYear = d.getTime() / 1000;
   });
 
   itError(
@@ -50,20 +61,7 @@ describe("applicationAPI.usage", () => {
   it("Get usage of this brand new app and get 0 hits", async () => {
     let api = new ApplicationAPI(ctx.dev.session);
     const usage = await api.getUsageOverview(ctx.app.identity.login);
-
-    expect(usage).to.deep.equal(<ApplicationAPI.UsageOverview>{
-      jwt: {
-        totalIdentities: 0,
-        newIdentities: 0,
-        newSessions: 0
-      },
-      delegatedAccess: {
-        newRequested: 0,
-        newResolved: 0,
-        newDistinctRequested: 0,
-        newDistinctResolved: 0
-      }
-    });
+    expect(usage.length).equals(0);
   });
 
   it("Get delegates usage of an active dev", async () => {
@@ -92,35 +90,46 @@ describe("applicationAPI.usage", () => {
     let api = new ApplicationAPI(ctx.dev.session);
     // Let's request usage since 10 seconds ago
     let usage = await api.getUsageOverview(ctx.app.identity.login, {
-      since: new Date().getTime() / 1000 - 10
+      from: new Date().getTime() / 1000 - 10
     });
 
-    expect(usage.delegatedAccess.newRequested).equals(5);
-    expect(usage.delegatedAccess.newResolved).equals(2);
-    expect(usage.delegatedAccess.newDistinctRequested).equals(2);
-    expect(usage.delegatedAccess.newDistinctResolved).equals(1);
+    let expected = {
+      start: midnight,
+      delegates: {
+        requested: 5,
+        resolved: 2,
+        distinctRequested: 2,
+        distinctResolved: 1
+      },
+      jwt: { identities: 0, sessions: 0 }
+    };
+
+    expect(usage.length).equal(1);
+    expect(usage[0]).to.deep.equal(expected);
+
+    usage = await api.getUsageOverview(ctx.app.identity.login, {
+      from: new Date().getTime() / 1000 - 60,
+      by: 1
+    });
+    expect(usage.length).equal(1);
+    expect(usage[0]).to.deep.equal({ ...expected, start: startOfMonth });
+
+    usage = await api.getUsageOverview(ctx.app.identity.login, {
+      from: new Date().getTime() / 1000 - 60,
+      by: 2
+    });
+    expect(usage.length).equal(1);
+    expect(usage[0]).to.deep.equal({ ...expected, start: startOfYear });
 
     // resolve request to cleanup promises
     mediator.resolveAll();
 
     usage = await api.getUsageOverview(ctx.app.identity.login, {
-      since: new Date().getTime() / 1000 + 1
+      from: new Date().getTime() / 1000 + 1
     });
 
     // Usage in the future should be empty
-    expect(usage).to.deep.equal(<ApplicationAPI.UsageOverview>{
-      jwt: {
-        totalIdentities: 0,
-        newIdentities: 0,
-        newSessions: 0
-      },
-      delegatedAccess: {
-        newRequested: 0,
-        newResolved: 0,
-        newDistinctRequested: 0,
-        newDistinctResolved: 0
-      }
-    });
+    expect(usage.length).equals(0);
   });
 
   it("Get jwt usage of an active dev and list sessions", async () => {
@@ -144,9 +153,11 @@ describe("applicationAPI.usage", () => {
     );
 
     let usage = await api.getUsageOverview(ctx.app.identity.login);
-    expect(usage.jwt.totalIdentities).to.equals(1);
-    expect(usage.jwt.newIdentities).to.equals(1);
-    expect(usage.jwt.newSessions).to.equals(0);
+
+    expect(usage.length).equal(1);
+    expect(usage[0].start).equal(midnight);
+    expect(usage[0].jwt.identities).to.equals(1);
+    expect(usage[0].jwt.sessions).to.equals(0);
 
     // Let's see if Charlie will be more motivated. Made up charlie's secret for datapeps
     let charlieDataPepsSecret = "angelsTest=1234";
@@ -180,9 +191,10 @@ describe("applicationAPI.usage", () => {
     expect(isNewAgain).to.be.false;
 
     usage = await api.getUsageOverview(ctx.app.identity.login);
-    expect(usage.jwt.totalIdentities).to.equals(2);
-    expect(usage.jwt.newIdentities).to.equals(2);
-    expect(usage.jwt.newSessions).to.equals(2);
+    expect(usage.length).equal(1);
+    expect(usage[0].start).equal(midnight);
+    expect(usage[0].jwt.identities).to.equals(2);
+    expect(usage[0].jwt.sessions).to.equals(2);
   });
 });
 

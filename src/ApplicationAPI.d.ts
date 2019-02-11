@@ -1,4 +1,5 @@
 import { ApplicationJWT } from "./ApplicationJWT";
+import { api } from "./proto";
 import { Session } from "./Session";
 import { Identity } from "./IdentityAPI";
 import { IdentitySortingOrder as ApplicationIdentitySortingOrder } from "./IdentityInternal";
@@ -8,23 +9,25 @@ export declare enum ApplicationIdentitySortingField {
     LOGIN = 0,
     CREATED = 1,
 }
+export import UsageBy = api.Period;
 export declare namespace ApplicationAPI {
     type Config = {
         jwt?: ApplicationJWT.Config;
     };
-    type UsageOverview = {
+    type UsageOverviewItem = {
         jwt: {
-            totalIdentities: number;
-            newIdentities: number;
-            newSessions: number;
+            identities: number;
+            sessions: number;
         };
-        delegatedAccess: {
-            newRequested: number;
-            newResolved: number;
-            newDistinctRequested: number;
-            newDistinctResolved: number;
+        delegates: {
+            requested: number;
+            resolved: number;
+            distinctRequested: number;
+            distinctResolved: number;
         };
+        start: number;
     };
+    type UsageOverview = UsageOverviewItem[];
     type IdentitySession = {
         owner: string;
         token: Uint8Array;
@@ -60,14 +63,18 @@ export declare class ApplicationAPI {
      * Get usage overview of an application
      * @param appID the app ID
      * @param options A collection of options:
-     *  - since; unix timestamp from which requests data
+     *  - from : unix timestamp from which requests data
+     *  - to : unix timestamp to which requests data
+     *  - by : number 0 : day , 1 : month , 2 : year
      * @return(p) On success the promise will be resolved with an ApplicationAPI.UsageOverview.
      * On error the promise will be rejected with an {@link Error} with kind:
      * - `IdentityCannotAssumeOwnership` if cannot have right to the application.
      * - `IdentityNotFound` if the identity `appID` doesn't exists.
      */
     getUsageOverview(appID: string, options?: {
-        since?: number;
+        from?: number;
+        to?: number;
+        by?: UsageBy;
     }): Promise<ApplicationAPI.UsageOverview>;
     /**
      * List identities that has been created on behalf of an application

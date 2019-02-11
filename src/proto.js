@@ -17108,6 +17108,7 @@ $root.api = (function() {
          * @interface IApplicationUsageOverview
          * @property {api.ApplicationUsageOverview.IJWT|null} [jwt] ApplicationUsageOverview jwt
          * @property {api.ApplicationUsageOverview.IDelegatedAccess|null} [delegates] ApplicationUsageOverview delegates
+         * @property {number|null} [start] ApplicationUsageOverview start
          */
 
         /**
@@ -17142,6 +17143,14 @@ $root.api = (function() {
         ApplicationUsageOverview.prototype.delegates = null;
 
         /**
+         * ApplicationUsageOverview start.
+         * @member {number} start
+         * @memberof api.ApplicationUsageOverview
+         * @instance
+         */
+        ApplicationUsageOverview.prototype.start = 0;
+
+        /**
          * Creates a new ApplicationUsageOverview instance using the specified properties.
          * @function create
          * @memberof api.ApplicationUsageOverview
@@ -17169,6 +17178,8 @@ $root.api = (function() {
                 $root.api.ApplicationUsageOverview.JWT.encode(message.jwt, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
             if (message.delegates != null && message.hasOwnProperty("delegates"))
                 $root.api.ApplicationUsageOverview.DelegatedAccess.encode(message.delegates, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+            if (message.start != null && message.hasOwnProperty("start"))
+                writer.uint32(/* id 3, wireType 0 =*/24).uint32(message.start);
             return writer;
         };
 
@@ -17208,6 +17219,9 @@ $root.api = (function() {
                     break;
                 case 2:
                     message.delegates = $root.api.ApplicationUsageOverview.DelegatedAccess.decode(reader, reader.uint32());
+                    break;
+                case 3:
+                    message.start = reader.uint32();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -17254,6 +17268,9 @@ $root.api = (function() {
                 if (error)
                     return "delegates." + error;
             }
+            if (message.start != null && message.hasOwnProperty("start"))
+                if (!$util.isInteger(message.start))
+                    return "start: integer expected";
             return null;
         };
 
@@ -17279,6 +17296,8 @@ $root.api = (function() {
                     throw TypeError(".api.ApplicationUsageOverview.delegates: object expected");
                 message.delegates = $root.api.ApplicationUsageOverview.DelegatedAccess.fromObject(object.delegates);
             }
+            if (object.start != null)
+                message.start = object.start >>> 0;
             return message;
         };
 
@@ -17298,11 +17317,14 @@ $root.api = (function() {
             if (options.defaults) {
                 object.jwt = null;
                 object.delegates = null;
+                object.start = 0;
             }
             if (message.jwt != null && message.hasOwnProperty("jwt"))
                 object.jwt = $root.api.ApplicationUsageOverview.JWT.toObject(message.jwt, options);
             if (message.delegates != null && message.hasOwnProperty("delegates"))
                 object.delegates = $root.api.ApplicationUsageOverview.DelegatedAccess.toObject(message.delegates, options);
+            if (message.start != null && message.hasOwnProperty("start"))
+                object.start = message.start;
             return object;
         };
 
@@ -17323,9 +17345,8 @@ $root.api = (function() {
              * Properties of a JWT.
              * @memberof api.ApplicationUsageOverview
              * @interface IJWT
-             * @property {number|null} [totalIdentities] JWT totalIdentities
-             * @property {number|null} [newIdentities] JWT newIdentities
-             * @property {number|null} [newSessions] JWT newSessions
+             * @property {number|null} [identities] JWT identities
+             * @property {number|null} [sessions] JWT sessions
              */
 
             /**
@@ -17344,28 +17365,20 @@ $root.api = (function() {
             }
 
             /**
-             * JWT totalIdentities.
-             * @member {number} totalIdentities
+             * JWT identities.
+             * @member {number} identities
              * @memberof api.ApplicationUsageOverview.JWT
              * @instance
              */
-            JWT.prototype.totalIdentities = 0;
+            JWT.prototype.identities = 0;
 
             /**
-             * JWT newIdentities.
-             * @member {number} newIdentities
+             * JWT sessions.
+             * @member {number} sessions
              * @memberof api.ApplicationUsageOverview.JWT
              * @instance
              */
-            JWT.prototype.newIdentities = 0;
-
-            /**
-             * JWT newSessions.
-             * @member {number} newSessions
-             * @memberof api.ApplicationUsageOverview.JWT
-             * @instance
-             */
-            JWT.prototype.newSessions = 0;
+            JWT.prototype.sessions = 0;
 
             /**
              * Creates a new JWT instance using the specified properties.
@@ -17391,12 +17404,10 @@ $root.api = (function() {
             JWT.encode = function encode(message, writer) {
                 if (!writer)
                     writer = $Writer.create();
-                if (message.totalIdentities != null && message.hasOwnProperty("totalIdentities"))
-                    writer.uint32(/* id 1, wireType 0 =*/8).uint32(message.totalIdentities);
-                if (message.newIdentities != null && message.hasOwnProperty("newIdentities"))
-                    writer.uint32(/* id 2, wireType 0 =*/16).uint32(message.newIdentities);
-                if (message.newSessions != null && message.hasOwnProperty("newSessions"))
-                    writer.uint32(/* id 3, wireType 0 =*/24).uint32(message.newSessions);
+                if (message.identities != null && message.hasOwnProperty("identities"))
+                    writer.uint32(/* id 1, wireType 0 =*/8).uint32(message.identities);
+                if (message.sessions != null && message.hasOwnProperty("sessions"))
+                    writer.uint32(/* id 2, wireType 0 =*/16).uint32(message.sessions);
                 return writer;
             };
 
@@ -17432,13 +17443,10 @@ $root.api = (function() {
                     var tag = reader.uint32();
                     switch (tag >>> 3) {
                     case 1:
-                        message.totalIdentities = reader.uint32();
+                        message.identities = reader.uint32();
                         break;
                     case 2:
-                        message.newIdentities = reader.uint32();
-                        break;
-                    case 3:
-                        message.newSessions = reader.uint32();
+                        message.sessions = reader.uint32();
                         break;
                     default:
                         reader.skipType(tag & 7);
@@ -17475,15 +17483,12 @@ $root.api = (function() {
             JWT.verify = function verify(message) {
                 if (typeof message !== "object" || message === null)
                     return "object expected";
-                if (message.totalIdentities != null && message.hasOwnProperty("totalIdentities"))
-                    if (!$util.isInteger(message.totalIdentities))
-                        return "totalIdentities: integer expected";
-                if (message.newIdentities != null && message.hasOwnProperty("newIdentities"))
-                    if (!$util.isInteger(message.newIdentities))
-                        return "newIdentities: integer expected";
-                if (message.newSessions != null && message.hasOwnProperty("newSessions"))
-                    if (!$util.isInteger(message.newSessions))
-                        return "newSessions: integer expected";
+                if (message.identities != null && message.hasOwnProperty("identities"))
+                    if (!$util.isInteger(message.identities))
+                        return "identities: integer expected";
+                if (message.sessions != null && message.hasOwnProperty("sessions"))
+                    if (!$util.isInteger(message.sessions))
+                        return "sessions: integer expected";
                 return null;
             };
 
@@ -17499,12 +17504,10 @@ $root.api = (function() {
                 if (object instanceof $root.api.ApplicationUsageOverview.JWT)
                     return object;
                 var message = new $root.api.ApplicationUsageOverview.JWT();
-                if (object.totalIdentities != null)
-                    message.totalIdentities = object.totalIdentities >>> 0;
-                if (object.newIdentities != null)
-                    message.newIdentities = object.newIdentities >>> 0;
-                if (object.newSessions != null)
-                    message.newSessions = object.newSessions >>> 0;
+                if (object.identities != null)
+                    message.identities = object.identities >>> 0;
+                if (object.sessions != null)
+                    message.sessions = object.sessions >>> 0;
                 return message;
             };
 
@@ -17522,16 +17525,13 @@ $root.api = (function() {
                     options = {};
                 var object = {};
                 if (options.defaults) {
-                    object.totalIdentities = 0;
-                    object.newIdentities = 0;
-                    object.newSessions = 0;
+                    object.identities = 0;
+                    object.sessions = 0;
                 }
-                if (message.totalIdentities != null && message.hasOwnProperty("totalIdentities"))
-                    object.totalIdentities = message.totalIdentities;
-                if (message.newIdentities != null && message.hasOwnProperty("newIdentities"))
-                    object.newIdentities = message.newIdentities;
-                if (message.newSessions != null && message.hasOwnProperty("newSessions"))
-                    object.newSessions = message.newSessions;
+                if (message.identities != null && message.hasOwnProperty("identities"))
+                    object.identities = message.identities;
+                if (message.sessions != null && message.hasOwnProperty("sessions"))
+                    object.sessions = message.sessions;
                 return object;
             };
 
@@ -17555,10 +17555,10 @@ $root.api = (function() {
              * Properties of a DelegatedAccess.
              * @memberof api.ApplicationUsageOverview
              * @interface IDelegatedAccess
-             * @property {number|null} [newRequested] DelegatedAccess newRequested
-             * @property {number|null} [newResolved] DelegatedAccess newResolved
-             * @property {number|null} [newDistinctRequested] DelegatedAccess newDistinctRequested
-             * @property {number|null} [newDistinctResolved] DelegatedAccess newDistinctResolved
+             * @property {number|null} [requested] DelegatedAccess requested
+             * @property {number|null} [resolved] DelegatedAccess resolved
+             * @property {number|null} [distinctRequested] DelegatedAccess distinctRequested
+             * @property {number|null} [distinctResolved] DelegatedAccess distinctResolved
              */
 
             /**
@@ -17577,36 +17577,36 @@ $root.api = (function() {
             }
 
             /**
-             * DelegatedAccess newRequested.
-             * @member {number} newRequested
+             * DelegatedAccess requested.
+             * @member {number} requested
              * @memberof api.ApplicationUsageOverview.DelegatedAccess
              * @instance
              */
-            DelegatedAccess.prototype.newRequested = 0;
+            DelegatedAccess.prototype.requested = 0;
 
             /**
-             * DelegatedAccess newResolved.
-             * @member {number} newResolved
+             * DelegatedAccess resolved.
+             * @member {number} resolved
              * @memberof api.ApplicationUsageOverview.DelegatedAccess
              * @instance
              */
-            DelegatedAccess.prototype.newResolved = 0;
+            DelegatedAccess.prototype.resolved = 0;
 
             /**
-             * DelegatedAccess newDistinctRequested.
-             * @member {number} newDistinctRequested
+             * DelegatedAccess distinctRequested.
+             * @member {number} distinctRequested
              * @memberof api.ApplicationUsageOverview.DelegatedAccess
              * @instance
              */
-            DelegatedAccess.prototype.newDistinctRequested = 0;
+            DelegatedAccess.prototype.distinctRequested = 0;
 
             /**
-             * DelegatedAccess newDistinctResolved.
-             * @member {number} newDistinctResolved
+             * DelegatedAccess distinctResolved.
+             * @member {number} distinctResolved
              * @memberof api.ApplicationUsageOverview.DelegatedAccess
              * @instance
              */
-            DelegatedAccess.prototype.newDistinctResolved = 0;
+            DelegatedAccess.prototype.distinctResolved = 0;
 
             /**
              * Creates a new DelegatedAccess instance using the specified properties.
@@ -17632,14 +17632,14 @@ $root.api = (function() {
             DelegatedAccess.encode = function encode(message, writer) {
                 if (!writer)
                     writer = $Writer.create();
-                if (message.newRequested != null && message.hasOwnProperty("newRequested"))
-                    writer.uint32(/* id 1, wireType 0 =*/8).uint32(message.newRequested);
-                if (message.newResolved != null && message.hasOwnProperty("newResolved"))
-                    writer.uint32(/* id 2, wireType 0 =*/16).uint32(message.newResolved);
-                if (message.newDistinctRequested != null && message.hasOwnProperty("newDistinctRequested"))
-                    writer.uint32(/* id 3, wireType 0 =*/24).uint32(message.newDistinctRequested);
-                if (message.newDistinctResolved != null && message.hasOwnProperty("newDistinctResolved"))
-                    writer.uint32(/* id 4, wireType 0 =*/32).uint32(message.newDistinctResolved);
+                if (message.requested != null && message.hasOwnProperty("requested"))
+                    writer.uint32(/* id 1, wireType 0 =*/8).uint32(message.requested);
+                if (message.resolved != null && message.hasOwnProperty("resolved"))
+                    writer.uint32(/* id 2, wireType 0 =*/16).uint32(message.resolved);
+                if (message.distinctRequested != null && message.hasOwnProperty("distinctRequested"))
+                    writer.uint32(/* id 3, wireType 0 =*/24).uint32(message.distinctRequested);
+                if (message.distinctResolved != null && message.hasOwnProperty("distinctResolved"))
+                    writer.uint32(/* id 4, wireType 0 =*/32).uint32(message.distinctResolved);
                 return writer;
             };
 
@@ -17675,16 +17675,16 @@ $root.api = (function() {
                     var tag = reader.uint32();
                     switch (tag >>> 3) {
                     case 1:
-                        message.newRequested = reader.uint32();
+                        message.requested = reader.uint32();
                         break;
                     case 2:
-                        message.newResolved = reader.uint32();
+                        message.resolved = reader.uint32();
                         break;
                     case 3:
-                        message.newDistinctRequested = reader.uint32();
+                        message.distinctRequested = reader.uint32();
                         break;
                     case 4:
-                        message.newDistinctResolved = reader.uint32();
+                        message.distinctResolved = reader.uint32();
                         break;
                     default:
                         reader.skipType(tag & 7);
@@ -17721,18 +17721,18 @@ $root.api = (function() {
             DelegatedAccess.verify = function verify(message) {
                 if (typeof message !== "object" || message === null)
                     return "object expected";
-                if (message.newRequested != null && message.hasOwnProperty("newRequested"))
-                    if (!$util.isInteger(message.newRequested))
-                        return "newRequested: integer expected";
-                if (message.newResolved != null && message.hasOwnProperty("newResolved"))
-                    if (!$util.isInteger(message.newResolved))
-                        return "newResolved: integer expected";
-                if (message.newDistinctRequested != null && message.hasOwnProperty("newDistinctRequested"))
-                    if (!$util.isInteger(message.newDistinctRequested))
-                        return "newDistinctRequested: integer expected";
-                if (message.newDistinctResolved != null && message.hasOwnProperty("newDistinctResolved"))
-                    if (!$util.isInteger(message.newDistinctResolved))
-                        return "newDistinctResolved: integer expected";
+                if (message.requested != null && message.hasOwnProperty("requested"))
+                    if (!$util.isInteger(message.requested))
+                        return "requested: integer expected";
+                if (message.resolved != null && message.hasOwnProperty("resolved"))
+                    if (!$util.isInteger(message.resolved))
+                        return "resolved: integer expected";
+                if (message.distinctRequested != null && message.hasOwnProperty("distinctRequested"))
+                    if (!$util.isInteger(message.distinctRequested))
+                        return "distinctRequested: integer expected";
+                if (message.distinctResolved != null && message.hasOwnProperty("distinctResolved"))
+                    if (!$util.isInteger(message.distinctResolved))
+                        return "distinctResolved: integer expected";
                 return null;
             };
 
@@ -17748,14 +17748,14 @@ $root.api = (function() {
                 if (object instanceof $root.api.ApplicationUsageOverview.DelegatedAccess)
                     return object;
                 var message = new $root.api.ApplicationUsageOverview.DelegatedAccess();
-                if (object.newRequested != null)
-                    message.newRequested = object.newRequested >>> 0;
-                if (object.newResolved != null)
-                    message.newResolved = object.newResolved >>> 0;
-                if (object.newDistinctRequested != null)
-                    message.newDistinctRequested = object.newDistinctRequested >>> 0;
-                if (object.newDistinctResolved != null)
-                    message.newDistinctResolved = object.newDistinctResolved >>> 0;
+                if (object.requested != null)
+                    message.requested = object.requested >>> 0;
+                if (object.resolved != null)
+                    message.resolved = object.resolved >>> 0;
+                if (object.distinctRequested != null)
+                    message.distinctRequested = object.distinctRequested >>> 0;
+                if (object.distinctResolved != null)
+                    message.distinctResolved = object.distinctResolved >>> 0;
                 return message;
             };
 
@@ -17773,19 +17773,19 @@ $root.api = (function() {
                     options = {};
                 var object = {};
                 if (options.defaults) {
-                    object.newRequested = 0;
-                    object.newResolved = 0;
-                    object.newDistinctRequested = 0;
-                    object.newDistinctResolved = 0;
+                    object.requested = 0;
+                    object.resolved = 0;
+                    object.distinctRequested = 0;
+                    object.distinctResolved = 0;
                 }
-                if (message.newRequested != null && message.hasOwnProperty("newRequested"))
-                    object.newRequested = message.newRequested;
-                if (message.newResolved != null && message.hasOwnProperty("newResolved"))
-                    object.newResolved = message.newResolved;
-                if (message.newDistinctRequested != null && message.hasOwnProperty("newDistinctRequested"))
-                    object.newDistinctRequested = message.newDistinctRequested;
-                if (message.newDistinctResolved != null && message.hasOwnProperty("newDistinctResolved"))
-                    object.newDistinctResolved = message.newDistinctResolved;
+                if (message.requested != null && message.hasOwnProperty("requested"))
+                    object.requested = message.requested;
+                if (message.resolved != null && message.hasOwnProperty("resolved"))
+                    object.resolved = message.resolved;
+                if (message.distinctRequested != null && message.hasOwnProperty("distinctRequested"))
+                    object.distinctRequested = message.distinctRequested;
+                if (message.distinctResolved != null && message.hasOwnProperty("distinctResolved"))
+                    object.distinctResolved = message.distinctResolved;
                 return object;
             };
 
@@ -17806,6 +17806,22 @@ $root.api = (function() {
         return ApplicationUsageOverview;
     })();
 
+    /**
+     * Period enum.
+     * @name api.Period
+     * @enum {string}
+     * @property {number} DAY=0 DAY value
+     * @property {number} MONTH=1 MONTH value
+     * @property {number} YEAR=2 YEAR value
+     */
+    api.Period = (function() {
+        var valuesById = {}, values = Object.create(valuesById);
+        values[valuesById[0] = "DAY"] = 0;
+        values[valuesById[1] = "MONTH"] = 1;
+        values[valuesById[2] = "YEAR"] = 2;
+        return values;
+    })();
+
     api.ApplicationUsageOverviewRequest = (function() {
 
         /**
@@ -17813,7 +17829,9 @@ $root.api = (function() {
          * @memberof api
          * @interface IApplicationUsageOverviewRequest
          * @property {string|null} [Login] ApplicationUsageOverviewRequest Login
-         * @property {number|null} [since] ApplicationUsageOverviewRequest since
+         * @property {number|null} [from] ApplicationUsageOverviewRequest from
+         * @property {number|null} [to] ApplicationUsageOverviewRequest to
+         * @property {api.Period|null} [by] ApplicationUsageOverviewRequest by
          */
 
         /**
@@ -17840,12 +17858,28 @@ $root.api = (function() {
         ApplicationUsageOverviewRequest.prototype.Login = "";
 
         /**
-         * ApplicationUsageOverviewRequest since.
-         * @member {number} since
+         * ApplicationUsageOverviewRequest from.
+         * @member {number} from
          * @memberof api.ApplicationUsageOverviewRequest
          * @instance
          */
-        ApplicationUsageOverviewRequest.prototype.since = 0;
+        ApplicationUsageOverviewRequest.prototype.from = 0;
+
+        /**
+         * ApplicationUsageOverviewRequest to.
+         * @member {number} to
+         * @memberof api.ApplicationUsageOverviewRequest
+         * @instance
+         */
+        ApplicationUsageOverviewRequest.prototype.to = 0;
+
+        /**
+         * ApplicationUsageOverviewRequest by.
+         * @member {api.Period} by
+         * @memberof api.ApplicationUsageOverviewRequest
+         * @instance
+         */
+        ApplicationUsageOverviewRequest.prototype.by = 0;
 
         /**
          * Creates a new ApplicationUsageOverviewRequest instance using the specified properties.
@@ -17873,8 +17907,12 @@ $root.api = (function() {
                 writer = $Writer.create();
             if (message.Login != null && message.hasOwnProperty("Login"))
                 writer.uint32(/* id 1, wireType 2 =*/10).string(message.Login);
-            if (message.since != null && message.hasOwnProperty("since"))
-                writer.uint32(/* id 2, wireType 0 =*/16).uint32(message.since);
+            if (message.from != null && message.hasOwnProperty("from"))
+                writer.uint32(/* id 2, wireType 0 =*/16).uint32(message.from);
+            if (message.to != null && message.hasOwnProperty("to"))
+                writer.uint32(/* id 3, wireType 0 =*/24).uint32(message.to);
+            if (message.by != null && message.hasOwnProperty("by"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int32(message.by);
             return writer;
         };
 
@@ -17913,7 +17951,13 @@ $root.api = (function() {
                     message.Login = reader.string();
                     break;
                 case 2:
-                    message.since = reader.uint32();
+                    message.from = reader.uint32();
+                    break;
+                case 3:
+                    message.to = reader.uint32();
+                    break;
+                case 4:
+                    message.by = reader.int32();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -17953,9 +17997,21 @@ $root.api = (function() {
             if (message.Login != null && message.hasOwnProperty("Login"))
                 if (!$util.isString(message.Login))
                     return "Login: string expected";
-            if (message.since != null && message.hasOwnProperty("since"))
-                if (!$util.isInteger(message.since))
-                    return "since: integer expected";
+            if (message.from != null && message.hasOwnProperty("from"))
+                if (!$util.isInteger(message.from))
+                    return "from: integer expected";
+            if (message.to != null && message.hasOwnProperty("to"))
+                if (!$util.isInteger(message.to))
+                    return "to: integer expected";
+            if (message.by != null && message.hasOwnProperty("by"))
+                switch (message.by) {
+                default:
+                    return "by: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
             return null;
         };
 
@@ -17973,8 +18029,24 @@ $root.api = (function() {
             var message = new $root.api.ApplicationUsageOverviewRequest();
             if (object.Login != null)
                 message.Login = String(object.Login);
-            if (object.since != null)
-                message.since = object.since >>> 0;
+            if (object.from != null)
+                message.from = object.from >>> 0;
+            if (object.to != null)
+                message.to = object.to >>> 0;
+            switch (object.by) {
+            case "DAY":
+            case 0:
+                message.by = 0;
+                break;
+            case "MONTH":
+            case 1:
+                message.by = 1;
+                break;
+            case "YEAR":
+            case 2:
+                message.by = 2;
+                break;
+            }
             return message;
         };
 
@@ -17993,12 +18065,18 @@ $root.api = (function() {
             var object = {};
             if (options.defaults) {
                 object.Login = "";
-                object.since = 0;
+                object.from = 0;
+                object.to = 0;
+                object.by = options.enums === String ? "DAY" : 0;
             }
             if (message.Login != null && message.hasOwnProperty("Login"))
                 object.Login = message.Login;
-            if (message.since != null && message.hasOwnProperty("since"))
-                object.since = message.since;
+            if (message.from != null && message.hasOwnProperty("from"))
+                object.from = message.from;
+            if (message.to != null && message.hasOwnProperty("to"))
+                object.to = message.to;
+            if (message.by != null && message.hasOwnProperty("by"))
+                object.by = options.enums === String ? $root.api.Period[message.by] : message.by;
             return object;
         };
 
@@ -18022,7 +18100,7 @@ $root.api = (function() {
          * Properties of an ApplicationUsageOverviewResponse.
          * @memberof api
          * @interface IApplicationUsageOverviewResponse
-         * @property {api.IApplicationUsageOverview|null} [overview] ApplicationUsageOverviewResponse overview
+         * @property {Array.<api.IApplicationUsageOverview>|null} [overview] ApplicationUsageOverviewResponse overview
          */
 
         /**
@@ -18034,6 +18112,7 @@ $root.api = (function() {
          * @param {api.IApplicationUsageOverviewResponse=} [properties] Properties to set
          */
         function ApplicationUsageOverviewResponse(properties) {
+            this.overview = [];
             if (properties)
                 for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null)
@@ -18042,11 +18121,11 @@ $root.api = (function() {
 
         /**
          * ApplicationUsageOverviewResponse overview.
-         * @member {api.IApplicationUsageOverview|null|undefined} overview
+         * @member {Array.<api.IApplicationUsageOverview>} overview
          * @memberof api.ApplicationUsageOverviewResponse
          * @instance
          */
-        ApplicationUsageOverviewResponse.prototype.overview = null;
+        ApplicationUsageOverviewResponse.prototype.overview = $util.emptyArray;
 
         /**
          * Creates a new ApplicationUsageOverviewResponse instance using the specified properties.
@@ -18072,8 +18151,9 @@ $root.api = (function() {
         ApplicationUsageOverviewResponse.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.overview != null && message.hasOwnProperty("overview"))
-                $root.api.ApplicationUsageOverview.encode(message.overview, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            if (message.overview != null && message.overview.length)
+                for (var i = 0; i < message.overview.length; ++i)
+                    $root.api.ApplicationUsageOverview.encode(message.overview[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
             return writer;
         };
 
@@ -18109,7 +18189,9 @@ $root.api = (function() {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
-                    message.overview = $root.api.ApplicationUsageOverview.decode(reader, reader.uint32());
+                    if (!(message.overview && message.overview.length))
+                        message.overview = [];
+                    message.overview.push($root.api.ApplicationUsageOverview.decode(reader, reader.uint32()));
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -18147,9 +18229,13 @@ $root.api = (function() {
             if (typeof message !== "object" || message === null)
                 return "object expected";
             if (message.overview != null && message.hasOwnProperty("overview")) {
-                var error = $root.api.ApplicationUsageOverview.verify(message.overview);
-                if (error)
-                    return "overview." + error;
+                if (!Array.isArray(message.overview))
+                    return "overview: array expected";
+                for (var i = 0; i < message.overview.length; ++i) {
+                    var error = $root.api.ApplicationUsageOverview.verify(message.overview[i]);
+                    if (error)
+                        return "overview." + error;
+                }
             }
             return null;
         };
@@ -18166,10 +18252,15 @@ $root.api = (function() {
             if (object instanceof $root.api.ApplicationUsageOverviewResponse)
                 return object;
             var message = new $root.api.ApplicationUsageOverviewResponse();
-            if (object.overview != null) {
-                if (typeof object.overview !== "object")
-                    throw TypeError(".api.ApplicationUsageOverviewResponse.overview: object expected");
-                message.overview = $root.api.ApplicationUsageOverview.fromObject(object.overview);
+            if (object.overview) {
+                if (!Array.isArray(object.overview))
+                    throw TypeError(".api.ApplicationUsageOverviewResponse.overview: array expected");
+                message.overview = [];
+                for (var i = 0; i < object.overview.length; ++i) {
+                    if (typeof object.overview[i] !== "object")
+                        throw TypeError(".api.ApplicationUsageOverviewResponse.overview: object expected");
+                    message.overview[i] = $root.api.ApplicationUsageOverview.fromObject(object.overview[i]);
+                }
             }
             return message;
         };
@@ -18187,10 +18278,13 @@ $root.api = (function() {
             if (!options)
                 options = {};
             var object = {};
-            if (options.defaults)
-                object.overview = null;
-            if (message.overview != null && message.hasOwnProperty("overview"))
-                object.overview = $root.api.ApplicationUsageOverview.toObject(message.overview, options);
+            if (options.arrays || options.defaults)
+                object.overview = [];
+            if (message.overview && message.overview.length) {
+                object.overview = [];
+                for (var j = 0; j < message.overview.length; ++j)
+                    object.overview[j] = $root.api.ApplicationUsageOverview.toObject(message.overview[j], options);
+            }
             return object;
         };
 

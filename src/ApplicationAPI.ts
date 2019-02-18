@@ -20,23 +20,33 @@ export enum ApplicationIdentitySortingField {
   CREATED = 1
 }
 
+export import UsageBy = api.Period;
+
 export namespace ApplicationAPI {
   export type Config = {
     jwt?: ApplicationJWT.Config;
   };
 
-  export type UsageOverview = {
+  export type UsageOverviewItem = {
     jwt: {
-      totalIdentities: number;
-      newIdentities: number;
-      newSessions: number;
+      identities: number;
+      sessions: number;
     };
-    delegatedAccess: {
-      newRequested: number;
-      newResolved: number;
-      newDistinctRequested: number;
-      newDistinctResolved: number;
+    delegates: {
+      requested: number;
+      resolved: number;
+      distinctRequested: number;
+      distinctResolved: number;
     };
+    start: number;
+  };
+  export type UsageOverview = UsageOverviewItem[];
+
+  export type IdentitySession = {
+    owner: string;
+    token: Uint8Array;
+    created: number;
+    expires: number;
   };
 }
 
@@ -113,7 +123,9 @@ export class ApplicationAPI {
    * Get usage overview of an application
    * @param appID the app ID
    * @param options A collection of options:
-   *  - since; unix timestamp from which requests data
+   *  - from : unix timestamp from which requests data
+   *  - to : unix timestamp to which requests data
+   *  - by : number 0 : day , 1 : month , 2 : year
    * @return(p) On success the promise will be resolved with an ApplicationAPI.UsageOverview.
    * On error the promise will be rejected with an {@link Error} with kind:
    * - `IdentityCannotAssumeOwnership` if cannot have right to the application.
@@ -122,7 +134,9 @@ export class ApplicationAPI {
   async getUsageOverview(
     appID: string,
     options?: {
-      since?: number;
+      from?: number;
+      to?: number;
+      by?: UsageBy;
     }
   ): Promise<ApplicationAPI.UsageOverview> {
     options = options == null ? {} : options;
@@ -136,22 +150,20 @@ export class ApplicationAPI {
         ...options
       }).finish(),
       response: r => {
-        let overview = api.ApplicationUsageOverviewResponse.decode(r).overview;
-        return <ApplicationAPI.UsageOverview>{
-          jwt: {
-            totalIdentities: 0,
-            newIdentities: 0,
-            newSessions: 0,
-            ...overview.jwt
-          },
-          delegatedAccess: {
-            newRequested: 0,
-            newResolved: 0,
-            newDistinctRequested: 0,
-            newDistinctResolved: 0,
-            ...overview.delegates
-          }
-        };
+        return api.ApplicationUsageOverviewResponse.decode(r).overview.map(
+          ({ start, jwt, delegates }) =>
+            <ApplicationAPI.UsageOverviewItem>{
+              start,
+              jwt: { identities: 0, sessions: 0, ...jwt },
+              delegates: {
+                requested: 0,
+                resolved: 0,
+                distinctRequested: 0,
+                distinctResolved: 0,
+                ...delegates
+              }
+            }
+        );
       }
     });
   }
@@ -236,5 +248,37 @@ export class ApplicationAPI {
       return "";
     }
     return dataPepsLogin.substr(0, i);
+  }
+
+  /** Returns all sessions that been created on behalf of the application.
+   * @param appID the app ID
+   * @param offset the offset
+   * @param limit the limit
+   * @return(p) On success the promise will be resolved with an ApplicationAPI.IdentitySession[].
+   * On error the promise will be rejected with an {@link Error} with kind:
+   * - `IdentityCannotAssumeOwnership` if cannot have right to the application.
+   * - `IdentityNotFound` if the identity `appID` doesn't exists.
+   */
+
+  async listSessions(
+    appID: string,
+    offset: number,
+    limit: number
+  ): Promise<ApplicationAPI.IdentitySession[]> {
+    return await this.session.doProtoRequest<ApplicationAPI.IdentitySession[]>({
+      path: `/api/v4/application/${encodeURI(appID)}/identities-session/list`,
+      method: "POST",
+      expectedCode: 200,
+      assume: { login: appID, kind: IdentityAccessKind.READ },
+      body: api.ApplicationIdentitySessionListRequest.encode({
+        appID,
+        offset,
+        limit
+      }).finish(),
+      response: r => {
+        let list = api.ApplicationIdentitySessionListResponse.decode(r);
+        return <ApplicationAPI.IdentitySession[]>list.sessions;
+      }
+    });
   }
 }

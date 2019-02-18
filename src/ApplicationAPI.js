@@ -53,6 +53,7 @@ var ApplicationIdentitySortingField;
     ApplicationIdentitySortingField[ApplicationIdentitySortingField["LOGIN"] = 0] = "LOGIN";
     ApplicationIdentitySortingField[ApplicationIdentitySortingField["CREATED"] = 1] = "CREATED";
 })(ApplicationIdentitySortingField = exports.ApplicationIdentitySortingField || (exports.ApplicationIdentitySortingField = {}));
+exports.UsageBy = proto_1.api.Period;
 var ApplicationAPI = /** @class */ (function () {
     function ApplicationAPI(session) {
         this.session = session;
@@ -137,7 +138,9 @@ var ApplicationAPI = /** @class */ (function () {
      * Get usage overview of an application
      * @param appID the app ID
      * @param options A collection of options:
-     *  - since; unix timestamp from which requests data
+     *  - from : unix timestamp from which requests data
+     *  - to : unix timestamp to which requests data
+     *  - by : number 0 : day , 1 : month , 2 : year
      * @return(p) On success the promise will be resolved with an ApplicationAPI.UsageOverview.
      * On error the promise will be rejected with an {@link Error} with kind:
      * - `IdentityCannotAssumeOwnership` if cannot have right to the application.
@@ -156,11 +159,14 @@ var ApplicationAPI = /** @class */ (function () {
                                 path: "/api/v4/application/" + encodeURI(appID) + "/usage-overview",
                                 body: proto_1.api.ApplicationUsageOverviewRequest.encode(__assign({ Login: appID }, options)).finish(),
                                 response: function (r) {
-                                    var overview = proto_1.api.ApplicationUsageOverviewResponse.decode(r).overview;
-                                    return {
-                                        jwt: __assign({ totalIdentities: 0, newIdentities: 0, newSessions: 0 }, overview.jwt),
-                                        delegatedAccess: __assign({ newRequested: 0, newResolved: 0, newDistinctRequested: 0, newDistinctResolved: 0 }, overview.delegates)
-                                    };
+                                    return proto_1.api.ApplicationUsageOverviewResponse.decode(r).overview.map(function (_a) {
+                                        var start = _a.start, jwt = _a.jwt, delegates = _a.delegates;
+                                        return ({
+                                            start: start,
+                                            jwt: __assign({ identities: 0, sessions: 0 }, jwt),
+                                            delegates: __assign({ requested: 0, resolved: 0, distinctRequested: 0, distinctResolved: 0 }, delegates)
+                                        });
+                                    });
                                 }
                             })];
                     case 1: return [2 /*return*/, _a.sent()];
@@ -239,6 +245,39 @@ var ApplicationAPI = /** @class */ (function () {
             return "";
         }
         return dataPepsLogin.substr(0, i);
+    };
+    /** Returns all sessions that been created on behalf of the application.
+     * @param appID the app ID
+     * @param offset the offset
+     * @param limit the limit
+     * @return(p) On success the promise will be resolved with an ApplicationAPI.IdentitySession[].
+     * On error the promise will be rejected with an {@link Error} with kind:
+     * - `IdentityCannotAssumeOwnership` if cannot have right to the application.
+     * - `IdentityNotFound` if the identity `appID` doesn't exists.
+     */
+    ApplicationAPI.prototype.listSessions = function (appID, offset, limit) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.session.doProtoRequest({
+                            path: "/api/v4/application/" + encodeURI(appID) + "/identities-session/list",
+                            method: "POST",
+                            expectedCode: 200,
+                            assume: { login: appID, kind: IdentityAPI_1.IdentityAccessKind.READ },
+                            body: proto_1.api.ApplicationIdentitySessionListRequest.encode({
+                                appID: appID,
+                                offset: offset,
+                                limit: limit
+                            }).finish(),
+                            response: function (r) {
+                                var list = proto_1.api.ApplicationIdentitySessionListResponse.decode(r);
+                                return list.sessions;
+                            }
+                        })];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
     };
     return ApplicationAPI;
 }());

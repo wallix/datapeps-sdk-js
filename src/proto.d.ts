@@ -6366,6 +6366,306 @@ export namespace api {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of an IdentitySession. */
+    interface IIdentitySession {
+
+        /** IdentitySession owner */
+        owner?: (string|null);
+
+        /** IdentitySession token */
+        token?: (Uint8Array|null);
+
+        /** IdentitySession created */
+        created?: (number|Long|null);
+
+        /** IdentitySession expires */
+        expires?: (number|Long|null);
+    }
+
+    /** Represents an IdentitySession. */
+    class IdentitySession implements IIdentitySession {
+
+        /**
+         * Constructs a new IdentitySession.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: api.IIdentitySession);
+
+        /** IdentitySession owner. */
+        public owner: string;
+
+        /** IdentitySession token. */
+        public token: Uint8Array;
+
+        /** IdentitySession created. */
+        public created: (number|Long);
+
+        /** IdentitySession expires. */
+        public expires: (number|Long);
+
+        /**
+         * Creates a new IdentitySession instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns IdentitySession instance
+         */
+        public static create(properties?: api.IIdentitySession): api.IdentitySession;
+
+        /**
+         * Encodes the specified IdentitySession message. Does not implicitly {@link api.IdentitySession.verify|verify} messages.
+         * @param message IdentitySession message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: api.IIdentitySession, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified IdentitySession message, length delimited. Does not implicitly {@link api.IdentitySession.verify|verify} messages.
+         * @param message IdentitySession message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: api.IIdentitySession, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an IdentitySession message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns IdentitySession
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.IdentitySession;
+
+        /**
+         * Decodes an IdentitySession message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns IdentitySession
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.IdentitySession;
+
+        /**
+         * Verifies an IdentitySession message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an IdentitySession message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns IdentitySession
+         */
+        public static fromObject(object: { [k: string]: any }): api.IdentitySession;
+
+        /**
+         * Creates a plain object from an IdentitySession message. Also converts values to other types if specified.
+         * @param message IdentitySession
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: api.IdentitySession, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this IdentitySession to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an ApplicationIdentitySessionListRequest. */
+    interface IApplicationIdentitySessionListRequest {
+
+        /** ApplicationIdentitySessionListRequest appID */
+        appID?: (string|null);
+
+        /** ApplicationIdentitySessionListRequest offset */
+        offset?: (number|null);
+
+        /** ApplicationIdentitySessionListRequest limit */
+        limit?: (number|null);
+    }
+
+    /** Represents an ApplicationIdentitySessionListRequest. */
+    class ApplicationIdentitySessionListRequest implements IApplicationIdentitySessionListRequest {
+
+        /**
+         * Constructs a new ApplicationIdentitySessionListRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: api.IApplicationIdentitySessionListRequest);
+
+        /** ApplicationIdentitySessionListRequest appID. */
+        public appID: string;
+
+        /** ApplicationIdentitySessionListRequest offset. */
+        public offset: number;
+
+        /** ApplicationIdentitySessionListRequest limit. */
+        public limit: number;
+
+        /**
+         * Creates a new ApplicationIdentitySessionListRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ApplicationIdentitySessionListRequest instance
+         */
+        public static create(properties?: api.IApplicationIdentitySessionListRequest): api.ApplicationIdentitySessionListRequest;
+
+        /**
+         * Encodes the specified ApplicationIdentitySessionListRequest message. Does not implicitly {@link api.ApplicationIdentitySessionListRequest.verify|verify} messages.
+         * @param message ApplicationIdentitySessionListRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: api.IApplicationIdentitySessionListRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ApplicationIdentitySessionListRequest message, length delimited. Does not implicitly {@link api.ApplicationIdentitySessionListRequest.verify|verify} messages.
+         * @param message ApplicationIdentitySessionListRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: api.IApplicationIdentitySessionListRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an ApplicationIdentitySessionListRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ApplicationIdentitySessionListRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.ApplicationIdentitySessionListRequest;
+
+        /**
+         * Decodes an ApplicationIdentitySessionListRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ApplicationIdentitySessionListRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.ApplicationIdentitySessionListRequest;
+
+        /**
+         * Verifies an ApplicationIdentitySessionListRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an ApplicationIdentitySessionListRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ApplicationIdentitySessionListRequest
+         */
+        public static fromObject(object: { [k: string]: any }): api.ApplicationIdentitySessionListRequest;
+
+        /**
+         * Creates a plain object from an ApplicationIdentitySessionListRequest message. Also converts values to other types if specified.
+         * @param message ApplicationIdentitySessionListRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: api.ApplicationIdentitySessionListRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ApplicationIdentitySessionListRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an ApplicationIdentitySessionListResponse. */
+    interface IApplicationIdentitySessionListResponse {
+
+        /** ApplicationIdentitySessionListResponse sessions */
+        sessions?: (api.IIdentitySession[]|null);
+    }
+
+    /** Represents an ApplicationIdentitySessionListResponse. */
+    class ApplicationIdentitySessionListResponse implements IApplicationIdentitySessionListResponse {
+
+        /**
+         * Constructs a new ApplicationIdentitySessionListResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: api.IApplicationIdentitySessionListResponse);
+
+        /** ApplicationIdentitySessionListResponse sessions. */
+        public sessions: api.IIdentitySession[];
+
+        /**
+         * Creates a new ApplicationIdentitySessionListResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ApplicationIdentitySessionListResponse instance
+         */
+        public static create(properties?: api.IApplicationIdentitySessionListResponse): api.ApplicationIdentitySessionListResponse;
+
+        /**
+         * Encodes the specified ApplicationIdentitySessionListResponse message. Does not implicitly {@link api.ApplicationIdentitySessionListResponse.verify|verify} messages.
+         * @param message ApplicationIdentitySessionListResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: api.IApplicationIdentitySessionListResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ApplicationIdentitySessionListResponse message, length delimited. Does not implicitly {@link api.ApplicationIdentitySessionListResponse.verify|verify} messages.
+         * @param message ApplicationIdentitySessionListResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: api.IApplicationIdentitySessionListResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an ApplicationIdentitySessionListResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ApplicationIdentitySessionListResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.ApplicationIdentitySessionListResponse;
+
+        /**
+         * Decodes an ApplicationIdentitySessionListResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ApplicationIdentitySessionListResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.ApplicationIdentitySessionListResponse;
+
+        /**
+         * Verifies an ApplicationIdentitySessionListResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an ApplicationIdentitySessionListResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ApplicationIdentitySessionListResponse
+         */
+        public static fromObject(object: { [k: string]: any }): api.ApplicationIdentitySessionListResponse;
+
+        /**
+         * Creates a plain object from an ApplicationIdentitySessionListResponse message. Also converts values to other types if specified.
+         * @param message ApplicationIdentitySessionListResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: api.ApplicationIdentitySessionListResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ApplicationIdentitySessionListResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** JwtAlgorithm enum. */
     enum JwtAlgorithm {
         HS256 = 0,
@@ -6768,6 +7068,9 @@ export namespace api {
 
         /** ApplicationUsageOverview delegates */
         delegates?: (api.ApplicationUsageOverview.IDelegatedAccess|null);
+
+        /** ApplicationUsageOverview start */
+        start?: (number|null);
     }
 
     /** Represents an ApplicationUsageOverview. */
@@ -6784,6 +7087,9 @@ export namespace api {
 
         /** ApplicationUsageOverview delegates. */
         public delegates?: (api.ApplicationUsageOverview.IDelegatedAccess|null);
+
+        /** ApplicationUsageOverview start. */
+        public start: number;
 
         /**
          * Creates a new ApplicationUsageOverview instance using the specified properties.
@@ -6861,14 +7167,11 @@ export namespace api {
         /** Properties of a JWT. */
         interface IJWT {
 
-            /** JWT totalIdentities */
-            totalIdentities?: (number|null);
+            /** JWT identities */
+            identities?: (number|null);
 
-            /** JWT newIdentities */
-            newIdentities?: (number|null);
-
-            /** JWT newSessions */
-            newSessions?: (number|null);
+            /** JWT sessions */
+            sessions?: (number|null);
         }
 
         /** Represents a JWT. */
@@ -6880,14 +7183,11 @@ export namespace api {
              */
             constructor(properties?: api.ApplicationUsageOverview.IJWT);
 
-            /** JWT totalIdentities. */
-            public totalIdentities: number;
+            /** JWT identities. */
+            public identities: number;
 
-            /** JWT newIdentities. */
-            public newIdentities: number;
-
-            /** JWT newSessions. */
-            public newSessions: number;
+            /** JWT sessions. */
+            public sessions: number;
 
             /**
              * Creates a new JWT instance using the specified properties.
@@ -6963,17 +7263,17 @@ export namespace api {
         /** Properties of a DelegatedAccess. */
         interface IDelegatedAccess {
 
-            /** DelegatedAccess newRequested */
-            newRequested?: (number|null);
+            /** DelegatedAccess requested */
+            requested?: (number|null);
 
-            /** DelegatedAccess newResolved */
-            newResolved?: (number|null);
+            /** DelegatedAccess resolved */
+            resolved?: (number|null);
 
-            /** DelegatedAccess newDistinctRequested */
-            newDistinctRequested?: (number|null);
+            /** DelegatedAccess distinctRequested */
+            distinctRequested?: (number|null);
 
-            /** DelegatedAccess newDistinctResolved */
-            newDistinctResolved?: (number|null);
+            /** DelegatedAccess distinctResolved */
+            distinctResolved?: (number|null);
         }
 
         /** Represents a DelegatedAccess. */
@@ -6985,17 +7285,17 @@ export namespace api {
              */
             constructor(properties?: api.ApplicationUsageOverview.IDelegatedAccess);
 
-            /** DelegatedAccess newRequested. */
-            public newRequested: number;
+            /** DelegatedAccess requested. */
+            public requested: number;
 
-            /** DelegatedAccess newResolved. */
-            public newResolved: number;
+            /** DelegatedAccess resolved. */
+            public resolved: number;
 
-            /** DelegatedAccess newDistinctRequested. */
-            public newDistinctRequested: number;
+            /** DelegatedAccess distinctRequested. */
+            public distinctRequested: number;
 
-            /** DelegatedAccess newDistinctResolved. */
-            public newDistinctResolved: number;
+            /** DelegatedAccess distinctResolved. */
+            public distinctResolved: number;
 
             /**
              * Creates a new DelegatedAccess instance using the specified properties.
@@ -7069,14 +7369,27 @@ export namespace api {
         }
     }
 
+    /** Period enum. */
+    enum Period {
+        DAY = 0,
+        MONTH = 1,
+        YEAR = 2
+    }
+
     /** Properties of an ApplicationUsageOverviewRequest. */
     interface IApplicationUsageOverviewRequest {
 
         /** ApplicationUsageOverviewRequest Login */
         Login?: (string|null);
 
-        /** ApplicationUsageOverviewRequest since */
-        since?: (number|null);
+        /** ApplicationUsageOverviewRequest from */
+        from?: (number|null);
+
+        /** ApplicationUsageOverviewRequest to */
+        to?: (number|null);
+
+        /** ApplicationUsageOverviewRequest by */
+        by?: (api.Period|null);
     }
 
     /** Represents an ApplicationUsageOverviewRequest. */
@@ -7091,8 +7404,14 @@ export namespace api {
         /** ApplicationUsageOverviewRequest Login. */
         public Login: string;
 
-        /** ApplicationUsageOverviewRequest since. */
-        public since: number;
+        /** ApplicationUsageOverviewRequest from. */
+        public from: number;
+
+        /** ApplicationUsageOverviewRequest to. */
+        public to: number;
+
+        /** ApplicationUsageOverviewRequest by. */
+        public by: api.Period;
 
         /**
          * Creates a new ApplicationUsageOverviewRequest instance using the specified properties.
@@ -7169,7 +7488,7 @@ export namespace api {
     interface IApplicationUsageOverviewResponse {
 
         /** ApplicationUsageOverviewResponse overview */
-        overview?: (api.IApplicationUsageOverview|null);
+        overview?: (api.IApplicationUsageOverview[]|null);
     }
 
     /** Represents an ApplicationUsageOverviewResponse. */
@@ -7182,7 +7501,7 @@ export namespace api {
         constructor(properties?: api.IApplicationUsageOverviewResponse);
 
         /** ApplicationUsageOverviewResponse overview. */
-        public overview?: (api.IApplicationUsageOverview|null);
+        public overview: api.IApplicationUsageOverview[];
 
         /**
          * Creates a new ApplicationUsageOverviewResponse instance using the specified properties.

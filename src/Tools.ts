@@ -251,3 +251,7 @@ export class Crypto {
     return masterKey;
   }
 }
+
+export function timestampToDate(timestamp: number | Long): Date {
+  return new Date((timestamp as number) * 1000);
+}

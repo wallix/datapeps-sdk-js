@@ -1,4 +1,5 @@
 import * as Long from "long";
+import { timestampToDate } from "./Tools";
 
 /**
  * Type of identitfier of DataPeps objects.
@@ -57,6 +58,6 @@ export namespace ID {
     } else {
       l = Long.fromNumber(id, true);
     }
-    return new Date(l.getHighBitsUnsigned() * 1000);
+    return timestampToDate(l.getHighBitsUnsigned());
   };
 }

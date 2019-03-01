@@ -1,3 +1,4 @@
+/// <reference types="long" />
 export declare class Base64 {
     /**
      * Decode a base64 string to an Uint8Array
@@ -37,3 +38,4 @@ export declare class Crypto {
      */
     static PBKDF2(password: Uint8Array, salt: Uint8Array, c: number, length: number): Uint8Array;
 }
+export declare function timestampToDate(timestamp: number | Long): Date;

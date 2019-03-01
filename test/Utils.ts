@@ -27,7 +27,7 @@ export async function expectError(
     expect(e).instanceof(DataPeps.Error);
     expect(e.kind).equal(kind);
     if (payload != null) {
-      expect(payload).to.deep.equals({ ...e.payload });
+      expect({ ...e.payload }).to.deep.equals(payload);
     }
     return;
   }

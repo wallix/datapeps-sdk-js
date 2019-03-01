@@ -64,12 +64,11 @@ describe("applicationAPI.usage", () => {
     expect(usage.length).equals(0);
   });
 
+  /**
+   * request N delegatedAccess
+   * resolve N-M delegatedAccess
+   */
   it("Get delegates usage of an active dev", async () => {
-    /**
-     * request N delegatedAccess
-     * resolve N-M delegatedAccess
-     */
-
     // Use app session to sign request
     const appSession = await Session.login(
       ctx.app.identity.login,
@@ -132,17 +131,19 @@ describe("applicationAPI.usage", () => {
     expect(usage.length).equals(0);
   });
 
-  it("Get jwt usage of an active dev and list sessions", async () => {
-    /*
-    * create J identity thanks jwt
-    * use some jwt identities to create some session
-    */
-
+  /**
+   * create J identity thanks jwt
+   * use some jwt identities to create some session
+   */
+  it("Get jwt usage of an active dev", async () => {
     const key = "supersecurekey";
 
     let api = new ApplicationAPI(ctx.dev.session);
     await api.putConfig(ctx.app.identity.login, {
-      jwt: { key: Uint8Tool.encode(key) }
+      jwt: {
+        key: Uint8Tool.encode(key),
+        signAlgorithm: ApplicationJWT.Algorithm.HS256
+      }
     });
 
     // Let's enroll David, David don't really use the app

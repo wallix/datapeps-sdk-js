@@ -1,12 +1,13 @@
 import { api } from "./proto";
-import { Identity } from './IdentityAPI';
+import { Identity } from "./IdentityAPI";
+import { timestampToDate } from "./Tools";
 
 export class IdentitySerializer {
   static deserialize(t: api.IIdentity): Identity<Uint8Array> {
     let x = api.Identity.create(t);
     return {
       ...x,
-      created: new Date((t.created as number) * 1000)
+      created: timestampToDate(t.created)
     };
   }
 }
@@ -18,18 +19,16 @@ export enum IdentitySortingOrder {
 }
 
 export class IdentityRequestsUtils {
-
   static resolveSortingOrder(order: IdentitySortingOrder): api.SortingOrder {
-    let resolvedSortingOrder: api.SortingOrder = api.SortingOrder.ASC
+    let resolvedSortingOrder: api.SortingOrder = api.SortingOrder.ASC;
     if (order == null) {
-      return resolvedSortingOrder
+      return resolvedSortingOrder;
     }
     if (order === IdentitySortingOrder.DESC) {
-      resolvedSortingOrder = api.SortingOrder.DESC
+      resolvedSortingOrder = api.SortingOrder.DESC;
     } else if (order != IdentitySortingOrder.ASC) {
-      resolvedSortingOrder = order as api.SortingOrder
+      resolvedSortingOrder = order as api.SortingOrder;
     }
-    return resolvedSortingOrder
+    return resolvedSortingOrder;
   }
-  
 }

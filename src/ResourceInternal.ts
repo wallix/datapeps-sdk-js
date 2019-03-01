@@ -86,9 +86,9 @@ export class ResourceBox<T> implements Resource<T> {
 }
 
 export function createWithEncryption<T>(
-  kind: string,
   payload: T,
   encryption: Encryption,
+  kind: string,
   options?: { serialize?: ((payload: T) => Uint8Array) }
 ): {
   resourceRequestBody: api.IResourcePostRequest;
@@ -98,7 +98,7 @@ export function createWithEncryption<T>(
   let serialize =
     options.serialize != null
       ? options.serialize
-      : p => Uint8Tool.encode(JSON.stringify(p));
+      : (p: T) => Uint8Tool.encode(JSON.stringify(p));
   let encryptionPK: IdentityPublicKey = {
     login: null,
     version: null,

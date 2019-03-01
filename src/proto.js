@@ -5928,6 +5928,248 @@ $root.api = (function() {
         return ApplicationListIdentitiesResponse;
     })();
 
+    api.ApplicationGetIdentityAuthResponse = (function() {
+
+        /**
+         * Properties of an ApplicationGetIdentityAuthResponse.
+         * @memberof api
+         * @interface IApplicationGetIdentityAuthResponse
+         * @property {api.IIdentityExternalAuth|null} [auth] ApplicationGetIdentityAuthResponse auth
+         * @property {string|null} [login] ApplicationGetIdentityAuthResponse login
+         * @property {api.IApplicationConfigID|null} [configID] ApplicationGetIdentityAuthResponse configID
+         */
+
+        /**
+         * Constructs a new ApplicationGetIdentityAuthResponse.
+         * @memberof api
+         * @classdesc Represents an ApplicationGetIdentityAuthResponse.
+         * @implements IApplicationGetIdentityAuthResponse
+         * @constructor
+         * @param {api.IApplicationGetIdentityAuthResponse=} [properties] Properties to set
+         */
+        function ApplicationGetIdentityAuthResponse(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * ApplicationGetIdentityAuthResponse auth.
+         * @member {api.IIdentityExternalAuth|null|undefined} auth
+         * @memberof api.ApplicationGetIdentityAuthResponse
+         * @instance
+         */
+        ApplicationGetIdentityAuthResponse.prototype.auth = null;
+
+        /**
+         * ApplicationGetIdentityAuthResponse login.
+         * @member {string} login
+         * @memberof api.ApplicationGetIdentityAuthResponse
+         * @instance
+         */
+        ApplicationGetIdentityAuthResponse.prototype.login = "";
+
+        /**
+         * ApplicationGetIdentityAuthResponse configID.
+         * @member {api.IApplicationConfigID|null|undefined} configID
+         * @memberof api.ApplicationGetIdentityAuthResponse
+         * @instance
+         */
+        ApplicationGetIdentityAuthResponse.prototype.configID = null;
+
+        /**
+         * Creates a new ApplicationGetIdentityAuthResponse instance using the specified properties.
+         * @function create
+         * @memberof api.ApplicationGetIdentityAuthResponse
+         * @static
+         * @param {api.IApplicationGetIdentityAuthResponse=} [properties] Properties to set
+         * @returns {api.ApplicationGetIdentityAuthResponse} ApplicationGetIdentityAuthResponse instance
+         */
+        ApplicationGetIdentityAuthResponse.create = function create(properties) {
+            return new ApplicationGetIdentityAuthResponse(properties);
+        };
+
+        /**
+         * Encodes the specified ApplicationGetIdentityAuthResponse message. Does not implicitly {@link api.ApplicationGetIdentityAuthResponse.verify|verify} messages.
+         * @function encode
+         * @memberof api.ApplicationGetIdentityAuthResponse
+         * @static
+         * @param {api.IApplicationGetIdentityAuthResponse} message ApplicationGetIdentityAuthResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ApplicationGetIdentityAuthResponse.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.auth != null && message.hasOwnProperty("auth"))
+                $root.api.IdentityExternalAuth.encode(message.auth, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            if (message.login != null && message.hasOwnProperty("login"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.login);
+            if (message.configID != null && message.hasOwnProperty("configID"))
+                $root.api.ApplicationConfigID.encode(message.configID, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified ApplicationGetIdentityAuthResponse message, length delimited. Does not implicitly {@link api.ApplicationGetIdentityAuthResponse.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof api.ApplicationGetIdentityAuthResponse
+         * @static
+         * @param {api.IApplicationGetIdentityAuthResponse} message ApplicationGetIdentityAuthResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ApplicationGetIdentityAuthResponse.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an ApplicationGetIdentityAuthResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof api.ApplicationGetIdentityAuthResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {api.ApplicationGetIdentityAuthResponse} ApplicationGetIdentityAuthResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ApplicationGetIdentityAuthResponse.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.ApplicationGetIdentityAuthResponse();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.auth = $root.api.IdentityExternalAuth.decode(reader, reader.uint32());
+                    break;
+                case 2:
+                    message.login = reader.string();
+                    break;
+                case 3:
+                    message.configID = $root.api.ApplicationConfigID.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an ApplicationGetIdentityAuthResponse message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof api.ApplicationGetIdentityAuthResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {api.ApplicationGetIdentityAuthResponse} ApplicationGetIdentityAuthResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ApplicationGetIdentityAuthResponse.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an ApplicationGetIdentityAuthResponse message.
+         * @function verify
+         * @memberof api.ApplicationGetIdentityAuthResponse
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        ApplicationGetIdentityAuthResponse.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.auth != null && message.hasOwnProperty("auth")) {
+                var error = $root.api.IdentityExternalAuth.verify(message.auth);
+                if (error)
+                    return "auth." + error;
+            }
+            if (message.login != null && message.hasOwnProperty("login"))
+                if (!$util.isString(message.login))
+                    return "login: string expected";
+            if (message.configID != null && message.hasOwnProperty("configID")) {
+                var error = $root.api.ApplicationConfigID.verify(message.configID);
+                if (error)
+                    return "configID." + error;
+            }
+            return null;
+        };
+
+        /**
+         * Creates an ApplicationGetIdentityAuthResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof api.ApplicationGetIdentityAuthResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {api.ApplicationGetIdentityAuthResponse} ApplicationGetIdentityAuthResponse
+         */
+        ApplicationGetIdentityAuthResponse.fromObject = function fromObject(object) {
+            if (object instanceof $root.api.ApplicationGetIdentityAuthResponse)
+                return object;
+            var message = new $root.api.ApplicationGetIdentityAuthResponse();
+            if (object.auth != null) {
+                if (typeof object.auth !== "object")
+                    throw TypeError(".api.ApplicationGetIdentityAuthResponse.auth: object expected");
+                message.auth = $root.api.IdentityExternalAuth.fromObject(object.auth);
+            }
+            if (object.login != null)
+                message.login = String(object.login);
+            if (object.configID != null) {
+                if (typeof object.configID !== "object")
+                    throw TypeError(".api.ApplicationGetIdentityAuthResponse.configID: object expected");
+                message.configID = $root.api.ApplicationConfigID.fromObject(object.configID);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an ApplicationGetIdentityAuthResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof api.ApplicationGetIdentityAuthResponse
+         * @static
+         * @param {api.ApplicationGetIdentityAuthResponse} message ApplicationGetIdentityAuthResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        ApplicationGetIdentityAuthResponse.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.auth = null;
+                object.login = "";
+                object.configID = null;
+            }
+            if (message.auth != null && message.hasOwnProperty("auth"))
+                object.auth = $root.api.IdentityExternalAuth.toObject(message.auth, options);
+            if (message.login != null && message.hasOwnProperty("login"))
+                object.login = message.login;
+            if (message.configID != null && message.hasOwnProperty("configID"))
+                object.configID = $root.api.ApplicationConfigID.toObject(message.configID, options);
+            return object;
+        };
+
+        /**
+         * Converts this ApplicationGetIdentityAuthResponse to JSON.
+         * @function toJSON
+         * @memberof api.ApplicationGetIdentityAuthResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        ApplicationGetIdentityAuthResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return ApplicationGetIdentityAuthResponse;
+    })();
+
     api.IdentityPromoteRequest = (function() {
 
         /**
@@ -15751,6 +15993,7 @@ $root.api = (function() {
          * @memberof api
          * @interface IApplicationIdentitySessionListRequest
          * @property {string|null} [appID] ApplicationIdentitySessionListRequest appID
+         * @property {number|Long|null} [since] ApplicationIdentitySessionListRequest since
          * @property {number|null} [offset] ApplicationIdentitySessionListRequest offset
          * @property {number|null} [limit] ApplicationIdentitySessionListRequest limit
          */
@@ -15777,6 +16020,14 @@ $root.api = (function() {
          * @instance
          */
         ApplicationIdentitySessionListRequest.prototype.appID = "";
+
+        /**
+         * ApplicationIdentitySessionListRequest since.
+         * @member {number|Long} since
+         * @memberof api.ApplicationIdentitySessionListRequest
+         * @instance
+         */
+        ApplicationIdentitySessionListRequest.prototype.since = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
 
         /**
          * ApplicationIdentitySessionListRequest offset.
@@ -15820,10 +16071,12 @@ $root.api = (function() {
                 writer = $Writer.create();
             if (message.appID != null && message.hasOwnProperty("appID"))
                 writer.uint32(/* id 1, wireType 2 =*/10).string(message.appID);
+            if (message.since != null && message.hasOwnProperty("since"))
+                writer.uint32(/* id 2, wireType 0 =*/16).uint64(message.since);
             if (message.offset != null && message.hasOwnProperty("offset"))
-                writer.uint32(/* id 2, wireType 0 =*/16).uint32(message.offset);
+                writer.uint32(/* id 3, wireType 0 =*/24).uint32(message.offset);
             if (message.limit != null && message.hasOwnProperty("limit"))
-                writer.uint32(/* id 3, wireType 0 =*/24).uint32(message.limit);
+                writer.uint32(/* id 4, wireType 0 =*/32).uint32(message.limit);
             return writer;
         };
 
@@ -15862,9 +16115,12 @@ $root.api = (function() {
                     message.appID = reader.string();
                     break;
                 case 2:
-                    message.offset = reader.uint32();
+                    message.since = reader.uint64();
                     break;
                 case 3:
+                    message.offset = reader.uint32();
+                    break;
+                case 4:
                     message.limit = reader.uint32();
                     break;
                 default:
@@ -15905,6 +16161,9 @@ $root.api = (function() {
             if (message.appID != null && message.hasOwnProperty("appID"))
                 if (!$util.isString(message.appID))
                     return "appID: string expected";
+            if (message.since != null && message.hasOwnProperty("since"))
+                if (!$util.isInteger(message.since) && !(message.since && $util.isInteger(message.since.low) && $util.isInteger(message.since.high)))
+                    return "since: integer|Long expected";
             if (message.offset != null && message.hasOwnProperty("offset"))
                 if (!$util.isInteger(message.offset))
                     return "offset: integer expected";
@@ -15928,6 +16187,15 @@ $root.api = (function() {
             var message = new $root.api.ApplicationIdentitySessionListRequest();
             if (object.appID != null)
                 message.appID = String(object.appID);
+            if (object.since != null)
+                if ($util.Long)
+                    (message.since = $util.Long.fromValue(object.since)).unsigned = true;
+                else if (typeof object.since === "string")
+                    message.since = parseInt(object.since, 10);
+                else if (typeof object.since === "number")
+                    message.since = object.since;
+                else if (typeof object.since === "object")
+                    message.since = new $util.LongBits(object.since.low >>> 0, object.since.high >>> 0).toNumber(true);
             if (object.offset != null)
                 message.offset = object.offset >>> 0;
             if (object.limit != null)
@@ -15950,11 +16218,21 @@ $root.api = (function() {
             var object = {};
             if (options.defaults) {
                 object.appID = "";
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, true);
+                    object.since = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.since = options.longs === String ? "0" : 0;
                 object.offset = 0;
                 object.limit = 0;
             }
             if (message.appID != null && message.hasOwnProperty("appID"))
                 object.appID = message.appID;
+            if (message.since != null && message.hasOwnProperty("since"))
+                if (typeof message.since === "number")
+                    object.since = options.longs === String ? String(message.since) : message.since;
+                else
+                    object.since = options.longs === String ? $util.Long.prototype.toString.call(message.since) : options.longs === Number ? new $util.LongBits(message.since.low >>> 0, message.since.high >>> 0).toNumber(true) : message.since;
             if (message.offset != null && message.hasOwnProperty("offset"))
                 object.offset = message.offset;
             if (message.limit != null && message.hasOwnProperty("limit"))
@@ -16693,6 +16971,472 @@ $root.api = (function() {
         return IdentityConfigurationAsApplication;
     })();
 
+    api.ApplicationConfigID = (function() {
+
+        /**
+         * Properties of an ApplicationConfigID.
+         * @memberof api
+         * @interface IApplicationConfigID
+         * @property {string|null} [appID] ApplicationConfigID appID
+         * @property {number|null} [version] ApplicationConfigID version
+         */
+
+        /**
+         * Constructs a new ApplicationConfigID.
+         * @memberof api
+         * @classdesc Represents an ApplicationConfigID.
+         * @implements IApplicationConfigID
+         * @constructor
+         * @param {api.IApplicationConfigID=} [properties] Properties to set
+         */
+        function ApplicationConfigID(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * ApplicationConfigID appID.
+         * @member {string} appID
+         * @memberof api.ApplicationConfigID
+         * @instance
+         */
+        ApplicationConfigID.prototype.appID = "";
+
+        /**
+         * ApplicationConfigID version.
+         * @member {number} version
+         * @memberof api.ApplicationConfigID
+         * @instance
+         */
+        ApplicationConfigID.prototype.version = 0;
+
+        /**
+         * Creates a new ApplicationConfigID instance using the specified properties.
+         * @function create
+         * @memberof api.ApplicationConfigID
+         * @static
+         * @param {api.IApplicationConfigID=} [properties] Properties to set
+         * @returns {api.ApplicationConfigID} ApplicationConfigID instance
+         */
+        ApplicationConfigID.create = function create(properties) {
+            return new ApplicationConfigID(properties);
+        };
+
+        /**
+         * Encodes the specified ApplicationConfigID message. Does not implicitly {@link api.ApplicationConfigID.verify|verify} messages.
+         * @function encode
+         * @memberof api.ApplicationConfigID
+         * @static
+         * @param {api.IApplicationConfigID} message ApplicationConfigID message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ApplicationConfigID.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.appID != null && message.hasOwnProperty("appID"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.appID);
+            if (message.version != null && message.hasOwnProperty("version"))
+                writer.uint32(/* id 2, wireType 0 =*/16).uint32(message.version);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified ApplicationConfigID message, length delimited. Does not implicitly {@link api.ApplicationConfigID.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof api.ApplicationConfigID
+         * @static
+         * @param {api.IApplicationConfigID} message ApplicationConfigID message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ApplicationConfigID.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an ApplicationConfigID message from the specified reader or buffer.
+         * @function decode
+         * @memberof api.ApplicationConfigID
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {api.ApplicationConfigID} ApplicationConfigID
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ApplicationConfigID.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.ApplicationConfigID();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.appID = reader.string();
+                    break;
+                case 2:
+                    message.version = reader.uint32();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an ApplicationConfigID message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof api.ApplicationConfigID
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {api.ApplicationConfigID} ApplicationConfigID
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ApplicationConfigID.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an ApplicationConfigID message.
+         * @function verify
+         * @memberof api.ApplicationConfigID
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        ApplicationConfigID.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.appID != null && message.hasOwnProperty("appID"))
+                if (!$util.isString(message.appID))
+                    return "appID: string expected";
+            if (message.version != null && message.hasOwnProperty("version"))
+                if (!$util.isInteger(message.version))
+                    return "version: integer expected";
+            return null;
+        };
+
+        /**
+         * Creates an ApplicationConfigID message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof api.ApplicationConfigID
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {api.ApplicationConfigID} ApplicationConfigID
+         */
+        ApplicationConfigID.fromObject = function fromObject(object) {
+            if (object instanceof $root.api.ApplicationConfigID)
+                return object;
+            var message = new $root.api.ApplicationConfigID();
+            if (object.appID != null)
+                message.appID = String(object.appID);
+            if (object.version != null)
+                message.version = object.version >>> 0;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an ApplicationConfigID message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof api.ApplicationConfigID
+         * @static
+         * @param {api.ApplicationConfigID} message ApplicationConfigID
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        ApplicationConfigID.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.appID = "";
+                object.version = 0;
+            }
+            if (message.appID != null && message.hasOwnProperty("appID"))
+                object.appID = message.appID;
+            if (message.version != null && message.hasOwnProperty("version"))
+                object.version = message.version;
+            return object;
+        };
+
+        /**
+         * Converts this ApplicationConfigID to JSON.
+         * @function toJSON
+         * @memberof api.ApplicationConfigID
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        ApplicationConfigID.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return ApplicationConfigID;
+    })();
+
+    api.IdentityConfigurationAsApplicationMetadata = (function() {
+
+        /**
+         * Properties of an IdentityConfigurationAsApplicationMetadata.
+         * @memberof api
+         * @interface IIdentityConfigurationAsApplicationMetadata
+         * @property {api.IApplicationConfigID|null} [configID] IdentityConfigurationAsApplicationMetadata configID
+         * @property {api.IIdentityKeyID|null} [creator] IdentityConfigurationAsApplicationMetadata creator
+         * @property {number|Long|null} [created] IdentityConfigurationAsApplicationMetadata created
+         */
+
+        /**
+         * Constructs a new IdentityConfigurationAsApplicationMetadata.
+         * @memberof api
+         * @classdesc Represents an IdentityConfigurationAsApplicationMetadata.
+         * @implements IIdentityConfigurationAsApplicationMetadata
+         * @constructor
+         * @param {api.IIdentityConfigurationAsApplicationMetadata=} [properties] Properties to set
+         */
+        function IdentityConfigurationAsApplicationMetadata(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * IdentityConfigurationAsApplicationMetadata configID.
+         * @member {api.IApplicationConfigID|null|undefined} configID
+         * @memberof api.IdentityConfigurationAsApplicationMetadata
+         * @instance
+         */
+        IdentityConfigurationAsApplicationMetadata.prototype.configID = null;
+
+        /**
+         * IdentityConfigurationAsApplicationMetadata creator.
+         * @member {api.IIdentityKeyID|null|undefined} creator
+         * @memberof api.IdentityConfigurationAsApplicationMetadata
+         * @instance
+         */
+        IdentityConfigurationAsApplicationMetadata.prototype.creator = null;
+
+        /**
+         * IdentityConfigurationAsApplicationMetadata created.
+         * @member {number|Long} created
+         * @memberof api.IdentityConfigurationAsApplicationMetadata
+         * @instance
+         */
+        IdentityConfigurationAsApplicationMetadata.prototype.created = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * Creates a new IdentityConfigurationAsApplicationMetadata instance using the specified properties.
+         * @function create
+         * @memberof api.IdentityConfigurationAsApplicationMetadata
+         * @static
+         * @param {api.IIdentityConfigurationAsApplicationMetadata=} [properties] Properties to set
+         * @returns {api.IdentityConfigurationAsApplicationMetadata} IdentityConfigurationAsApplicationMetadata instance
+         */
+        IdentityConfigurationAsApplicationMetadata.create = function create(properties) {
+            return new IdentityConfigurationAsApplicationMetadata(properties);
+        };
+
+        /**
+         * Encodes the specified IdentityConfigurationAsApplicationMetadata message. Does not implicitly {@link api.IdentityConfigurationAsApplicationMetadata.verify|verify} messages.
+         * @function encode
+         * @memberof api.IdentityConfigurationAsApplicationMetadata
+         * @static
+         * @param {api.IIdentityConfigurationAsApplicationMetadata} message IdentityConfigurationAsApplicationMetadata message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        IdentityConfigurationAsApplicationMetadata.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.configID != null && message.hasOwnProperty("configID"))
+                $root.api.ApplicationConfigID.encode(message.configID, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            if (message.creator != null && message.hasOwnProperty("creator"))
+                $root.api.IdentityKeyID.encode(message.creator, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+            if (message.created != null && message.hasOwnProperty("created"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int64(message.created);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified IdentityConfigurationAsApplicationMetadata message, length delimited. Does not implicitly {@link api.IdentityConfigurationAsApplicationMetadata.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof api.IdentityConfigurationAsApplicationMetadata
+         * @static
+         * @param {api.IIdentityConfigurationAsApplicationMetadata} message IdentityConfigurationAsApplicationMetadata message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        IdentityConfigurationAsApplicationMetadata.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an IdentityConfigurationAsApplicationMetadata message from the specified reader or buffer.
+         * @function decode
+         * @memberof api.IdentityConfigurationAsApplicationMetadata
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {api.IdentityConfigurationAsApplicationMetadata} IdentityConfigurationAsApplicationMetadata
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        IdentityConfigurationAsApplicationMetadata.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.IdentityConfigurationAsApplicationMetadata();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.configID = $root.api.ApplicationConfigID.decode(reader, reader.uint32());
+                    break;
+                case 2:
+                    message.creator = $root.api.IdentityKeyID.decode(reader, reader.uint32());
+                    break;
+                case 3:
+                    message.created = reader.int64();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an IdentityConfigurationAsApplicationMetadata message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof api.IdentityConfigurationAsApplicationMetadata
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {api.IdentityConfigurationAsApplicationMetadata} IdentityConfigurationAsApplicationMetadata
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        IdentityConfigurationAsApplicationMetadata.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an IdentityConfigurationAsApplicationMetadata message.
+         * @function verify
+         * @memberof api.IdentityConfigurationAsApplicationMetadata
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        IdentityConfigurationAsApplicationMetadata.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.configID != null && message.hasOwnProperty("configID")) {
+                var error = $root.api.ApplicationConfigID.verify(message.configID);
+                if (error)
+                    return "configID." + error;
+            }
+            if (message.creator != null && message.hasOwnProperty("creator")) {
+                var error = $root.api.IdentityKeyID.verify(message.creator);
+                if (error)
+                    return "creator." + error;
+            }
+            if (message.created != null && message.hasOwnProperty("created"))
+                if (!$util.isInteger(message.created) && !(message.created && $util.isInteger(message.created.low) && $util.isInteger(message.created.high)))
+                    return "created: integer|Long expected";
+            return null;
+        };
+
+        /**
+         * Creates an IdentityConfigurationAsApplicationMetadata message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof api.IdentityConfigurationAsApplicationMetadata
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {api.IdentityConfigurationAsApplicationMetadata} IdentityConfigurationAsApplicationMetadata
+         */
+        IdentityConfigurationAsApplicationMetadata.fromObject = function fromObject(object) {
+            if (object instanceof $root.api.IdentityConfigurationAsApplicationMetadata)
+                return object;
+            var message = new $root.api.IdentityConfigurationAsApplicationMetadata();
+            if (object.configID != null) {
+                if (typeof object.configID !== "object")
+                    throw TypeError(".api.IdentityConfigurationAsApplicationMetadata.configID: object expected");
+                message.configID = $root.api.ApplicationConfigID.fromObject(object.configID);
+            }
+            if (object.creator != null) {
+                if (typeof object.creator !== "object")
+                    throw TypeError(".api.IdentityConfigurationAsApplicationMetadata.creator: object expected");
+                message.creator = $root.api.IdentityKeyID.fromObject(object.creator);
+            }
+            if (object.created != null)
+                if ($util.Long)
+                    (message.created = $util.Long.fromValue(object.created)).unsigned = false;
+                else if (typeof object.created === "string")
+                    message.created = parseInt(object.created, 10);
+                else if (typeof object.created === "number")
+                    message.created = object.created;
+                else if (typeof object.created === "object")
+                    message.created = new $util.LongBits(object.created.low >>> 0, object.created.high >>> 0).toNumber();
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an IdentityConfigurationAsApplicationMetadata message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof api.IdentityConfigurationAsApplicationMetadata
+         * @static
+         * @param {api.IdentityConfigurationAsApplicationMetadata} message IdentityConfigurationAsApplicationMetadata
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        IdentityConfigurationAsApplicationMetadata.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.configID = null;
+                object.creator = null;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.created = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.created = options.longs === String ? "0" : 0;
+            }
+            if (message.configID != null && message.hasOwnProperty("configID"))
+                object.configID = $root.api.ApplicationConfigID.toObject(message.configID, options);
+            if (message.creator != null && message.hasOwnProperty("creator"))
+                object.creator = $root.api.IdentityKeyID.toObject(message.creator, options);
+            if (message.created != null && message.hasOwnProperty("created"))
+                if (typeof message.created === "number")
+                    object.created = options.longs === String ? String(message.created) : message.created;
+                else
+                    object.created = options.longs === String ? $util.Long.prototype.toString.call(message.created) : options.longs === Number ? new $util.LongBits(message.created.low >>> 0, message.created.high >>> 0).toNumber() : message.created;
+            return object;
+        };
+
+        /**
+         * Converts this IdentityConfigurationAsApplicationMetadata to JSON.
+         * @function toJSON
+         * @memberof api.IdentityConfigurationAsApplicationMetadata
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        IdentityConfigurationAsApplicationMetadata.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return IdentityConfigurationAsApplicationMetadata;
+    })();
+
     api.IdentityConfigurationAsApplicationRequest = (function() {
 
         /**
@@ -16908,24 +17652,25 @@ $root.api = (function() {
         return IdentityConfigurationAsApplicationRequest;
     })();
 
-    api.IdentityConfigurationAsApplicationResponse = (function() {
+    api.IdentityGetConfigurationResponse = (function() {
 
         /**
-         * Properties of an IdentityConfigurationAsApplicationResponse.
+         * Properties of an IdentityGetConfigurationResponse.
          * @memberof api
-         * @interface IIdentityConfigurationAsApplicationResponse
-         * @property {api.IIdentityConfigurationAsApplication|null} [config] IdentityConfigurationAsApplicationResponse config
+         * @interface IIdentityGetConfigurationResponse
+         * @property {api.IIdentityConfigurationAsApplication|null} [config] IdentityGetConfigurationResponse config
+         * @property {api.IIdentityConfigurationAsApplicationMetadata|null} [metadata] IdentityGetConfigurationResponse metadata
          */
 
         /**
-         * Constructs a new IdentityConfigurationAsApplicationResponse.
+         * Constructs a new IdentityGetConfigurationResponse.
          * @memberof api
-         * @classdesc Represents an IdentityConfigurationAsApplicationResponse.
-         * @implements IIdentityConfigurationAsApplicationResponse
+         * @classdesc Represents an IdentityGetConfigurationResponse.
+         * @implements IIdentityGetConfigurationResponse
          * @constructor
-         * @param {api.IIdentityConfigurationAsApplicationResponse=} [properties] Properties to set
+         * @param {api.IIdentityGetConfigurationResponse=} [properties] Properties to set
          */
-        function IdentityConfigurationAsApplicationResponse(properties) {
+        function IdentityGetConfigurationResponse(properties) {
             if (properties)
                 for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null)
@@ -16933,75 +17678,88 @@ $root.api = (function() {
         }
 
         /**
-         * IdentityConfigurationAsApplicationResponse config.
+         * IdentityGetConfigurationResponse config.
          * @member {api.IIdentityConfigurationAsApplication|null|undefined} config
-         * @memberof api.IdentityConfigurationAsApplicationResponse
+         * @memberof api.IdentityGetConfigurationResponse
          * @instance
          */
-        IdentityConfigurationAsApplicationResponse.prototype.config = null;
+        IdentityGetConfigurationResponse.prototype.config = null;
 
         /**
-         * Creates a new IdentityConfigurationAsApplicationResponse instance using the specified properties.
-         * @function create
-         * @memberof api.IdentityConfigurationAsApplicationResponse
-         * @static
-         * @param {api.IIdentityConfigurationAsApplicationResponse=} [properties] Properties to set
-         * @returns {api.IdentityConfigurationAsApplicationResponse} IdentityConfigurationAsApplicationResponse instance
+         * IdentityGetConfigurationResponse metadata.
+         * @member {api.IIdentityConfigurationAsApplicationMetadata|null|undefined} metadata
+         * @memberof api.IdentityGetConfigurationResponse
+         * @instance
          */
-        IdentityConfigurationAsApplicationResponse.create = function create(properties) {
-            return new IdentityConfigurationAsApplicationResponse(properties);
+        IdentityGetConfigurationResponse.prototype.metadata = null;
+
+        /**
+         * Creates a new IdentityGetConfigurationResponse instance using the specified properties.
+         * @function create
+         * @memberof api.IdentityGetConfigurationResponse
+         * @static
+         * @param {api.IIdentityGetConfigurationResponse=} [properties] Properties to set
+         * @returns {api.IdentityGetConfigurationResponse} IdentityGetConfigurationResponse instance
+         */
+        IdentityGetConfigurationResponse.create = function create(properties) {
+            return new IdentityGetConfigurationResponse(properties);
         };
 
         /**
-         * Encodes the specified IdentityConfigurationAsApplicationResponse message. Does not implicitly {@link api.IdentityConfigurationAsApplicationResponse.verify|verify} messages.
+         * Encodes the specified IdentityGetConfigurationResponse message. Does not implicitly {@link api.IdentityGetConfigurationResponse.verify|verify} messages.
          * @function encode
-         * @memberof api.IdentityConfigurationAsApplicationResponse
+         * @memberof api.IdentityGetConfigurationResponse
          * @static
-         * @param {api.IIdentityConfigurationAsApplicationResponse} message IdentityConfigurationAsApplicationResponse message or plain object to encode
+         * @param {api.IIdentityGetConfigurationResponse} message IdentityGetConfigurationResponse message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        IdentityConfigurationAsApplicationResponse.encode = function encode(message, writer) {
+        IdentityGetConfigurationResponse.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
             if (message.config != null && message.hasOwnProperty("config"))
                 $root.api.IdentityConfigurationAsApplication.encode(message.config, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            if (message.metadata != null && message.hasOwnProperty("metadata"))
+                $root.api.IdentityConfigurationAsApplicationMetadata.encode(message.metadata, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
             return writer;
         };
 
         /**
-         * Encodes the specified IdentityConfigurationAsApplicationResponse message, length delimited. Does not implicitly {@link api.IdentityConfigurationAsApplicationResponse.verify|verify} messages.
+         * Encodes the specified IdentityGetConfigurationResponse message, length delimited. Does not implicitly {@link api.IdentityGetConfigurationResponse.verify|verify} messages.
          * @function encodeDelimited
-         * @memberof api.IdentityConfigurationAsApplicationResponse
+         * @memberof api.IdentityGetConfigurationResponse
          * @static
-         * @param {api.IIdentityConfigurationAsApplicationResponse} message IdentityConfigurationAsApplicationResponse message or plain object to encode
+         * @param {api.IIdentityGetConfigurationResponse} message IdentityGetConfigurationResponse message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        IdentityConfigurationAsApplicationResponse.encodeDelimited = function encodeDelimited(message, writer) {
+        IdentityGetConfigurationResponse.encodeDelimited = function encodeDelimited(message, writer) {
             return this.encode(message, writer).ldelim();
         };
 
         /**
-         * Decodes an IdentityConfigurationAsApplicationResponse message from the specified reader or buffer.
+         * Decodes an IdentityGetConfigurationResponse message from the specified reader or buffer.
          * @function decode
-         * @memberof api.IdentityConfigurationAsApplicationResponse
+         * @memberof api.IdentityGetConfigurationResponse
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {api.IdentityConfigurationAsApplicationResponse} IdentityConfigurationAsApplicationResponse
+         * @returns {api.IdentityGetConfigurationResponse} IdentityGetConfigurationResponse
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        IdentityConfigurationAsApplicationResponse.decode = function decode(reader, length) {
+        IdentityGetConfigurationResponse.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.IdentityConfigurationAsApplicationResponse();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.IdentityGetConfigurationResponse();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
                     message.config = $root.api.IdentityConfigurationAsApplication.decode(reader, reader.uint32());
+                    break;
+                case 2:
+                    message.metadata = $root.api.IdentityConfigurationAsApplicationMetadata.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -17012,30 +17770,30 @@ $root.api = (function() {
         };
 
         /**
-         * Decodes an IdentityConfigurationAsApplicationResponse message from the specified reader or buffer, length delimited.
+         * Decodes an IdentityGetConfigurationResponse message from the specified reader or buffer, length delimited.
          * @function decodeDelimited
-         * @memberof api.IdentityConfigurationAsApplicationResponse
+         * @memberof api.IdentityGetConfigurationResponse
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {api.IdentityConfigurationAsApplicationResponse} IdentityConfigurationAsApplicationResponse
+         * @returns {api.IdentityGetConfigurationResponse} IdentityGetConfigurationResponse
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        IdentityConfigurationAsApplicationResponse.decodeDelimited = function decodeDelimited(reader) {
+        IdentityGetConfigurationResponse.decodeDelimited = function decodeDelimited(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
             return this.decode(reader, reader.uint32());
         };
 
         /**
-         * Verifies an IdentityConfigurationAsApplicationResponse message.
+         * Verifies an IdentityGetConfigurationResponse message.
          * @function verify
-         * @memberof api.IdentityConfigurationAsApplicationResponse
+         * @memberof api.IdentityGetConfigurationResponse
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
          */
-        IdentityConfigurationAsApplicationResponse.verify = function verify(message) {
+        IdentityGetConfigurationResponse.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
             if (message.config != null && message.hasOwnProperty("config")) {
@@ -17043,61 +17801,75 @@ $root.api = (function() {
                 if (error)
                     return "config." + error;
             }
+            if (message.metadata != null && message.hasOwnProperty("metadata")) {
+                var error = $root.api.IdentityConfigurationAsApplicationMetadata.verify(message.metadata);
+                if (error)
+                    return "metadata." + error;
+            }
             return null;
         };
 
         /**
-         * Creates an IdentityConfigurationAsApplicationResponse message from a plain object. Also converts values to their respective internal types.
+         * Creates an IdentityGetConfigurationResponse message from a plain object. Also converts values to their respective internal types.
          * @function fromObject
-         * @memberof api.IdentityConfigurationAsApplicationResponse
+         * @memberof api.IdentityGetConfigurationResponse
          * @static
          * @param {Object.<string,*>} object Plain object
-         * @returns {api.IdentityConfigurationAsApplicationResponse} IdentityConfigurationAsApplicationResponse
+         * @returns {api.IdentityGetConfigurationResponse} IdentityGetConfigurationResponse
          */
-        IdentityConfigurationAsApplicationResponse.fromObject = function fromObject(object) {
-            if (object instanceof $root.api.IdentityConfigurationAsApplicationResponse)
+        IdentityGetConfigurationResponse.fromObject = function fromObject(object) {
+            if (object instanceof $root.api.IdentityGetConfigurationResponse)
                 return object;
-            var message = new $root.api.IdentityConfigurationAsApplicationResponse();
+            var message = new $root.api.IdentityGetConfigurationResponse();
             if (object.config != null) {
                 if (typeof object.config !== "object")
-                    throw TypeError(".api.IdentityConfigurationAsApplicationResponse.config: object expected");
+                    throw TypeError(".api.IdentityGetConfigurationResponse.config: object expected");
                 message.config = $root.api.IdentityConfigurationAsApplication.fromObject(object.config);
+            }
+            if (object.metadata != null) {
+                if (typeof object.metadata !== "object")
+                    throw TypeError(".api.IdentityGetConfigurationResponse.metadata: object expected");
+                message.metadata = $root.api.IdentityConfigurationAsApplicationMetadata.fromObject(object.metadata);
             }
             return message;
         };
 
         /**
-         * Creates a plain object from an IdentityConfigurationAsApplicationResponse message. Also converts values to other types if specified.
+         * Creates a plain object from an IdentityGetConfigurationResponse message. Also converts values to other types if specified.
          * @function toObject
-         * @memberof api.IdentityConfigurationAsApplicationResponse
+         * @memberof api.IdentityGetConfigurationResponse
          * @static
-         * @param {api.IdentityConfigurationAsApplicationResponse} message IdentityConfigurationAsApplicationResponse
+         * @param {api.IdentityGetConfigurationResponse} message IdentityGetConfigurationResponse
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
-        IdentityConfigurationAsApplicationResponse.toObject = function toObject(message, options) {
+        IdentityGetConfigurationResponse.toObject = function toObject(message, options) {
             if (!options)
                 options = {};
             var object = {};
-            if (options.defaults)
+            if (options.defaults) {
                 object.config = null;
+                object.metadata = null;
+            }
             if (message.config != null && message.hasOwnProperty("config"))
                 object.config = $root.api.IdentityConfigurationAsApplication.toObject(message.config, options);
+            if (message.metadata != null && message.hasOwnProperty("metadata"))
+                object.metadata = $root.api.IdentityConfigurationAsApplicationMetadata.toObject(message.metadata, options);
             return object;
         };
 
         /**
-         * Converts this IdentityConfigurationAsApplicationResponse to JSON.
+         * Converts this IdentityGetConfigurationResponse to JSON.
          * @function toJSON
-         * @memberof api.IdentityConfigurationAsApplicationResponse
+         * @memberof api.IdentityGetConfigurationResponse
          * @instance
          * @returns {Object.<string,*>} JSON object
          */
-        IdentityConfigurationAsApplicationResponse.prototype.toJSON = function toJSON() {
+        IdentityGetConfigurationResponse.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
 
-        return IdentityConfigurationAsApplicationResponse;
+        return IdentityGetConfigurationResponse;
     })();
 
     api.ApplicationUsageOverview = (function() {
@@ -33151,6 +33923,7 @@ $root.api = (function() {
          * @memberof api
          * @interface IPayloadApplicationConfigNotFound
          * @property {string|null} [login] PayloadApplicationConfigNotFound login
+         * @property {string|null} [version] PayloadApplicationConfigNotFound version
          */
 
         /**
@@ -33175,6 +33948,14 @@ $root.api = (function() {
          * @instance
          */
         PayloadApplicationConfigNotFound.prototype.login = "";
+
+        /**
+         * PayloadApplicationConfigNotFound version.
+         * @member {string} version
+         * @memberof api.PayloadApplicationConfigNotFound
+         * @instance
+         */
+        PayloadApplicationConfigNotFound.prototype.version = "";
 
         /**
          * Creates a new PayloadApplicationConfigNotFound instance using the specified properties.
@@ -33202,6 +33983,8 @@ $root.api = (function() {
                 writer = $Writer.create();
             if (message.login != null && message.hasOwnProperty("login"))
                 writer.uint32(/* id 1, wireType 2 =*/10).string(message.login);
+            if (message.version != null && message.hasOwnProperty("version"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.version);
             return writer;
         };
 
@@ -33238,6 +34021,9 @@ $root.api = (function() {
                 switch (tag >>> 3) {
                 case 1:
                     message.login = reader.string();
+                    break;
+                case 2:
+                    message.version = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -33277,6 +34063,9 @@ $root.api = (function() {
             if (message.login != null && message.hasOwnProperty("login"))
                 if (!$util.isString(message.login))
                     return "login: string expected";
+            if (message.version != null && message.hasOwnProperty("version"))
+                if (!$util.isString(message.version))
+                    return "version: string expected";
             return null;
         };
 
@@ -33294,6 +34083,8 @@ $root.api = (function() {
             var message = new $root.api.PayloadApplicationConfigNotFound();
             if (object.login != null)
                 message.login = String(object.login);
+            if (object.version != null)
+                message.version = String(object.version);
             return message;
         };
 
@@ -33310,10 +34101,14 @@ $root.api = (function() {
             if (!options)
                 options = {};
             var object = {};
-            if (options.defaults)
+            if (options.defaults) {
                 object.login = "";
+                object.version = "";
+            }
             if (message.login != null && message.hasOwnProperty("login"))
                 object.login = message.login;
+            if (message.version != null && message.hasOwnProperty("version"))
+                object.version = message.version;
             return object;
         };
 

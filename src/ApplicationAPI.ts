@@ -1,16 +1,20 @@
 import { ApplicationJWT } from "./ApplicationJWT";
+import { ApplicationIdentityAuth } from "./Application";
+import { Error, SDKKind } from "./Error";
 import { api } from "./proto";
 import { Session } from "./Session";
 import {
   IdentityAccessKind,
   Identity,
-  IdentitySortingField
+  IdentitySortingField,
+  IdentityPublicKeyID
 } from "./IdentityAPI";
 import {
   IdentitySerializer,
   IdentitySortingOrder as ApplicationIdentitySortingOrder,
   IdentityRequestsUtils
 } from "./IdentityInternal";
+import { timestampToDate } from "./Tools";
 
 export { ApplicationIdentitySortingOrder };
 
@@ -25,6 +29,20 @@ export import UsageBy = api.Period;
 export namespace ApplicationAPI {
   export type Config = {
     jwt?: ApplicationJWT.Config;
+  };
+
+  export type ApplicationConfigID = {
+    appID: string;
+    version: number;
+  };
+
+  export type ConfigWithMetadata = {
+    meta: {
+      applicationConfigID: ApplicationConfigID;
+      creator: IdentityPublicKeyID;
+      created: Date;
+    };
+    payload: Config;
   };
 
   export type UsageOverviewItem = {
@@ -48,6 +66,12 @@ export namespace ApplicationAPI {
     created: number;
     expires: number;
   };
+
+  export type IdentityAuthWithContext = {
+    auth: ApplicationIdentityAuth;
+    identityLogin: string;
+    applicationConfigID: ApplicationConfigID;
+  };
 }
 
 export class ApplicationAPI {
@@ -61,24 +85,38 @@ export class ApplicationAPI {
    * Put configuration of an application
    * @param appID the app ID
    * @param config The config of the application.
-   * @return(p) On success the promise will be resolved with void.
+   * @return(p) On success the promise will be resolved with ApplicationAPI.ApplicationConfigID.
    * On error the promise will be rejected with an {@link Error} with kind:
    * - `IdentityCannotAssumeAccess` if cannot have right to write the configuration.
    * - `ApplicationConfigInvalid` if configuration object is invalid.
    * - `IdentityNotFound` if the identity `appID` doesn't exists.
    */
-  async putConfig(appID: string, config: ApplicationAPI.Config): Promise<void> {
+  async putConfig(
+    appID: string,
+    config: ApplicationAPI.Config
+  ): Promise<ApplicationAPI.ApplicationConfigID> {
     if (!("jwt" in config)) {
       return;
     }
     const jwtConfig = config.jwt;
-    let c = {
-      jwt: { key: jwtConfig.key, claimForLogin: jwtConfig.claimForLogin }
-    };
-    if ("signAlgorithm" in jwtConfig) {
-      c.jwt["signAlgorithm"] = jwtConfig.signAlgorithm.valueOf();
+    if (jwtConfig.signAlgorithm == null) {
+      throw new Error({
+        kind: SDKKind.SDKInternalError,
+        payload: {
+          hint: "configuration sign algorithm cannot be null or undefined"
+        }
+      });
     }
-    return await this.session.doProtoRequest<void>({
+    let c = {
+      jwt: {
+        key: jwtConfig.key,
+        claimForLogin: jwtConfig.claimForLogin,
+        signAlgorithm: jwtConfig.signAlgorithm.valueOf()
+      }
+    };
+    return await this.session.doProtoRequest<
+      ApplicationAPI.ApplicationConfigID
+    >({
       method: "PUT",
       assume: { login: appID, kind: IdentityAccessKind.WRITE },
       expectedCode: 201,
@@ -86,37 +124,67 @@ export class ApplicationAPI {
       body: api.IdentityConfigurationAsApplicationRequest.encode({
         Login: appID,
         config: c
-      }).finish()
+      }).finish(),
+      response: r => {
+        return api.ApplicationConfigID.decode(r);
+      }
     });
   }
 
   /**
    * Get configuration of an application
-   * @param appID the app ID
-   * @return(p) On success the promise will be resolved with an ApplicationConfig.
+   * @param appConfigID the application configuration ID, that specifies tha application ID and the application configuration version.
+   * @return(p) On success the promise will be resolved with an ApplicationAPI.ConfigWithContext object.
    * On error the promise will be rejected with an {@link Error} with kind:
-   * - `IdentityCannotAssumeAccess` if cannot have right to read the configuration.
-   * - `IdentityNotFound` if the identity `appID` doesn't exists.
-   * - `ApplicationConfigNotFound` if configuration doesn't exists.
+   * - `IdentityCannotAssumeOwnership` if the client does not have a right to read the configuration.
+   * - `IdentityNotFound` if the identity `appID` doesn't exist.
+   * - `AppliacationConfigNotFound` if the `appConfigID` does not correspond to any existing application configuration.
+   * - `BadRequest` if the `appConfigID` is malformatted.
    */
-  async getConfig(appID: string): Promise<ApplicationAPI.Config> {
-    return await this.session.doProtoRequest<ApplicationAPI.Config>({
-      method: "GET",
-      assume: { login: appID, kind: IdentityAccessKind.READ },
-      expectedCode: 200,
-      path: `/api/v4/identity/${encodeURI(appID)}/configure-as-application`,
-      response: r => {
-        let config = api.IdentityConfigurationAsApplicationResponse.decode(r)
-          .config;
-        return <ApplicationAPI.Config>{
-          jwt: {
-            key: config.jwt.key,
-            signAlgorithm: config.jwt.signAlgorithm.valueOf(),
-            claimForLogin: config.jwt.claimForLogin
-          }
-        };
+  async getConfig(
+    appConfigID: ApplicationAPI.ApplicationConfigID
+  ): Promise<ApplicationAPI.ConfigWithMetadata> {
+    // if appConfigID == null, the server returns IdenityNotFound as appID is empty
+    appConfigID = appConfigID == null ? { appID: "", version: 1 } : appConfigID;
+    return await this.session.doProtoRequest<ApplicationAPI.ConfigWithMetadata>(
+      {
+        method: "POST",
+        assume: {
+          login: appConfigID.appID,
+          kind: IdentityAccessKind.READ
+        },
+        expectedCode: 200,
+        path: `/api/v4/application/${encodeURI(
+          appConfigID.appID
+        )}/configuration`,
+        body: api.ApplicationConfigID.encode({
+          version: appConfigID.version
+        }).finish(),
+        response: r => {
+          let resp = api.IdentityGetConfigurationResponse.decode(r);
+          return {
+            meta: {
+              applicationConfigID: {
+                appID: resp.metadata.configID.appID,
+                version: resp.metadata.configID.version
+              },
+              creator: {
+                login: resp.metadata.creator.login,
+                version: resp.metadata.creator.version
+              },
+              created: timestampToDate(resp.metadata.created)
+            },
+            payload: {
+              jwt: {
+                key: resp.config.jwt.key,
+                signAlgorithm: resp.config.jwt.signAlgorithm.valueOf(),
+                claimForLogin: resp.config.jwt.claimForLogin
+              }
+            }
+          };
+        }
       }
-    });
+    );
   }
 
   /**
@@ -236,15 +304,56 @@ export class ApplicationAPI {
   }
 
   /**
+   * Get the an application identity auth object.
+   * @param appID the app ID
+   * @param dataPepsLogin identity's DataPeps login
+   * @return(p) On success the promise will be resolved with the identity's auth object and its metadata that contains:
+   * - identity's DataPeps login
+   * - application configuration ID that corresponds to the auth object
+   * On error the promise will be rejected with an {@link Error} with kind:
+   * - `IdentityCannotAssumeOwnership` if the client cannot assume the application.
+   * - `IdentityNotFound` if the identity with the dataPepsLogin does not exist or is not configured as an application identty.
+   */
+  async getIdentityAuth(
+    appID: string,
+    dataPepsLogin: string
+  ): Promise<ApplicationAPI.IdentityAuthWithContext> {
+    return await this.session.doProtoRequest({
+      method: "GET",
+      expectedCode: 200,
+      path: `/api/v4/application/identity/${encodeURI(dataPepsLogin)}/auth`,
+      assume: {
+        login: appID,
+        kind: IdentityAccessKind.READ
+      },
+      response: r => {
+        let response = api.ApplicationGetIdentityAuthResponse.decode(r);
+        return {
+          auth: {
+            jwt: {
+              token: response.auth.jwt.token
+            }
+          },
+          identityLogin: response.login,
+          applicationConfigID: {
+            appID: response.configID.appID,
+            version: response.configID.version
+          }
+        };
+      }
+    });
+  }
+
+  /**
    * Get user's application login from the user's DataPeps login
    * @param dataPepsLogin the user's login in DataPeps
    * @return Returns the user's application login used to generate the given DataPeps login.
    * If the dataPepsLogin is null, undefined, empty or malformatted returns an empty string.
    */
-  static extractLoginFromDataPepsLogin(dataPepsLogin) {
+  static extractLoginFromDataPepsLogin(dataPepsLogin: string) {
     dataPepsLogin = dataPepsLogin == null ? "" : dataPepsLogin;
     let i = dataPepsLogin.lastIndexOf("@");
-    if (i == -1) {
+    if (i === -1) {
       return "";
     }
     return dataPepsLogin.substr(0, i);
@@ -263,8 +372,10 @@ export class ApplicationAPI {
   async listSessions(
     appID: string,
     offset: number,
-    limit: number
+    limit: number,
+    since?: number
   ): Promise<ApplicationAPI.IdentitySession[]> {
+    since = since == null ? 0 : since;
     return await this.session.doProtoRequest<ApplicationAPI.IdentitySession[]>({
       path: `/api/v4/application/${encodeURI(appID)}/identities-session/list`,
       method: "POST",
@@ -272,6 +383,7 @@ export class ApplicationAPI {
       assume: { login: appID, kind: IdentityAccessKind.READ },
       body: api.ApplicationIdentitySessionListRequest.encode({
         appID,
+        since,
         offset,
         limit
       }).finish(),

@@ -2396,6 +2396,108 @@ export namespace api {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of an ApplicationGetIdentityAuthResponse. */
+    interface IApplicationGetIdentityAuthResponse {
+
+        /** ApplicationGetIdentityAuthResponse auth */
+        auth?: (api.IIdentityExternalAuth|null);
+
+        /** ApplicationGetIdentityAuthResponse login */
+        login?: (string|null);
+
+        /** ApplicationGetIdentityAuthResponse configID */
+        configID?: (api.IApplicationConfigID|null);
+    }
+
+    /** Represents an ApplicationGetIdentityAuthResponse. */
+    class ApplicationGetIdentityAuthResponse implements IApplicationGetIdentityAuthResponse {
+
+        /**
+         * Constructs a new ApplicationGetIdentityAuthResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: api.IApplicationGetIdentityAuthResponse);
+
+        /** ApplicationGetIdentityAuthResponse auth. */
+        public auth?: (api.IIdentityExternalAuth|null);
+
+        /** ApplicationGetIdentityAuthResponse login. */
+        public login: string;
+
+        /** ApplicationGetIdentityAuthResponse configID. */
+        public configID?: (api.IApplicationConfigID|null);
+
+        /**
+         * Creates a new ApplicationGetIdentityAuthResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ApplicationGetIdentityAuthResponse instance
+         */
+        public static create(properties?: api.IApplicationGetIdentityAuthResponse): api.ApplicationGetIdentityAuthResponse;
+
+        /**
+         * Encodes the specified ApplicationGetIdentityAuthResponse message. Does not implicitly {@link api.ApplicationGetIdentityAuthResponse.verify|verify} messages.
+         * @param message ApplicationGetIdentityAuthResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: api.IApplicationGetIdentityAuthResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ApplicationGetIdentityAuthResponse message, length delimited. Does not implicitly {@link api.ApplicationGetIdentityAuthResponse.verify|verify} messages.
+         * @param message ApplicationGetIdentityAuthResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: api.IApplicationGetIdentityAuthResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an ApplicationGetIdentityAuthResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ApplicationGetIdentityAuthResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.ApplicationGetIdentityAuthResponse;
+
+        /**
+         * Decodes an ApplicationGetIdentityAuthResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ApplicationGetIdentityAuthResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.ApplicationGetIdentityAuthResponse;
+
+        /**
+         * Verifies an ApplicationGetIdentityAuthResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an ApplicationGetIdentityAuthResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ApplicationGetIdentityAuthResponse
+         */
+        public static fromObject(object: { [k: string]: any }): api.ApplicationGetIdentityAuthResponse;
+
+        /**
+         * Creates a plain object from an ApplicationGetIdentityAuthResponse message. Also converts values to other types if specified.
+         * @param message ApplicationGetIdentityAuthResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: api.ApplicationGetIdentityAuthResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ApplicationGetIdentityAuthResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of an IdentityPromoteRequest. */
     interface IIdentityPromoteRequest {
 
@@ -6480,6 +6582,9 @@ export namespace api {
         /** ApplicationIdentitySessionListRequest appID */
         appID?: (string|null);
 
+        /** ApplicationIdentitySessionListRequest since */
+        since?: (number|Long|null);
+
         /** ApplicationIdentitySessionListRequest offset */
         offset?: (number|null);
 
@@ -6498,6 +6603,9 @@ export namespace api {
 
         /** ApplicationIdentitySessionListRequest appID. */
         public appID: string;
+
+        /** ApplicationIdentitySessionListRequest since. */
+        public since: (number|Long);
 
         /** ApplicationIdentitySessionListRequest offset. */
         public offset: number;
@@ -6874,6 +6982,204 @@ export namespace api {
         }
     }
 
+    /** Properties of an ApplicationConfigID. */
+    interface IApplicationConfigID {
+
+        /** ApplicationConfigID appID */
+        appID?: (string|null);
+
+        /** ApplicationConfigID version */
+        version?: (number|null);
+    }
+
+    /** Represents an ApplicationConfigID. */
+    class ApplicationConfigID implements IApplicationConfigID {
+
+        /**
+         * Constructs a new ApplicationConfigID.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: api.IApplicationConfigID);
+
+        /** ApplicationConfigID appID. */
+        public appID: string;
+
+        /** ApplicationConfigID version. */
+        public version: number;
+
+        /**
+         * Creates a new ApplicationConfigID instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ApplicationConfigID instance
+         */
+        public static create(properties?: api.IApplicationConfigID): api.ApplicationConfigID;
+
+        /**
+         * Encodes the specified ApplicationConfigID message. Does not implicitly {@link api.ApplicationConfigID.verify|verify} messages.
+         * @param message ApplicationConfigID message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: api.IApplicationConfigID, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ApplicationConfigID message, length delimited. Does not implicitly {@link api.ApplicationConfigID.verify|verify} messages.
+         * @param message ApplicationConfigID message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: api.IApplicationConfigID, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an ApplicationConfigID message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ApplicationConfigID
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.ApplicationConfigID;
+
+        /**
+         * Decodes an ApplicationConfigID message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ApplicationConfigID
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.ApplicationConfigID;
+
+        /**
+         * Verifies an ApplicationConfigID message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an ApplicationConfigID message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ApplicationConfigID
+         */
+        public static fromObject(object: { [k: string]: any }): api.ApplicationConfigID;
+
+        /**
+         * Creates a plain object from an ApplicationConfigID message. Also converts values to other types if specified.
+         * @param message ApplicationConfigID
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: api.ApplicationConfigID, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ApplicationConfigID to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an IdentityConfigurationAsApplicationMetadata. */
+    interface IIdentityConfigurationAsApplicationMetadata {
+
+        /** IdentityConfigurationAsApplicationMetadata configID */
+        configID?: (api.IApplicationConfigID|null);
+
+        /** IdentityConfigurationAsApplicationMetadata creator */
+        creator?: (api.IIdentityKeyID|null);
+
+        /** IdentityConfigurationAsApplicationMetadata created */
+        created?: (number|Long|null);
+    }
+
+    /** Represents an IdentityConfigurationAsApplicationMetadata. */
+    class IdentityConfigurationAsApplicationMetadata implements IIdentityConfigurationAsApplicationMetadata {
+
+        /**
+         * Constructs a new IdentityConfigurationAsApplicationMetadata.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: api.IIdentityConfigurationAsApplicationMetadata);
+
+        /** IdentityConfigurationAsApplicationMetadata configID. */
+        public configID?: (api.IApplicationConfigID|null);
+
+        /** IdentityConfigurationAsApplicationMetadata creator. */
+        public creator?: (api.IIdentityKeyID|null);
+
+        /** IdentityConfigurationAsApplicationMetadata created. */
+        public created: (number|Long);
+
+        /**
+         * Creates a new IdentityConfigurationAsApplicationMetadata instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns IdentityConfigurationAsApplicationMetadata instance
+         */
+        public static create(properties?: api.IIdentityConfigurationAsApplicationMetadata): api.IdentityConfigurationAsApplicationMetadata;
+
+        /**
+         * Encodes the specified IdentityConfigurationAsApplicationMetadata message. Does not implicitly {@link api.IdentityConfigurationAsApplicationMetadata.verify|verify} messages.
+         * @param message IdentityConfigurationAsApplicationMetadata message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: api.IIdentityConfigurationAsApplicationMetadata, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified IdentityConfigurationAsApplicationMetadata message, length delimited. Does not implicitly {@link api.IdentityConfigurationAsApplicationMetadata.verify|verify} messages.
+         * @param message IdentityConfigurationAsApplicationMetadata message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: api.IIdentityConfigurationAsApplicationMetadata, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an IdentityConfigurationAsApplicationMetadata message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns IdentityConfigurationAsApplicationMetadata
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.IdentityConfigurationAsApplicationMetadata;
+
+        /**
+         * Decodes an IdentityConfigurationAsApplicationMetadata message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns IdentityConfigurationAsApplicationMetadata
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.IdentityConfigurationAsApplicationMetadata;
+
+        /**
+         * Verifies an IdentityConfigurationAsApplicationMetadata message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an IdentityConfigurationAsApplicationMetadata message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns IdentityConfigurationAsApplicationMetadata
+         */
+        public static fromObject(object: { [k: string]: any }): api.IdentityConfigurationAsApplicationMetadata;
+
+        /**
+         * Creates a plain object from an IdentityConfigurationAsApplicationMetadata message. Also converts values to other types if specified.
+         * @param message IdentityConfigurationAsApplicationMetadata
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: api.IdentityConfigurationAsApplicationMetadata, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this IdentityConfigurationAsApplicationMetadata to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of an IdentityConfigurationAsApplicationRequest. */
     interface IIdentityConfigurationAsApplicationRequest {
 
@@ -6970,91 +7276,97 @@ export namespace api {
         public toJSON(): { [k: string]: any };
     }
 
-    /** Properties of an IdentityConfigurationAsApplicationResponse. */
-    interface IIdentityConfigurationAsApplicationResponse {
+    /** Properties of an IdentityGetConfigurationResponse. */
+    interface IIdentityGetConfigurationResponse {
 
-        /** IdentityConfigurationAsApplicationResponse config */
+        /** IdentityGetConfigurationResponse config */
         config?: (api.IIdentityConfigurationAsApplication|null);
+
+        /** IdentityGetConfigurationResponse metadata */
+        metadata?: (api.IIdentityConfigurationAsApplicationMetadata|null);
     }
 
-    /** Represents an IdentityConfigurationAsApplicationResponse. */
-    class IdentityConfigurationAsApplicationResponse implements IIdentityConfigurationAsApplicationResponse {
+    /** Represents an IdentityGetConfigurationResponse. */
+    class IdentityGetConfigurationResponse implements IIdentityGetConfigurationResponse {
 
         /**
-         * Constructs a new IdentityConfigurationAsApplicationResponse.
+         * Constructs a new IdentityGetConfigurationResponse.
          * @param [properties] Properties to set
          */
-        constructor(properties?: api.IIdentityConfigurationAsApplicationResponse);
+        constructor(properties?: api.IIdentityGetConfigurationResponse);
 
-        /** IdentityConfigurationAsApplicationResponse config. */
+        /** IdentityGetConfigurationResponse config. */
         public config?: (api.IIdentityConfigurationAsApplication|null);
 
+        /** IdentityGetConfigurationResponse metadata. */
+        public metadata?: (api.IIdentityConfigurationAsApplicationMetadata|null);
+
         /**
-         * Creates a new IdentityConfigurationAsApplicationResponse instance using the specified properties.
+         * Creates a new IdentityGetConfigurationResponse instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns IdentityConfigurationAsApplicationResponse instance
+         * @returns IdentityGetConfigurationResponse instance
          */
-        public static create(properties?: api.IIdentityConfigurationAsApplicationResponse): api.IdentityConfigurationAsApplicationResponse;
+        public static create(properties?: api.IIdentityGetConfigurationResponse): api.IdentityGetConfigurationResponse;
 
         /**
-         * Encodes the specified IdentityConfigurationAsApplicationResponse message. Does not implicitly {@link api.IdentityConfigurationAsApplicationResponse.verify|verify} messages.
-         * @param message IdentityConfigurationAsApplicationResponse message or plain object to encode
+         * Encodes the specified IdentityGetConfigurationResponse message. Does not implicitly {@link api.IdentityGetConfigurationResponse.verify|verify} messages.
+         * @param message IdentityGetConfigurationResponse message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: api.IIdentityConfigurationAsApplicationResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: api.IIdentityGetConfigurationResponse, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified IdentityConfigurationAsApplicationResponse message, length delimited. Does not implicitly {@link api.IdentityConfigurationAsApplicationResponse.verify|verify} messages.
-         * @param message IdentityConfigurationAsApplicationResponse message or plain object to encode
+         * Encodes the specified IdentityGetConfigurationResponse message, length delimited. Does not implicitly {@link api.IdentityGetConfigurationResponse.verify|verify} messages.
+         * @param message IdentityGetConfigurationResponse message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: api.IIdentityConfigurationAsApplicationResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: api.IIdentityGetConfigurationResponse, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes an IdentityConfigurationAsApplicationResponse message from the specified reader or buffer.
+         * Decodes an IdentityGetConfigurationResponse message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns IdentityConfigurationAsApplicationResponse
+         * @returns IdentityGetConfigurationResponse
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.IdentityConfigurationAsApplicationResponse;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.IdentityGetConfigurationResponse;
 
         /**
-         * Decodes an IdentityConfigurationAsApplicationResponse message from the specified reader or buffer, length delimited.
+         * Decodes an IdentityGetConfigurationResponse message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns IdentityConfigurationAsApplicationResponse
+         * @returns IdentityGetConfigurationResponse
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.IdentityConfigurationAsApplicationResponse;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.IdentityGetConfigurationResponse;
 
         /**
-         * Verifies an IdentityConfigurationAsApplicationResponse message.
+         * Verifies an IdentityGetConfigurationResponse message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates an IdentityConfigurationAsApplicationResponse message from a plain object. Also converts values to their respective internal types.
+         * Creates an IdentityGetConfigurationResponse message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns IdentityConfigurationAsApplicationResponse
+         * @returns IdentityGetConfigurationResponse
          */
-        public static fromObject(object: { [k: string]: any }): api.IdentityConfigurationAsApplicationResponse;
+        public static fromObject(object: { [k: string]: any }): api.IdentityGetConfigurationResponse;
 
         /**
-         * Creates a plain object from an IdentityConfigurationAsApplicationResponse message. Also converts values to other types if specified.
-         * @param message IdentityConfigurationAsApplicationResponse
+         * Creates a plain object from an IdentityGetConfigurationResponse message. Also converts values to other types if specified.
+         * @param message IdentityGetConfigurationResponse
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: api.IdentityConfigurationAsApplicationResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: api.IdentityGetConfigurationResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this IdentityConfigurationAsApplicationResponse to JSON.
+         * Converts this IdentityGetConfigurationResponse to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -13825,6 +14137,9 @@ export namespace api {
 
         /** PayloadApplicationConfigNotFound login */
         login?: (string|null);
+
+        /** PayloadApplicationConfigNotFound version */
+        version?: (string|null);
     }
 
     /** Represents a PayloadApplicationConfigNotFound. */
@@ -13838,6 +14153,9 @@ export namespace api {
 
         /** PayloadApplicationConfigNotFound login. */
         public login: string;
+
+        /** PayloadApplicationConfigNotFound version. */
+        public version: string;
 
         /**
          * Creates a new PayloadApplicationConfigNotFound instance using the specified properties.

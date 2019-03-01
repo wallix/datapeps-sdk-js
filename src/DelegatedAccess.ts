@@ -11,7 +11,7 @@ import {
   IdentityAccessKind,
   IdentityAPI
 } from "./IdentityAPI";
-import { Uint8Tool } from "./Tools";
+import { Uint8Tool, timestampToDate } from "./Tools";
 import { Session, loginWithKeys } from "./Session";
 import { ID } from "./ID";
 
@@ -145,7 +145,7 @@ export class DelegatedAccessAPI {
         ({
           ...access,
           resolved: access.resolved,
-          created: new Date((access.created as number) * 1000)
+          created: timestampToDate(access.created)
         } as DelegatedAccess)
     );
   }

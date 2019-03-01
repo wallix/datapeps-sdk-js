@@ -7,6 +7,12 @@ import { IdentityFields } from "./IdentityAPI";
 import { Session } from "./Session";
 import { ResourceAPI } from "./ResourceAPI";
 
+export type ApplicationIdentityAuth = {
+  jwt: {
+    token: string;
+  };
+};
+
 /**
  * Create a user thanks an external referential of identities
  * @param appID The identifier of a configured application
@@ -14,12 +20,11 @@ import { ResourceAPI } from "./ResourceAPI";
  * @param secret The identity secret
  * On error the promise will be rejected with an {@link Error} with kind:
  * - `ApplicationInvalidToken` if the JWT token returned by the connector is invalid.
- * - `IdentityNotFound` if the identity `appID` doesn't exists.
- * - `ApplicationConfigNotFound` if the `appID` is not configured.
+ * - `ApplicationConfigNotFound` if the `appID` is not configured or if the identity `appID` doesn't exists.
  */
 export async function createUser(
   appID: string,
-  auth: { jwt: { token: string } },
+  auth: ApplicationIdentityAuth,
   secret: string | Uint8Array
 ): Promise<api.RegisterApplicationIdentityResponse> {
   let encryption = new Encryption();
@@ -39,11 +44,14 @@ export async function createUser(
     payload
   };
 
+  const appIdentityResourceKind = "internal/application/secret";
   let resource = createWithEncryption<Uint8Array>(
-    "application/secret",
     secretBytes,
     encryption,
-    { serialize: u => u }
+    appIdentityResourceKind,
+    {
+      serialize: u => u
+    }
   );
   let { body } = await HTTP.client.doRequest<
     api.RegisterApplicationIdentityResponse

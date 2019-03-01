@@ -51,6 +51,7 @@ var Tools_1 = require("./Tools");
 var HTTP_1 = require("./HTTP");
 var IdentityInternal_1 = require("./IdentityInternal");
 exports.IdentitySortingOrder = IdentityInternal_1.IdentitySortingOrder;
+var Tools_2 = require("./Tools");
 var IdentityPublicKey;
 (function (IdentityPublicKey) {
     var bs58 = require("bs58");
@@ -670,7 +671,7 @@ var IdentityAPI = /** @class */ (function () {
                                     : { login: login, kind: IdentityAccessKind.READ },
                                 response: function (r) {
                                     return proto_1.api.IdentityGetLockedVersionsResponse.decode(r).lockedVersions.map(function (lockedVersion) {
-                                        return __assign({}, lockedVersion, { publicKey: __assign({}, lockedVersion.publicKey.publicKey, { created: new Date(lockedVersion.publicKey.created * 1000) }) });
+                                        return __assign({}, lockedVersion, { publicKey: __assign({}, lockedVersion.publicKey.publicKey, { created: Tools_2.timestampToDate(lockedVersion.publicKey.created) }) });
                                     });
                                 }
                             })];

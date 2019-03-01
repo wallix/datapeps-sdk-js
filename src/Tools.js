@@ -225,4 +225,8 @@ var Crypto = /** @class */ (function () {
     return Crypto;
 }());
 exports.Crypto = Crypto;
+function timestampToDate(timestamp) {
+    return new Date(timestamp * 1000);
+}
+exports.timestampToDate = timestampToDate;
 //# sourceMappingURL=Tools.js.map

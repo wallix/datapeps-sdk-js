@@ -19,7 +19,7 @@ describe("applicationJWT.createSession", () => {
 
   function itWithSecret(secret: string | Uint8Array) {
     let secretType = secret instanceof Uint8Array ? "Uint8Array" : "string";
-    configs.forEach(({ config, secretKey }, i) => {
+    configs.forEach(({ keys, config }, i) => {
       let algorithm = ApplicationJWT.Algorithm[config.signAlgorithm];
       let login = `user.ok.${secretType}`;
 
@@ -32,7 +32,7 @@ describe("applicationJWT.createSession", () => {
           ctx.apps[i].identity.login,
           login,
           secret,
-          createConnector(secretKey, config.signAlgorithm, secret)
+          createConnector(keys.sk, config.signAlgorithm, secret)
         );
         expect(session).to.be.not.null;
         expect(app).to.be.not.null;
@@ -45,7 +45,7 @@ describe("applicationJWT.createSession", () => {
           ctx.apps[i].identity.login,
           login,
           secret,
-          createConnector(secretKey, config.signAlgorithm, secret)
+          createConnector(keys.sk, config.signAlgorithm, secret)
         );
         expect(session).to.be.not.null;
         expect(app).to.be.not.null;
@@ -84,7 +84,7 @@ describe("applicationJWT.createSession", () => {
             ctx.apps[i].identity.login,
             login,
             badSecret,
-            createConnector(secretKey, config.signAlgorithm, badSecret)
+            createConnector(keys.sk, config.signAlgorithm, badSecret)
           );
         },
         SDKError.BadSecret
@@ -107,14 +107,14 @@ describe("applicationJWT.createSession", () => {
         "appLogin",
         "secret",
         createConnector(
-          configs[0].secretKey,
+          configs[0].keys.sk,
           configs[0].config.signAlgorithm,
           "secret"
         )
       );
     },
-    ServerError.IdentityNotFound,
-    () => ({ login: "non.existent.app" })
+    ServerError.ApplicationConfigNotFound,
+    () => ({ login: "non.existent.app", version: "latest" })
   );
 
   itError(
@@ -125,14 +125,17 @@ describe("applicationJWT.createSession", () => {
         "appLogin",
         "secret",
         createConnector(
-          configs[0].secretKey,
+          configs[0].keys.sk,
           configs[0].config.signAlgorithm,
           "secret"
         )
       );
     },
     ServerError.ApplicationConfigNotFound,
-    () => ({ login: ctx.apps[ctx.apps.length - 1].identity.login })
+    () => ({
+      login: ctx.apps[ctx.apps.length - 1].identity.login,
+      version: "latest"
+    })
   );
 });
 

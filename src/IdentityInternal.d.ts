@@ -1,5 +1,5 @@
 import { api } from "./proto";
-import { Identity } from './IdentityAPI';
+import { Identity } from "./IdentityAPI";
 export declare class IdentitySerializer {
     static deserialize(t: api.IIdentity): Identity<Uint8Array>;
 }

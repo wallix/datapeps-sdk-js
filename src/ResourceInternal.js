@@ -96,7 +96,7 @@ var ResourceBox = /** @class */ (function () {
     return ResourceBox;
 }());
 exports.ResourceBox = ResourceBox;
-function createWithEncryption(kind, payload, encryption, options) {
+function createWithEncryption(payload, encryption, kind, options) {
     options = options == null ? {} : options;
     var serialize = options.serialize != null
         ? options.serialize

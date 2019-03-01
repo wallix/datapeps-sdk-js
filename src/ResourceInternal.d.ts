@@ -21,7 +21,7 @@ export declare class ResourceBox<T> implements Resource<T> {
     private decryptUint8Array(message);
     private decryptString(cipher);
 }
-export declare function createWithEncryption<T>(kind: string, payload: T, encryption: Encryption, options?: {
+export declare function createWithEncryption<T>(payload: T, encryption: Encryption, kind: string, options?: {
     serialize?: ((payload: T) => Uint8Array);
 }): {
     resourceRequestBody: api.IResourcePostRequest;

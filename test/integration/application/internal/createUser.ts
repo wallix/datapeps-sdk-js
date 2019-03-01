@@ -18,7 +18,7 @@ describe("application.createUser", () => {
     ctx = { ...initCtx, ...devCtx };
   });
 
-  configs.forEach(({ config, secretKey }, i) => {
+  configs.forEach(({ config, keys }, i) => {
     let signAlgorithm = config.signAlgorithm;
 
     ///////////////////////////////////////////////
@@ -30,7 +30,7 @@ describe("application.createUser", () => {
     })`, async () => {
       const login = `alice${Math.random()}`;
       let userSecret = "aSoStrongSecret";
-      let token = JWT.sign({ login }, Uint8Tool.decode(secretKey), {
+      let token = JWT.sign({ login }, Uint8Tool.decode(keys.sk), {
         algorithm: ApplicationJWT.Algorithm[signAlgorithm]
       });
       let createAliceResp = await Application.createUser(
@@ -70,7 +70,7 @@ describe("application.createUser", () => {
     ];
     invalidAuths.map(auth => {
       itError(
-        `Try to create a user with an invalid auth (${
+        `Try to create a user with an invalid auth(${JSON.stringify(auth)}) (${
           ApplicationJWT.Algorithm[signAlgorithm]
         })`,
         async () => {
@@ -101,8 +101,8 @@ describe("application.createUser", () => {
         userSecret
       );
     },
-    ServerError.IdentityNotFound,
-    () => ({ login: "non.existent.app" })
+    ServerError.ApplicationConfigNotFound,
+    () => ({ login: "non.existent.app", version: "latest" })
   );
 
   itError(
@@ -117,6 +117,9 @@ describe("application.createUser", () => {
       );
     },
     ServerError.ApplicationConfigNotFound,
-    () => ({ login: ctx.apps[configs.length].identity.login })
+    () => ({
+      login: ctx.apps[configs.length].identity.login,
+      version: "latest"
+    })
   );
 });

@@ -49,12 +49,11 @@ var ResourceAPI_1 = require("./ResourceAPI");
  * @param secret The identity secret
  * On error the promise will be rejected with an {@link Error} with kind:
  * - `ApplicationInvalidToken` if the JWT token returned by the connector is invalid.
- * - `IdentityNotFound` if the identity `appID` doesn't exists.
- * - `ApplicationConfigNotFound` if the `appID` is not configured.
+ * - `ApplicationConfigNotFound` if the `appID` is not configured or if the identity `appID` doesn't exists.
  */
 function createUser(appID, auth, secret) {
     return __awaiter(this, void 0, void 0, function () {
-        var encryption, secretBytes, payload, identity, resource, body;
+        var encryption, secretBytes, payload, identity, appIdentityResourceKind, resource, body;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -70,7 +69,10 @@ function createUser(appID, auth, secret) {
                         kind: "pepsswarm/4",
                         payload: payload
                     };
-                    resource = ResourceInternal_1.createWithEncryption("application/secret", secretBytes, encryption, { serialize: function (u) { return u; } });
+                    appIdentityResourceKind = "internal/application/secret";
+                    resource = ResourceInternal_1.createWithEncryption(secretBytes, encryption, appIdentityResourceKind, {
+                        serialize: function (u) { return u; }
+                    });
                     return [4 /*yield*/, HTTP.client.doRequest({
                             method: "POST",
                             expectedCode: 201,

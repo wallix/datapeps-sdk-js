@@ -9,9 +9,10 @@ import {
   IdentitySerializer,
   IdentitySortingOrder,
   IdentityRequestsUtils
-} from './IdentityInternal';
+} from "./IdentityInternal";
+import { timestampToDate } from "./Tools";
 
-export { IdentitySortingOrder }
+export { IdentitySortingOrder };
 
 /**
  * An {@Identity} owns several keys, this is a reference to the unique version of an identity public key.
@@ -215,7 +216,9 @@ export class IdentityAPI {
     if (options.sortingField == null) {
       options.sortingField = IdentitySortingField.CREATED;
     }
-    let sortingOrder = IdentityRequestsUtils.resolveSortingOrder(options.sortingOrder)
+    let sortingOrder = IdentityRequestsUtils.resolveSortingOrder(
+      options.sortingOrder
+    );
     return await this.session.doProtoRequest({
       method: "POST",
       expectedCode: 200,
@@ -697,9 +700,7 @@ export class IdentityAPI {
             ...lockedVersion,
             publicKey: {
               ...lockedVersion.publicKey.publicKey,
-              created: new Date(
-                (lockedVersion.publicKey.created as number) * 1000
-              )
+              created: timestampToDate(lockedVersion.publicKey.created)
             } as IdentityPublicKeyWithMetadata
           };
         });

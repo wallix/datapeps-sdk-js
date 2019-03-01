@@ -1,6 +1,6 @@
 import { api } from "./proto";
 import { Session } from "./Session";
-import { IdentitySortingOrder } from './IdentityInternal';
+import { IdentitySortingOrder } from "./IdentityInternal";
 export { IdentitySortingOrder };
 /**
  * An {@Identity} owns several keys, this is a reference to the unique version of an identity public key.

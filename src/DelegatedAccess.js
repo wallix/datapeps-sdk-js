@@ -143,7 +143,7 @@ var DelegatedAccessAPI = /** @class */ (function () {
                     case 1:
                         accesses = (_a.sent()).accesses;
                         return [2 /*return*/, accesses.map(function (access) {
-                                return (__assign({}, access, { resolved: access.resolved, created: new Date(access.created * 1000) }));
+                                return (__assign({}, access, { resolved: access.resolved, created: Tools_1.timestampToDate(access.created) }));
                             })];
                 }
             });

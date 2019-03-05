@@ -305,7 +305,7 @@ fwIDAQAB
   ];
   invalidConfigVersions.map(version =>
     itError(
-      `should fail when getting an application configuration with an invalid version (${version})`,
+      `should fail when getting an application configuration with an invalid version (${version.actual})`,
       () =>
         new ApplicationAPI(ctx.dev.session).getConfig({
           appID: ctx.app.identity.login,

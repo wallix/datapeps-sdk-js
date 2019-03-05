@@ -62,7 +62,7 @@ describe("session.getPublicKeyHistory", () => {
 
   it("Public key history contains old and new versions after admin overwrite key", async () => {
     let secret = "an admin secret";
-    await new AdminAPI(adminSession).overwriteKeys(alice.login, secret);
+    await new IdentityAPI(adminSession).overwriteKeys(alice.login, secret);
     aliceSession = await DataPeps.Session.login(alice.login, secret);
 
     let aliceKey = await aliceSession.getLatestPublicKey(alice.login);

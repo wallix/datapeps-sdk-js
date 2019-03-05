@@ -45,7 +45,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var proto_1 = require("./proto");
 var ResourceInternal_1 = require("./ResourceInternal");
-var IdentityAPI_1 = require("./IdentityAPI");
+var Cryptor_1 = require("./Cryptor");
 var ResourceType;
 (function (ResourceType) {
     ResourceType[ResourceType["ANONYMOUS"] = 0] = "ANONYMOUS";
@@ -72,7 +72,7 @@ var ResourceAPI = /** @class */ (function () {
                 switch (_b.label) {
                     case 0:
                         options = options == null ? {} : options;
-                        encryptFunc = this.session.encryption.encrypt(proto_1.api.ResourceType.SES);
+                        encryptFunc = this.session.encryption.encryptor(Cryptor_1.CipherType.NACL_SES);
                         type = proto_1.api.ResourceType.ANONYMOUS;
                         creator = this.session.getSessionPublicKey();
                         return [4 /*yield*/, ResourceInternal_1.createBodyRequest(payload, sharingGroup, encryptFunc, this.session, options)];
@@ -122,11 +122,9 @@ var ResourceAPI = /** @class */ (function () {
                                 method: "GET",
                                 expectedCode: 200,
                                 path: "/api/v4/resources",
-                                assume: { login: assume, kind: IdentityAPI_1.IdentityAccessKind.READ },
+                                assume: { login: assume, kind: proto_1.api.IdentityAccessKeyKind.READ },
                                 params: params,
-                                response: function (r) {
-                                    return proto_1.api.ResourceListResponse.decode(r).resources;
-                                }
+                                response: function (r) { return proto_1.api.ResourceListResponse.decode(r).resources; }
                             })
                                 .then(function (resources) {
                                 return ResourceInternal_1.makeResourcesFromResponses(resources, _this.session, parse);
@@ -160,13 +158,13 @@ var ResourceAPI = /** @class */ (function () {
                                 method: "GET",
                                 expectedCode: 200,
                                 path: "/api/v4/resource/" + id,
-                                assume: { login: assume, kind: IdentityAPI_1.IdentityAccessKind.READ },
+                                assume: { login: assume, kind: proto_1.api.IdentityAccessKeyKind.READ },
                                 params: params,
                                 response: function (r) { return proto_1.api.ResourceGetResponse.decode(r); }
                             })];
                     case 1:
                         response = _a.sent();
-                        return [2 /*return*/, ResourceInternal_1.makeResourceFromResponse(response, proto_1.api.ResourceType.SES, this.session, options.parse, assume)];
+                        return [2 /*return*/, ResourceInternal_1.makeResourceFromResponse(response, Cryptor_1.CipherType.NACL_SES, this.session, options.parse)];
                 }
             });
         });
@@ -186,7 +184,7 @@ var ResourceAPI = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         options = options != null ? options : {};
-                        assume = { login: login, kind: IdentityAPI_1.IdentityAccessKind.READ };
+                        assume = { login: login, kind: proto_1.api.IdentityAccessKeyKind.READ };
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "GET",
                                 expectedCode: 200,
@@ -199,7 +197,7 @@ var ResourceAPI = /** @class */ (function () {
                             })];
                     case 1:
                         resp = _a.sent();
-                        return [2 /*return*/, ResourceInternal_1.makeResourceFromResponse(resp.resource, proto_1.api.ResourceType.SES, this.session, options.parse, assume.login)];
+                        return [2 /*return*/, ResourceInternal_1.makeResourceFromResponse(resp.resource, Cryptor_1.CipherType.NACL_SES, this.session, options.parse)];
                 }
             });
         });
@@ -219,7 +217,7 @@ var ResourceAPI = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        assume = { login: login, kind: IdentityAPI_1.IdentityAccessKind.WRITE };
+                        assume = { login: login, kind: proto_1.api.IdentityAccessKeyKind.WRITE };
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "PUT",
                                 expectedCode: 200,
@@ -256,7 +254,7 @@ var ResourceAPI = /** @class */ (function () {
                                 method: "DELETE",
                                 expectedCode: 200,
                                 path: "/api/v4/resource/" + id,
-                                assume: { login: assume, kind: IdentityAPI_1.IdentityAccessKind.WRITE },
+                                assume: { login: assume, kind: proto_1.api.IdentityAccessKeyKind.WRITE },
                                 params: { soft: true }
                             })];
                     case 1: return [2 /*return*/, _a.sent()];
@@ -284,7 +282,7 @@ var ResourceAPI = /** @class */ (function () {
                                 method: "DELETE",
                                 expectedCode: 200,
                                 path: "/api/v4/resource/" + id,
-                                assume: { login: assume, kind: IdentityAPI_1.IdentityAccessKind.WRITE },
+                                assume: { login: assume, kind: proto_1.api.IdentityAccessKeyKind.WRITE },
                                 params: { soft: false }
                             })];
                     case 1: return [2 /*return*/, _a.sent()];
@@ -303,13 +301,13 @@ var ResourceAPI = /** @class */ (function () {
      * - `ResourceNotFound` if the resource does not exists.
      */
     ResourceAPI.prototype.extendSharingGroup = function (id, sharingGroup, options) {
+        if (options === void 0) { options = { assume: this.session.login }; }
         return __awaiter(this, void 0, void 0, function () {
-            var assume, _a, encryptedKey, type, key, secretKey, encryptFunc, encryptedSharingGroup;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var _a, encryptedKey, owner, keySet, secretKey, _b, _c, encryptFunc, encryptedSharingGroup;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
                     case 0:
                         options = options != null ? options : {};
-                        assume = options.assume != null ? options.assume : this.session.login;
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "GET",
                                 expectedCode: 200,
@@ -317,30 +315,29 @@ var ResourceAPI = /** @class */ (function () {
                                 response: proto_1.api.ResourceGetKeyResponse.decode
                             })];
                     case 1:
-                        _a = _b.sent(), encryptedKey = _a.encryptedKey, type = _a.type;
-                        return [4 /*yield*/, this.session.getAssumeParams({
-                                login: assume,
-                                kind: IdentityAPI_1.IdentityAccessKind.READ
-                            })];
+                        _a = _d.sent(), encryptedKey = _a.encryptedKey, owner = _a.owner;
+                        return [4 /*yield*/, this.session.getIdentityKeySet(owner.login, owner.version)];
                     case 2:
-                        key = (_b.sent()).key;
-                        return [4 /*yield*/, this.session.decryptCipherList(proto_1.api.ResourceType.SES, encryptedKey, key.boxKey)];
+                        keySet = _d.sent();
+                        _c = (_b = keySet
+                            .decryptor(Cryptor_1.CipherType.NACL_SES)).decryptList;
+                        return [4 /*yield*/, this.session.resolveCipherList([encryptedKey])];
                     case 3:
-                        secretKey = _b.sent();
-                        encryptFunc = this.session.encryption.encrypt(proto_1.api.ResourceType.SES);
+                        secretKey = _c.apply(_b, [_d.sent()]);
+                        encryptFunc = this.session.encryption.encryptor(Cryptor_1.CipherType.NACL_SES);
                         return [4 /*yield*/, ResourceInternal_1.encryptForSharingGroup(secretKey, sharingGroup, encryptFunc, this.session)];
                     case 4:
-                        encryptedSharingGroup = _b.sent();
+                        encryptedSharingGroup = _d.sent();
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "PATCH",
                                 expectedCode: 201,
                                 path: "/api/v4/resource/" + id + "/sharingGroup",
-                                assume: { login: assume, kind: IdentityAPI_1.IdentityAccessKind.WRITE },
+                                assume: { login: options.assume, kind: proto_1.api.IdentityAccessKeyKind.WRITE },
                                 body: proto_1.api.ResourceExtendSharingGroupRequest.encode({
                                     sharingGroup: encryptedSharingGroup
                                 }).finish()
                             })];
-                    case 5: return [2 /*return*/, _b.sent()];
+                    case 5: return [2 /*return*/, _d.sent()];
                 }
             });
         });
@@ -371,7 +368,7 @@ var ResourceAPI = /** @class */ (function () {
                                 response: proto_1.api.ResourceGetAccessLogsResponse.decode,
                                 assume: {
                                     login: assume,
-                                    kind: IdentityAPI_1.IdentityAccessKind.READ
+                                    kind: proto_1.api.IdentityAccessKeyKind.READ
                                 }
                             })];
                     case 1:
@@ -403,7 +400,7 @@ var ResourceAPI = /** @class */ (function () {
                                 method: "GET",
                                 expectedCode: 200,
                                 path: "/api/v4/resource/" + id + "/sharingGroup",
-                                assume: { login: assume, kind: IdentityAPI_1.IdentityAccessKind.READ },
+                                assume: { login: assume, kind: proto_1.api.IdentityAccessKeyKind.READ },
                                 response: function (r) {
                                     return proto_1.api.ResourceGetSharingGroupResponse.decode(r)
                                         .sharingGroup;

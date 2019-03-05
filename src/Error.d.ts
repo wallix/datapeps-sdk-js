@@ -7,8 +7,8 @@ export declare enum SDKKind {
     BadResponse = -2,
     NetworkException = -3,
     SDKInternalError = -4,
-    BadSecret = -5,
     IdentitySignChainInvalid = -6,
+    IdentityInvalidKeySet = -9,
     ProtocolError = -7,
     DecryptFail = -8,
     InvalidServerChain = -10,
@@ -29,3 +29,4 @@ export declare class Error {
         code?: number;
     });
 }
+export declare function kindName(kind: ErrorKind): string;

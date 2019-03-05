@@ -1,11 +1,12 @@
 import { api } from "./proto";
 import { Uint8Tool } from "./Tools";
-import { Encryption } from "./CryptoFuncs";
+import { MasterPrivateSeed } from "./IdentityKeySet";
 import * as HTTP from "./HTTP";
 import { createWithEncryption } from "./ResourceInternal";
 import { IdentityFields } from "./IdentityAPI";
 import { Session } from "./Session";
 import { ResourceAPI } from "./ResourceAPI";
+import { IdentityKeySetAPI } from "./IdentityKeySetAPI";
 
 export type ApplicationIdentityAuth = {
   jwt: {
@@ -27,9 +28,12 @@ export async function createUser(
   auth: ApplicationIdentityAuth,
   secret: string | Uint8Array
 ): Promise<api.RegisterApplicationIdentityResponse> {
-  let encryption = new Encryption();
   let secretBytes = Uint8Tool.convert(secret);
-  encryption.generate(secretBytes, null);
+
+  let { keySet, encryptedKeySet } = IdentityKeySetAPI.initWithSecret(
+    { version: 1, login: null },
+    secretBytes
+  );
 
   let payload = Uint8Tool.convert(
     JSON.stringify({
@@ -47,11 +51,9 @@ export async function createUser(
   const appIdentityResourceKind = "internal/application/secret";
   let resource = createWithEncryption<Uint8Array>(
     secretBytes,
-    encryption,
+    keySet,
     appIdentityResourceKind,
-    {
-      serialize: u => u
-    }
+    { serialize: u => u }
   );
   let { body } = await HTTP.client.doRequest<
     api.RegisterApplicationIdentityResponse
@@ -62,7 +64,7 @@ export async function createUser(
     body: api.RegisterApplicationIdentityRequest.encode({
       appID,
       auth,
-      encryption,
+      encryption: encryptedKeySet,
       identity,
       resources: { appSecret: resource.resourceRequestBody }
     }).finish(),

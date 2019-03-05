@@ -4,7 +4,6 @@ import { Error, SDKKind } from "./Error";
 import { api } from "./proto";
 import { Session } from "./Session";
 import {
-  IdentityAccessKind,
   Identity,
   IdentitySortingField,
   IdentityPublicKeyID
@@ -118,7 +117,7 @@ export class ApplicationAPI {
       ApplicationAPI.ApplicationConfigID
     >({
       method: "PUT",
-      assume: { login: appID, kind: IdentityAccessKind.WRITE },
+      assume: { login: appID, kind: api.IdentityAccessKeyKind.WRITE },
       expectedCode: 201,
       path: `/api/v4/identity/${encodeURI(appID)}/configure-as-application`,
       body: api.IdentityConfigurationAsApplicationRequest.encode({
@@ -151,7 +150,7 @@ export class ApplicationAPI {
         method: "POST",
         assume: {
           login: appConfigID.appID,
-          kind: IdentityAccessKind.READ
+          kind: api.IdentityAccessKeyKind.READ
         },
         expectedCode: 200,
         path: `/api/v4/application/${encodeURI(
@@ -210,7 +209,7 @@ export class ApplicationAPI {
     options = options == null ? {} : options;
     return await this.session.doProtoRequest<ApplicationAPI.UsageOverview>({
       method: "POST",
-      assume: { login: appID, kind: IdentityAccessKind.READ },
+      assume: { login: appID, kind: api.IdentityAccessKeyKind.READ },
       expectedCode: 200,
       path: `/api/v4/application/${encodeURI(appID)}/usage-overview`,
       body: api.ApplicationUsageOverviewRequest.encode({
@@ -274,7 +273,7 @@ export class ApplicationAPI {
       method: "POST",
       expectedCode: 200,
       path: `/api/v4/application/${encodeURI(appID)}/identities/list`,
-      assume: { login: appID, kind: IdentityAccessKind.READ },
+      assume: { login: appID, kind: api.IdentityAccessKeyKind.READ },
       body: api.ApplicationListIdentitiesRequest.encode({
         options: {
           limit: options.limit,
@@ -324,7 +323,7 @@ export class ApplicationAPI {
       path: `/api/v4/application/identity/${encodeURI(dataPepsLogin)}/auth`,
       assume: {
         login: appID,
-        kind: IdentityAccessKind.READ
+        kind: api.IdentityAccessKeyKind.READ
       },
       response: r => {
         let response = api.ApplicationGetIdentityAuthResponse.decode(r);
@@ -380,7 +379,7 @@ export class ApplicationAPI {
       path: `/api/v4/application/${encodeURI(appID)}/identities-session/list`,
       method: "POST",
       expectedCode: 200,
-      assume: { login: appID, kind: IdentityAccessKind.READ },
+      assume: { login: appID, kind: api.IdentityAccessKeyKind.READ },
       body: api.ApplicationIdentitySessionListRequest.encode({
         appID,
         since,

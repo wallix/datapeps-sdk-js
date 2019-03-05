@@ -39,8 +39,8 @@ var Long = require("long");
 var protobufjs = require("protobufjs");
 var proto_1 = require("./proto");
 var Tools_1 = require("./Tools");
-var CryptoFuncs_1 = require("./CryptoFuncs");
 var HTTP = require("./HTTP");
+var IdentityKeySetAPI_1 = require("./IdentityKeySetAPI");
 var Error_1 = require("./Error");
 exports.Error = Error_1.Error;
 exports.ServerError = Error_1.ServerKind;
@@ -95,17 +95,16 @@ function registerWithToken(token, identity, secret) {
 exports.registerWithToken = registerWithToken;
 function _register(path, identity, secret, request) {
     return __awaiter(this, void 0, void 0, function () {
-        var encryption;
+        var encryptedKeySet;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    encryption = new CryptoFuncs_1.Encryption();
-                    encryption.generate(Tools_1.Uint8Tool.convert(secret), null);
+                    encryptedKeySet = IdentityKeySetAPI_1.IdentityKeySetAPI.initWithSecret({ version: 1, login: identity.login }, secret).encryptedKeySet;
                     return [4 /*yield*/, HTTP.client.doRequest({
                             method: "POST",
                             expectedCode: 201,
                             path: path,
-                            body: request({ identity: identity, encryption: encryption }),
+                            body: request({ identity: identity, encryption: encryptedKeySet }),
                             headers: new Headers({
                                 "content-type": "application/x-protobuf"
                             })

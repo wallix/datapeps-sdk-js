@@ -87,7 +87,7 @@ describe("applicationJWT.createSession", () => {
             createConnector(keys.sk, config.signAlgorithm, badSecret)
           );
         },
-        SDKError.BadSecret
+        SDKError.IdentityInvalidKeySet
       );
     });
   }

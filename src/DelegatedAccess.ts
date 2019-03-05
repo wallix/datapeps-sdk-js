@@ -1,5 +1,5 @@
 import * as nacl from "tweetnacl";
-import { EncryptAnonymous } from "./CryptoFuncs";
+import { EncryptAnonymous, CipherType } from "./Cryptor";
 import { client, Client } from "./HTTP";
 import { api } from "./proto";
 import { ResourceBox, makeResourceFromResponse } from "./ResourceInternal";
@@ -8,12 +8,12 @@ import { Constants } from "./Constants";
 import {
   IdentityPublicKey,
   IdentityPublicKeyID,
-  IdentityAccessKind,
   IdentityAPI
 } from "./IdentityAPI";
 import { Uint8Tool, timestampToDate } from "./Tools";
-import { Session, loginWithKeys } from "./Session";
+import { Session } from "./Session";
 import { ID } from "./ID";
+import { IdentityKeySet } from "./IdentityKeySet";
 
 export interface DelegatedAccess {
   /**
@@ -74,10 +74,8 @@ export class DelegatedAccessAPI {
     });
     let r = await makeResourceFromResponse<null>(
       resource,
-      api.ResourceType.ANONYMOUS,
-      this.session,
-      null,
-      null
+      CipherType.NACL_ANON,
+      this.session
     );
     // Verify requester's signature
     let msg = Uint8Tool.concat(
@@ -107,13 +105,15 @@ export class DelegatedAccessAPI {
       }
 
       async resolve(login: string): Promise<void> {
-        let keys = await (this.session as any).fetchKeys(login);
+        let keySet = await this.session.getIdentityKeySet(login);
         await this.session.doProtoRequest({
           method: "PUT",
           expectedCode: 200,
           path: "/api/v4/delegatedAccess/" + this.id.toString() + "/keys",
           body: api.DelegatedPostKeysRequest.encode({
-            keys: this.resource.encrypt(api.DelegatedKeys.encode(keys).finish())
+            keys: this.resource.encrypt(
+              api.DelegatedKeys.encode(keySet.toDelegatedKeys()).finish()
+            )
           }).finish()
         });
       }
@@ -137,7 +137,7 @@ export class DelegatedAccessAPI {
       expectedCode: 200,
       path: "/api/v4/delegatedAccesses",
       response: api.DelegatedAccessListResponse.decode,
-      assume: { login, kind: IdentityAccessKind.READ },
+      assume: { login, kind: api.IdentityAccessKeyKind.READ },
       params: options
     });
     return accesses.map(
@@ -214,7 +214,7 @@ export namespace DelegatedAccess {
     let encrypt = new EncryptAnonymous();
     let keypair = nacl.box.keyPair();
     let { box, version } = await IdentityAPI.getLatestPublicKey(login);
-    let encryptedKey = encrypt.encrypt(box, keypair.secretKey);
+    let encryptedKey = encrypt.encrypt({ box }, keypair.secretKey);
     let signResult = await sign({
       login,
       publicKey: keypair.publicKey
@@ -311,7 +311,9 @@ export namespace DelegatedAccess {
 
     async waitSession(): Promise<Session> {
       await this.wait();
-      return await loginWithKeys(this.client, this.keys);
+      return await Session.create(this.client, this.keys.login, e => {
+        return IdentityKeySet.fromDelegatedKeys(this.keys);
+      });
     }
 
     openResolver(): any {

@@ -89,7 +89,7 @@ describe("identity.AccessGroup", () => {
 
   it("checks alice accessGroup after admin reset keys", async () => {
     let newPassword = "a new password";
-    await new AdminAPI(adminSession).overwriteKeys(alice.login, newPassword);
+    await new IdentityAPI(adminSession).overwriteKeys(alice.login, newPassword);
     aliceSession = await DataPeps.Session.login(alice.login, newPassword);
 
     // Add new element to accessGroup and check it is unlocked

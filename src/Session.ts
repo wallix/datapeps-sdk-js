@@ -3,13 +3,12 @@ import { api } from "./proto";
 import {
   IdentityPublicKey,
   IdentityPublicKeyID,
-  IdentityAccessKind,
   IdentityAPI
 } from "./IdentityAPI";
 import { Error, SDKKind, ServerKind } from "./Error";
 import { Uint8Tool, Base64 } from "./Tools";
 import { Client, Request, client } from "./HTTP";
-import { ResolvedCipher, Encryption } from "./CryptoFuncs";
+import { SignedCipher } from "./Cryptor";
 
 import {
   MemoryPublicKeyCache,
@@ -17,6 +16,13 @@ import {
   TrustPolicy,
   PublicKeysCache
 } from "./SessionUtils";
+import {
+  IdentityKeySet,
+  MasterPrivateSeed,
+  IdentityEncryptedKeySet
+} from "./IdentityKeySet";
+import { IdentityKeySetAPI } from "./IdentityKeySetAPI";
+import { CipherType } from "./Cryptor";
 
 /**
  * Specify how the sdk request should be authenticated by the DataPeps service.
@@ -25,11 +31,20 @@ import {
  */
 export type SessionSaltKind = api.SessionSaltKind;
 
+export type AssumeOptions = {
+  login: string;
+  kind: api.IdentityAccessKeyKind;
+  keySet?: IdentityKeySet;
+};
+
 /**
  * A object that can be used to make authenticated request by a {@link_Session}.
  */
 export interface SessionRequest<T> extends Request<T> {
-  assume?: { login: string; kind: IdentityAccessKind };
+  /**
+   * An optional assume parameters to assume the request as another identity.
+   */
+  assume?: AssumeOptions;
 }
 
 export namespace Session {
@@ -46,18 +61,71 @@ export namespace Session {
   export async function login(
     login: string,
     secret: string | Uint8Array,
-    options?: { saltKind?: SessionSaltKind }
+    options?: LoginOptions
   ): Promise<Session> {
-    return await _login(
+    let session = await Session.create(
       client,
       login,
-      (e, c) => {
-        let encryption = new Encryption(e);
-        encryption.recover(Uint8Tool.convert(secret), c);
-        return encryption;
+      e => {
+        let seed = MasterPrivateSeed.fromSecret(secret, e.masterSalt);
+        let keySet = IdentityKeySet.recover(
+          { login, version: e.version },
+          seed,
+          e as IdentityEncryptedKeySet
+        );
+        return keySet;
       },
       options
     );
+    (session as any).secret = Uint8Tool.convert(secret);
+    return session;
+  }
+
+  export async function create(
+    client: Client,
+    login: string,
+    recover: (e: api.IdentityEncryptedKeySet) => IdentityKeySet,
+    options: LoginOptions = { saltKind: api.SessionSaltKind.TIME }
+  ): Promise<Session> {
+    let { body: createResponse } = await client.doRequest({
+      method: "POST",
+      expectedCode: 201,
+      path: "/api/v4/session/challenge/create",
+      body: api.SessionCreateChallengeRequest.encode({
+        login: login,
+        saltKind: options.saltKind
+      }).finish(),
+      response: api.SessionCreateChallengeResponse.decode,
+      headers: new Headers({
+        "content-type": "application/x-protobuf"
+      })
+    });
+    let encryption = recover(
+      api.IdentityEncryptedKeySet.create(createResponse.encryption)
+    );
+    //await saveSessionState(sessionParams, encryption);
+    let { body: resolveResponse } = await client.doRequest({
+      method: "POST",
+      expectedCode: 200,
+      path: "/api/v4/session/challenge/resolve",
+      body: api.SessionResolveChallengeRequest.encode({
+        token: createResponse.token,
+        salt: createResponse.salt,
+        signature: encryption.sign(createResponse.salt)
+      }).finish(),
+      response: api.SessionResolveChallengeResponse.decode,
+      headers: new Headers({
+        "content-type": "application/x-protobuf"
+      })
+    });
+    let sessionParams: SessionParameters = {
+      token: createResponse.token,
+      login: resolveResponse.login,
+      salt: resolveResponse.salt,
+      saltKind: createResponse.saltKind
+    };
+    encryption.id.login = login;
+    return new SessionImpl(sessionParams, encryption, client);
   }
 }
 
@@ -123,6 +191,8 @@ export interface Session {
    */
   getPublicKeys(ids: IdentityPublicKeyID[]): Promise<IdentityPublicKey[]>;
 
+  getIdentityKeySet(login: string, version?: number): Promise<IdentityKeySet>;
+
   /**
    * Create a new session for an identity that the current session identity can access.
    * @param login The login of the identity to login with.
@@ -163,88 +233,23 @@ export interface Session {
    */
   doProtoRequest<T>(request: SessionRequest<T>): Promise<T>;
 }
-interface AssumeParams {
-  key: api.IDelegatedKeys;
-  kind: IdentityAccessKind;
-}
 
-export async function loginWithKeys(client, keys: any) {
-  return await _login(client, keys.login, (e, c) => {
-    let encryption = new Encryption(e);
-    encryption.recoverWithKeys(keys, c);
-    return encryption;
-  });
-}
+export type LoginOptions = {
+  saltKind?: api.SessionSaltKind;
+};
 
-async function _login(
-  client: Client,
-  login: string,
-  recover: (e: api.IdentityEncryption, c: api.IdentityPublicKey) => Encryption,
-  options?: { saltKind?: api.SessionSaltKind }
-): Promise<Session> {
-  let saltKind =
-    options != null && options.saltKind != null
-      ? options.saltKind
-      : api.SessionSaltKind.TIME;
-  let { body: createResponse } = await client.doRequest({
-    method: "POST",
-    expectedCode: 201,
-    path: "/api/v4/session/challenge/create",
-    body: api.SessionCreateChallengeRequest.encode({
-      login: login,
-      saltKind: saltKind
-    }).finish(),
-    response: api.SessionCreateChallengeResponse.decode,
-    headers: new Headers({
-      "content-type": "application/x-protobuf"
-    })
-  });
-  let encryption = recover(
-    api.IdentityEncryption.create(createResponse.encryption),
-    api.IdentityPublicKey.create(createResponse.creator)
-  );
-  let token = createResponse.token;
-  let salt = createResponse.salt;
-  let { body: resolveResponse } = await client.doRequest({
-    method: "POST",
-    expectedCode: 200,
-    path: "/api/v4/session/challenge/resolve",
-    body: api.SessionResolveChallengeRequest.encode({
-      token,
-      salt,
-      signature: encryption.sign(salt)
-    }).finish(),
-    response: api.SessionResolveChallengeResponse.decode,
-    headers: new Headers({
-      "content-type": "application/x-protobuf"
-    })
-  });
-  saltKind = createResponse.saltKind;
-  salt = createResponse.salt;
-  return new SessionImpl(
-    {
-      token,
-      login: resolveResponse.login,
-      salt,
-      saltKind
-    },
-    encryption,
-    client
-  );
-}
-
-export interface SessionParameters {
+export type SessionParameters = {
   token: Uint8Array;
   login: string;
   salt: Uint8Array;
   saltKind: api.SessionSaltKind;
-}
+};
 
 class SessionImpl implements Session {
   login: string;
-
+  secret: Uint8Array;
   private params: SessionParameters;
-  private encryption: Encryption;
+  private encryption: IdentityKeySet;
   private client: Client;
 
   private b64token: string; // base64 encoded
@@ -252,11 +257,10 @@ class SessionImpl implements Session {
 
   private pkCache: PublicKeysCache;
   private trustPolicy: TrustPolicy;
-  private assumeKeyCache: { [login: string]: api.IDelegatedKeys };
 
   constructor(
     params: SessionParameters,
-    encryption: Encryption,
+    encryption: IdentityKeySet,
     client: Client
   ) {
     this.login = params.login;
@@ -269,7 +273,6 @@ class SessionImpl implements Session {
 
     this.pkCache = new MemoryPublicKeyCache();
     this.trustPolicy = new TrustOnFirstUse(this);
-    this.assumeKeyCache = {};
     this.afterRequestHandleSalt();
   }
 
@@ -284,18 +287,19 @@ class SessionImpl implements Session {
   async renewKeys(secret?: string | Uint8Array): Promise<void> {
     await new IdentityAPI(this).renewKeys(this.login, secret);
     if (secret != null) {
-      (this.encryption as any).secret = Uint8Tool.convert(secret);
+      this.secret = Uint8Tool.convert(secret);
     }
     await this.unStale();
   }
 
   getSessionPublicKey(): IdentityPublicKey {
-    let p = this.encryption.getPublic();
+    let p = this.encryption.public();
+    // TODO : p
     return {
       login: this.login,
-      version: this.encryption.version,
-      sign: p.signEncrypted.publicKey,
-      box: p.boxEncrypted.publicKey
+      version: this.encryption.id.version,
+      sign: p.sign,
+      box: p.box
     };
   }
 
@@ -360,9 +364,12 @@ class SessionImpl implements Session {
     await this.validateChains(chains);
     return ids.map(id => this.pkCache.get(id));
   }
+
   async createSession(login: string): Promise<Session> {
-    let keys = await this.getKeys(login);
-    return loginWithKeys(this.client, keys);
+    let keySet = await this.getIdentityKeySet(login);
+    return await Session.create(client, login, () => {
+      return keySet;
+    });
   }
 
   setTrustPolicy(policy: TrustPolicy) {
@@ -374,8 +381,8 @@ class SessionImpl implements Session {
   }
 
   async getSecretToken(login: string): Promise<string> {
-    let keys = await this.getKeys(login);
-    return Base64.encode(keys.signKey);
+    let keySet = await this.getIdentityKeySet(login);
+    return Base64.encode(keySet.getSecretToken());
   }
 
   sign(message: Uint8Array): Uint8Array {
@@ -383,8 +390,7 @@ class SessionImpl implements Session {
   }
 
   async doRequest<T>(request: SessionRequest<T>): Promise<T> {
-    let assumeParams = await this.getAssumeParams(request.assume);
-    this.addAuthHeaders(request.headers, request.body, assumeParams);
+    await this.addAuthHeaders(request);
     try {
       let response = await this.client.doRequest(request);
       this.handleResponseHeaders(response.headers);
@@ -395,14 +401,13 @@ class SessionImpl implements Session {
           try {
             await this.unStale();
           } catch (e) {
-            if (e instanceof Error && e.kind == SDKKind.BadSecret) {
+            if (e instanceof Error && e.kind == SDKKind.IdentityInvalidKeySet) {
               throw err;
             }
             throw e;
           }
           return this.doRequest(request);
         case ServerKind.AssumeStale:
-          this.clearAssumeParams(request.assume.login);
           return this.doRequest(request);
       }
       throw err;
@@ -499,34 +504,33 @@ class SessionImpl implements Session {
     this.deltaSaltTime = secondsServer - secondsLocal;
   }
 
-  private addAuthHeaders(
-    headers: Headers,
-    body: Uint8Array,
-    assume?: AssumeParams
-  ) {
+  private async addAuthHeaders(request: SessionRequest<any>) {
+    // Add session headers
+    let body = request.body;
+    let headers = request.headers;
     let salt = this.getSalt();
-    let tosign = body == null ? salt : Uint8Tool.concat(body, salt);
+    let assumeKeySet: IdentityKeySet;
     headers.set("x-peps-token", this.b64token);
+    let tosign = body == null ? salt : Uint8Tool.concat(body, salt);
+    // Add assume headers if needed
+    if (request.assume != null) {
+      assumeKeySet = await this.getIdentityKeySet(request.assume.login);
+      let assumeKind = request.assume.kind;
+      request.assume.keySet = assumeKeySet;
+      headers.set("x-peps-assume-access", assumeKind.toString());
+      headers.set(
+        "x-peps-assume-identity",
+        assumeKeySet.id.login + "/" + assumeKeySet.id.version
+      );
+      headers.set(
+        "x-peps-assume-signature",
+        Base64.encode(assumeKeySet.sign(tosign, assumeKind))
+      );
+    }
+    headers.set("x-peps-salt", Base64.encode(salt));
     headers.set(
       "x-peps-signature",
       Base64.encode(this.encryption.sign(tosign))
-    );
-    headers.set("x-peps-salt", Base64.encode(salt));
-    if (assume == null) {
-      return;
-    }
-    headers.set("x-peps-assume-access", assume.kind.toString());
-    headers.set(
-      "x-peps-assume-identity",
-      assume.key.login + "/" + assume.key.version
-    );
-    let key =
-      assume.kind == IdentityAccessKind.READ
-        ? assume.key.readKey
-        : assume.key.signKey;
-    headers.set(
-      "x-peps-assume-signature",
-      Base64.encode(nacl.sign.detached(tosign, key))
     );
   }
 
@@ -551,15 +555,20 @@ class SessionImpl implements Session {
       expectedCode: 200,
       path: "/api/v4/session/unStale",
       response: api.SessionUnStaleResponse.decode
-    }).then(({ encryption, creator }) => {
-      this.clearAssumeParams(this.login);
-      let e = new Encryption(encryption);
-      e.recover(this.encryption.secret, creator as IdentityPublicKey);
-      this.encryption = e;
+    }).then(({ encryption }) => {
+      let seed = MasterPrivateSeed.fromSecret(
+        this.secret,
+        encryption.masterSalt
+      );
+      this.encryption = IdentityKeySet.recover(
+        { login: this.encryption.id.login, version: encryption.version },
+        seed,
+        encryption as IdentityEncryptedKeySet
+      );
     });
   }
 
-  async resolveCipherList(ciphers: api.ICipher[]): Promise<ResolvedCipher[]> {
+  async resolveCipherList(ciphers: api.ICipher[]): Promise<SignedCipher[]> {
     let signs = ciphers.map(cipher => cipher.sign);
     let publicKeys = await this.getPublicKeys(signs as IdentityPublicKeyID[]);
     return ciphers.map(({ message, nonce, sign }) => {
@@ -577,105 +586,41 @@ class SessionImpl implements Session {
   }
 
   async decryptCipherList(
-    type: api.ResourceType,
+    type: CipherType,
     ciphers: api.ICipher[],
     secretKey?: Uint8Array
   ): Promise<Uint8Array> {
     let resolvedCiphers = await this.resolveCipherList(ciphers);
-    return this.encryption
-      .decrypt(type, secretKey)
-      .decryptList(resolvedCiphers);
+    let decryptor =
+      secretKey == null
+        ? this.encryption.decryptor(type)
+        : IdentityKeySet.decryptor(type, secretKey);
+    return decryptor.decryptList(resolvedCiphers);
   }
 
-  async getAssumeParams(assume?: {
-    login: string;
-    kind: IdentityAccessKind;
-  }): Promise<AssumeParams> {
-    if (assume == null) {
-      return null;
-    }
-    let key = await this.getKeys(assume.login);
-    return { key, kind: assume.kind };
-  }
-
-  private async getKeys(login: string): Promise<api.IDelegatedKeys> {
-    let key = this.assumeKeyCache[login];
-    if (key != null) {
-      return key;
-    }
-    let keys = await this.fetchKeys(login);
-    this.assumeKeyCache[login] = keys;
-    return keys;
-  }
-
-  async fetchKeys(
+  async getIdentityKeySet(
     login: string,
     version?: number
-  ): Promise<api.IDelegatedKeys> {
+  ): Promise<IdentityKeySet> {
     if (
-      this.login == login &&
-      (version == undefined || this.encryption.version == version)
+      this.encryption.id.login == login &&
+      (version == null || this.encryption.id.version == version)
     ) {
-      let sharingKey = (this.encryption as any).sharingKeyPair.secretKey;
-      let signKey = (this.encryption as any).signKeyPair.secretKey;
-      let boxKey = (this.encryption as any).boxKeyPair.secretKey;
-      let readKey = (this.encryption as any).readKeyPair.secretKey;
-      return {
-        sharingKey,
-        signKey,
-        boxKey,
-        readKey,
-        version: this.encryption.version,
-        login
-      };
+      return this.encryption;
     }
-    let params: undefined | { version: string };
-    if (version != undefined) {
-      params = { version: version.toString() };
-    }
-
-    let {
-      sharingKey,
-      signKey,
-      boxKey,
-      readKey,
-      version: identityVersion
-    } = await this.doProtoRequest({
-      method: "GET",
-      path: "/api/v4/identity/" + encodeURI(login) + "/keys",
+    let { path } = await this.doProtoRequest({
+      method: "POST",
+      path: "/api/v4/identity/" + encodeURI(login) + "/keySet",
       expectedCode: 200,
-      response: api.IdentityGetKeysResponse.decode,
-      params
+      body: api.IdentityGetKeySetRequest.encode({ version }).finish(),
+      response: api.IdentityGetKeySetResponse.decode
     });
-    let decryptedSharingKey = await this.decryptCipherList(
-      api.ResourceType.SES,
-      sharingKey
-    );
-    let [
-      cipherSignkey,
-      cipherBoxKey,
-      cipherReadKey
-    ] = await this.resolveCipherList([signKey, boxKey, readKey]);
-    let decryptedSignKey = this.encryption
-      .decrypt(api.ResourceType.SES, decryptedSharingKey)
-      .decrypt(cipherSignkey);
-    let decryptedBoxKey = this.encryption
-      .decrypt(api.ResourceType.SES, decryptedSharingKey)
-      .decrypt(cipherBoxKey);
-    let decryptedReadKey = this.encryption
-      .decrypt(api.ResourceType.SES, decryptedBoxKey)
-      .decrypt(cipherReadKey);
-    return {
-      sharingKey: decryptedSharingKey,
-      signKey: decryptedSignKey,
-      boxKey: decryptedBoxKey,
-      readKey: decryptedReadKey,
-      version: identityVersion,
-      login
-    };
-  }
-
-  clearAssumeParams(login: string) {
-    delete this.assumeKeyCache[login];
+    if (path.length == 0) {
+      throw new Error({
+        kind: SDKKind.ProtocolError,
+        payload: { message: "unexpected keySet path" }
+      });
+    }
+    return path.reduce(IdentityKeySetAPI.recoverWithPathElt, this.encryption);
   }
 }

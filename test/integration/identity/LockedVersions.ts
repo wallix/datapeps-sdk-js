@@ -1,10 +1,7 @@
 import * as Config from "../../Config";
 import * as DataPeps from "../../../src/DataPeps";
-import { Encryption } from "../../../src/CryptoFuncs";
-import { api } from "../../../src/proto";
 import * as nacl from "tweetnacl";
 import { expect } from "chai";
-import { Uint8Tool, Base64 } from "../../../src/Tools";
 import { AdminAPI, IdentityAPI } from "../../../src/DataPeps";
 
 describe("identity.LockedVersions", () => {
@@ -32,11 +29,17 @@ describe("identity.LockedVersions", () => {
     adminSession = await Config.adminLogin();
     await aliceSession.renewKeys(); // v2
     await aliceSession.renewKeys(otherPassword); // v3
-    await new AdminAPI(adminSession).overwriteKeys(alice.login, adminSecret1); // key reset: v4
+    await new IdentityAPI(adminSession).overwriteKeys(
+      alice.login,
+      adminSecret1
+    ); // key reset: v4
     aliceSession = await DataPeps.Session.login(alice.login, adminSecret1);
     await aliceSession.renewKeys(); // v5
     let adminSecret2 = "a second admin secret";
-    await new AdminAPI(adminSession).overwriteKeys(alice.login, adminSecret2); // key reset: v6
+    await new IdentityAPI(adminSession).overwriteKeys(
+      alice.login,
+      adminSecret2
+    ); // key reset: v6
     aliceSession = await DataPeps.Session.login(alice.login, adminSecret2);
     await aliceSession.renewKeys(); // v7
     publicKeys = (await new IdentityAPI(aliceSession).getPublicKeyHistory(

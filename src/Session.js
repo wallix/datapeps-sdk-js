@@ -41,8 +41,9 @@ var IdentityAPI_1 = require("./IdentityAPI");
 var Error_1 = require("./Error");
 var Tools_1 = require("./Tools");
 var HTTP_1 = require("./HTTP");
-var CryptoFuncs_1 = require("./CryptoFuncs");
 var SessionUtils_1 = require("./SessionUtils");
+var IdentityKeySet_1 = require("./IdentityKeySet");
+var IdentityKeySetAPI_1 = require("./IdentityKeySetAPI");
 var Session;
 (function (Session) {
     /**
@@ -57,90 +58,75 @@ var Session;
      */
     function login(login, secret, options) {
         return __awaiter(this, void 0, void 0, function () {
+            var session;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, _login(HTTP_1.client, login, function (e, c) {
-                            var encryption = new CryptoFuncs_1.Encryption(e);
-                            encryption.recover(Tools_1.Uint8Tool.convert(secret), c);
-                            return encryption;
+                    case 0: return [4 /*yield*/, Session.create(HTTP_1.client, login, function (e) {
+                            var seed = IdentityKeySet_1.MasterPrivateSeed.fromSecret(secret, e.masterSalt);
+                            var keySet = IdentityKeySet_1.IdentityKeySet.recover({ login: login, version: e.version }, seed, e);
+                            return keySet;
                         }, options)];
-                    case 1: return [2 /*return*/, _a.sent()];
+                    case 1:
+                        session = _a.sent();
+                        session.secret = Tools_1.Uint8Tool.convert(secret);
+                        return [2 /*return*/, session];
                 }
             });
         });
     }
     Session.login = login;
-})(Session = exports.Session || (exports.Session = {}));
-function loginWithKeys(client, keys) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, _login(client, keys.login, function (e, c) {
-                        var encryption = new CryptoFuncs_1.Encryption(e);
-                        encryption.recoverWithKeys(keys, c);
-                        return encryption;
-                    })];
-                case 1: return [2 /*return*/, _a.sent()];
-            }
-        });
-    });
-}
-exports.loginWithKeys = loginWithKeys;
-function _login(client, login, recover, options) {
-    return __awaiter(this, void 0, void 0, function () {
-        var saltKind, createResponse, encryption, token, salt, resolveResponse;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    saltKind = options != null && options.saltKind != null
-                        ? options.saltKind
-                        : proto_1.api.SessionSaltKind.TIME;
-                    return [4 /*yield*/, client.doRequest({
+    function create(client, login, recover, options) {
+        if (options === void 0) { options = { saltKind: proto_1.api.SessionSaltKind.TIME }; }
+        return __awaiter(this, void 0, void 0, function () {
+            var createResponse, encryption, resolveResponse, sessionParams;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, client.doRequest({
                             method: "POST",
                             expectedCode: 201,
                             path: "/api/v4/session/challenge/create",
                             body: proto_1.api.SessionCreateChallengeRequest.encode({
                                 login: login,
-                                saltKind: saltKind
+                                saltKind: options.saltKind
                             }).finish(),
                             response: proto_1.api.SessionCreateChallengeResponse.decode,
                             headers: new Headers({
                                 "content-type": "application/x-protobuf"
                             })
                         })];
-                case 1:
-                    createResponse = (_a.sent()).body;
-                    encryption = recover(proto_1.api.IdentityEncryption.create(createResponse.encryption), proto_1.api.IdentityPublicKey.create(createResponse.creator));
-                    token = createResponse.token;
-                    salt = createResponse.salt;
-                    return [4 /*yield*/, client.doRequest({
-                            method: "POST",
-                            expectedCode: 200,
-                            path: "/api/v4/session/challenge/resolve",
-                            body: proto_1.api.SessionResolveChallengeRequest.encode({
-                                token: token,
-                                salt: salt,
-                                signature: encryption.sign(salt)
-                            }).finish(),
-                            response: proto_1.api.SessionResolveChallengeResponse.decode,
-                            headers: new Headers({
-                                "content-type": "application/x-protobuf"
-                            })
-                        })];
-                case 2:
-                    resolveResponse = (_a.sent()).body;
-                    saltKind = createResponse.saltKind;
-                    salt = createResponse.salt;
-                    return [2 /*return*/, new SessionImpl({
-                            token: token,
+                    case 1:
+                        createResponse = (_a.sent()).body;
+                        encryption = recover(proto_1.api.IdentityEncryptedKeySet.create(createResponse.encryption));
+                        return [4 /*yield*/, client.doRequest({
+                                method: "POST",
+                                expectedCode: 200,
+                                path: "/api/v4/session/challenge/resolve",
+                                body: proto_1.api.SessionResolveChallengeRequest.encode({
+                                    token: createResponse.token,
+                                    salt: createResponse.salt,
+                                    signature: encryption.sign(createResponse.salt)
+                                }).finish(),
+                                response: proto_1.api.SessionResolveChallengeResponse.decode,
+                                headers: new Headers({
+                                    "content-type": "application/x-protobuf"
+                                })
+                            })];
+                    case 2:
+                        resolveResponse = (_a.sent()).body;
+                        sessionParams = {
+                            token: createResponse.token,
                             login: resolveResponse.login,
-                            salt: salt,
-                            saltKind: saltKind
-                        }, encryption, client)];
-            }
+                            salt: resolveResponse.salt,
+                            saltKind: createResponse.saltKind
+                        };
+                        encryption.id.login = login;
+                        return [2 /*return*/, new SessionImpl(sessionParams, encryption, client)];
+                }
+            });
         });
-    });
-}
+    }
+    Session.create = create;
+})(Session = exports.Session || (exports.Session = {}));
 var SessionImpl = /** @class */ (function () {
     function SessionImpl(params, encryption, client) {
         this.login = params.login;
@@ -150,7 +136,6 @@ var SessionImpl = /** @class */ (function () {
         this.b64token = Tools_1.Base64.encode(params.token);
         this.pkCache = new SessionUtils_1.MemoryPublicKeyCache();
         this.trustPolicy = new SessionUtils_1.TrustOnFirstUse(this);
-        this.assumeKeyCache = {};
         this.afterRequestHandleSalt();
     }
     SessionImpl.prototype.close = function () {
@@ -175,7 +160,7 @@ var SessionImpl = /** @class */ (function () {
                     case 1:
                         _a.sent();
                         if (secret != null) {
-                            this.encryption.secret = Tools_1.Uint8Tool.convert(secret);
+                            this.secret = Tools_1.Uint8Tool.convert(secret);
                         }
                         return [4 /*yield*/, this.unStale()];
                     case 2:
@@ -186,12 +171,13 @@ var SessionImpl = /** @class */ (function () {
         });
     };
     SessionImpl.prototype.getSessionPublicKey = function () {
-        var p = this.encryption.getPublic();
+        var p = this.encryption.public();
+        // TODO : p
         return {
             login: this.login,
-            version: this.encryption.version,
-            sign: p.signEncrypted.publicKey,
-            box: p.boxEncrypted.publicKey
+            version: this.encryption.id.version,
+            sign: p.sign,
+            box: p.box
         };
     };
     SessionImpl.prototype.getLatestPublicKey = function (login) {
@@ -295,13 +281,16 @@ var SessionImpl = /** @class */ (function () {
     };
     SessionImpl.prototype.createSession = function (login) {
         return __awaiter(this, void 0, void 0, function () {
-            var keys;
+            var keySet;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.getKeys(login)];
+                    case 0: return [4 /*yield*/, this.getIdentityKeySet(login)];
                     case 1:
-                        keys = _a.sent();
-                        return [2 /*return*/, loginWithKeys(this.client, keys)];
+                        keySet = _a.sent();
+                        return [4 /*yield*/, Session.create(HTTP_1.client, login, function () {
+                                return keySet;
+                            })];
+                    case 2: return [2 /*return*/, _a.sent()];
                 }
             });
         });
@@ -314,13 +303,13 @@ var SessionImpl = /** @class */ (function () {
     };
     SessionImpl.prototype.getSecretToken = function (login) {
         return __awaiter(this, void 0, void 0, function () {
-            var keys;
+            var keySet;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.getKeys(login)];
+                    case 0: return [4 /*yield*/, this.getIdentityKeySet(login)];
                     case 1:
-                        keys = _a.sent();
-                        return [2 /*return*/, Tools_1.Base64.encode(keys.signKey)];
+                        keySet = _a.sent();
+                        return [2 /*return*/, Tools_1.Base64.encode(keySet.getSecretToken())];
                 }
             });
         });
@@ -330,13 +319,12 @@ var SessionImpl = /** @class */ (function () {
     };
     SessionImpl.prototype.doRequest = function (request) {
         return __awaiter(this, void 0, void 0, function () {
-            var assumeParams, response, err_1, _a, e_1;
+            var response, err_1, _a, e_1;
             return __generator(this, function (_b) {
                 switch (_b.label) {
-                    case 0: return [4 /*yield*/, this.getAssumeParams(request.assume)];
+                    case 0: return [4 /*yield*/, this.addAuthHeaders(request)];
                     case 1:
-                        assumeParams = _b.sent();
-                        this.addAuthHeaders(request.headers, request.body, assumeParams);
+                        _b.sent();
                         _b.label = 2;
                     case 2:
                         _b.trys.push([2, 4, , 11]);
@@ -361,14 +349,12 @@ var SessionImpl = /** @class */ (function () {
                         return [3 /*break*/, 8];
                     case 7:
                         e_1 = _b.sent();
-                        if (e_1 instanceof Error_1.Error && e_1.kind == Error_1.SDKKind.BadSecret) {
+                        if (e_1 instanceof Error_1.Error && e_1.kind == Error_1.SDKKind.IdentityInvalidKeySet) {
                             throw err_1;
                         }
                         throw e_1;
                     case 8: return [2 /*return*/, this.doRequest(request)];
-                    case 9:
-                        this.clearAssumeParams(request.assume.login);
-                        return [2 /*return*/, this.doRequest(request)];
+                    case 9: return [2 /*return*/, this.doRequest(request)];
                     case 10: throw err_1;
                     case 11: return [2 /*return*/];
                 }
@@ -500,21 +486,34 @@ var SessionImpl = /** @class */ (function () {
         var secondsLocal = Math.floor(Date.now() / 1000);
         this.deltaSaltTime = secondsServer - secondsLocal;
     };
-    SessionImpl.prototype.addAuthHeaders = function (headers, body, assume) {
-        var salt = this.getSalt();
-        var tosign = body == null ? salt : Tools_1.Uint8Tool.concat(body, salt);
-        headers.set("x-peps-token", this.b64token);
-        headers.set("x-peps-signature", Tools_1.Base64.encode(this.encryption.sign(tosign)));
-        headers.set("x-peps-salt", Tools_1.Base64.encode(salt));
-        if (assume == null) {
-            return;
-        }
-        headers.set("x-peps-assume-access", assume.kind.toString());
-        headers.set("x-peps-assume-identity", assume.key.login + "/" + assume.key.version);
-        var key = assume.kind == IdentityAPI_1.IdentityAccessKind.READ
-            ? assume.key.readKey
-            : assume.key.signKey;
-        headers.set("x-peps-assume-signature", Tools_1.Base64.encode(nacl.sign.detached(tosign, key)));
+    SessionImpl.prototype.addAuthHeaders = function (request) {
+        return __awaiter(this, void 0, void 0, function () {
+            var body, headers, salt, assumeKeySet, tosign, assumeKind;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        body = request.body;
+                        headers = request.headers;
+                        salt = this.getSalt();
+                        headers.set("x-peps-token", this.b64token);
+                        tosign = body == null ? salt : Tools_1.Uint8Tool.concat(body, salt);
+                        if (!(request.assume != null)) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.getIdentityKeySet(request.assume.login)];
+                    case 1:
+                        assumeKeySet = _a.sent();
+                        assumeKind = request.assume.kind;
+                        request.assume.keySet = assumeKeySet;
+                        headers.set("x-peps-assume-access", assumeKind.toString());
+                        headers.set("x-peps-assume-identity", assumeKeySet.id.login + "/" + assumeKeySet.id.version);
+                        headers.set("x-peps-assume-signature", Tools_1.Base64.encode(assumeKeySet.sign(tosign, assumeKind)));
+                        _a.label = 2;
+                    case 2:
+                        headers.set("x-peps-salt", Tools_1.Base64.encode(salt));
+                        headers.set("x-peps-signature", Tools_1.Base64.encode(this.encryption.sign(tosign)));
+                        return [2 /*return*/];
+                }
+            });
+        });
     };
     SessionImpl.prototype.getSalt = function () {
         switch (this.params.saltKind) {
@@ -538,11 +537,9 @@ var SessionImpl = /** @class */ (function () {
             path: "/api/v4/session/unStale",
             response: proto_1.api.SessionUnStaleResponse.decode
         }).then(function (_a) {
-            var encryption = _a.encryption, creator = _a.creator;
-            _this.clearAssumeParams(_this.login);
-            var e = new CryptoFuncs_1.Encryption(encryption);
-            e.recover(_this.encryption.secret, creator);
-            _this.encryption = e;
+            var encryption = _a.encryption;
+            var seed = IdentityKeySet_1.MasterPrivateSeed.fromSecret(_this.secret, encryption.masterSalt);
+            _this.encryption = IdentityKeySet_1.IdentityKeySet.recover({ login: _this.encryption.id.login, version: encryption.version }, seed, encryption);
         });
     };
     SessionImpl.prototype.resolveCipherList = function (ciphers) {
@@ -572,117 +569,49 @@ var SessionImpl = /** @class */ (function () {
     };
     SessionImpl.prototype.decryptCipherList = function (type, ciphers, secretKey) {
         return __awaiter(this, void 0, void 0, function () {
-            var resolvedCiphers;
+            var resolvedCiphers, decryptor;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.resolveCipherList(ciphers)];
                     case 1:
                         resolvedCiphers = _a.sent();
-                        return [2 /*return*/, this.encryption
-                                .decrypt(type, secretKey)
-                                .decryptList(resolvedCiphers)];
+                        decryptor = secretKey == null
+                            ? this.encryption.decryptor(type)
+                            : IdentityKeySet_1.IdentityKeySet.decryptor(type, secretKey);
+                        return [2 /*return*/, decryptor.decryptList(resolvedCiphers)];
                 }
             });
         });
     };
-    SessionImpl.prototype.getAssumeParams = function (assume) {
+    SessionImpl.prototype.getIdentityKeySet = function (login, version) {
         return __awaiter(this, void 0, void 0, function () {
-            var key;
+            var path;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (assume == null) {
-                            return [2 /*return*/, null];
-                        }
-                        return [4 /*yield*/, this.getKeys(assume.login)];
-                    case 1:
-                        key = _a.sent();
-                        return [2 /*return*/, { key: key, kind: assume.kind }];
-                }
-            });
-        });
-    };
-    SessionImpl.prototype.getKeys = function (login) {
-        return __awaiter(this, void 0, void 0, function () {
-            var key, keys;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        key = this.assumeKeyCache[login];
-                        if (key != null) {
-                            return [2 /*return*/, key];
-                        }
-                        return [4 /*yield*/, this.fetchKeys(login)];
-                    case 1:
-                        keys = _a.sent();
-                        this.assumeKeyCache[login] = keys;
-                        return [2 /*return*/, keys];
-                }
-            });
-        });
-    };
-    SessionImpl.prototype.fetchKeys = function (login, version) {
-        return __awaiter(this, void 0, void 0, function () {
-            var sharingKey_1, signKey_1, boxKey_1, readKey_1, params, _a, sharingKey, signKey, boxKey, readKey, identityVersion, decryptedSharingKey, _b, cipherSignkey, cipherBoxKey, cipherReadKey, decryptedSignKey, decryptedBoxKey, decryptedReadKey;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
-                    case 0:
-                        if (this.login == login &&
-                            (version == undefined || this.encryption.version == version)) {
-                            sharingKey_1 = this.encryption.sharingKeyPair.secretKey;
-                            signKey_1 = this.encryption.signKeyPair.secretKey;
-                            boxKey_1 = this.encryption.boxKeyPair.secretKey;
-                            readKey_1 = this.encryption.readKeyPair.secretKey;
-                            return [2 /*return*/, {
-                                    sharingKey: sharingKey_1,
-                                    signKey: signKey_1,
-                                    boxKey: boxKey_1,
-                                    readKey: readKey_1,
-                                    version: this.encryption.version,
-                                    login: login
-                                }];
-                        }
-                        if (version != undefined) {
-                            params = { version: version.toString() };
+                        if (this.encryption.id.login == login &&
+                            (version == null || this.encryption.id.version == version)) {
+                            return [2 /*return*/, this.encryption];
                         }
                         return [4 /*yield*/, this.doProtoRequest({
-                                method: "GET",
-                                path: "/api/v4/identity/" + encodeURI(login) + "/keys",
+                                method: "POST",
+                                path: "/api/v4/identity/" + encodeURI(login) + "/keySet",
                                 expectedCode: 200,
-                                response: proto_1.api.IdentityGetKeysResponse.decode,
-                                params: params
+                                body: proto_1.api.IdentityGetKeySetRequest.encode({ version: version }).finish(),
+                                response: proto_1.api.IdentityGetKeySetResponse.decode
                             })];
                     case 1:
-                        _a = _c.sent(), sharingKey = _a.sharingKey, signKey = _a.signKey, boxKey = _a.boxKey, readKey = _a.readKey, identityVersion = _a.version;
-                        return [4 /*yield*/, this.decryptCipherList(proto_1.api.ResourceType.SES, sharingKey)];
-                    case 2:
-                        decryptedSharingKey = _c.sent();
-                        return [4 /*yield*/, this.resolveCipherList([signKey, boxKey, readKey])];
-                    case 3:
-                        _b = _c.sent(), cipherSignkey = _b[0], cipherBoxKey = _b[1], cipherReadKey = _b[2];
-                        decryptedSignKey = this.encryption
-                            .decrypt(proto_1.api.ResourceType.SES, decryptedSharingKey)
-                            .decrypt(cipherSignkey);
-                        decryptedBoxKey = this.encryption
-                            .decrypt(proto_1.api.ResourceType.SES, decryptedSharingKey)
-                            .decrypt(cipherBoxKey);
-                        decryptedReadKey = this.encryption
-                            .decrypt(proto_1.api.ResourceType.SES, decryptedBoxKey)
-                            .decrypt(cipherReadKey);
-                        return [2 /*return*/, {
-                                sharingKey: decryptedSharingKey,
-                                signKey: decryptedSignKey,
-                                boxKey: decryptedBoxKey,
-                                readKey: decryptedReadKey,
-                                version: identityVersion,
-                                login: login
-                            }];
+                        path = (_a.sent()).path;
+                        if (path.length == 0) {
+                            throw new Error_1.Error({
+                                kind: Error_1.SDKKind.ProtocolError,
+                                payload: { message: "unexpected keySet path" }
+                            });
+                        }
+                        return [2 /*return*/, path.reduce(IdentityKeySetAPI_1.IdentityKeySetAPI.recoverWithPathElt, this.encryption)];
                 }
             });
         });
-    };
-    SessionImpl.prototype.clearAssumeParams = function (login) {
-        delete this.assumeKeyCache[login];
     };
     return SessionImpl;
 }());

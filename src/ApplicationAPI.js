@@ -45,7 +45,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Error_1 = require("./Error");
 var proto_1 = require("./proto");
-var IdentityAPI_1 = require("./IdentityAPI");
 var IdentityInternal_1 = require("./IdentityInternal");
 exports.ApplicationIdentitySortingOrder = IdentityInternal_1.IdentitySortingOrder;
 var Tools_1 = require("./Tools");
@@ -97,7 +96,7 @@ var ApplicationAPI = /** @class */ (function () {
                         };
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "PUT",
-                                assume: { login: appID, kind: IdentityAPI_1.IdentityAccessKind.WRITE },
+                                assume: { login: appID, kind: proto_1.api.IdentityAccessKeyKind.WRITE },
                                 expectedCode: 201,
                                 path: "/api/v4/identity/" + encodeURI(appID) + "/configure-as-application",
                                 body: proto_1.api.IdentityConfigurationAsApplicationRequest.encode({
@@ -134,7 +133,7 @@ var ApplicationAPI = /** @class */ (function () {
                                 method: "POST",
                                 assume: {
                                     login: appConfigID.appID,
-                                    kind: IdentityAPI_1.IdentityAccessKind.READ
+                                    kind: proto_1.api.IdentityAccessKeyKind.READ
                                 },
                                 expectedCode: 200,
                                 path: "/api/v4/application/" + encodeURI(appConfigID.appID) + "/configuration",
@@ -190,7 +189,7 @@ var ApplicationAPI = /** @class */ (function () {
                         options = options == null ? {} : options;
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "POST",
-                                assume: { login: appID, kind: IdentityAPI_1.IdentityAccessKind.READ },
+                                assume: { login: appID, kind: proto_1.api.IdentityAccessKeyKind.READ },
                                 expectedCode: 200,
                                 path: "/api/v4/application/" + encodeURI(appID) + "/usage-overview",
                                 body: proto_1.api.ApplicationUsageOverviewRequest.encode(__assign({ Login: appID }, options)).finish(),
@@ -239,7 +238,7 @@ var ApplicationAPI = /** @class */ (function () {
                                 method: "POST",
                                 expectedCode: 200,
                                 path: "/api/v4/application/" + encodeURI(appID) + "/identities/list",
-                                assume: { login: appID, kind: IdentityAPI_1.IdentityAccessKind.READ },
+                                assume: { login: appID, kind: proto_1.api.IdentityAccessKeyKind.READ },
                                 body: proto_1.api.ApplicationListIdentitiesRequest.encode({
                                     options: {
                                         limit: options.limit,
@@ -289,7 +288,7 @@ var ApplicationAPI = /** @class */ (function () {
                             path: "/api/v4/application/identity/" + encodeURI(dataPepsLogin) + "/auth",
                             assume: {
                                 login: appID,
-                                kind: IdentityAPI_1.IdentityAccessKind.READ
+                                kind: proto_1.api.IdentityAccessKeyKind.READ
                             },
                             response: function (r) {
                                 var response = proto_1.api.ApplicationGetIdentityAuthResponse.decode(r);
@@ -345,7 +344,7 @@ var ApplicationAPI = /** @class */ (function () {
                                 path: "/api/v4/application/" + encodeURI(appID) + "/identities-session/list",
                                 method: "POST",
                                 expectedCode: 200,
-                                assume: { login: appID, kind: IdentityAPI_1.IdentityAccessKind.READ },
+                                assume: { login: appID, kind: proto_1.api.IdentityAccessKeyKind.READ },
                                 body: proto_1.api.ApplicationIdentitySessionListRequest.encode({
                                     appID: appID,
                                     since: since,

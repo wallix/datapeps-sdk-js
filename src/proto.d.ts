@@ -959,127 +959,127 @@ export namespace api {
         public toJSON(): { [k: string]: any };
     }
 
-    /** Properties of an IdentityEncryption. */
-    interface IIdentityEncryption {
+    /** Properties of an IdentityEncryptedKeySet. */
+    interface IIdentityEncryptedKeySet {
 
-        /** IdentityEncryption version */
+        /** IdentityEncryptedKeySet version */
         version?: (number|null);
 
-        /** IdentityEncryption masterSalt */
+        /** IdentityEncryptedKeySet masterSalt */
         masterSalt?: (Uint8Array|null);
 
-        /** IdentityEncryption masterPublicKey */
+        /** IdentityEncryptedKeySet masterPublicKey */
         masterPublicKey?: (Uint8Array|null);
 
-        /** IdentityEncryption sharingEncrypted */
+        /** IdentityEncryptedKeySet sharingEncrypted */
         sharingEncrypted?: (api.IIdentityEncryptedKey|null);
 
-        /** IdentityEncryption boxEncrypted */
+        /** IdentityEncryptedKeySet boxEncrypted */
         boxEncrypted?: (api.IIdentityEncryptedKey|null);
 
-        /** IdentityEncryption signEncrypted */
+        /** IdentityEncryptedKeySet signEncrypted */
         signEncrypted?: (api.IIdentityEncryptedKey|null);
 
-        /** IdentityEncryption readEncrypted */
+        /** IdentityEncryptedKeySet readEncrypted */
         readEncrypted?: (api.IIdentityEncryptedKey|null);
     }
 
-    /** Represents an IdentityEncryption. */
-    class IdentityEncryption implements IIdentityEncryption {
+    /** Represents an IdentityEncryptedKeySet. */
+    class IdentityEncryptedKeySet implements IIdentityEncryptedKeySet {
 
         /**
-         * Constructs a new IdentityEncryption.
+         * Constructs a new IdentityEncryptedKeySet.
          * @param [properties] Properties to set
          */
-        constructor(properties?: api.IIdentityEncryption);
+        constructor(properties?: api.IIdentityEncryptedKeySet);
 
-        /** IdentityEncryption version. */
+        /** IdentityEncryptedKeySet version. */
         public version: number;
 
-        /** IdentityEncryption masterSalt. */
+        /** IdentityEncryptedKeySet masterSalt. */
         public masterSalt: Uint8Array;
 
-        /** IdentityEncryption masterPublicKey. */
+        /** IdentityEncryptedKeySet masterPublicKey. */
         public masterPublicKey: Uint8Array;
 
-        /** IdentityEncryption sharingEncrypted. */
+        /** IdentityEncryptedKeySet sharingEncrypted. */
         public sharingEncrypted?: (api.IIdentityEncryptedKey|null);
 
-        /** IdentityEncryption boxEncrypted. */
+        /** IdentityEncryptedKeySet boxEncrypted. */
         public boxEncrypted?: (api.IIdentityEncryptedKey|null);
 
-        /** IdentityEncryption signEncrypted. */
+        /** IdentityEncryptedKeySet signEncrypted. */
         public signEncrypted?: (api.IIdentityEncryptedKey|null);
 
-        /** IdentityEncryption readEncrypted. */
+        /** IdentityEncryptedKeySet readEncrypted. */
         public readEncrypted?: (api.IIdentityEncryptedKey|null);
 
         /**
-         * Creates a new IdentityEncryption instance using the specified properties.
+         * Creates a new IdentityEncryptedKeySet instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns IdentityEncryption instance
+         * @returns IdentityEncryptedKeySet instance
          */
-        public static create(properties?: api.IIdentityEncryption): api.IdentityEncryption;
+        public static create(properties?: api.IIdentityEncryptedKeySet): api.IdentityEncryptedKeySet;
 
         /**
-         * Encodes the specified IdentityEncryption message. Does not implicitly {@link api.IdentityEncryption.verify|verify} messages.
-         * @param message IdentityEncryption message or plain object to encode
+         * Encodes the specified IdentityEncryptedKeySet message. Does not implicitly {@link api.IdentityEncryptedKeySet.verify|verify} messages.
+         * @param message IdentityEncryptedKeySet message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: api.IIdentityEncryption, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: api.IIdentityEncryptedKeySet, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified IdentityEncryption message, length delimited. Does not implicitly {@link api.IdentityEncryption.verify|verify} messages.
-         * @param message IdentityEncryption message or plain object to encode
+         * Encodes the specified IdentityEncryptedKeySet message, length delimited. Does not implicitly {@link api.IdentityEncryptedKeySet.verify|verify} messages.
+         * @param message IdentityEncryptedKeySet message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: api.IIdentityEncryption, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: api.IIdentityEncryptedKeySet, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes an IdentityEncryption message from the specified reader or buffer.
+         * Decodes an IdentityEncryptedKeySet message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns IdentityEncryption
+         * @returns IdentityEncryptedKeySet
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.IdentityEncryption;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.IdentityEncryptedKeySet;
 
         /**
-         * Decodes an IdentityEncryption message from the specified reader or buffer, length delimited.
+         * Decodes an IdentityEncryptedKeySet message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns IdentityEncryption
+         * @returns IdentityEncryptedKeySet
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.IdentityEncryption;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.IdentityEncryptedKeySet;
 
         /**
-         * Verifies an IdentityEncryption message.
+         * Verifies an IdentityEncryptedKeySet message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates an IdentityEncryption message from a plain object. Also converts values to their respective internal types.
+         * Creates an IdentityEncryptedKeySet message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns IdentityEncryption
+         * @returns IdentityEncryptedKeySet
          */
-        public static fromObject(object: { [k: string]: any }): api.IdentityEncryption;
+        public static fromObject(object: { [k: string]: any }): api.IdentityEncryptedKeySet;
 
         /**
-         * Creates a plain object from an IdentityEncryption message. Also converts values to other types if specified.
-         * @param message IdentityEncryption
+         * Creates a plain object from an IdentityEncryptedKeySet message. Also converts values to other types if specified.
+         * @param message IdentityEncryptedKeySet
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: api.IdentityEncryption, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: api.IdentityEncryptedKeySet, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this IdentityEncryption to JSON.
+         * Converts this IdentityEncryptedKeySet to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -1200,7 +1200,7 @@ export namespace api {
         identity?: (api.IIdentityFields|null);
 
         /** IdentityRegisterRequest encryption */
-        encryption?: (api.IIdentityEncryption|null);
+        encryption?: (api.IIdentityEncryptedKeySet|null);
     }
 
     /** Represents an IdentityRegisterRequest. */
@@ -1216,7 +1216,7 @@ export namespace api {
         public identity?: (api.IIdentityFields|null);
 
         /** IdentityRegisterRequest encryption. */
-        public encryption?: (api.IIdentityEncryption|null);
+        public encryption?: (api.IIdentityEncryptedKeySet|null);
 
         /**
          * Creates a new IdentityRegisterRequest instance using the specified properties.
@@ -1482,7 +1482,7 @@ export namespace api {
         identity?: (api.IIdentityFields|null);
 
         /** RegisterApplicationIdentityRequest encryption */
-        encryption?: (api.IIdentityEncryption|null);
+        encryption?: (api.IIdentityEncryptedKeySet|null);
 
         /** RegisterApplicationIdentityRequest resources */
         resources?: ({ [k: string]: api.IResourcePostRequest }|null);
@@ -1507,7 +1507,7 @@ export namespace api {
         public identity?: (api.IIdentityFields|null);
 
         /** RegisterApplicationIdentityRequest encryption. */
-        public encryption?: (api.IIdentityEncryption|null);
+        public encryption?: (api.IIdentityEncryptedKeySet|null);
 
         /** RegisterApplicationIdentityRequest resources. */
         public resources: { [k: string]: api.IResourcePostRequest };
@@ -1683,7 +1683,7 @@ export namespace api {
         identity?: (api.IIdentityFields|null);
 
         /** IdentityCreateRequest encryption */
-        encryption?: (api.IIdentityEncryption|null);
+        encryption?: (api.IIdentityEncryptedKeySet|null);
 
         /** IdentityCreateRequest signChain */
         signChain?: (Uint8Array|null);
@@ -1708,7 +1708,7 @@ export namespace api {
         public identity?: (api.IIdentityFields|null);
 
         /** IdentityCreateRequest encryption. */
-        public encryption?: (api.IIdentityEncryption|null);
+        public encryption?: (api.IIdentityEncryptedKeySet|null);
 
         /** IdentityCreateRequest signChain. */
         public signChain: Uint8Array;
@@ -1797,7 +1797,7 @@ export namespace api {
         login?: (string|null);
 
         /** IdentityKeysToReplaceRequest encryption */
-        encryption?: (api.IIdentityEncryption|null);
+        encryption?: (api.IIdentityEncryptedKeySet|null);
 
         /** IdentityKeysToReplaceRequest signChain */
         signChain?: (Uint8Array|null);
@@ -1819,7 +1819,7 @@ export namespace api {
         public login: string;
 
         /** IdentityKeysToReplaceRequest encryption. */
-        public encryption?: (api.IIdentityEncryption|null);
+        public encryption?: (api.IIdentityEncryptedKeySet|null);
 
         /** IdentityKeysToReplaceRequest signChain. */
         public signChain: Uint8Array;
@@ -2594,118 +2594,295 @@ export namespace api {
         public toJSON(): { [k: string]: any };
     }
 
-    /** Properties of an IdentityGetKeysResponse. */
-    interface IIdentityGetKeysResponse {
+    /** Properties of an IdentityGetKeySetRequest. */
+    interface IIdentityGetKeySetRequest {
 
-        /** IdentityGetKeysResponse sharingKey */
-        sharingKey?: (api.ICipher[]|null);
-
-        /** IdentityGetKeysResponse signKey */
-        signKey?: (api.ICipher|null);
-
-        /** IdentityGetKeysResponse boxKey */
-        boxKey?: (api.ICipher|null);
-
-        /** IdentityGetKeysResponse readKey */
-        readKey?: (api.ICipher|null);
-
-        /** IdentityGetKeysResponse version */
+        /** IdentityGetKeySetRequest version */
         version?: (number|null);
+
+        /** IdentityGetKeySetRequest login */
+        login?: (string|null);
     }
 
-    /** Represents an IdentityGetKeysResponse. */
-    class IdentityGetKeysResponse implements IIdentityGetKeysResponse {
+    /** Represents an IdentityGetKeySetRequest. */
+    class IdentityGetKeySetRequest implements IIdentityGetKeySetRequest {
 
         /**
-         * Constructs a new IdentityGetKeysResponse.
+         * Constructs a new IdentityGetKeySetRequest.
          * @param [properties] Properties to set
          */
-        constructor(properties?: api.IIdentityGetKeysResponse);
+        constructor(properties?: api.IIdentityGetKeySetRequest);
 
-        /** IdentityGetKeysResponse sharingKey. */
-        public sharingKey: api.ICipher[];
-
-        /** IdentityGetKeysResponse signKey. */
-        public signKey?: (api.ICipher|null);
-
-        /** IdentityGetKeysResponse boxKey. */
-        public boxKey?: (api.ICipher|null);
-
-        /** IdentityGetKeysResponse readKey. */
-        public readKey?: (api.ICipher|null);
-
-        /** IdentityGetKeysResponse version. */
+        /** IdentityGetKeySetRequest version. */
         public version: number;
 
+        /** IdentityGetKeySetRequest login. */
+        public login: string;
+
         /**
-         * Creates a new IdentityGetKeysResponse instance using the specified properties.
+         * Creates a new IdentityGetKeySetRequest instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns IdentityGetKeysResponse instance
+         * @returns IdentityGetKeySetRequest instance
          */
-        public static create(properties?: api.IIdentityGetKeysResponse): api.IdentityGetKeysResponse;
+        public static create(properties?: api.IIdentityGetKeySetRequest): api.IdentityGetKeySetRequest;
 
         /**
-         * Encodes the specified IdentityGetKeysResponse message. Does not implicitly {@link api.IdentityGetKeysResponse.verify|verify} messages.
-         * @param message IdentityGetKeysResponse message or plain object to encode
+         * Encodes the specified IdentityGetKeySetRequest message. Does not implicitly {@link api.IdentityGetKeySetRequest.verify|verify} messages.
+         * @param message IdentityGetKeySetRequest message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: api.IIdentityGetKeysResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: api.IIdentityGetKeySetRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified IdentityGetKeysResponse message, length delimited. Does not implicitly {@link api.IdentityGetKeysResponse.verify|verify} messages.
-         * @param message IdentityGetKeysResponse message or plain object to encode
+         * Encodes the specified IdentityGetKeySetRequest message, length delimited. Does not implicitly {@link api.IdentityGetKeySetRequest.verify|verify} messages.
+         * @param message IdentityGetKeySetRequest message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: api.IIdentityGetKeysResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: api.IIdentityGetKeySetRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes an IdentityGetKeysResponse message from the specified reader or buffer.
+         * Decodes an IdentityGetKeySetRequest message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns IdentityGetKeysResponse
+         * @returns IdentityGetKeySetRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.IdentityGetKeysResponse;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.IdentityGetKeySetRequest;
 
         /**
-         * Decodes an IdentityGetKeysResponse message from the specified reader or buffer, length delimited.
+         * Decodes an IdentityGetKeySetRequest message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns IdentityGetKeysResponse
+         * @returns IdentityGetKeySetRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.IdentityGetKeysResponse;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.IdentityGetKeySetRequest;
 
         /**
-         * Verifies an IdentityGetKeysResponse message.
+         * Verifies an IdentityGetKeySetRequest message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates an IdentityGetKeysResponse message from a plain object. Also converts values to their respective internal types.
+         * Creates an IdentityGetKeySetRequest message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns IdentityGetKeysResponse
+         * @returns IdentityGetKeySetRequest
          */
-        public static fromObject(object: { [k: string]: any }): api.IdentityGetKeysResponse;
+        public static fromObject(object: { [k: string]: any }): api.IdentityGetKeySetRequest;
 
         /**
-         * Creates a plain object from an IdentityGetKeysResponse message. Also converts values to other types if specified.
-         * @param message IdentityGetKeysResponse
+         * Creates a plain object from an IdentityGetKeySetRequest message. Also converts values to other types if specified.
+         * @param message IdentityGetKeySetRequest
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: api.IdentityGetKeysResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: api.IdentityGetKeySetRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this IdentityGetKeysResponse to JSON.
+         * Converts this IdentityGetKeySetRequest to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an IdentityGetKeySetResponse. */
+    interface IIdentityGetKeySetResponse {
+
+        /** IdentityGetKeySetResponse path */
+        path?: (api.IdentityGetKeySetResponse.IPathElt[]|null);
+    }
+
+    /** Represents an IdentityGetKeySetResponse. */
+    class IdentityGetKeySetResponse implements IIdentityGetKeySetResponse {
+
+        /**
+         * Constructs a new IdentityGetKeySetResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: api.IIdentityGetKeySetResponse);
+
+        /** IdentityGetKeySetResponse path. */
+        public path: api.IdentityGetKeySetResponse.IPathElt[];
+
+        /**
+         * Creates a new IdentityGetKeySetResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns IdentityGetKeySetResponse instance
+         */
+        public static create(properties?: api.IIdentityGetKeySetResponse): api.IdentityGetKeySetResponse;
+
+        /**
+         * Encodes the specified IdentityGetKeySetResponse message. Does not implicitly {@link api.IdentityGetKeySetResponse.verify|verify} messages.
+         * @param message IdentityGetKeySetResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: api.IIdentityGetKeySetResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified IdentityGetKeySetResponse message, length delimited. Does not implicitly {@link api.IdentityGetKeySetResponse.verify|verify} messages.
+         * @param message IdentityGetKeySetResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: api.IIdentityGetKeySetResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an IdentityGetKeySetResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns IdentityGetKeySetResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.IdentityGetKeySetResponse;
+
+        /**
+         * Decodes an IdentityGetKeySetResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns IdentityGetKeySetResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.IdentityGetKeySetResponse;
+
+        /**
+         * Verifies an IdentityGetKeySetResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an IdentityGetKeySetResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns IdentityGetKeySetResponse
+         */
+        public static fromObject(object: { [k: string]: any }): api.IdentityGetKeySetResponse;
+
+        /**
+         * Creates a plain object from an IdentityGetKeySetResponse message. Also converts values to other types if specified.
+         * @param message IdentityGetKeySetResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: api.IdentityGetKeySetResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this IdentityGetKeySetResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace IdentityGetKeySetResponse {
+
+        /** Properties of a PathElt. */
+        interface IPathElt {
+
+            /** PathElt sharedKey */
+            sharedKey?: (api.ICipher|null);
+
+            /** PathElt encryptedKeySet */
+            encryptedKeySet?: (api.IIdentityEncryptedKeySet|null);
+
+            /** PathElt id */
+            id?: (api.IIdentityKeyID|null);
+        }
+
+        /** Represents a PathElt. */
+        class PathElt implements IPathElt {
+
+            /**
+             * Constructs a new PathElt.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: api.IdentityGetKeySetResponse.IPathElt);
+
+            /** PathElt sharedKey. */
+            public sharedKey?: (api.ICipher|null);
+
+            /** PathElt encryptedKeySet. */
+            public encryptedKeySet?: (api.IIdentityEncryptedKeySet|null);
+
+            /** PathElt id. */
+            public id?: (api.IIdentityKeyID|null);
+
+            /**
+             * Creates a new PathElt instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns PathElt instance
+             */
+            public static create(properties?: api.IdentityGetKeySetResponse.IPathElt): api.IdentityGetKeySetResponse.PathElt;
+
+            /**
+             * Encodes the specified PathElt message. Does not implicitly {@link api.IdentityGetKeySetResponse.PathElt.verify|verify} messages.
+             * @param message PathElt message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: api.IdentityGetKeySetResponse.IPathElt, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified PathElt message, length delimited. Does not implicitly {@link api.IdentityGetKeySetResponse.PathElt.verify|verify} messages.
+             * @param message PathElt message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: api.IdentityGetKeySetResponse.IPathElt, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a PathElt message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns PathElt
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.IdentityGetKeySetResponse.PathElt;
+
+            /**
+             * Decodes a PathElt message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns PathElt
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.IdentityGetKeySetResponse.PathElt;
+
+            /**
+             * Verifies a PathElt message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a PathElt message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns PathElt
+             */
+            public static fromObject(object: { [k: string]: any }): api.IdentityGetKeySetResponse.PathElt;
+
+            /**
+             * Creates a plain object from a PathElt message. Also converts values to other types if specified.
+             * @param message PathElt
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: api.IdentityGetKeySetResponse.PathElt, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this PathElt to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+        }
     }
 
     /** Properties of an IdentityGetPublicKeysRequest. */
@@ -4128,10 +4305,7 @@ export namespace api {
     interface IIdentityGetEncryptionResponse {
 
         /** IdentityGetEncryptionResponse encryption */
-        encryption?: (api.IIdentityEncryption|null);
-
-        /** IdentityGetEncryptionResponse creator */
-        creator?: (api.IIdentityPublicKey|null);
+        encryption?: (api.IIdentityEncryptedKeySet|null);
     }
 
     /** Represents an IdentityGetEncryptionResponse. */
@@ -4144,10 +4318,7 @@ export namespace api {
         constructor(properties?: api.IIdentityGetEncryptionResponse);
 
         /** IdentityGetEncryptionResponse encryption. */
-        public encryption?: (api.IIdentityEncryption|null);
-
-        /** IdentityGetEncryptionResponse creator. */
-        public creator?: (api.IIdentityPublicKey|null);
+        public encryption?: (api.IIdentityEncryptedKeySet|null);
 
         /**
          * Creates a new IdentityGetEncryptionResponse instance using the specified properties.
@@ -4224,10 +4395,7 @@ export namespace api {
     interface IIdentityGetKeysToRenewResponse {
 
         /** IdentityGetKeysToRenewResponse encryption */
-        encryption?: (api.IIdentityEncryption|null);
-
-        /** IdentityGetKeysToRenewResponse creator */
-        creator?: (api.IIdentityPublicKey|null);
+        encryption?: (api.IIdentityEncryptedKeySet|null);
 
         /** IdentityGetKeysToRenewResponse sharingGroup */
         sharingGroup?: (api.IIdentityPublicKey[]|null);
@@ -4243,10 +4411,7 @@ export namespace api {
         constructor(properties?: api.IIdentityGetKeysToRenewResponse);
 
         /** IdentityGetKeysToRenewResponse encryption. */
-        public encryption?: (api.IIdentityEncryption|null);
-
-        /** IdentityGetKeysToRenewResponse creator. */
-        public creator?: (api.IIdentityPublicKey|null);
+        public encryption?: (api.IIdentityEncryptedKeySet|null);
 
         /** IdentityGetKeysToRenewResponse sharingGroup. */
         public sharingGroup: api.IIdentityPublicKey[];
@@ -4425,7 +4590,7 @@ export namespace api {
         login?: (string|null);
 
         /** IdentityPostKeysToRenewRequest encryption */
-        encryption?: (api.IIdentityEncryption|null);
+        encryption?: (api.IIdentityEncryptedKeySet|null);
 
         /** IdentityPostKeysToRenewRequest signChain */
         signChain?: (Uint8Array|null);
@@ -4450,7 +4615,7 @@ export namespace api {
         public login: string;
 
         /** IdentityPostKeysToRenewRequest encryption. */
-        public encryption?: (api.IIdentityEncryption|null);
+        public encryption?: (api.IIdentityEncryptedKeySet|null);
 
         /** IdentityPostKeysToRenewRequest signChain. */
         public signChain: Uint8Array;
@@ -4561,6 +4726,12 @@ export namespace api {
 
         /** IdentityGetSharingGraphElement latest */
         latest?: (boolean|null);
+
+        /** IdentityGetSharingGraphElement boxPublicKey */
+        boxPublicKey?: (Uint8Array|null);
+
+        /** IdentityGetSharingGraphElement signPublicKey */
+        signPublicKey?: (Uint8Array|null);
     }
 
     /** Represents an IdentityGetSharingGraphElement. */
@@ -4598,6 +4769,12 @@ export namespace api {
 
         /** IdentityGetSharingGraphElement latest. */
         public latest: boolean;
+
+        /** IdentityGetSharingGraphElement boxPublicKey. */
+        public boxPublicKey: Uint8Array;
+
+        /** IdentityGetSharingGraphElement signPublicKey. */
+        public signPublicKey: Uint8Array;
 
         /**
          * Creates a new IdentityGetSharingGraphElement instance using the specified properties.
@@ -4779,7 +4956,7 @@ export namespace api {
         backward?: (api.IIdentityBackwardKey|null);
 
         /** IdentityPostSharingGraphElement encryption */
-        encryption?: (api.IIdentityEncryption|null);
+        encryption?: (api.IIdentityEncryptedKeySet|null);
     }
 
     /** Represents an IdentityPostSharingGraphElement. */
@@ -4807,7 +4984,7 @@ export namespace api {
         public backward?: (api.IIdentityBackwardKey|null);
 
         /** IdentityPostSharingGraphElement encryption. */
-        public encryption?: (api.IIdentityEncryption|null);
+        public encryption?: (api.IIdentityEncryptedKeySet|null);
 
         /**
          * Creates a new IdentityPostSharingGraphElement instance using the specified properties.
@@ -5174,10 +5351,7 @@ export namespace api {
             token?: (Uint8Array|null);
 
             /** IdentityChallenge encryption */
-            encryption?: (api.IIdentityEncryption|null);
-
-            /** IdentityChallenge creator */
-            creator?: (api.IIdentityPublicKey|null);
+            encryption?: (api.IIdentityEncryptedKeySet|null);
         }
 
         /** Represents an IdentityChallenge. */
@@ -5196,10 +5370,7 @@ export namespace api {
             public token: Uint8Array;
 
             /** IdentityChallenge encryption. */
-            public encryption?: (api.IIdentityEncryption|null);
-
-            /** IdentityChallenge creator. */
-            public creator?: (api.IIdentityPublicKey|null);
+            public encryption?: (api.IIdentityEncryptedKeySet|null);
 
             /**
              * Creates a new IdentityChallenge instance using the specified properties.
@@ -6166,10 +6337,7 @@ export namespace api {
         token?: (Uint8Array|null);
 
         /** SessionCreateChallengeResponse encryption */
-        encryption?: (api.IIdentityEncryption|null);
-
-        /** SessionCreateChallengeResponse creator */
-        creator?: (api.IIdentityPublicKey|null);
+        encryption?: (api.IIdentityEncryptedKeySet|null);
 
         /** SessionCreateChallengeResponse saltKind */
         saltKind?: (api.SessionSaltKind|null);
@@ -6191,10 +6359,7 @@ export namespace api {
         public token: Uint8Array;
 
         /** SessionCreateChallengeResponse encryption. */
-        public encryption?: (api.IIdentityEncryption|null);
-
-        /** SessionCreateChallengeResponse creator. */
-        public creator?: (api.IIdentityPublicKey|null);
+        public encryption?: (api.IIdentityEncryptedKeySet|null);
 
         /** SessionCreateChallengeResponse saltKind. */
         public saltKind: api.SessionSaltKind;
@@ -8181,10 +8346,7 @@ export namespace api {
     interface ISessionUnStaleResponse {
 
         /** SessionUnStaleResponse encryption */
-        encryption?: (api.IIdentityEncryption|null);
-
-        /** SessionUnStaleResponse creator */
-        creator?: (api.IIdentityPublicKey|null);
+        encryption?: (api.IIdentityEncryptedKeySet|null);
     }
 
     /** Represents a SessionUnStaleResponse. */
@@ -8197,10 +8359,7 @@ export namespace api {
         constructor(properties?: api.ISessionUnStaleResponse);
 
         /** SessionUnStaleResponse encryption. */
-        public encryption?: (api.IIdentityEncryption|null);
-
-        /** SessionUnStaleResponse creator. */
-        public creator?: (api.IIdentityPublicKey|null);
+        public encryption?: (api.IIdentityEncryptedKeySet|null);
 
         /**
          * Creates a new SessionUnStaleResponse instance using the specified properties.
@@ -8521,11 +8680,14 @@ export namespace api {
         /** ResourceGetResponse resource */
         resource?: (api.IResource|null);
 
+        /** ResourceGetResponse owner */
+        owner?: (api.IIdentityKeyID|null);
+
         /** ResourceGetResponse creator */
         creator?: (api.IIdentityKeyID|null);
 
         /** ResourceGetResponse encryptedKey */
-        encryptedKey?: (api.ICipher[]|null);
+        encryptedKey?: (api.ICipher|null);
     }
 
     /** Represents a ResourceGetResponse. */
@@ -8540,11 +8702,14 @@ export namespace api {
         /** ResourceGetResponse resource. */
         public resource?: (api.IResource|null);
 
+        /** ResourceGetResponse owner. */
+        public owner?: (api.IIdentityKeyID|null);
+
         /** ResourceGetResponse creator. */
         public creator?: (api.IIdentityKeyID|null);
 
         /** ResourceGetResponse encryptedKey. */
-        public encryptedKey: api.ICipher[];
+        public encryptedKey?: (api.ICipher|null);
 
         /**
          * Creates a new ResourceGetResponse instance using the specified properties.
@@ -8617,122 +8782,17 @@ export namespace api {
         public toJSON(): { [k: string]: any };
     }
 
-    /** Properties of a ResourceWithKey. */
-    interface IResourceWithKey {
-
-        /** ResourceWithKey resource */
-        resource?: (api.IResource|null);
-
-        /** ResourceWithKey owner */
-        owner?: (api.IIdentityKeyID|null);
-
-        /** ResourceWithKey creator */
-        creator?: (api.IIdentityKeyID|null);
-
-        /** ResourceWithKey encryptedKey */
-        encryptedKey?: (api.ICipher|null);
-    }
-
-    /** Represents a ResourceWithKey. */
-    class ResourceWithKey implements IResourceWithKey {
-
-        /**
-         * Constructs a new ResourceWithKey.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: api.IResourceWithKey);
-
-        /** ResourceWithKey resource. */
-        public resource?: (api.IResource|null);
-
-        /** ResourceWithKey owner. */
-        public owner?: (api.IIdentityKeyID|null);
-
-        /** ResourceWithKey creator. */
-        public creator?: (api.IIdentityKeyID|null);
-
-        /** ResourceWithKey encryptedKey. */
-        public encryptedKey?: (api.ICipher|null);
-
-        /**
-         * Creates a new ResourceWithKey instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns ResourceWithKey instance
-         */
-        public static create(properties?: api.IResourceWithKey): api.ResourceWithKey;
-
-        /**
-         * Encodes the specified ResourceWithKey message. Does not implicitly {@link api.ResourceWithKey.verify|verify} messages.
-         * @param message ResourceWithKey message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: api.IResourceWithKey, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified ResourceWithKey message, length delimited. Does not implicitly {@link api.ResourceWithKey.verify|verify} messages.
-         * @param message ResourceWithKey message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: api.IResourceWithKey, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a ResourceWithKey message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns ResourceWithKey
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.ResourceWithKey;
-
-        /**
-         * Decodes a ResourceWithKey message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns ResourceWithKey
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.ResourceWithKey;
-
-        /**
-         * Verifies a ResourceWithKey message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a ResourceWithKey message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns ResourceWithKey
-         */
-        public static fromObject(object: { [k: string]: any }): api.ResourceWithKey;
-
-        /**
-         * Creates a plain object from a ResourceWithKey message. Also converts values to other types if specified.
-         * @param message ResourceWithKey
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: api.ResourceWithKey, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this ResourceWithKey to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
     /** Properties of a ResourceGetKeyResponse. */
     interface IResourceGetKeyResponse {
 
         /** ResourceGetKeyResponse encryptedKey */
-        encryptedKey?: (api.ICipher[]|null);
+        encryptedKey?: (api.ICipher|null);
 
         /** ResourceGetKeyResponse type */
         type?: (api.ResourceType|null);
+
+        /** ResourceGetKeyResponse owner */
+        owner?: (api.IIdentityKeyID|null);
     }
 
     /** Represents a ResourceGetKeyResponse. */
@@ -8745,10 +8805,13 @@ export namespace api {
         constructor(properties?: api.IResourceGetKeyResponse);
 
         /** ResourceGetKeyResponse encryptedKey. */
-        public encryptedKey: api.ICipher[];
+        public encryptedKey?: (api.ICipher|null);
 
         /** ResourceGetKeyResponse type. */
         public type: api.ResourceType;
+
+        /** ResourceGetKeyResponse owner. */
+        public owner?: (api.IIdentityKeyID|null);
 
         /**
          * Creates a new ResourceGetKeyResponse instance using the specified properties.
@@ -9239,7 +9302,7 @@ export namespace api {
     interface IResourceListResponse {
 
         /** ResourceListResponse resources */
-        resources?: (api.IResourceWithKey[]|null);
+        resources?: (api.IResourceGetResponse[]|null);
     }
 
     /** Represents a ResourceListResponse. */
@@ -9252,7 +9315,7 @@ export namespace api {
         constructor(properties?: api.IResourceListResponse);
 
         /** ResourceListResponse resources. */
-        public resources: api.IResourceWithKey[];
+        public resources: api.IResourceGetResponse[];
 
         /**
          * Creates a new ResourceListResponse instance using the specified properties.
@@ -10900,8 +10963,8 @@ export namespace api {
     /** Properties of a DelegatedPostKeysRequest. */
     interface IDelegatedPostKeysRequest {
 
-        /** DelegatedPostKeysRequest DelegatedID */
-        DelegatedID?: (number|Long|null);
+        /** DelegatedPostKeysRequest delegatedID */
+        delegatedID?: (number|Long|null);
 
         /** DelegatedPostKeysRequest keys */
         keys?: (Uint8Array|null);
@@ -10916,8 +10979,8 @@ export namespace api {
          */
         constructor(properties?: api.IDelegatedPostKeysRequest);
 
-        /** DelegatedPostKeysRequest DelegatedID. */
-        public DelegatedID: (number|Long);
+        /** DelegatedPostKeysRequest delegatedID. */
+        public delegatedID: (number|Long);
 
         /** DelegatedPostKeysRequest keys. */
         public keys: Uint8Array;
@@ -11604,7 +11667,7 @@ export namespace api {
         identity?: (api.IIdentityFields|null);
 
         /** RegisterPostLinkTokenRequest encryption */
-        encryption?: (api.IIdentityEncryption|null);
+        encryption?: (api.IIdentityEncryptedKeySet|null);
     }
 
     /** Represents a RegisterPostLinkTokenRequest. */
@@ -11623,7 +11686,7 @@ export namespace api {
         public identity?: (api.IIdentityFields|null);
 
         /** RegisterPostLinkTokenRequest encryption. */
-        public encryption?: (api.IIdentityEncryption|null);
+        public encryption?: (api.IIdentityEncryptedKeySet|null);
 
         /**
          * Creates a new RegisterPostLinkTokenRequest instance using the specified properties.

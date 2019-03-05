@@ -36,7 +36,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var proto_1 = require("./proto");
-var IdentityAPI_1 = require("./IdentityAPI");
 exports.RegisterTokenStatus = proto_1.api.RegisterTokenStatus;
 var AdminAPI = /** @class */ (function () {
     function AdminAPI(session) {
@@ -91,30 +90,6 @@ var AdminAPI = /** @class */ (function () {
                             }).finish()
                         })];
                     case 1: return [2 /*return*/, _a.sent()];
-                }
-            });
-        });
-    };
-    /**
-     * Generate new keys for an identity.
-     * The identity will no longer be able access any things (resources, shared identities, ...) that have previously been shared with it.
-     * @param login The login of the identity to set the active status.
-     * @return(p) On success the promise will be resolved with void.
-     * On error the promise will be rejected with an {@link Error} with kind:
-     * - `IdentityNotFound` if `login` does not exists.
-     * - `IdentityNotAdmin` if the identity logged along the current session is not an admin.
-     * - `IdentityNotAdminDomain` if the identity logged along with the current session cannot adinistrate the domain of `login`.
-     */
-    AdminAPI.prototype.overwriteKeys = function (login, secret) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, new IdentityAPI_1.IdentityAPI(this.session).editSharingGraph(login, {
-                            overwriteKeys: { secret: secret }
-                        })];
-                    case 1:
-                        _a.sent();
-                        return [2 /*return*/];
                 }
             });
         });

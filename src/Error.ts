@@ -8,8 +8,8 @@ export enum SDKKind {
   BadResponse = -2,
   NetworkException = -3,
   SDKInternalError = -4,
-  BadSecret = -5,
   IdentitySignChainInvalid = -6,
+  IdentityInvalidKeySet = -9,
   ProtocolError = -7,
   DecryptFail = -8,
   InvalidServerChain = -10
@@ -31,13 +31,17 @@ export class Error {
     // var err = new global.Error();
     // console.log("stack", err.stack);
     this.name = "DataPepsError";
-    let kname = api.PepsErrorKind[properties.kind];
-    if (kname == null) {
-      kname = SDKKind[properties.kind];
-    }
-    this.message = "DataPepsError(" + kname + ")";
+    let kname = kindName(properties.kind);
     this.kind = properties.kind;
     this.payload = properties.payload;
     this.code = properties.code;
   }
+}
+
+export function kindName(kind: ErrorKind): string {
+  let kname = api.PepsErrorKind[kind];
+  if (kname == null) {
+    kname = SDKKind[kind];
+  }
+  return kname;
 }

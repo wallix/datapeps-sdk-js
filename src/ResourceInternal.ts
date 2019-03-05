@@ -3,14 +3,11 @@ import { Resource, ResourceType } from "./ResourceAPI";
 import { Uint8Tool, Base64 } from "./Tools";
 import { SDKKind, Error } from "./Error";
 import { api } from "./proto";
-import { Encryption, EncryptFuncs } from "./CryptoFuncs";
-import {
-  IdentityPublicKey,
-  IdentityAccessKind,
-  IdentityPublicKeyID
-} from "./IdentityAPI";
+import { Encryptor, CipherType } from "./Cryptor";
+import { IdentityPublicKey, IdentityPublicKeyID } from "./IdentityAPI";
 import { Session } from "./Session";
 import { ID } from "./ID";
+import { IdentityKeySet } from "./IdentityKeySet";
 
 export class ResourceBox<T> implements Resource<T> {
   id: ID;
@@ -87,7 +84,7 @@ export class ResourceBox<T> implements Resource<T> {
 
 export function createWithEncryption<T>(
   payload: T,
-  encryption: Encryption,
+  encryption: IdentityKeySet,
   kind: string,
   options?: { serialize?: ((payload: T) => Uint8Array) }
 ): {
@@ -99,23 +96,15 @@ export function createWithEncryption<T>(
     options.serialize != null
       ? options.serialize
       : (p: T) => Uint8Tool.encode(JSON.stringify(p));
-  let encryptionPK: IdentityPublicKey = {
-    login: null,
-    version: null,
-    sign: encryption.signEncrypted.publicKey,
-    box: encryption.boxEncrypted.publicKey
-  };
+  let encryptionPK: IdentityPublicKey = encryption.public();
   let keyPair = nacl.box.keyPair();
-  let cryptoSES = encryption.encrypt(api.ResourceType.SES);
+  let cryptoSES = encryption.encryptor(CipherType.NACL_SES);
   let sharer: api.IResourceShareEntry = {};
-  let sharerSKEncrypted = cryptoSES.encrypt(
-    encryptionPK.box,
-    keyPair.secretKey
-  );
+  let sharerSKEncrypted = cryptoSES.encrypt(encryptionPK, keyPair.secretKey);
   sharer.nonce = sharerSKEncrypted.nonce;
   sharer.encryptedKey = sharerSKEncrypted.message;
   let payloadEncrypted = cryptoSES.encrypt(
-    keyPair.publicKey,
+    { box: keyPair.publicKey },
     serialize(payload)
   );
   let body: api.IResourcePostRequest = {
@@ -137,78 +126,66 @@ export function createWithEncryption<T>(
 }
 
 export async function makeResourceFromResponse<T>(
-  { resource, encryptedKey, creator }: api.IResourceGetResponse,
-  typeOfKey: api.ResourceType,
+  { resource, owner, creator, encryptedKey }: api.IResourceGetResponse,
+  typeOfKey: CipherType,
   session: Session,
-  parse?,
-  assume?: string
+  parse?
 ) {
-  assume = assume != null ? assume : session.login;
-  // TODO(K1): as any
-  let { key } = await (session as any).getAssumeParams({
-    login: assume,
-    kind: IdentityAccessKind.READ
-  });
-  let secretKeyCipher = encryptedKey.pop();
-  // TODO(K1): as any
-  let accessKey = await (session as any).decryptCipherList(
-    api.ResourceType.SES,
-    encryptedKey,
-    key.boxKey
-  );
+  let ownerKeySet = await session.getIdentityKeySet(owner.login, owner.version);
   return await makeResource<T>(
-    { resource, encryptedKey: secretKeyCipher, creator: creator },
-    typeOfKey,
+    { resource, creator, encryptedKey },
     session,
-    accessKey,
+    ownerKeySet,
+    typeOfKey,
     parse
   );
 }
 
 export async function makeResource<T>(
-  { resource, encryptedKey, creator }: api.IResourceWithKey,
-  typeOfKey: api.ResourceType,
+  { resource, encryptedKey, creator }: api.IResourceGetResponse,
   session: Session,
-  boxKey?: Uint8Array,
-  parse?
+  ownerKeySet: IdentityKeySet,
+  typeOfKey: CipherType,
+  parse = u => JSON.parse(Uint8Tool.decode(u))
 ) {
   // TODO(K1): as any
-  let secretKey = await (session as any).decryptCipherList(
-    typeOfKey,
-    [encryptedKey],
-    boxKey
-  );
+  let [resolvedKey] = await (session as any).resolveCipherList([encryptedKey]);
+  let secretKey = ownerKeySet.decryptor(typeOfKey).decrypt(resolvedKey);
   let keypair = nacl.box.keyPair.fromSecretKey(secretKey);
-
-  parse = parse != null ? parse : u => JSON.parse(Uint8Tool.decode(u));
+  if (!Uint8Tool.equals(resource.publicKey, keypair.publicKey)) {
+    throw new Error({
+      kind: SDKKind.ProtocolError,
+      payload: {
+        message: "public key doesn't match secret key",
+        resource: resource.id
+      }
+    });
+  }
+  let creatorPk = await session.getPublicKey(creator as IdentityPublicKeyID);
   let payload =
     resource.payload.length == 0
       ? null
       : parse(
-          await (session as any).decryptCipherList(
-            api.ResourceType.SES,
-            [
-              {
-                message: resource.payload,
-                nonce: resource.nonce,
-                sign: creator
-              }
-            ],
+          IdentityKeySet.decryptor(
+            CipherType.NACL_SES,
             keypair.secretKey
-          )
+          ).decrypt({
+            message: resource.payload,
+            nonce: resource.nonce,
+            sign: creatorPk
+          })
         );
-  let rcreator = await session.getPublicKey(creator as IdentityPublicKeyID);
   return new ResourceBox<T>(
     resource.id,
     resource.kind,
     payload,
     keypair,
-    rcreator
+    creatorPk
   );
 }
 
 export async function makeResourcesFromResponses<T>(
-  resources: api.IResourceWithKey[],
+  resources: api.IResourceGetResponse[],
   session: Session,
   parse?
 ) {
@@ -234,32 +211,33 @@ export async function makeResourcesFromResponses<T>(
       });
     }
   });
-  let ownersKeys: api.IDelegatedKeys[] = [];
+  let ownersKeys: IdentityKeySet[] = [];
   for (let i = 0; i < owners.length; i++) {
     let owner = owners[i];
     if (owner.login != undefined && owner.version != undefined) {
-      let keys = await (session as any).fetchKeys(owner.login, owner.version);
-      ownersKeys.push(keys);
+      let keySet = await session.getIdentityKeySet(owner.login, owner.version);
+      ownersKeys.push(keySet);
     }
   }
   let resolvedResources: ResourceBox<T>[] = [];
   for (let i = 0; i < resources.length; i++) {
     let resource = resources[i];
-    let keys: api.IDelegatedKeys;
+    let keySet: IdentityKeySet;
     for (let j = 0; j < owners.length; j++) {
       if (
         resource.owner.login == owners[j].login &&
         resource.owner.version == owners[j].version
       ) {
-        keys = ownersKeys[j];
+        keySet = ownersKeys[j];
       }
     }
+    // TODO(K1): Rid keySet as any
     resolvedResources.push(
       await makeResource<T>(
         resource,
-        api.ResourceType.SES,
         session,
-        keys != undefined ? keys.boxKey : undefined,
+        keySet,
+        CipherType.NACL_SES,
         parse
       )
     );
@@ -270,7 +248,7 @@ export async function makeResourcesFromResponses<T>(
 export async function createBodyRequest<T>(
   payload: T,
   sharingGroup: string[],
-  crypto: EncryptFuncs,
+  crypto: Encryptor,
   session: Session,
   options?: { serialize?: ((payload: T) => Uint8Array) }
 ) {
@@ -287,7 +265,7 @@ export async function createBodyRequest<T>(
     session
   );
   let { message, nonce } = crypto.encrypt(
-    keypair.publicKey,
+    { box: keypair.publicKey },
     serialize(payload)
   );
   return {
@@ -304,12 +282,17 @@ export async function createBodyRequest<T>(
 export async function encryptForSharingGroup(
   text: Uint8Array,
   sharingGroup: string[],
-  crypto: EncryptFuncs,
+  crypto: Encryptor,
   session: Session
 ) {
   let publicKeys = await session.getLatestPublicKeys(sharingGroup);
-  return publicKeys.map(({ login, version, box, sign }) => {
-    let { message, nonce } = crypto.encrypt(box, text);
-    return { login, version, nonce, encryptedKey: message };
+  return publicKeys.map(pk => {
+    let { message, nonce } = crypto.encrypt(pk, text);
+    return {
+      login: pk.login,
+      version: pk.version,
+      nonce,
+      encryptedKey: message
+    };
   });
 }

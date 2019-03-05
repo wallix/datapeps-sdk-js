@@ -125,7 +125,7 @@ describe("admin.overwriteKeys", () => {
 
   it("After overwriteKeys Alice can still access to the delegate identity", async () => {
     let newPassword = "a new password";
-    await new AdminAPI(adminSession).overwriteKeys(alice.login, newPassword);
+    await new IdentityAPI(adminSession).overwriteKeys(alice.login, newPassword);
     aliceSession = await DataPeps.Session.login(alice.login, newPassword);
     aliceDelegateSession = await aliceSession.createSession(
       aliceDelegate.login

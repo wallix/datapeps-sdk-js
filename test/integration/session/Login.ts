@@ -60,7 +60,7 @@ describe("session.Login", () => {
   it("check alice can login after an administrator has overwrite her keys", async () => {
     aliceSecret = nacl.randomBytes(128);
     let adminSession = await Config.adminLogin();
-    await new AdminAPI(adminSession).overwriteKeys(alice.login, aliceSecret);
+    await new IdentityAPI(adminSession).overwriteKeys(alice.login, aliceSecret);
     aliceSession = await DataPeps.Session.login(alice.login, aliceSecret);
     checkAliceSession(aliceSession);
   });
@@ -100,7 +100,7 @@ describe("session.Login", () => {
       await DataPeps.Session.login(alice.login, new Uint8Array(1));
     } catch (err) {
       expect(err).instanceof(DataPeps.Error);
-      expect(err.kind).to.be.equals(DataPeps.SDKError.BadSecret);
+      expect(err.kind).to.be.equals(DataPeps.SDKError.IdentityInvalidKeySet);
       return;
     }
     throw new Error("login with a wrong password");

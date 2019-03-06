@@ -75,9 +75,18 @@ export declare class ApplicationAPI {
      * - `IdentityCannotAssumeOwnership` if the client does not have a right to read the configuration.
      * - `IdentityNotFound` if the identity `appID` doesn't exist.
      * - `AppliacationConfigNotFound` if the `appConfigID` does not correspond to any existing application configuration.
-     * - `BadRequest` if the `appConfigID` is malformatted.
      */
     getConfig(appConfigID: ApplicationAPI.ApplicationConfigID): Promise<ApplicationAPI.ConfigWithMetadata>;
+    /**
+     * Get the most recent configuration of an application
+     * @param appConfigID the app ID.
+     * @return(p) On success the promise will be resolved with an ApplicationAPI.ConfigWithContext object.
+     * On error the promise will be rejected with an {@link Error} with kind:
+     * - `IdentityCannotAssumeOwnership` if the client does not have a right to read the configuration.
+     * - `IdentityNotFound` if the identity `appID` doesn't exist.
+     */
+    getLastestConfig(appID: string): Promise<ApplicationAPI.ConfigWithMetadata>;
+    private decodeConfigWithMetadata(r);
     /**
      * Get usage overview of an application
      * @param appID the app ID

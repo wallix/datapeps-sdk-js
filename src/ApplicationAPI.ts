@@ -138,7 +138,6 @@ export class ApplicationAPI {
    * - `IdentityCannotAssumeOwnership` if the client does not have a right to read the configuration.
    * - `IdentityNotFound` if the identity `appID` doesn't exist.
    * - `AppliacationConfigNotFound` if the `appConfigID` does not correspond to any existing application configuration.
-   * - `BadRequest` if the `appConfigID` is malformatted.
    */
   async getConfig(
     appConfigID: ApplicationAPI.ApplicationConfigID
@@ -160,30 +159,63 @@ export class ApplicationAPI {
           version: appConfigID.version
         }).finish(),
         response: r => {
-          let resp = api.IdentityGetConfigurationResponse.decode(r);
-          return {
-            meta: {
-              applicationConfigID: {
-                appID: resp.metadata.configID.appID,
-                version: resp.metadata.configID.version
-              },
-              creator: {
-                login: resp.metadata.creator.login,
-                version: resp.metadata.creator.version
-              },
-              created: timestampToDate(resp.metadata.created)
-            },
-            payload: {
-              jwt: {
-                key: resp.config.jwt.key,
-                signAlgorithm: resp.config.jwt.signAlgorithm.valueOf(),
-                claimForLogin: resp.config.jwt.claimForLogin
-              }
-            }
-          };
+          return this.decodeConfigWithMetadata(r);
         }
       }
     );
+  }
+
+  /**
+   * Get the most recent configuration of an application
+   * @param appConfigID the app ID.
+   * @return(p) On success the promise will be resolved with an ApplicationAPI.ConfigWithContext object.
+   * On error the promise will be rejected with an {@link Error} with kind:
+   * - `IdentityCannotAssumeOwnership` if the client does not have a right to read the configuration.
+   * - `IdentityNotFound` if the identity `appID` doesn't exist.
+   */
+  async getLastestConfig(
+    appID: string
+  ): Promise<ApplicationAPI.ConfigWithMetadata> {
+    return await this.session.doProtoRequest<ApplicationAPI.ConfigWithMetadata>(
+      {
+        method: "GET",
+        assume: {
+          login: appID,
+          kind: api.IdentityAccessKeyKind.READ
+        },
+        expectedCode: 200,
+        path: `/api/v4/application/${encodeURI(appID)}/latest-configuration`,
+        response: r => {
+          return this.decodeConfigWithMetadata(r);
+        }
+      }
+    );
+  }
+
+  private decodeConfigWithMetadata(
+    r: Uint8Array
+  ): ApplicationAPI.ConfigWithMetadata {
+    let resp = api.IdentityGetConfigurationResponse.decode(r);
+    return {
+      meta: {
+        applicationConfigID: {
+          appID: resp.metadata.configID.appID,
+          version: resp.metadata.configID.version
+        },
+        creator: {
+          login: resp.metadata.creator.login,
+          version: resp.metadata.creator.version
+        },
+        created: timestampToDate(resp.metadata.created)
+      },
+      payload: {
+        jwt: {
+          key: resp.config.jwt.key,
+          signAlgorithm: resp.config.jwt.signAlgorithm.valueOf(),
+          claimForLogin: resp.config.jwt.claimForLogin
+        }
+      }
+    };
   }
 
   /**

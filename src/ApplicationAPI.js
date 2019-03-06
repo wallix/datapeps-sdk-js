@@ -120,10 +120,10 @@ var ApplicationAPI = /** @class */ (function () {
      * - `IdentityCannotAssumeOwnership` if the client does not have a right to read the configuration.
      * - `IdentityNotFound` if the identity `appID` doesn't exist.
      * - `AppliacationConfigNotFound` if the `appConfigID` does not correspond to any existing application configuration.
-     * - `BadRequest` if the `appConfigID` is malformatted.
      */
     ApplicationAPI.prototype.getConfig = function (appConfigID) {
         return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -141,33 +141,66 @@ var ApplicationAPI = /** @class */ (function () {
                                     version: appConfigID.version
                                 }).finish(),
                                 response: function (r) {
-                                    var resp = proto_1.api.IdentityGetConfigurationResponse.decode(r);
-                                    return {
-                                        meta: {
-                                            applicationConfigID: {
-                                                appID: resp.metadata.configID.appID,
-                                                version: resp.metadata.configID.version
-                                            },
-                                            creator: {
-                                                login: resp.metadata.creator.login,
-                                                version: resp.metadata.creator.version
-                                            },
-                                            created: Tools_1.timestampToDate(resp.metadata.created)
-                                        },
-                                        payload: {
-                                            jwt: {
-                                                key: resp.config.jwt.key,
-                                                signAlgorithm: resp.config.jwt.signAlgorithm.valueOf(),
-                                                claimForLogin: resp.config.jwt.claimForLogin
-                                            }
-                                        }
-                                    };
+                                    return _this.decodeConfigWithMetadata(r);
                                 }
                             })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });
         });
+    };
+    /**
+     * Get the most recent configuration of an application
+     * @param appConfigID the app ID.
+     * @return(p) On success the promise will be resolved with an ApplicationAPI.ConfigWithContext object.
+     * On error the promise will be rejected with an {@link Error} with kind:
+     * - `IdentityCannotAssumeOwnership` if the client does not have a right to read the configuration.
+     * - `IdentityNotFound` if the identity `appID` doesn't exist.
+     */
+    ApplicationAPI.prototype.getLastestConfig = function (appID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.session.doProtoRequest({
+                            method: "GET",
+                            assume: {
+                                login: appID,
+                                kind: proto_1.api.IdentityAccessKeyKind.READ
+                            },
+                            expectedCode: 200,
+                            path: "/api/v4/application/" + encodeURI(appID) + "/latest-configuration",
+                            response: function (r) {
+                                return _this.decodeConfigWithMetadata(r);
+                            }
+                        })];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
+    ApplicationAPI.prototype.decodeConfigWithMetadata = function (r) {
+        var resp = proto_1.api.IdentityGetConfigurationResponse.decode(r);
+        return {
+            meta: {
+                applicationConfigID: {
+                    appID: resp.metadata.configID.appID,
+                    version: resp.metadata.configID.version
+                },
+                creator: {
+                    login: resp.metadata.creator.login,
+                    version: resp.metadata.creator.version
+                },
+                created: Tools_1.timestampToDate(resp.metadata.created)
+            },
+            payload: {
+                jwt: {
+                    key: resp.config.jwt.key,
+                    signAlgorithm: resp.config.jwt.signAlgorithm.valueOf(),
+                    claimForLogin: resp.config.jwt.claimForLogin
+                }
+            }
+        };
     };
     /**
      * Get usage overview of an application

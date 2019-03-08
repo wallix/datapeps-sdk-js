@@ -85,7 +85,7 @@ export declare class ApplicationAPI {
      * - `IdentityCannotAssumeOwnership` if the client does not have a right to read the configuration.
      * - `IdentityNotFound` if the identity `appID` doesn't exist.
      */
-    getLastestConfig(appID: string): Promise<ApplicationAPI.ConfigWithMetadata>;
+    getLatestConfig(appID: string): Promise<ApplicationAPI.ConfigWithMetadata>;
     private decodeConfigWithMetadata(r);
     /**
      * Get usage overview of an application

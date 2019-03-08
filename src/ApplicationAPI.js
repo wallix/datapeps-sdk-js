@@ -157,7 +157,7 @@ var ApplicationAPI = /** @class */ (function () {
      * - `IdentityCannotAssumeOwnership` if the client does not have a right to read the configuration.
      * - `IdentityNotFound` if the identity `appID` doesn't exist.
      */
-    ApplicationAPI.prototype.getLastestConfig = function (appID) {
+    ApplicationAPI.prototype.getLatestConfig = function (appID) {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
             return __generator(this, function (_a) {

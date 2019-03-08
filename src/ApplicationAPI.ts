@@ -173,7 +173,7 @@ export class ApplicationAPI {
    * - `IdentityCannotAssumeOwnership` if the client does not have a right to read the configuration.
    * - `IdentityNotFound` if the identity `appID` doesn't exist.
    */
-  async getLastestConfig(
+  async getLatestConfig(
     appID: string
   ): Promise<ApplicationAPI.ConfigWithMetadata> {
     return await this.session.doProtoRequest<ApplicationAPI.ConfigWithMetadata>(

@@ -53,7 +53,7 @@ describe("applicationAPI.getLatestConfig.JWT", () => {
         appID,
         aliceDataPepsLogin
       );
-      let appLatestConfig = await devApi.getLastestConfig(appID);
+      let appLatestConfig = await devApi.getLatestConfig(appID);
       expect(appLatestConfig.meta.applicationConfigID).to.deep.equals(
         identityAuth.applicationConfigID
       );
@@ -72,7 +72,7 @@ describe("applicationAPI.getLatestConfig.JWT", () => {
         config.signAlgorithm
       );
       let identityAuth = await devApi.getIdentityAuth(appID, bobDataPepsLogin);
-      let appLatestConfig = await devApi.getLastestConfig(appID);
+      let appLatestConfig = await devApi.getLatestConfig(appID);
       expect(appLatestConfig.meta.applicationConfigID).to.deep.equals(
         identityAuth.applicationConfigID
       );
@@ -86,7 +86,7 @@ describe("applicationAPI.getLatestConfig.JWT", () => {
         config.signAlgorithm
       );
       identityAuth = await devApi.getIdentityAuth(appID, charlieDataPepsLogin);
-      let newAppLatestConfig = await devApi.getLastestConfig(appID);
+      let newAppLatestConfig = await devApi.getLatestConfig(appID);
       expect(newAppLatestConfig.meta.applicationConfigID).to.deep.equals(
         identityAuth.applicationConfigID
       );
@@ -103,20 +103,20 @@ describe("applicationAPI.getLatestConfig.JWT", () => {
   inexistantAppIDs.map(appID =>
     itError(
       `fails when a dev tries to get the latest configuration using an appID that does not exist`,
-      () => devApi.getLastestConfig(appID),
+      () => devApi.getLatestConfig(appID),
       ServerError.IdentityNotFound
     )
   );
 
   itError(
     `fails when a developer tries to get the latest configuration of a non-configured identity`,
-    () => devApi.getLastestConfig(ctx.nonConfiguredDev.app.identity.login),
+    () => devApi.getLatestConfig(ctx.nonConfiguredDev.app.identity.login),
     ServerError.IdentityCannotAssumeOwnership
   );
 
   itError(
     `a developer cannot get the latest configuration of another's developers app`,
-    () => otherDevApi.getLastestConfig(ctx.dev.app.identity.login),
+    () => otherDevApi.getLatestConfig(ctx.dev.app.identity.login),
     ServerError.IdentityCannotAssumeOwnership
   );
 

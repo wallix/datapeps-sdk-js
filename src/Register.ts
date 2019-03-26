@@ -30,7 +30,7 @@ export async function register(
   identity: IdentityFields,
   secret: string | Uint8Array
 ): Promise<void> {
-  return await _register("/api/v4/register", identity, secret, r =>
+  return await _register("/api/v1/register", identity, secret, r =>
     api.IdentityRegisterRequest.encode(r).finish()
   );
 }
@@ -52,7 +52,7 @@ export async function registerWithToken(
 ): Promise<void> {
   let btoken = token instanceof Uint8Array ? Base64.encode(token) : token;
   return await _register(
-    "/api/v4/register/link/" + encodeURIComponent(btoken),
+    "/api/v1/register/link/" + encodeURIComponent(btoken),
     identity,
     secret,
     r => api.RegisterPostLinkTokenRequest.encode(r).finish()
@@ -99,7 +99,7 @@ export async function sendRegisterLink(email: string): Promise<void> {
   await HTTP.client.doRequest<void>({
     method: "POST",
     expectedCode: 201,
-    path: "/api/v4/register/link",
+    path: "/api/v1/register/link",
     body: api.RegisterLinkRequest.encode({
       email
     }).finish(),

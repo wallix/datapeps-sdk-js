@@ -119,7 +119,7 @@ export class ApplicationAPI {
       method: "PUT",
       assume: { login: appID, kind: api.IdentityAccessKeyKind.WRITE },
       expectedCode: 201,
-      path: `/api/v4/identity/${encodeURI(appID)}/configure-as-application`,
+      path: `/api/v1/identity/${encodeURI(appID)}/configureAsApplication`,
       body: api.IdentityConfigurationAsApplicationRequest.encode({
         Login: appID,
         config: c
@@ -152,7 +152,7 @@ export class ApplicationAPI {
           kind: api.IdentityAccessKeyKind.READ
         },
         expectedCode: 200,
-        path: `/api/v4/application/${encodeURI(
+        path: `/api/v1/application/${encodeURI(
           appConfigID.appID
         )}/configuration`,
         body: api.ApplicationConfigID.encode({
@@ -184,7 +184,7 @@ export class ApplicationAPI {
           kind: api.IdentityAccessKeyKind.READ
         },
         expectedCode: 200,
-        path: `/api/v4/application/${encodeURI(appID)}/latest-configuration`,
+        path: `/api/v1/application/${encodeURI(appID)}/latestConfiguration`,
         response: r => {
           return this.decodeConfigWithMetadata(r);
         }
@@ -243,7 +243,7 @@ export class ApplicationAPI {
       method: "POST",
       assume: { login: appID, kind: api.IdentityAccessKeyKind.READ },
       expectedCode: 200,
-      path: `/api/v4/application/${encodeURI(appID)}/usage-overview`,
+      path: `/api/v1/application/${encodeURI(appID)}/usageOverview`,
       body: api.ApplicationUsageOverviewRequest.encode({
         Login: appID,
         ...options
@@ -304,7 +304,7 @@ export class ApplicationAPI {
     return await this.session.doProtoRequest({
       method: "POST",
       expectedCode: 200,
-      path: `/api/v4/application/${encodeURI(appID)}/identities/list`,
+      path: `/api/v1/application/${encodeURI(appID)}/identities/list`,
       assume: { login: appID, kind: api.IdentityAccessKeyKind.READ },
       body: api.ApplicationListIdentitiesRequest.encode({
         options: {
@@ -352,7 +352,7 @@ export class ApplicationAPI {
     return await this.session.doProtoRequest({
       method: "GET",
       expectedCode: 200,
-      path: `/api/v4/application/identity/${encodeURI(dataPepsLogin)}/auth`,
+      path: `/api/v1/application/identity/${encodeURI(dataPepsLogin)}/auth`,
       assume: {
         login: appID,
         kind: api.IdentityAccessKeyKind.READ
@@ -408,7 +408,7 @@ export class ApplicationAPI {
   ): Promise<ApplicationAPI.IdentitySession[]> {
     since = since == null ? 0 : since;
     return await this.session.doProtoRequest<ApplicationAPI.IdentitySession[]>({
-      path: `/api/v4/application/${encodeURI(appID)}/identities-session/list`,
+      path: `/api/v1/application/${encodeURI(appID)}/identitiesSession/list`,
       method: "POST",
       expectedCode: 200,
       assume: { login: appID, kind: api.IdentityAccessKeyKind.READ },

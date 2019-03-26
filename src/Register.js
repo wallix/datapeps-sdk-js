@@ -60,7 +60,7 @@ function register(identity, secret) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, _register("/api/v4/register", identity, secret, function (r) {
+                case 0: return [4 /*yield*/, _register("/api/v1/register", identity, secret, function (r) {
                         return proto_1.api.IdentityRegisterRequest.encode(r).finish();
                     })];
                 case 1: return [2 /*return*/, _a.sent()];
@@ -86,7 +86,7 @@ function registerWithToken(token, identity, secret) {
             switch (_a.label) {
                 case 0:
                     btoken = token instanceof Uint8Array ? Tools_1.Base64.encode(token) : token;
-                    return [4 /*yield*/, _register("/api/v4/register/link/" + encodeURIComponent(btoken), identity, secret, function (r) { return proto_1.api.RegisterPostLinkTokenRequest.encode(r).finish(); })];
+                    return [4 /*yield*/, _register("/api/v1/register/link/" + encodeURIComponent(btoken), identity, secret, function (r) { return proto_1.api.RegisterPostLinkTokenRequest.encode(r).finish(); })];
                 case 1: return [2 /*return*/, _a.sent()];
             }
         });
@@ -132,7 +132,7 @@ function sendRegisterLink(email) {
                 case 0: return [4 /*yield*/, HTTP.client.doRequest({
                         method: "POST",
                         expectedCode: 201,
-                        path: "/api/v4/register/link",
+                        path: "/api/v1/register/link",
                         body: proto_1.api.RegisterLinkRequest.encode({
                             email: email
                         }).finish(),

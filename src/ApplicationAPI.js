@@ -98,7 +98,7 @@ var ApplicationAPI = /** @class */ (function () {
                                 method: "PUT",
                                 assume: { login: appID, kind: proto_1.api.IdentityAccessKeyKind.WRITE },
                                 expectedCode: 201,
-                                path: "/api/v4/identity/" + encodeURI(appID) + "/configure-as-application",
+                                path: "/api/v1/identity/" + encodeURI(appID) + "/configureAsApplication",
                                 body: proto_1.api.IdentityConfigurationAsApplicationRequest.encode({
                                     Login: appID,
                                     config: c
@@ -136,7 +136,7 @@ var ApplicationAPI = /** @class */ (function () {
                                     kind: proto_1.api.IdentityAccessKeyKind.READ
                                 },
                                 expectedCode: 200,
-                                path: "/api/v4/application/" + encodeURI(appConfigID.appID) + "/configuration",
+                                path: "/api/v1/application/" + encodeURI(appConfigID.appID) + "/configuration",
                                 body: proto_1.api.ApplicationConfigID.encode({
                                     version: appConfigID.version
                                 }).finish(),
@@ -169,7 +169,7 @@ var ApplicationAPI = /** @class */ (function () {
                                 kind: proto_1.api.IdentityAccessKeyKind.READ
                             },
                             expectedCode: 200,
-                            path: "/api/v4/application/" + encodeURI(appID) + "/latest-configuration",
+                            path: "/api/v1/application/" + encodeURI(appID) + "/latestConfiguration",
                             response: function (r) {
                                 return _this.decodeConfigWithMetadata(r);
                             }
@@ -224,7 +224,7 @@ var ApplicationAPI = /** @class */ (function () {
                                 method: "POST",
                                 assume: { login: appID, kind: proto_1.api.IdentityAccessKeyKind.READ },
                                 expectedCode: 200,
-                                path: "/api/v4/application/" + encodeURI(appID) + "/usage-overview",
+                                path: "/api/v1/application/" + encodeURI(appID) + "/usageOverview",
                                 body: proto_1.api.ApplicationUsageOverviewRequest.encode(__assign({ Login: appID }, options)).finish(),
                                 response: function (r) {
                                     return proto_1.api.ApplicationUsageOverviewResponse.decode(r).overview.map(function (_a) {
@@ -270,7 +270,7 @@ var ApplicationAPI = /** @class */ (function () {
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "POST",
                                 expectedCode: 200,
-                                path: "/api/v4/application/" + encodeURI(appID) + "/identities/list",
+                                path: "/api/v1/application/" + encodeURI(appID) + "/identities/list",
                                 assume: { login: appID, kind: proto_1.api.IdentityAccessKeyKind.READ },
                                 body: proto_1.api.ApplicationListIdentitiesRequest.encode({
                                     options: {
@@ -318,7 +318,7 @@ var ApplicationAPI = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "GET",
                             expectedCode: 200,
-                            path: "/api/v4/application/identity/" + encodeURI(dataPepsLogin) + "/auth",
+                            path: "/api/v1/application/identity/" + encodeURI(dataPepsLogin) + "/auth",
                             assume: {
                                 login: appID,
                                 kind: proto_1.api.IdentityAccessKeyKind.READ
@@ -374,7 +374,7 @@ var ApplicationAPI = /** @class */ (function () {
                     case 0:
                         since = since == null ? 0 : since;
                         return [4 /*yield*/, this.session.doProtoRequest({
-                                path: "/api/v4/application/" + encodeURI(appID) + "/identities-session/list",
+                                path: "/api/v1/application/" + encodeURI(appID) + "/identitiesSession/list",
                                 method: "POST",
                                 expectedCode: 200,
                                 assume: { login: appID, kind: proto_1.api.IdentityAccessKeyKind.READ },

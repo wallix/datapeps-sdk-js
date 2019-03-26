@@ -69,7 +69,7 @@ export class DelegatedAccessAPI {
     let { sign, resource } = await this.session.doProtoRequest({
       method: "GET",
       expectedCode: 200,
-      path: "/api/v4/delegatedAccess/" + requestId.toString(),
+      path: "/api/v1/delegatedAccess/" + requestId.toString(),
       response: api.DelegatedGetResponse.decode
     });
     let r = await makeResourceFromResponse<null>(
@@ -109,7 +109,7 @@ export class DelegatedAccessAPI {
         await this.session.doProtoRequest({
           method: "PUT",
           expectedCode: 200,
-          path: "/api/v4/delegatedAccess/" + this.id.toString() + "/keys",
+          path: "/api/v1/delegatedAccess/" + this.id.toString() + "/keys",
           body: api.DelegatedPostKeysRequest.encode({
             keys: this.resource.encrypt(
               api.DelegatedKeys.encode(keySet.toDelegatedKeys()).finish()
@@ -135,7 +135,7 @@ export class DelegatedAccessAPI {
     let { accesses } = await this.session.doProtoRequest({
       method: "GET",
       expectedCode: 200,
-      path: "/api/v4/delegatedAccesses",
+      path: "/api/v1/delegatedAccesses",
       response: api.DelegatedAccessListResponse.decode,
       assume: { login, kind: api.IdentityAccessKeyKind.READ },
       params: options
@@ -224,7 +224,7 @@ export namespace DelegatedAccess {
     } = await client.doRequest({
       method: "POST",
       expectedCode: 201,
-      path: "/api/v4/delegatedAccess",
+      path: "/api/v1/delegatedAccess",
       body: api.DelegatedPostRequest.encode({
         publicKey: keypair.publicKey,
         sign: signResult.sign,
@@ -276,7 +276,7 @@ export namespace DelegatedAccess {
         } = await this.client.doRequest({
           method: "GET",
           expectedCode: 200,
-          path: "/api/v4/delegatedAccess/" + this.id.toString() + "/keys",
+          path: "/api/v1/delegatedAccess/" + this.id.toString() + "/keys",
           response: api.DelegatedGetKeysResponse.decode,
           headers: new Headers({ "content-type": "application/x-protobuf" })
         });

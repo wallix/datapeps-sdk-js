@@ -150,7 +150,7 @@ export class IdentityAPI {
     } = await client.doRequest({
       method: "POST",
       expectedCode: 200,
-      path: "/api/v4/identities/latestPublicKeys",
+      path: "/api/v1/identities/latestPublicKeys",
       body: api.IdentityGetLatestPublicKeysRequest.encode({ logins }).finish(),
       response: api.IdentityGetLatestPublicKeysResponse.decode,
       headers: new Headers({
@@ -183,7 +183,7 @@ export class IdentityAPI {
     return await this.session.doProtoRequest({
       method: "GET",
       expectedCode: 200,
-      path: "/api/v4/identity/" + encodeURI(login),
+      path: "/api/v1/identity/" + encodeURI(login),
       response: r => IdentitySerializer.deserialize(api.Identity.decode(r))
     });
   }
@@ -220,7 +220,7 @@ export class IdentityAPI {
     return await this.session.doProtoRequest({
       method: "POST",
       expectedCode: 200,
-      path: "/api/v4/identities/list",
+      path: "/api/v1/identities/list",
       body: api.IdentityListRequest.encode({
         options: {
           offset: options.offset,
@@ -276,7 +276,7 @@ export class IdentityAPI {
     return await this.session.doProtoRequest<void>({
       method: "POST",
       expectedCode: 201,
-      path: "/api/v4/identity",
+      path: "/api/v1/identity",
       body: api.IdentityCreateRequest.encode({
         identity,
         sharingGroup,
@@ -303,7 +303,7 @@ export class IdentityAPI {
     return await this.session.doProtoRequest<void>({
       method: "PUT",
       expectedCode: 200,
-      path: "/api/v4/identity/" + encodeURI(identity.login),
+      path: "/api/v1/identity/" + encodeURI(identity.login),
       body: api.IdentityFields.encode(identity).finish()
     });
   }
@@ -325,7 +325,7 @@ export class IdentityAPI {
     let { encryption, sharingGroup } = await this.session.doProtoRequest({
       method: "GET",
       expectedCode: 200,
-      path: "/api/v4/identity/" + encodeURIComponent(login) + "/keysToRenew",
+      path: "/api/v1/identity/" + encodeURIComponent(login) + "/keysToRenew",
       response: api.IdentityGetKeysToRenewResponse.decode,
       assume
     });
@@ -360,7 +360,7 @@ export class IdentityAPI {
     await this.session.doProtoRequest({
       method: "POST",
       expectedCode: 201,
-      path: "/api/v4/identity/" + encodeURIComponent(login) + "/keysToRenew",
+      path: "/api/v1/identity/" + encodeURIComponent(login) + "/keysToRenew",
       body: api.IdentityPostKeysToRenewRequest.encode({
         encryption: nextEncryptedKeySet,
         sharingGroup: nextSharingGroup,
@@ -383,7 +383,7 @@ export class IdentityAPI {
     return await this.session.doProtoRequest({
       method: "GET",
       expectedCode: 200,
-      path: "/api/v4/identity/" + encodeURIComponent(login) + "/sharingGroup",
+      path: "/api/v1/identity/" + encodeURIComponent(login) + "/sharingGroup",
       response: r =>
         api.IdentityGetSharingGroupResponse.decode(r)
           .sharingGroup as IdentityShareLink[]
@@ -411,7 +411,7 @@ export class IdentityAPI {
     return await this.session.doProtoRequest<void>({
       method: "PATCH",
       expectedCode: 201,
-      path: "/api/v4/identity/" + encodeURI(login) + "/sharingGroup",
+      path: "/api/v1/identity/" + encodeURI(login) + "/sharingGroup",
       assume: { login, kind: api.IdentityAccessKeyKind.WRITE },
       body: api.IdentityShareRequest.encode({
         version: keySet.id.version,
@@ -506,7 +506,7 @@ export class IdentityAPI {
     return await this.session.doProtoRequest<void>({
       method: "POST",
       expectedCode: 201,
-      path: "/api/v4/identity/" + encodeURIComponent(login) + "/sharingGraph",
+      path: "/api/v1/identity/" + encodeURIComponent(login) + "/sharingGraph",
       assume: { login, kind: api.IdentityAccessKeyKind.WRITE },
       body: api.IdentityPostSharingGraphRequest.encode({
         graph: encryptedGraph
@@ -607,7 +607,7 @@ export class IdentityAPI {
     return await this.session.doProtoRequest<void>({
       method: "POST",
       expectedCode: 201,
-      path: "/api/v4/identity/" + encodeURIComponent(login) + "/sharingGraph",
+      path: "/api/v1/identity/" + encodeURIComponent(login) + "/sharingGraph",
       body: api.IdentityPostSharingGraphRequest.encode({
         graph: encryptedGraph
       }).finish()
@@ -626,7 +626,7 @@ export class IdentityAPI {
     return await this.session.doProtoRequest({
       method: "GET",
       expectedCode: 200,
-      path: "/api/v4/identity/" + encodeURIComponent(login) + "/accessGroup",
+      path: "/api/v1/identity/" + encodeURIComponent(login) + "/accessGroup",
       response: r =>
         api.IdentityGetAccessGroupResponse.decode(r)
           .accessGroup as IdentityShareLink[]
@@ -645,7 +645,7 @@ export class IdentityAPI {
     let { chains } = await this.session.doProtoRequest({
       method: "POST",
       expectedCode: 200,
-      path: "/api/v4/identities/latestPublicChains",
+      path: "/api/v1/identities/latestPublicChains",
       body: api.IdentityGetLatestPublicChainsRequest.encode({
         ids: [{ login, since: 0 }]
       }).finish(),
@@ -689,7 +689,7 @@ export class IdentityAPI {
     return await this.session.doProtoRequest({
       method: "GET",
       expectedCode: 200,
-      path: "/api/v4/identity/" + encodeURI(login) + "/lockedVersions",
+      path: "/api/v1/identity/" + encodeURI(login) + "/lockedVersions",
       params: options,
       assume:
         login == this.session.login
@@ -779,7 +779,7 @@ export class IdentityAPI {
           login == this.session.login
             ? null
             : { login, kind: api.IdentityAccessKeyKind.WRITE },
-        path: "/api/v4/identity/" + encodeURI(login) + "/unlockVersions",
+        path: "/api/v1/identity/" + encodeURI(login) + "/unlockVersions",
         body: api.UnlockVersionsRequest.encode({
           unlockedVersions: resolvedChallengesWithEncryptedKeys
         }).finish(),
@@ -798,7 +798,7 @@ export class IdentityAPI {
     let { graph } = await this.session.doProtoRequest({
       method: "GET",
       expectedCode: 200,
-      path: "/api/v4/identity/" + encodeURIComponent(login) + "/sharingGraph",
+      path: "/api/v1/identity/" + encodeURIComponent(login) + "/sharingGraph",
       response: api.IdentityGetSharingGraphResponse.decode
     });
     // Return the graph with IdentityPublicKeyID
@@ -827,7 +827,7 @@ export class IdentityAPI {
     let { graph } = await this.session.doProtoRequest({
       method: "GET",
       expectedCode: 200,
-      path: "/api/v4/identity/" + encodeURIComponent(login) + "/sharingGraph",
+      path: "/api/v1/identity/" + encodeURIComponent(login) + "/sharingGraph",
       assume,
       response: api.IdentityGetSharingGraphResponse.decode
     });

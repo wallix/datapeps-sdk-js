@@ -26,7 +26,7 @@ export class AdminAPI {
     return await this.session.doProtoRequest<void>({
       method: "POST",
       expectedCode: 200,
-      path: "/api/v4/identity/" + encodeURIComponent(login) + "/promote",
+      path: "/api/v1/identity/" + encodeURIComponent(login) + "/promote",
       body: api.IdentityPromoteRequest.encode({
         admin
       }).finish()
@@ -46,7 +46,7 @@ export class AdminAPI {
     return await this.session.doProtoRequest<void>({
       method: "POST",
       expectedCode: 200,
-      path: "/api/v4/identity/" + encodeURI(login) + "/active",
+      path: "/api/v1/identity/" + encodeURI(login) + "/active",
       body: api.IdentityToggleActiveStatusRequest.encode({
         login,
         active
@@ -68,7 +68,7 @@ export class AdminAPI {
     let { links } = await this.session.doProtoRequest({
       method: "GET",
       expectedCode: 200,
-      path: "/api/v4/register/links",
+      path: "/api/v1/register/links",
       params: options,
       response: api.LinksGetResponse.decode
     });

@@ -84,7 +84,7 @@ var Session;
                     case 0: return [4 /*yield*/, client.doRequest({
                             method: "POST",
                             expectedCode: 201,
-                            path: "/api/v4/session/challenge/create",
+                            path: "/api/v1/session/challenge/create",
                             body: proto_1.api.SessionCreateChallengeRequest.encode({
                                 login: login,
                                 saltKind: options.saltKind
@@ -100,7 +100,7 @@ var Session;
                         return [4 /*yield*/, client.doRequest({
                                 method: "POST",
                                 expectedCode: 200,
-                                path: "/api/v4/session/challenge/resolve",
+                                path: "/api/v1/session/challenge/resolve",
                                 body: proto_1.api.SessionResolveChallengeRequest.encode({
                                     token: createResponse.token,
                                     salt: createResponse.salt,
@@ -145,7 +145,7 @@ var SessionImpl = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.doProtoRequest({
                             method: "PUT",
                             expectedCode: 200,
-                            path: "/api/v4/session/close"
+                            path: "/api/v1/session/close"
                         })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
@@ -202,7 +202,7 @@ var SessionImpl = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.doProtoRequest({
                             method: "POST",
                             expectedCode: 200,
-                            path: "/api/v4/identities/latestPublicChains",
+                            path: "/api/v1/identities/latestPublicChains",
                             body: proto_1.api.IdentityGetLatestPublicChainsRequest.encode({
                                 ids: logins.map(function (login) {
                                     var pk = _this.pkCache.latest(login);
@@ -258,7 +258,7 @@ var SessionImpl = /** @class */ (function () {
                         return [4 /*yield*/, this.doProtoRequest({
                                 method: "POST",
                                 expectedCode: 200,
-                                path: "/api/v4/identities/publicChains",
+                                path: "/api/v1/identities/publicChains",
                                 body: proto_1.api.IdentityGetPublicChainsRequest.encode({
                                     ids: Object.keys(requestIds).map(function (login) {
                                         var pk = _this.pkCache.latest(login);
@@ -534,7 +534,7 @@ var SessionImpl = /** @class */ (function () {
         return this.doProtoRequest({
             method: "PUT",
             expectedCode: 200,
-            path: "/api/v4/session/unStale",
+            path: "/api/v1/session/unStale",
             response: proto_1.api.SessionUnStaleResponse.decode
         }).then(function (_a) {
             var encryption = _a.encryption;
@@ -595,7 +595,7 @@ var SessionImpl = /** @class */ (function () {
                         }
                         return [4 /*yield*/, this.doProtoRequest({
                                 method: "POST",
-                                path: "/api/v4/identity/" + encodeURI(login) + "/keySet",
+                                path: "/api/v1/identity/" + encodeURI(login) + "/keySet",
                                 expectedCode: 200,
                                 body: proto_1.api.IdentityGetKeySetRequest.encode({ version: version }).finish(),
                                 response: proto_1.api.IdentityGetKeySetResponse.decode

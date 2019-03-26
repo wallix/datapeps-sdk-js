@@ -90,7 +90,7 @@ export namespace Session {
     let { body: createResponse } = await client.doRequest({
       method: "POST",
       expectedCode: 201,
-      path: "/api/v4/session/challenge/create",
+      path: "/api/v1/session/challenge/create",
       body: api.SessionCreateChallengeRequest.encode({
         login: login,
         saltKind: options.saltKind
@@ -107,7 +107,7 @@ export namespace Session {
     let { body: resolveResponse } = await client.doRequest({
       method: "POST",
       expectedCode: 200,
-      path: "/api/v4/session/challenge/resolve",
+      path: "/api/v1/session/challenge/resolve",
       body: api.SessionResolveChallengeRequest.encode({
         token: createResponse.token,
         salt: createResponse.salt,
@@ -280,7 +280,7 @@ class SessionImpl implements Session {
     return await this.doProtoRequest<void>({
       method: "PUT",
       expectedCode: 200,
-      path: "/api/v4/session/close"
+      path: "/api/v1/session/close"
     });
   }
 
@@ -312,7 +312,7 @@ class SessionImpl implements Session {
     let { chains } = await this.doProtoRequest({
       method: "POST",
       expectedCode: 200,
-      path: "/api/v4/identities/latestPublicChains",
+      path: "/api/v1/identities/latestPublicChains",
       body: api.IdentityGetLatestPublicChainsRequest.encode({
         ids: logins.map(login => {
           let pk = this.pkCache.latest(login);
@@ -350,7 +350,7 @@ class SessionImpl implements Session {
     let { chains } = await this.doProtoRequest({
       method: "POST",
       expectedCode: 200,
-      path: "/api/v4/identities/publicChains",
+      path: "/api/v1/identities/publicChains",
       body: api.IdentityGetPublicChainsRequest.encode({
         ids: Object.keys(requestIds).map(login => {
           let pk = this.pkCache.latest(login);
@@ -553,7 +553,7 @@ class SessionImpl implements Session {
     return this.doProtoRequest({
       method: "PUT",
       expectedCode: 200,
-      path: "/api/v4/session/unStale",
+      path: "/api/v1/session/unStale",
       response: api.SessionUnStaleResponse.decode
     }).then(({ encryption }) => {
       let seed = MasterPrivateSeed.fromSecret(
@@ -610,7 +610,7 @@ class SessionImpl implements Session {
     }
     let { path } = await this.doProtoRequest({
       method: "POST",
-      path: "/api/v4/identity/" + encodeURI(login) + "/keySet",
+      path: "/api/v1/identity/" + encodeURI(login) + "/keySet",
       expectedCode: 200,
       body: api.IdentityGetKeySetRequest.encode({ version }).finish(),
       response: api.IdentityGetKeySetResponse.decode

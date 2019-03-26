@@ -120,7 +120,7 @@ export class ResourceAPI {
     let { id } = await this.session.doProtoRequest({
       method: "POST",
       expectedCode: 201,
-      path: "/api/v4/resources",
+      path: "/api/v1/resources",
       body: api.ResourcePostRequest.encode({
         ...body,
         type,
@@ -161,7 +161,7 @@ export class ResourceAPI {
       .doProtoRequest({
         method: "GET",
         expectedCode: 200,
-        path: "/api/v4/resources",
+        path: "/api/v1/resources",
         assume: { login: assume, kind: api.IdentityAccessKeyKind.READ },
         params,
         response: r => api.ResourceListResponse.decode(r).resources
@@ -197,7 +197,7 @@ export class ResourceAPI {
     let response = await this.session.doProtoRequest({
       method: "GET",
       expectedCode: 200,
-      path: "/api/v4/resource/" + id,
+      path: "/api/v1/resource/" + id,
       assume: { login: assume, kind: api.IdentityAccessKeyKind.READ },
       params,
       response: r => api.ResourceGetResponse.decode(r)
@@ -232,7 +232,7 @@ export class ResourceAPI {
       expectedCode: 200,
       assume,
       path:
-        "/api/v4/identity/" +
+        "/api/v1/identity/" +
         encodeURIComponent(login) +
         "/resource/" +
         encodeURIComponent(resourceName),
@@ -265,7 +265,7 @@ export class ResourceAPI {
       method: "PUT",
       expectedCode: 200,
       assume,
-      path: `/api/v4/identity/${encodeURI(login)}/resource/${encodeURIComponent(
+      path: `/api/v1/identity/${encodeURI(login)}/resource/${encodeURIComponent(
         resourceName
       )}`,
       body: api.IdentitySetNamedResourceRequest.encode({
@@ -289,7 +289,7 @@ export class ResourceAPI {
     return await this.session.doProtoRequest<void>({
       method: "DELETE",
       expectedCode: 200,
-      path: "/api/v4/resource/" + id,
+      path: "/api/v1/resource/" + id,
       assume: { login: assume, kind: api.IdentityAccessKeyKind.WRITE },
       params: { soft: true }
     });
@@ -309,7 +309,7 @@ export class ResourceAPI {
     return await this.session.doProtoRequest<void>({
       method: "DELETE",
       expectedCode: 200,
-      path: "/api/v4/resource/" + id,
+      path: "/api/v1/resource/" + id,
       assume: { login: assume, kind: api.IdentityAccessKeyKind.WRITE },
       params: { soft: false }
     });
@@ -334,7 +334,7 @@ export class ResourceAPI {
     let { encryptedKey, owner } = await this.session.doProtoRequest({
       method: "GET",
       expectedCode: 200,
-      path: "/api/v4/resource/" + id + "/key",
+      path: "/api/v1/resource/" + id + "/key",
       response: api.ResourceGetKeyResponse.decode
     });
     let keySet = await this.session.getIdentityKeySet(
@@ -358,7 +358,7 @@ export class ResourceAPI {
     return await this.session.doProtoRequest<void>({
       method: "PATCH",
       expectedCode: 201,
-      path: "/api/v4/resource/" + id + "/sharingGroup",
+      path: "/api/v1/resource/" + id + "/sharingGroup",
       assume: { login: options.assume, kind: api.IdentityAccessKeyKind.WRITE },
       body: api.ResourceExtendSharingGroupRequest.encode({
         sharingGroup: encryptedSharingGroup
@@ -387,7 +387,7 @@ export class ResourceAPI {
     let { logs } = await this.session.doProtoRequest({
       method: "POST",
       expectedCode: 200,
-      path: "/api/v4/resources/accessLogs",
+      path: "/api/v1/resources/accessLogs",
       body: api.ResourceGetAccessLogsRequest.encode(options).finish(),
       response: api.ResourceGetAccessLogsResponse.decode,
       assume: {
@@ -421,7 +421,7 @@ export class ResourceAPI {
     return await this.session.doProtoRequest({
       method: "GET",
       expectedCode: 200,
-      path: "/api/v4/resource/" + id + "/sharingGroup",
+      path: "/api/v1/resource/" + id + "/sharingGroup",
       assume: { login: assume, kind: api.IdentityAccessKeyKind.READ },
       response: r =>
         api.ResourceGetSharingGroupResponse.decode(r)

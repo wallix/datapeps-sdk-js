@@ -81,7 +81,7 @@ var ResourceAPI = /** @class */ (function () {
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "POST",
                                 expectedCode: 201,
-                                path: "/api/v4/resources",
+                                path: "/api/v1/resources",
                                 body: proto_1.api.ResourcePostRequest.encode(__assign({}, body, { type: type,
                                     kind: kind })).finish(),
                                 response: proto_1.api.ResourcePostResponse.decode
@@ -121,7 +121,7 @@ var ResourceAPI = /** @class */ (function () {
                                 .doProtoRequest({
                                 method: "GET",
                                 expectedCode: 200,
-                                path: "/api/v4/resources",
+                                path: "/api/v1/resources",
                                 assume: { login: assume, kind: proto_1.api.IdentityAccessKeyKind.READ },
                                 params: params,
                                 response: function (r) { return proto_1.api.ResourceListResponse.decode(r).resources; }
@@ -157,7 +157,7 @@ var ResourceAPI = /** @class */ (function () {
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "GET",
                                 expectedCode: 200,
-                                path: "/api/v4/resource/" + id,
+                                path: "/api/v1/resource/" + id,
                                 assume: { login: assume, kind: proto_1.api.IdentityAccessKeyKind.READ },
                                 params: params,
                                 response: function (r) { return proto_1.api.ResourceGetResponse.decode(r); }
@@ -189,7 +189,7 @@ var ResourceAPI = /** @class */ (function () {
                                 method: "GET",
                                 expectedCode: 200,
                                 assume: assume,
-                                path: "/api/v4/identity/" +
+                                path: "/api/v1/identity/" +
                                     encodeURIComponent(login) +
                                     "/resource/" +
                                     encodeURIComponent(resourceName),
@@ -222,7 +222,7 @@ var ResourceAPI = /** @class */ (function () {
                                 method: "PUT",
                                 expectedCode: 200,
                                 assume: assume,
-                                path: "/api/v4/identity/" + encodeURI(login) + "/resource/" + encodeURIComponent(resourceName),
+                                path: "/api/v1/identity/" + encodeURI(login) + "/resource/" + encodeURIComponent(resourceName),
                                 body: proto_1.api.IdentitySetNamedResourceRequest.encode({
                                     resourceID: resourceID
                                 }).finish()
@@ -253,7 +253,7 @@ var ResourceAPI = /** @class */ (function () {
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "DELETE",
                                 expectedCode: 200,
-                                path: "/api/v4/resource/" + id,
+                                path: "/api/v1/resource/" + id,
                                 assume: { login: assume, kind: proto_1.api.IdentityAccessKeyKind.WRITE },
                                 params: { soft: true }
                             })];
@@ -281,7 +281,7 @@ var ResourceAPI = /** @class */ (function () {
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "DELETE",
                                 expectedCode: 200,
-                                path: "/api/v4/resource/" + id,
+                                path: "/api/v1/resource/" + id,
                                 assume: { login: assume, kind: proto_1.api.IdentityAccessKeyKind.WRITE },
                                 params: { soft: false }
                             })];
@@ -311,7 +311,7 @@ var ResourceAPI = /** @class */ (function () {
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "GET",
                                 expectedCode: 200,
-                                path: "/api/v4/resource/" + id + "/key",
+                                path: "/api/v1/resource/" + id + "/key",
                                 response: proto_1.api.ResourceGetKeyResponse.decode
                             })];
                     case 1:
@@ -331,7 +331,7 @@ var ResourceAPI = /** @class */ (function () {
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "PATCH",
                                 expectedCode: 201,
-                                path: "/api/v4/resource/" + id + "/sharingGroup",
+                                path: "/api/v1/resource/" + id + "/sharingGroup",
                                 assume: { login: options.assume, kind: proto_1.api.IdentityAccessKeyKind.WRITE },
                                 body: proto_1.api.ResourceExtendSharingGroupRequest.encode({
                                     sharingGroup: encryptedSharingGroup
@@ -363,7 +363,7 @@ var ResourceAPI = /** @class */ (function () {
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "POST",
                                 expectedCode: 200,
-                                path: "/api/v4/resources/accessLogs",
+                                path: "/api/v1/resources/accessLogs",
                                 body: proto_1.api.ResourceGetAccessLogsRequest.encode(options).finish(),
                                 response: proto_1.api.ResourceGetAccessLogsResponse.decode,
                                 assume: {
@@ -399,7 +399,7 @@ var ResourceAPI = /** @class */ (function () {
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "GET",
                                 expectedCode: 200,
-                                path: "/api/v4/resource/" + id + "/sharingGroup",
+                                path: "/api/v1/resource/" + id + "/sharingGroup",
                                 assume: { login: assume, kind: proto_1.api.IdentityAccessKeyKind.READ },
                                 response: function (r) {
                                     return proto_1.api.ResourceGetSharingGroupResponse.decode(r)

@@ -70,7 +70,7 @@ var DelegatedAccessAPI = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "GET",
                             expectedCode: 200,
-                            path: "/api/v4/delegatedAccess/" + requestId.toString(),
+                            path: "/api/v1/delegatedAccess/" + requestId.toString(),
                             response: proto_1.api.DelegatedGetResponse.decode
                         })];
                     case 1:
@@ -106,7 +106,7 @@ var DelegatedAccessAPI = /** @class */ (function () {
                                                 return [4 /*yield*/, this.session.doProtoRequest({
                                                         method: "PUT",
                                                         expectedCode: 200,
-                                                        path: "/api/v4/delegatedAccess/" + this.id.toString() + "/keys",
+                                                        path: "/api/v1/delegatedAccess/" + this.id.toString() + "/keys",
                                                         body: proto_1.api.DelegatedPostKeysRequest.encode({
                                                             keys: this.resource.encrypt(proto_1.api.DelegatedKeys.encode(keySet.toDelegatedKeys()).finish())
                                                         }).finish()
@@ -136,7 +136,7 @@ var DelegatedAccessAPI = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "GET",
                             expectedCode: 200,
-                            path: "/api/v4/delegatedAccesses",
+                            path: "/api/v1/delegatedAccesses",
                             response: proto_1.api.DelegatedAccessListResponse.decode,
                             assume: { login: login, kind: proto_1.api.IdentityAccessKeyKind.READ },
                             params: options
@@ -193,7 +193,7 @@ var DelegatedAccess;
                         return [4 /*yield*/, HTTP_1.client.doRequest({
                                 method: "POST",
                                 expectedCode: 201,
-                                path: "/api/v4/delegatedAccess",
+                                path: "/api/v1/delegatedAccess",
                                 body: proto_1.api.DelegatedPostRequest.encode({
                                     publicKey: keypair.publicKey,
                                     sign: signResult.sign,
@@ -237,7 +237,7 @@ var DelegatedAccess;
                             return [4 /*yield*/, this.client.doRequest({
                                     method: "GET",
                                     expectedCode: 200,
-                                    path: "/api/v4/delegatedAccess/" + this.id.toString() + "/keys",
+                                    path: "/api/v1/delegatedAccess/" + this.id.toString() + "/keys",
                                     response: proto_1.api.DelegatedGetKeysResponse.decode,
                                     headers: new Headers({ "content-type": "application/x-protobuf" })
                                 })];

@@ -57,7 +57,7 @@ var AdminAPI = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "POST",
                             expectedCode: 200,
-                            path: "/api/v4/identity/" + encodeURIComponent(login) + "/promote",
+                            path: "/api/v1/identity/" + encodeURIComponent(login) + "/promote",
                             body: proto_1.api.IdentityPromoteRequest.encode({
                                 admin: admin
                             }).finish()
@@ -83,7 +83,7 @@ var AdminAPI = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "POST",
                             expectedCode: 200,
-                            path: "/api/v4/identity/" + encodeURI(login) + "/active",
+                            path: "/api/v1/identity/" + encodeURI(login) + "/active",
                             body: proto_1.api.IdentityToggleActiveStatusRequest.encode({
                                 login: login,
                                 active: active
@@ -109,7 +109,7 @@ var AdminAPI = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "GET",
                             expectedCode: 200,
-                            path: "/api/v4/register/links",
+                            path: "/api/v1/register/links",
                             params: options,
                             response: proto_1.api.LinksGetResponse.decode
                         })];

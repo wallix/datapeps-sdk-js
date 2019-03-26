@@ -100,7 +100,7 @@ var IdentityAPI = /** @class */ (function () {
                     case 0: return [4 /*yield*/, HTTP_1.client.doRequest({
                             method: "POST",
                             expectedCode: 200,
-                            path: "/api/v4/identities/latestPublicKeys",
+                            path: "/api/v1/identities/latestPublicKeys",
                             body: proto_1.api.IdentityGetLatestPublicKeysRequest.encode({ logins: logins }).finish(),
                             response: proto_1.api.IdentityGetLatestPublicKeysResponse.decode,
                             headers: new Headers({
@@ -148,7 +148,7 @@ var IdentityAPI = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "GET",
                             expectedCode: 200,
-                            path: "/api/v4/identity/" + encodeURI(login),
+                            path: "/api/v1/identity/" + encodeURI(login),
                             response: function (r) { return IdentityInternal_1.IdentitySerializer.deserialize(proto_1.api.Identity.decode(r)); }
                         })];
                     case 1: return [2 /*return*/, _a.sent()];
@@ -181,7 +181,7 @@ var IdentityAPI = /** @class */ (function () {
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "POST",
                                 expectedCode: 200,
-                                path: "/api/v4/identities/list",
+                                path: "/api/v1/identities/list",
                                 body: proto_1.api.IdentityListRequest.encode({
                                     options: {
                                         offset: options.offset,
@@ -233,7 +233,7 @@ var IdentityAPI = /** @class */ (function () {
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "POST",
                                 expectedCode: 201,
-                                path: "/api/v4/identity",
+                                path: "/api/v1/identity",
                                 body: proto_1.api.IdentityCreateRequest.encode({
                                     identity: identity,
                                     sharingGroup: sharingGroup,
@@ -261,7 +261,7 @@ var IdentityAPI = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "PUT",
                             expectedCode: 200,
-                            path: "/api/v4/identity/" + encodeURI(identity.login),
+                            path: "/api/v1/identity/" + encodeURI(identity.login),
                             body: proto_1.api.IdentityFields.encode(identity).finish()
                         })];
                     case 1: return [2 /*return*/, _a.sent()];
@@ -290,7 +290,7 @@ var IdentityAPI = /** @class */ (function () {
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "GET",
                                 expectedCode: 200,
-                                path: "/api/v4/identity/" + encodeURIComponent(login) + "/keysToRenew",
+                                path: "/api/v1/identity/" + encodeURIComponent(login) + "/keysToRenew",
                                 response: proto_1.api.IdentityGetKeysToRenewResponse.decode,
                                 assume: assume
                             })];
@@ -314,7 +314,7 @@ var IdentityAPI = /** @class */ (function () {
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "POST",
                                 expectedCode: 201,
-                                path: "/api/v4/identity/" + encodeURIComponent(login) + "/keysToRenew",
+                                path: "/api/v1/identity/" + encodeURIComponent(login) + "/keysToRenew",
                                 body: proto_1.api.IdentityPostKeysToRenewRequest.encode({
                                     encryption: nextEncryptedKeySet,
                                     sharingGroup: nextSharingGroup,
@@ -346,7 +346,7 @@ var IdentityAPI = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "GET",
                             expectedCode: 200,
-                            path: "/api/v4/identity/" + encodeURIComponent(login) + "/sharingGroup",
+                            path: "/api/v1/identity/" + encodeURIComponent(login) + "/sharingGroup",
                             response: function (r) {
                                 return proto_1.api.IdentityGetSharingGroupResponse.decode(r)
                                     .sharingGroup;
@@ -380,7 +380,7 @@ var IdentityAPI = /** @class */ (function () {
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "PATCH",
                                 expectedCode: 201,
-                                path: "/api/v4/identity/" + encodeURI(login) + "/sharingGroup",
+                                path: "/api/v1/identity/" + encodeURI(login) + "/sharingGroup",
                                 assume: { login: login, kind: proto_1.api.IdentityAccessKeyKind.WRITE },
                                 body: proto_1.api.IdentityShareRequest.encode({
                                     version: keySet.id.version,
@@ -475,7 +475,7 @@ var IdentityAPI = /** @class */ (function () {
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "POST",
                                 expectedCode: 201,
-                                path: "/api/v4/identity/" + encodeURIComponent(login) + "/sharingGraph",
+                                path: "/api/v1/identity/" + encodeURIComponent(login) + "/sharingGraph",
                                 assume: { login: login, kind: proto_1.api.IdentityAccessKeyKind.WRITE },
                                 body: proto_1.api.IdentityPostSharingGraphRequest.encode({
                                     graph: encryptedGraph
@@ -571,7 +571,7 @@ var IdentityAPI = /** @class */ (function () {
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "POST",
                                 expectedCode: 201,
-                                path: "/api/v4/identity/" + encodeURIComponent(login) + "/sharingGraph",
+                                path: "/api/v1/identity/" + encodeURIComponent(login) + "/sharingGraph",
                                 body: proto_1.api.IdentityPostSharingGraphRequest.encode({
                                     graph: encryptedGraph
                                 }).finish()
@@ -596,7 +596,7 @@ var IdentityAPI = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "GET",
                             expectedCode: 200,
-                            path: "/api/v4/identity/" + encodeURIComponent(login) + "/accessGroup",
+                            path: "/api/v1/identity/" + encodeURIComponent(login) + "/accessGroup",
                             response: function (r) {
                                 return proto_1.api.IdentityGetAccessGroupResponse.decode(r)
                                     .accessGroup;
@@ -623,7 +623,7 @@ var IdentityAPI = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "POST",
                             expectedCode: 200,
-                            path: "/api/v4/identities/latestPublicChains",
+                            path: "/api/v1/identities/latestPublicChains",
                             body: proto_1.api.IdentityGetLatestPublicChainsRequest.encode({
                                 ids: [{ login: login, since: 0 }]
                             }).finish(),
@@ -671,7 +671,7 @@ var IdentityAPI = /** @class */ (function () {
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "GET",
                                 expectedCode: 200,
-                                path: "/api/v4/identity/" + encodeURI(login) + "/lockedVersions",
+                                path: "/api/v1/identity/" + encodeURI(login) + "/lockedVersions",
                                 params: options,
                                 assume: login == this.session.login
                                     ? null
@@ -749,7 +749,7 @@ var IdentityAPI = /** @class */ (function () {
                                 assume: login == this.session.login
                                     ? null
                                     : { login: login, kind: proto_1.api.IdentityAccessKeyKind.WRITE },
-                                path: "/api/v4/identity/" + encodeURI(login) + "/unlockVersions",
+                                path: "/api/v1/identity/" + encodeURI(login) + "/unlockVersions",
                                 body: proto_1.api.UnlockVersionsRequest.encode({
                                     unlockedVersions: resolvedChallengesWithEncryptedKeys
                                 }).finish(),
@@ -771,7 +771,7 @@ var IdentityAPI = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "GET",
                             expectedCode: 200,
-                            path: "/api/v4/identity/" + encodeURIComponent(login) + "/sharingGraph",
+                            path: "/api/v1/identity/" + encodeURIComponent(login) + "/sharingGraph",
                             response: proto_1.api.IdentityGetSharingGraphResponse.decode
                         })];
                     case 1:
@@ -806,7 +806,7 @@ var IdentityAPI = /** @class */ (function () {
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "GET",
                                 expectedCode: 200,
-                                path: "/api/v4/identity/" + encodeURIComponent(login) + "/sharingGraph",
+                                path: "/api/v1/identity/" + encodeURIComponent(login) + "/sharingGraph",
                                 assume: assume,
                                 response: proto_1.api.IdentityGetSharingGraphResponse.decode
                             })];

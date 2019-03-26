@@ -73,7 +73,7 @@ function createUser(appID, auth, secret) {
                     return [4 /*yield*/, HTTP.client.doRequest({
                             method: "POST",
                             expectedCode: 201,
-                            path: "/api/v4/application/" + appID + "/identity",
+                            path: "/api/v1/application/" + appID + "/identity",
                             body: proto_1.api.RegisterApplicationIdentityRequest.encode({
                                 appID: appID,
                                 auth: auth,

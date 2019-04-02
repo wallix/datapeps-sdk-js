@@ -9,6 +9,18 @@ export declare class Base64 {
      */
     static encode(aBytes: any): string;
 }
+export declare class Uint8Converter {
+    /**
+     * Converts a string to a Uint8Array typed array.
+     * @param s The string to convert
+     */
+    static fromString(s: string): Uint8Array;
+    /**
+     * Converts a Uint8Array typed array to string.
+     * @param u The Uint8Array typed array to convert
+     */
+    static toString(u: Uint8Array): string;
+}
 export declare class Uint8Tool {
     static encode(s: string): Uint8Array;
     static decode(u: Uint8Array): string;

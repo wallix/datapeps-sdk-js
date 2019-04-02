@@ -84,8 +84,32 @@ export class Base64 {
   }
 }
 
+/*
+Uint8Tool is a helper class that groups functions for working with Uint8Array typed arrays. 
+*/
+export class Uint8Converter {
+  /**
+   * Converts a string to a Uint8Array typed array.
+   * @param s The string to convert
+   */
+  static fromString(s: string): Uint8Array {
+    return Uint8Tool.encode(s);
+  }
+
+  /**
+   * Converts a Uint8Array typed array to string.
+   * @param u The Uint8Array typed array to convert
+   */
+  static toString(u: Uint8Array): string {
+    return Uint8Tool.decode(u);
+  }
+}
+
 export class Uint8Tool {
   static encode(s: string): Uint8Array {
+    if (s == null) {
+      return new Uint8Array([]);
+    }
     try {
       if (TextEncoder != null) {
         return new TextEncoder().encode(s);

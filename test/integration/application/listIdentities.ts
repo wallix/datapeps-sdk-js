@@ -66,7 +66,7 @@ describe("application.listIdentities", () => {
   // Test nominal cases - forEach config
   ///////////////////////////////////////////////
 
-  configs.forEach(({ config, secretKey }, i) => {
+  configs.forEach(({ keys, config }, i) => {
     function itWithPage(
       expectedFn: () => Identity<Uint8Array>[],
       options?: {

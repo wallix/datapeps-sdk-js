@@ -33,7 +33,7 @@ export namespace ApplicationJWT {
      * The signAlgorithm that should be used by DataPeps to verify JWT tokens.
      * By default use ApplicationJwtAlgorithm.HS256
      */
-    signAlgorithm?: Algorithm;
+    signAlgorithm: Algorithm;
 
     /**
      * The claim used by DataPeps to generates the login of an identity created
@@ -70,7 +70,6 @@ export namespace ApplicationJWT {
    * of the user to the DataPeps service.
    * On error the promise will be rejected with an {@link Error} with kind:
    * - `ApplicationInvalidToken` if the JWT token returned by the connector is invalid.
-   * - `IdentityNotFound` if the identity `appID` doesn't exists.
    * - `BadSecret` if the secret of the user is wrong.
    * - `ApplicationConfigNotFound` if the `appID` is not configured.
    */

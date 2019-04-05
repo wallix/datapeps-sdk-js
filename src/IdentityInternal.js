@@ -9,12 +9,13 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var proto_1 = require("./proto");
+var Tools_1 = require("./Tools");
 var IdentitySerializer = /** @class */ (function () {
     function IdentitySerializer() {
     }
     IdentitySerializer.deserialize = function (t) {
         var x = proto_1.api.Identity.create(t);
-        return __assign({}, x, { created: new Date(t.created * 1000) });
+        return __assign({}, x, { created: Tools_1.timestampToDate(t.created) });
     };
     return IdentitySerializer;
 }());

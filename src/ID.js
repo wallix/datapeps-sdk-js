@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Long = require("long");
+var Tools_1 = require("./Tools");
 var ID;
 (function (ID) {
     function compare(a, b) {
@@ -54,7 +55,7 @@ var ID;
         else {
             l = Long.fromNumber(id, true);
         }
-        return new Date(l.getHighBitsUnsigned() * 1000);
+        return Tools_1.timestampToDate(l.getHighBitsUnsigned());
     };
 })(ID = exports.ID || (exports.ID = {}));
 //# sourceMappingURL=ID.js.map

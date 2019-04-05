@@ -1,3 +1,4 @@
+/// <reference types="long" />
 export declare class Base64 {
     /**
      * Decode a base64 string to an Uint8Array
@@ -7,6 +8,18 @@ export declare class Base64 {
      * Encode a Uint8Array to a base64 string
      */
     static encode(aBytes: any): string;
+}
+export declare class Uint8Converter {
+    /**
+     * Converts a string to a Uint8Array typed array.
+     * @param s The string to convert
+     */
+    static fromString(s: string): Uint8Array;
+    /**
+     * Converts a Uint8Array typed array to string.
+     * @param u The Uint8Array typed array to convert
+     */
+    static toString(u: Uint8Array): string;
 }
 export declare class Uint8Tool {
     static encode(s: string): Uint8Array;
@@ -37,3 +50,4 @@ export declare class Crypto {
      */
     static PBKDF2(password: Uint8Array, salt: Uint8Array, c: number, length: number): Uint8Array;
 }
+export declare function timestampToDate(timestamp: number | Long): Date;

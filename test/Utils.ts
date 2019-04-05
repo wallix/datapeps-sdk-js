@@ -4,6 +4,7 @@ import * as mocha from "mocha";
 import * as DataPeps from "../src/DataPeps";
 import { ResourceAPI } from "../src/DataPeps";
 import { Uint8Tool } from "../src/Tools";
+import { kindName } from "../src/Error";
 
 export function itError(
   description: string,
@@ -11,7 +12,7 @@ export function itError(
   kind: DataPeps.ErrorKind,
   payload?: () => any
 ): mocha.ITest {
-  return it(`${description} expect error(${kind})`, async () =>
+  return it(`${description} expect error(${kindName(kind)})`, async () =>
     await expectError(action(), kind, payload != null ? payload() : null));
 }
 
@@ -25,13 +26,16 @@ export async function expectError(
   } catch (e) {
     expect(e).to.not.be.null;
     expect(e).instanceof(DataPeps.Error);
-    expect(e.kind).equal(kind);
+    expect(
+      e.kind,
+      `expected ${kindName(e.kind)} to equal ${kindName(kind)}`
+    ).equal(kind);
     if (payload != null) {
-      expect(payload).to.deep.equals({ ...e.payload });
+      expect({ ...e.payload }).to.deep.equals(payload);
     }
     return;
   }
-  throw new Error(`action should throw a DataPepsError(${kind})`);
+  throw new Error(`action should throw a DataPepsError(${kindName(kind)})`);
 }
 
 // CLASSES

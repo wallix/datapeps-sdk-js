@@ -44,7 +44,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var nacl = require("tweetnacl");
-var CryptoFuncs_1 = require("./CryptoFuncs");
+var Cryptor_1 = require("./Cryptor");
 var HTTP_1 = require("./HTTP");
 var proto_1 = require("./proto");
 var ResourceInternal_1 = require("./ResourceInternal");
@@ -53,6 +53,7 @@ var Constants_1 = require("./Constants");
 var IdentityAPI_1 = require("./IdentityAPI");
 var Tools_1 = require("./Tools");
 var Session_1 = require("./Session");
+var IdentityKeySet_1 = require("./IdentityKeySet");
 var DelegatedAccessAPI = /** @class */ (function () {
     function DelegatedAccessAPI(session) {
         this.session = session;
@@ -69,12 +70,12 @@ var DelegatedAccessAPI = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "GET",
                             expectedCode: 200,
-                            path: "/api/v4/delegatedAccess/" + requestId.toString(),
+                            path: "/api/v1/delegatedAccess/" + requestId.toString(),
                             response: proto_1.api.DelegatedGetResponse.decode
                         })];
                     case 1:
                         _a = _b.sent(), sign = _a.sign, resource = _a.resource;
-                        return [4 /*yield*/, ResourceInternal_1.makeResourceFromResponse(resource, proto_1.api.ResourceType.ANONYMOUS, this.session, null, null)];
+                        return [4 /*yield*/, ResourceInternal_1.makeResourceFromResponse(resource, Cryptor_1.CipherType.NACL_ANON, this.session)];
                     case 2:
                         r = _b.sent();
                         msg = Tools_1.Uint8Tool.concat(Tools_1.Uint8Tool.encode(this.session.login), r.publicKey());
@@ -96,18 +97,18 @@ var DelegatedAccessAPI = /** @class */ (function () {
                             }
                             AccessRequestResolverImpl.prototype.resolve = function (login) {
                                 return __awaiter(this, void 0, void 0, function () {
-                                    var keys;
+                                    var keySet;
                                     return __generator(this, function (_a) {
                                         switch (_a.label) {
-                                            case 0: return [4 /*yield*/, this.session.fetchKeys(login)];
+                                            case 0: return [4 /*yield*/, this.session.getIdentityKeySet(login)];
                                             case 1:
-                                                keys = _a.sent();
+                                                keySet = _a.sent();
                                                 return [4 /*yield*/, this.session.doProtoRequest({
                                                         method: "PUT",
                                                         expectedCode: 200,
-                                                        path: "/api/v4/delegatedAccess/" + this.id.toString() + "/keys",
+                                                        path: "/api/v1/delegatedAccess/" + this.id.toString() + "/keys",
                                                         body: proto_1.api.DelegatedPostKeysRequest.encode({
-                                                            keys: this.resource.encrypt(proto_1.api.DelegatedKeys.encode(keys).finish())
+                                                            keys: this.resource.encrypt(proto_1.api.DelegatedKeys.encode(keySet.toDelegatedKeys()).finish())
                                                         }).finish()
                                                     })];
                                             case 2:
@@ -135,15 +136,15 @@ var DelegatedAccessAPI = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "GET",
                             expectedCode: 200,
-                            path: "/api/v4/delegatedAccesses",
+                            path: "/api/v1/delegatedAccesses",
                             response: proto_1.api.DelegatedAccessListResponse.decode,
-                            assume: { login: login, kind: IdentityAPI_1.IdentityAccessKind.READ },
+                            assume: { login: login, kind: proto_1.api.IdentityAccessKeyKind.READ },
                             params: options
                         })];
                     case 1:
                         accesses = (_a.sent()).accesses;
                         return [2 /*return*/, accesses.map(function (access) {
-                                return (__assign({}, access, { resolved: access.resolved, created: new Date(access.created * 1000) }));
+                                return (__assign({}, access, { resolved: access.resolved, created: Tools_1.timestampToDate(access.created) }));
                             })];
                 }
             });
@@ -177,12 +178,12 @@ var DelegatedAccess;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        encrypt = new CryptoFuncs_1.EncryptAnonymous();
+                        encrypt = new Cryptor_1.EncryptAnonymous();
                         keypair = nacl.box.keyPair();
                         return [4 /*yield*/, IdentityAPI_1.IdentityAPI.getLatestPublicKey(login)];
                     case 1:
                         _a = _b.sent(), box = _a.box, version = _a.version;
-                        encryptedKey = encrypt.encrypt(box, keypair.secretKey);
+                        encryptedKey = encrypt.encrypt({ box: box }, keypair.secretKey);
                         return [4 /*yield*/, sign({
                                 login: login,
                                 publicKey: keypair.publicKey
@@ -192,7 +193,7 @@ var DelegatedAccess;
                         return [4 /*yield*/, HTTP_1.client.doRequest({
                                 method: "POST",
                                 expectedCode: 201,
-                                path: "/api/v4/delegatedAccess",
+                                path: "/api/v1/delegatedAccess",
                                 body: proto_1.api.DelegatedPostRequest.encode({
                                     publicKey: keypair.publicKey,
                                     sign: signResult.sign,
@@ -236,7 +237,7 @@ var DelegatedAccess;
                             return [4 /*yield*/, this.client.doRequest({
                                     method: "GET",
                                     expectedCode: 200,
-                                    path: "/api/v4/delegatedAccess/" + this.id.toString() + "/keys",
+                                    path: "/api/v1/delegatedAccess/" + this.id.toString() + "/keys",
                                     response: proto_1.api.DelegatedGetKeysResponse.decode,
                                     headers: new Headers({ "content-type": "application/x-protobuf" })
                                 })];
@@ -278,12 +279,15 @@ var DelegatedAccess;
         };
         AccessRequestImpl.prototype.waitSession = function () {
             return __awaiter(this, void 0, void 0, function () {
+                var _this = this;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0: return [4 /*yield*/, this.wait()];
                         case 1:
                             _a.sent();
-                            return [4 /*yield*/, Session_1.loginWithKeys(this.client, this.keys)];
+                            return [4 /*yield*/, Session_1.Session.create(this.client, this.keys.login, function (e) {
+                                    return IdentityKeySet_1.IdentityKeySet.fromDelegatedKeys(_this.keys);
+                                })];
                         case 2: return [2 /*return*/, _a.sent()];
                     }
                 });

@@ -40,7 +40,8 @@ var ResourceAPI_1 = require("./ResourceAPI");
 var Tools_1 = require("./Tools");
 var Error_1 = require("./Error");
 var proto_1 = require("./proto");
-var IdentityAPI_1 = require("./IdentityAPI");
+var Cryptor_1 = require("./Cryptor");
+var IdentityKeySet_1 = require("./IdentityKeySet");
 var ResourceBox = /** @class */ (function () {
     function ResourceBox(id, kind, payload, keypair, creator, type) {
         if (type === void 0) { type = ResourceAPI_1.ResourceType.ANONYMOUS; }
@@ -96,24 +97,19 @@ var ResourceBox = /** @class */ (function () {
     return ResourceBox;
 }());
 exports.ResourceBox = ResourceBox;
-function createWithEncryption(kind, payload, encryption, options) {
+function createWithEncryption(payload, encryption, kind, options) {
     options = options == null ? {} : options;
     var serialize = options.serialize != null
         ? options.serialize
         : function (p) { return Tools_1.Uint8Tool.encode(JSON.stringify(p)); };
-    var encryptionPK = {
-        login: null,
-        version: null,
-        sign: encryption.signEncrypted.publicKey,
-        box: encryption.boxEncrypted.publicKey
-    };
+    var encryptionPK = encryption.public();
     var keyPair = nacl.box.keyPair();
-    var cryptoSES = encryption.encrypt(proto_1.api.ResourceType.SES);
+    var cryptoSES = encryption.encryptor(Cryptor_1.CipherType.NACL_SES);
     var sharer = {};
-    var sharerSKEncrypted = cryptoSES.encrypt(encryptionPK.box, keyPair.secretKey);
+    var sharerSKEncrypted = cryptoSES.encrypt(encryptionPK, keyPair.secretKey);
     sharer.nonce = sharerSKEncrypted.nonce;
     sharer.encryptedKey = sharerSKEncrypted.message;
-    var payloadEncrypted = cryptoSES.encrypt(keyPair.publicKey, serialize(payload));
+    var payloadEncrypted = cryptoSES.encrypt({ box: keyPair.publicKey }, serialize(payload));
     var body = {
         kind: kind,
         type: proto_1.api.ResourceType.ANONYMOUS,
@@ -126,63 +122,54 @@ function createWithEncryption(kind, payload, encryption, options) {
     return { resourceRequestBody: body, resource: resource };
 }
 exports.createWithEncryption = createWithEncryption;
-function makeResourceFromResponse(_a, typeOfKey, session, parse, assume) {
-    var resource = _a.resource, encryptedKey = _a.encryptedKey, creator = _a.creator;
+function makeResourceFromResponse(_a, typeOfKey, session, parse) {
+    var resource = _a.resource, owner = _a.owner, creator = _a.creator, encryptedKey = _a.encryptedKey;
     return __awaiter(this, void 0, void 0, function () {
-        var key, secretKeyCipher, accessKey;
+        var ownerKeySet;
         return __generator(this, function (_b) {
             switch (_b.label) {
-                case 0:
-                    assume = assume != null ? assume : session.login;
-                    return [4 /*yield*/, session.getAssumeParams({
-                            login: assume,
-                            kind: IdentityAPI_1.IdentityAccessKind.READ
-                        })];
+                case 0: return [4 /*yield*/, session.getIdentityKeySet(owner.login, owner.version)];
                 case 1:
-                    key = (_b.sent()).key;
-                    secretKeyCipher = encryptedKey.pop();
-                    return [4 /*yield*/, session.decryptCipherList(proto_1.api.ResourceType.SES, encryptedKey, key.boxKey)];
-                case 2:
-                    accessKey = _b.sent();
-                    return [4 /*yield*/, makeResource({ resource: resource, encryptedKey: secretKeyCipher, creator: creator }, typeOfKey, session, accessKey, parse)];
-                case 3: return [2 /*return*/, _b.sent()];
+                    ownerKeySet = _b.sent();
+                    return [4 /*yield*/, makeResource({ resource: resource, creator: creator, encryptedKey: encryptedKey }, session, ownerKeySet, typeOfKey, parse)];
+                case 2: return [2 /*return*/, _b.sent()];
             }
         });
     });
 }
 exports.makeResourceFromResponse = makeResourceFromResponse;
-function makeResource(_a, typeOfKey, session, boxKey, parse) {
+function makeResource(_a, session, ownerKeySet, typeOfKey, parse) {
     var resource = _a.resource, encryptedKey = _a.encryptedKey, creator = _a.creator;
+    if (parse === void 0) { parse = function (u) { return JSON.parse(Tools_1.Uint8Tool.decode(u)); }; }
     return __awaiter(this, void 0, void 0, function () {
-        var secretKey, keypair, payload, _b, _c, rcreator;
-        return __generator(this, function (_d) {
-            switch (_d.label) {
-                case 0: return [4 /*yield*/, session.decryptCipherList(typeOfKey, [encryptedKey], boxKey)];
+        var resolvedKey, secretKey, keypair, creatorPk, payload;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0: return [4 /*yield*/, session.resolveCipherList([encryptedKey])];
                 case 1:
-                    secretKey = _d.sent();
+                    resolvedKey = (_b.sent())[0];
+                    secretKey = ownerKeySet.decryptor(typeOfKey).decrypt(resolvedKey);
                     keypair = nacl.box.keyPair.fromSecretKey(secretKey);
-                    parse = parse != null ? parse : function (u) { return JSON.parse(Tools_1.Uint8Tool.decode(u)); };
-                    if (!(resource.payload.length == 0)) return [3 /*break*/, 2];
-                    _b = null;
-                    return [3 /*break*/, 4];
-                case 2:
-                    _c = parse;
-                    return [4 /*yield*/, session.decryptCipherList(proto_1.api.ResourceType.SES, [
-                            {
-                                message: resource.payload,
-                                nonce: resource.nonce,
-                                sign: creator
+                    if (!Tools_1.Uint8Tool.equals(resource.publicKey, keypair.publicKey)) {
+                        throw new Error_1.Error({
+                            kind: Error_1.SDKKind.ProtocolError,
+                            payload: {
+                                message: "public key doesn't match secret key",
+                                resource: resource.id
                             }
-                        ], keypair.secretKey)];
-                case 3:
-                    _b = _c.apply(void 0, [_d.sent()]);
-                    _d.label = 4;
-                case 4:
-                    payload = _b;
+                        });
+                    }
                     return [4 /*yield*/, session.getPublicKey(creator)];
-                case 5:
-                    rcreator = _d.sent();
-                    return [2 /*return*/, new ResourceBox(resource.id, resource.kind, payload, keypair, rcreator)];
+                case 2:
+                    creatorPk = _b.sent();
+                    payload = resource.payload.length == 0
+                        ? null
+                        : parse(IdentityKeySet_1.IdentityKeySet.decryptor(Cryptor_1.CipherType.NACL_SES, keypair.secretKey).decrypt({
+                            message: resource.payload,
+                            nonce: resource.nonce,
+                            sign: creatorPk
+                        }));
+                    return [2 /*return*/, new ResourceBox(resource.id, resource.kind, payload, keypair, creatorPk)];
             }
         });
     });
@@ -190,7 +177,7 @@ function makeResource(_a, typeOfKey, session, boxKey, parse) {
 exports.makeResource = makeResource;
 function makeResourcesFromResponses(resources, session, parse) {
     return __awaiter(this, void 0, void 0, function () {
-        var owners, ownersKeys, i, owner, keys, resolvedResources, i, resource, keys, j, _a, _b;
+        var owners, ownersKeys, i, owner, keySet, resolvedResources, i, resource, keySet, j, _a, _b;
         return __generator(this, function (_c) {
             switch (_c.label) {
                 case 0:
@@ -221,10 +208,10 @@ function makeResourcesFromResponses(resources, session, parse) {
                     if (!(i < owners.length)) return [3 /*break*/, 4];
                     owner = owners[i];
                     if (!(owner.login != undefined && owner.version != undefined)) return [3 /*break*/, 3];
-                    return [4 /*yield*/, session.fetchKeys(owner.login, owner.version)];
+                    return [4 /*yield*/, session.getIdentityKeySet(owner.login, owner.version)];
                 case 2:
-                    keys = _c.sent();
-                    ownersKeys.push(keys);
+                    keySet = _c.sent();
+                    ownersKeys.push(keySet);
                     _c.label = 3;
                 case 3:
                     i++;
@@ -236,16 +223,18 @@ function makeResourcesFromResponses(resources, session, parse) {
                 case 5:
                     if (!(i < resources.length)) return [3 /*break*/, 8];
                     resource = resources[i];
-                    keys = void 0;
+                    keySet = void 0;
                     for (j = 0; j < owners.length; j++) {
                         if (resource.owner.login == owners[j].login &&
                             resource.owner.version == owners[j].version) {
-                            keys = ownersKeys[j];
+                            keySet = ownersKeys[j];
                         }
                     }
+                    // TODO(K1): Rid keySet as any
                     _b = (_a = resolvedResources).push;
-                    return [4 /*yield*/, makeResource(resource, proto_1.api.ResourceType.SES, session, keys != undefined ? keys.boxKey : undefined, parse)];
+                    return [4 /*yield*/, makeResource(resource, session, keySet, Cryptor_1.CipherType.NACL_SES, parse)];
                 case 6:
+                    // TODO(K1): Rid keySet as any
                     _b.apply(_a, [_c.sent()]);
                     _c.label = 7;
                 case 7:
@@ -271,7 +260,7 @@ function createBodyRequest(payload, sharingGroup, crypto, session, options) {
                     return [4 /*yield*/, encryptForSharingGroup(keypair.secretKey, sharingGroup, crypto, session)];
                 case 1:
                     encryptedSharingGroup = _b.sent();
-                    _a = crypto.encrypt(keypair.publicKey, serialize(payload)), message = _a.message, nonce = _a.nonce;
+                    _a = crypto.encrypt({ box: keypair.publicKey }, serialize(payload)), message = _a.message, nonce = _a.nonce;
                     return [2 /*return*/, {
                             keypair: keypair,
                             body: {
@@ -294,10 +283,14 @@ function encryptForSharingGroup(text, sharingGroup, crypto, session) {
                 case 0: return [4 /*yield*/, session.getLatestPublicKeys(sharingGroup)];
                 case 1:
                     publicKeys = _a.sent();
-                    return [2 /*return*/, publicKeys.map(function (_a) {
-                            var login = _a.login, version = _a.version, box = _a.box, sign = _a.sign;
-                            var _b = crypto.encrypt(box, text), message = _b.message, nonce = _b.nonce;
-                            return { login: login, version: version, nonce: nonce, encryptedKey: message };
+                    return [2 /*return*/, publicKeys.map(function (pk) {
+                            var _a = crypto.encrypt(pk, text), message = _a.message, nonce = _a.nonce;
+                            return {
+                                login: pk.login,
+                                version: pk.version,
+                                nonce: nonce,
+                                encryptedKey: message
+                            };
                         })];
             }
         });

@@ -83,7 +83,10 @@ describe("identity.UnlockVersions", () => {
     );
   });
   it("Create identity and resource v4", async () => {
-    await new AdminAPI(adminSession).overwriteKeys(alice.login, adminSecret1); // key reset: v4
+    await new IdentityAPI(adminSession).overwriteKeys(
+      alice.login,
+      adminSecret1
+    ); // key reset: v4
     aliceSession = await DataPeps.Session.login(alice.login, adminSecret1);
     resv4 = await new ResourceAPI(aliceSession).create(
       "test",
@@ -101,7 +104,10 @@ describe("identity.UnlockVersions", () => {
     );
   });
   it("Create identity and resource v6", async () => {
-    await new AdminAPI(adminSession).overwriteKeys(alice.login, adminSecret2); // key reset: v6
+    await new IdentityAPI(adminSession).overwriteKeys(
+      alice.login,
+      adminSecret2
+    ); // key reset: v6
     aliceSession = await DataPeps.Session.login(alice.login, adminSecret2);
     resv6 = await new ResourceAPI(aliceSession).create(
       "test",
@@ -213,7 +219,10 @@ describe("identity.UnlockVersions", () => {
   });
 
   it("Create new locked versions for tests from a device (with assume)", async () => {
-    await new AdminAPI(adminSession).overwriteKeys(alice.login, adminSecret3); // key reset: v8
+    await new IdentityAPI(adminSession).overwriteKeys(
+      alice.login,
+      adminSecret3
+    ); // key reset: v8
     aliceSession = await DataPeps.Session.login(alice.login, adminSecret3);
     await expectCannotAssumeOwnershipToGetAResource(aliceSession, resv1.id);
     await expectCannotAssumeOwnershipToGetAResource(aliceSession, resv2.id);

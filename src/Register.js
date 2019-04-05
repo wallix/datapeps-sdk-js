@@ -39,8 +39,8 @@ var Long = require("long");
 var protobufjs = require("protobufjs");
 var proto_1 = require("./proto");
 var Tools_1 = require("./Tools");
-var CryptoFuncs_1 = require("./CryptoFuncs");
 var HTTP = require("./HTTP");
+var IdentityKeySetAPI_1 = require("./IdentityKeySetAPI");
 var Error_1 = require("./Error");
 exports.Error = Error_1.Error;
 exports.ServerError = Error_1.ServerKind;
@@ -60,7 +60,7 @@ function register(identity, secret) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, _register("/api/v4/register", identity, secret, function (r) {
+                case 0: return [4 /*yield*/, _register("/api/v1/register", identity, secret, function (r) {
                         return proto_1.api.IdentityRegisterRequest.encode(r).finish();
                     })];
                 case 1: return [2 /*return*/, _a.sent()];
@@ -86,7 +86,7 @@ function registerWithToken(token, identity, secret) {
             switch (_a.label) {
                 case 0:
                     btoken = token instanceof Uint8Array ? Tools_1.Base64.encode(token) : token;
-                    return [4 /*yield*/, _register("/api/v4/register/link/" + encodeURIComponent(btoken), identity, secret, function (r) { return proto_1.api.RegisterPostLinkTokenRequest.encode(r).finish(); })];
+                    return [4 /*yield*/, _register("/api/v1/register/link/" + encodeURIComponent(btoken), identity, secret, function (r) { return proto_1.api.RegisterPostLinkTokenRequest.encode(r).finish(); })];
                 case 1: return [2 /*return*/, _a.sent()];
             }
         });
@@ -95,17 +95,16 @@ function registerWithToken(token, identity, secret) {
 exports.registerWithToken = registerWithToken;
 function _register(path, identity, secret, request) {
     return __awaiter(this, void 0, void 0, function () {
-        var encryption;
+        var encryptedKeySet;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    encryption = new CryptoFuncs_1.Encryption();
-                    encryption.generate(Tools_1.Uint8Tool.convert(secret), null);
+                    encryptedKeySet = IdentityKeySetAPI_1.IdentityKeySetAPI.initWithSecret({ version: 1, login: identity.login }, secret).encryptedKeySet;
                     return [4 /*yield*/, HTTP.client.doRequest({
                             method: "POST",
                             expectedCode: 201,
                             path: path,
-                            body: request({ identity: identity, encryption: encryption }),
+                            body: request({ identity: identity, encryption: encryptedKeySet }),
                             headers: new Headers({
                                 "content-type": "application/x-protobuf"
                             })
@@ -133,7 +132,7 @@ function sendRegisterLink(email) {
                 case 0: return [4 /*yield*/, HTTP.client.doRequest({
                         method: "POST",
                         expectedCode: 201,
-                        path: "/api/v4/register/link",
+                        path: "/api/v1/register/link",
                         body: proto_1.api.RegisterLinkRequest.encode({
                             email: email
                         }).finish(),

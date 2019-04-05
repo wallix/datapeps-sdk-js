@@ -37,11 +37,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var proto_1 = require("./proto");
 var Tools_1 = require("./Tools");
-var CryptoFuncs_1 = require("./CryptoFuncs");
 var HTTP = require("./HTTP");
 var ResourceInternal_1 = require("./ResourceInternal");
 var Session_1 = require("./Session");
 var ResourceAPI_1 = require("./ResourceAPI");
+var IdentityKeySetAPI_1 = require("./IdentityKeySetAPI");
 /**
  * Create a user thanks an external referential of identities
  * @param appID The identifier of a configured application
@@ -49,18 +49,16 @@ var ResourceAPI_1 = require("./ResourceAPI");
  * @param secret The identity secret
  * On error the promise will be rejected with an {@link Error} with kind:
  * - `ApplicationInvalidToken` if the JWT token returned by the connector is invalid.
- * - `IdentityNotFound` if the identity `appID` doesn't exists.
- * - `ApplicationConfigNotFound` if the `appID` is not configured.
+ * - `ApplicationConfigNotFound` if the `appID` is not configured or if the identity `appID` doesn't exists.
  */
 function createUser(appID, auth, secret) {
     return __awaiter(this, void 0, void 0, function () {
-        var encryption, secretBytes, payload, identity, resource, body;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        var secretBytes, _a, keySet, encryptedKeySet, payload, identity, appIdentityResourceKind, resource, body;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
-                    encryption = new CryptoFuncs_1.Encryption();
                     secretBytes = Tools_1.Uint8Tool.convert(secret);
-                    encryption.generate(secretBytes, null);
+                    _a = IdentityKeySetAPI_1.IdentityKeySetAPI.initWithSecret({ version: 1, login: null }, secretBytes), keySet = _a.keySet, encryptedKeySet = _a.encryptedKeySet;
                     payload = Tools_1.Uint8Tool.convert(JSON.stringify({
                         appID: appID
                     }));
@@ -70,15 +68,16 @@ function createUser(appID, auth, secret) {
                         kind: "pepsswarm/4",
                         payload: payload
                     };
-                    resource = ResourceInternal_1.createWithEncryption("application/secret", secretBytes, encryption, { serialize: function (u) { return u; } });
+                    appIdentityResourceKind = "internal/application/secret";
+                    resource = ResourceInternal_1.createWithEncryption(secretBytes, keySet, appIdentityResourceKind, { serialize: function (u) { return u; } });
                     return [4 /*yield*/, HTTP.client.doRequest({
                             method: "POST",
                             expectedCode: 201,
-                            path: "/api/v4/application/" + appID + "/identity",
+                            path: "/api/v1/application/" + appID + "/identity",
                             body: proto_1.api.RegisterApplicationIdentityRequest.encode({
                                 appID: appID,
                                 auth: auth,
-                                encryption: encryption,
+                                encryption: encryptedKeySet,
                                 identity: identity,
                                 resources: { appSecret: resource.resourceRequestBody }
                             }).finish(),
@@ -86,7 +85,7 @@ function createUser(appID, auth, secret) {
                             headers: new Headers({ "content-type": "application/x-protobuf" })
                         })];
                 case 1:
-                    body = (_a.sent()).body;
+                    body = (_b.sent()).body;
                     return [2 /*return*/, body];
             }
         });

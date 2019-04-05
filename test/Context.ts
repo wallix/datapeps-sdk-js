@@ -9,7 +9,7 @@ export interface initCtx {
 }
 
 export function init(): initCtx {
-  let seed = Math.floor(Math.random() * (Math.pow(10, 6) - 1));
+  let seed = getRandomSuffix();
   return { seed };
 }
 
@@ -243,9 +243,9 @@ export async function dev(init: initCtx, n = 1): Promise<devCtx> {
     new Array(n)
       .fill(null)
       .map(
-        (_, i) =>
+        _ =>
           <DataPeps.IdentityFields>{
-            login: `app${i}.${init.seed}`,
+            login: `app.${getRandomSuffix()}.${init.seed}`,
             name: "A killer app",
             kind: "pepsswarm/3",
             payload: Uint8Tool.encode(
@@ -297,10 +297,9 @@ export async function generateIdentities(
   let name = options.name == null ? "id" : options.name;
   for (let i = 0; i < n; i++) {
     let secret = nacl.randomBytes(128);
-    let nameSuffix = Math.floor(Math.random() * (Math.pow(10, 6) - 1));
     let identity: DataPeps.IdentityFields = generateIdentityFields(init, {
       ...options,
-      name: `${name}${nameSuffix}`
+      name: `${name}.${getRandomSuffix()}`
     });
     promises.push(
       (async () => {
@@ -342,7 +341,7 @@ function generateIdentityFields(
 ): DataPeps.IdentityFields {
   options = options ? options : {};
   let name = options.name == null ? "test" : options.name;
-  let login = `${name}.${init.seed}`;
+  let login = `${name}.${getRandomSuffix()}.${init.seed}`;
   let kind = options.kind;
   if (!kind || 0 === kind.length) {
     kind = identityDefaultKind;
@@ -354,4 +353,8 @@ function generateIdentityFields(
     payload: options.payload
   };
   return identityFields;
+}
+
+function getRandomSuffix(): number {
+  return Math.floor(Math.random() * (Math.pow(10, 6) - 1));
 }

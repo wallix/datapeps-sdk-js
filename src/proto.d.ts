@@ -959,127 +959,127 @@ export namespace api {
         public toJSON(): { [k: string]: any };
     }
 
-    /** Properties of an IdentityEncryption. */
-    interface IIdentityEncryption {
+    /** Properties of an IdentityEncryptedKeySet. */
+    interface IIdentityEncryptedKeySet {
 
-        /** IdentityEncryption version */
+        /** IdentityEncryptedKeySet version */
         version?: (number|null);
 
-        /** IdentityEncryption masterSalt */
+        /** IdentityEncryptedKeySet masterSalt */
         masterSalt?: (Uint8Array|null);
 
-        /** IdentityEncryption masterPublicKey */
+        /** IdentityEncryptedKeySet masterPublicKey */
         masterPublicKey?: (Uint8Array|null);
 
-        /** IdentityEncryption sharingEncrypted */
+        /** IdentityEncryptedKeySet sharingEncrypted */
         sharingEncrypted?: (api.IIdentityEncryptedKey|null);
 
-        /** IdentityEncryption boxEncrypted */
+        /** IdentityEncryptedKeySet boxEncrypted */
         boxEncrypted?: (api.IIdentityEncryptedKey|null);
 
-        /** IdentityEncryption signEncrypted */
+        /** IdentityEncryptedKeySet signEncrypted */
         signEncrypted?: (api.IIdentityEncryptedKey|null);
 
-        /** IdentityEncryption readEncrypted */
+        /** IdentityEncryptedKeySet readEncrypted */
         readEncrypted?: (api.IIdentityEncryptedKey|null);
     }
 
-    /** Represents an IdentityEncryption. */
-    class IdentityEncryption implements IIdentityEncryption {
+    /** Represents an IdentityEncryptedKeySet. */
+    class IdentityEncryptedKeySet implements IIdentityEncryptedKeySet {
 
         /**
-         * Constructs a new IdentityEncryption.
+         * Constructs a new IdentityEncryptedKeySet.
          * @param [properties] Properties to set
          */
-        constructor(properties?: api.IIdentityEncryption);
+        constructor(properties?: api.IIdentityEncryptedKeySet);
 
-        /** IdentityEncryption version. */
+        /** IdentityEncryptedKeySet version. */
         public version: number;
 
-        /** IdentityEncryption masterSalt. */
+        /** IdentityEncryptedKeySet masterSalt. */
         public masterSalt: Uint8Array;
 
-        /** IdentityEncryption masterPublicKey. */
+        /** IdentityEncryptedKeySet masterPublicKey. */
         public masterPublicKey: Uint8Array;
 
-        /** IdentityEncryption sharingEncrypted. */
+        /** IdentityEncryptedKeySet sharingEncrypted. */
         public sharingEncrypted?: (api.IIdentityEncryptedKey|null);
 
-        /** IdentityEncryption boxEncrypted. */
+        /** IdentityEncryptedKeySet boxEncrypted. */
         public boxEncrypted?: (api.IIdentityEncryptedKey|null);
 
-        /** IdentityEncryption signEncrypted. */
+        /** IdentityEncryptedKeySet signEncrypted. */
         public signEncrypted?: (api.IIdentityEncryptedKey|null);
 
-        /** IdentityEncryption readEncrypted. */
+        /** IdentityEncryptedKeySet readEncrypted. */
         public readEncrypted?: (api.IIdentityEncryptedKey|null);
 
         /**
-         * Creates a new IdentityEncryption instance using the specified properties.
+         * Creates a new IdentityEncryptedKeySet instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns IdentityEncryption instance
+         * @returns IdentityEncryptedKeySet instance
          */
-        public static create(properties?: api.IIdentityEncryption): api.IdentityEncryption;
+        public static create(properties?: api.IIdentityEncryptedKeySet): api.IdentityEncryptedKeySet;
 
         /**
-         * Encodes the specified IdentityEncryption message. Does not implicitly {@link api.IdentityEncryption.verify|verify} messages.
-         * @param message IdentityEncryption message or plain object to encode
+         * Encodes the specified IdentityEncryptedKeySet message. Does not implicitly {@link api.IdentityEncryptedKeySet.verify|verify} messages.
+         * @param message IdentityEncryptedKeySet message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: api.IIdentityEncryption, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: api.IIdentityEncryptedKeySet, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified IdentityEncryption message, length delimited. Does not implicitly {@link api.IdentityEncryption.verify|verify} messages.
-         * @param message IdentityEncryption message or plain object to encode
+         * Encodes the specified IdentityEncryptedKeySet message, length delimited. Does not implicitly {@link api.IdentityEncryptedKeySet.verify|verify} messages.
+         * @param message IdentityEncryptedKeySet message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: api.IIdentityEncryption, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: api.IIdentityEncryptedKeySet, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes an IdentityEncryption message from the specified reader or buffer.
+         * Decodes an IdentityEncryptedKeySet message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns IdentityEncryption
+         * @returns IdentityEncryptedKeySet
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.IdentityEncryption;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.IdentityEncryptedKeySet;
 
         /**
-         * Decodes an IdentityEncryption message from the specified reader or buffer, length delimited.
+         * Decodes an IdentityEncryptedKeySet message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns IdentityEncryption
+         * @returns IdentityEncryptedKeySet
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.IdentityEncryption;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.IdentityEncryptedKeySet;
 
         /**
-         * Verifies an IdentityEncryption message.
+         * Verifies an IdentityEncryptedKeySet message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates an IdentityEncryption message from a plain object. Also converts values to their respective internal types.
+         * Creates an IdentityEncryptedKeySet message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns IdentityEncryption
+         * @returns IdentityEncryptedKeySet
          */
-        public static fromObject(object: { [k: string]: any }): api.IdentityEncryption;
+        public static fromObject(object: { [k: string]: any }): api.IdentityEncryptedKeySet;
 
         /**
-         * Creates a plain object from an IdentityEncryption message. Also converts values to other types if specified.
-         * @param message IdentityEncryption
+         * Creates a plain object from an IdentityEncryptedKeySet message. Also converts values to other types if specified.
+         * @param message IdentityEncryptedKeySet
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: api.IdentityEncryption, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: api.IdentityEncryptedKeySet, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this IdentityEncryption to JSON.
+         * Converts this IdentityEncryptedKeySet to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -1200,7 +1200,7 @@ export namespace api {
         identity?: (api.IIdentityFields|null);
 
         /** IdentityRegisterRequest encryption */
-        encryption?: (api.IIdentityEncryption|null);
+        encryption?: (api.IIdentityEncryptedKeySet|null);
     }
 
     /** Represents an IdentityRegisterRequest. */
@@ -1216,7 +1216,7 @@ export namespace api {
         public identity?: (api.IIdentityFields|null);
 
         /** IdentityRegisterRequest encryption. */
-        public encryption?: (api.IIdentityEncryption|null);
+        public encryption?: (api.IIdentityEncryptedKeySet|null);
 
         /**
          * Creates a new IdentityRegisterRequest instance using the specified properties.
@@ -1482,7 +1482,7 @@ export namespace api {
         identity?: (api.IIdentityFields|null);
 
         /** RegisterApplicationIdentityRequest encryption */
-        encryption?: (api.IIdentityEncryption|null);
+        encryption?: (api.IIdentityEncryptedKeySet|null);
 
         /** RegisterApplicationIdentityRequest resources */
         resources?: ({ [k: string]: api.IResourcePostRequest }|null);
@@ -1507,7 +1507,7 @@ export namespace api {
         public identity?: (api.IIdentityFields|null);
 
         /** RegisterApplicationIdentityRequest encryption. */
-        public encryption?: (api.IIdentityEncryption|null);
+        public encryption?: (api.IIdentityEncryptedKeySet|null);
 
         /** RegisterApplicationIdentityRequest resources. */
         public resources: { [k: string]: api.IResourcePostRequest };
@@ -1683,7 +1683,7 @@ export namespace api {
         identity?: (api.IIdentityFields|null);
 
         /** IdentityCreateRequest encryption */
-        encryption?: (api.IIdentityEncryption|null);
+        encryption?: (api.IIdentityEncryptedKeySet|null);
 
         /** IdentityCreateRequest signChain */
         signChain?: (Uint8Array|null);
@@ -1708,7 +1708,7 @@ export namespace api {
         public identity?: (api.IIdentityFields|null);
 
         /** IdentityCreateRequest encryption. */
-        public encryption?: (api.IIdentityEncryption|null);
+        public encryption?: (api.IIdentityEncryptedKeySet|null);
 
         /** IdentityCreateRequest signChain. */
         public signChain: Uint8Array;
@@ -1797,7 +1797,7 @@ export namespace api {
         login?: (string|null);
 
         /** IdentityKeysToReplaceRequest encryption */
-        encryption?: (api.IIdentityEncryption|null);
+        encryption?: (api.IIdentityEncryptedKeySet|null);
 
         /** IdentityKeysToReplaceRequest signChain */
         signChain?: (Uint8Array|null);
@@ -1819,7 +1819,7 @@ export namespace api {
         public login: string;
 
         /** IdentityKeysToReplaceRequest encryption. */
-        public encryption?: (api.IIdentityEncryption|null);
+        public encryption?: (api.IIdentityEncryptedKeySet|null);
 
         /** IdentityKeysToReplaceRequest signChain. */
         public signChain: Uint8Array;
@@ -2396,6 +2396,108 @@ export namespace api {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of an ApplicationGetIdentityAuthResponse. */
+    interface IApplicationGetIdentityAuthResponse {
+
+        /** ApplicationGetIdentityAuthResponse auth */
+        auth?: (api.IIdentityExternalAuth|null);
+
+        /** ApplicationGetIdentityAuthResponse login */
+        login?: (string|null);
+
+        /** ApplicationGetIdentityAuthResponse configID */
+        configID?: (api.IApplicationConfigID|null);
+    }
+
+    /** Represents an ApplicationGetIdentityAuthResponse. */
+    class ApplicationGetIdentityAuthResponse implements IApplicationGetIdentityAuthResponse {
+
+        /**
+         * Constructs a new ApplicationGetIdentityAuthResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: api.IApplicationGetIdentityAuthResponse);
+
+        /** ApplicationGetIdentityAuthResponse auth. */
+        public auth?: (api.IIdentityExternalAuth|null);
+
+        /** ApplicationGetIdentityAuthResponse login. */
+        public login: string;
+
+        /** ApplicationGetIdentityAuthResponse configID. */
+        public configID?: (api.IApplicationConfigID|null);
+
+        /**
+         * Creates a new ApplicationGetIdentityAuthResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ApplicationGetIdentityAuthResponse instance
+         */
+        public static create(properties?: api.IApplicationGetIdentityAuthResponse): api.ApplicationGetIdentityAuthResponse;
+
+        /**
+         * Encodes the specified ApplicationGetIdentityAuthResponse message. Does not implicitly {@link api.ApplicationGetIdentityAuthResponse.verify|verify} messages.
+         * @param message ApplicationGetIdentityAuthResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: api.IApplicationGetIdentityAuthResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ApplicationGetIdentityAuthResponse message, length delimited. Does not implicitly {@link api.ApplicationGetIdentityAuthResponse.verify|verify} messages.
+         * @param message ApplicationGetIdentityAuthResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: api.IApplicationGetIdentityAuthResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an ApplicationGetIdentityAuthResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ApplicationGetIdentityAuthResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.ApplicationGetIdentityAuthResponse;
+
+        /**
+         * Decodes an ApplicationGetIdentityAuthResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ApplicationGetIdentityAuthResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.ApplicationGetIdentityAuthResponse;
+
+        /**
+         * Verifies an ApplicationGetIdentityAuthResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an ApplicationGetIdentityAuthResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ApplicationGetIdentityAuthResponse
+         */
+        public static fromObject(object: { [k: string]: any }): api.ApplicationGetIdentityAuthResponse;
+
+        /**
+         * Creates a plain object from an ApplicationGetIdentityAuthResponse message. Also converts values to other types if specified.
+         * @param message ApplicationGetIdentityAuthResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: api.ApplicationGetIdentityAuthResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ApplicationGetIdentityAuthResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of an IdentityPromoteRequest. */
     interface IIdentityPromoteRequest {
 
@@ -2492,118 +2594,295 @@ export namespace api {
         public toJSON(): { [k: string]: any };
     }
 
-    /** Properties of an IdentityGetKeysResponse. */
-    interface IIdentityGetKeysResponse {
+    /** Properties of an IdentityGetKeySetRequest. */
+    interface IIdentityGetKeySetRequest {
 
-        /** IdentityGetKeysResponse sharingKey */
-        sharingKey?: (api.ICipher[]|null);
-
-        /** IdentityGetKeysResponse signKey */
-        signKey?: (api.ICipher|null);
-
-        /** IdentityGetKeysResponse boxKey */
-        boxKey?: (api.ICipher|null);
-
-        /** IdentityGetKeysResponse readKey */
-        readKey?: (api.ICipher|null);
-
-        /** IdentityGetKeysResponse version */
+        /** IdentityGetKeySetRequest version */
         version?: (number|null);
+
+        /** IdentityGetKeySetRequest login */
+        login?: (string|null);
     }
 
-    /** Represents an IdentityGetKeysResponse. */
-    class IdentityGetKeysResponse implements IIdentityGetKeysResponse {
+    /** Represents an IdentityGetKeySetRequest. */
+    class IdentityGetKeySetRequest implements IIdentityGetKeySetRequest {
 
         /**
-         * Constructs a new IdentityGetKeysResponse.
+         * Constructs a new IdentityGetKeySetRequest.
          * @param [properties] Properties to set
          */
-        constructor(properties?: api.IIdentityGetKeysResponse);
+        constructor(properties?: api.IIdentityGetKeySetRequest);
 
-        /** IdentityGetKeysResponse sharingKey. */
-        public sharingKey: api.ICipher[];
-
-        /** IdentityGetKeysResponse signKey. */
-        public signKey?: (api.ICipher|null);
-
-        /** IdentityGetKeysResponse boxKey. */
-        public boxKey?: (api.ICipher|null);
-
-        /** IdentityGetKeysResponse readKey. */
-        public readKey?: (api.ICipher|null);
-
-        /** IdentityGetKeysResponse version. */
+        /** IdentityGetKeySetRequest version. */
         public version: number;
 
+        /** IdentityGetKeySetRequest login. */
+        public login: string;
+
         /**
-         * Creates a new IdentityGetKeysResponse instance using the specified properties.
+         * Creates a new IdentityGetKeySetRequest instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns IdentityGetKeysResponse instance
+         * @returns IdentityGetKeySetRequest instance
          */
-        public static create(properties?: api.IIdentityGetKeysResponse): api.IdentityGetKeysResponse;
+        public static create(properties?: api.IIdentityGetKeySetRequest): api.IdentityGetKeySetRequest;
 
         /**
-         * Encodes the specified IdentityGetKeysResponse message. Does not implicitly {@link api.IdentityGetKeysResponse.verify|verify} messages.
-         * @param message IdentityGetKeysResponse message or plain object to encode
+         * Encodes the specified IdentityGetKeySetRequest message. Does not implicitly {@link api.IdentityGetKeySetRequest.verify|verify} messages.
+         * @param message IdentityGetKeySetRequest message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: api.IIdentityGetKeysResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: api.IIdentityGetKeySetRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified IdentityGetKeysResponse message, length delimited. Does not implicitly {@link api.IdentityGetKeysResponse.verify|verify} messages.
-         * @param message IdentityGetKeysResponse message or plain object to encode
+         * Encodes the specified IdentityGetKeySetRequest message, length delimited. Does not implicitly {@link api.IdentityGetKeySetRequest.verify|verify} messages.
+         * @param message IdentityGetKeySetRequest message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: api.IIdentityGetKeysResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: api.IIdentityGetKeySetRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes an IdentityGetKeysResponse message from the specified reader or buffer.
+         * Decodes an IdentityGetKeySetRequest message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns IdentityGetKeysResponse
+         * @returns IdentityGetKeySetRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.IdentityGetKeysResponse;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.IdentityGetKeySetRequest;
 
         /**
-         * Decodes an IdentityGetKeysResponse message from the specified reader or buffer, length delimited.
+         * Decodes an IdentityGetKeySetRequest message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns IdentityGetKeysResponse
+         * @returns IdentityGetKeySetRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.IdentityGetKeysResponse;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.IdentityGetKeySetRequest;
 
         /**
-         * Verifies an IdentityGetKeysResponse message.
+         * Verifies an IdentityGetKeySetRequest message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates an IdentityGetKeysResponse message from a plain object. Also converts values to their respective internal types.
+         * Creates an IdentityGetKeySetRequest message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns IdentityGetKeysResponse
+         * @returns IdentityGetKeySetRequest
          */
-        public static fromObject(object: { [k: string]: any }): api.IdentityGetKeysResponse;
+        public static fromObject(object: { [k: string]: any }): api.IdentityGetKeySetRequest;
 
         /**
-         * Creates a plain object from an IdentityGetKeysResponse message. Also converts values to other types if specified.
-         * @param message IdentityGetKeysResponse
+         * Creates a plain object from an IdentityGetKeySetRequest message. Also converts values to other types if specified.
+         * @param message IdentityGetKeySetRequest
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: api.IdentityGetKeysResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: api.IdentityGetKeySetRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this IdentityGetKeysResponse to JSON.
+         * Converts this IdentityGetKeySetRequest to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an IdentityGetKeySetResponse. */
+    interface IIdentityGetKeySetResponse {
+
+        /** IdentityGetKeySetResponse path */
+        path?: (api.IdentityGetKeySetResponse.IPathElt[]|null);
+    }
+
+    /** Represents an IdentityGetKeySetResponse. */
+    class IdentityGetKeySetResponse implements IIdentityGetKeySetResponse {
+
+        /**
+         * Constructs a new IdentityGetKeySetResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: api.IIdentityGetKeySetResponse);
+
+        /** IdentityGetKeySetResponse path. */
+        public path: api.IdentityGetKeySetResponse.IPathElt[];
+
+        /**
+         * Creates a new IdentityGetKeySetResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns IdentityGetKeySetResponse instance
+         */
+        public static create(properties?: api.IIdentityGetKeySetResponse): api.IdentityGetKeySetResponse;
+
+        /**
+         * Encodes the specified IdentityGetKeySetResponse message. Does not implicitly {@link api.IdentityGetKeySetResponse.verify|verify} messages.
+         * @param message IdentityGetKeySetResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: api.IIdentityGetKeySetResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified IdentityGetKeySetResponse message, length delimited. Does not implicitly {@link api.IdentityGetKeySetResponse.verify|verify} messages.
+         * @param message IdentityGetKeySetResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: api.IIdentityGetKeySetResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an IdentityGetKeySetResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns IdentityGetKeySetResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.IdentityGetKeySetResponse;
+
+        /**
+         * Decodes an IdentityGetKeySetResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns IdentityGetKeySetResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.IdentityGetKeySetResponse;
+
+        /**
+         * Verifies an IdentityGetKeySetResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an IdentityGetKeySetResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns IdentityGetKeySetResponse
+         */
+        public static fromObject(object: { [k: string]: any }): api.IdentityGetKeySetResponse;
+
+        /**
+         * Creates a plain object from an IdentityGetKeySetResponse message. Also converts values to other types if specified.
+         * @param message IdentityGetKeySetResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: api.IdentityGetKeySetResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this IdentityGetKeySetResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace IdentityGetKeySetResponse {
+
+        /** Properties of a PathElt. */
+        interface IPathElt {
+
+            /** PathElt sharedKey */
+            sharedKey?: (api.ICipher|null);
+
+            /** PathElt encryptedKeySet */
+            encryptedKeySet?: (api.IIdentityEncryptedKeySet|null);
+
+            /** PathElt id */
+            id?: (api.IIdentityKeyID|null);
+        }
+
+        /** Represents a PathElt. */
+        class PathElt implements IPathElt {
+
+            /**
+             * Constructs a new PathElt.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: api.IdentityGetKeySetResponse.IPathElt);
+
+            /** PathElt sharedKey. */
+            public sharedKey?: (api.ICipher|null);
+
+            /** PathElt encryptedKeySet. */
+            public encryptedKeySet?: (api.IIdentityEncryptedKeySet|null);
+
+            /** PathElt id. */
+            public id?: (api.IIdentityKeyID|null);
+
+            /**
+             * Creates a new PathElt instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns PathElt instance
+             */
+            public static create(properties?: api.IdentityGetKeySetResponse.IPathElt): api.IdentityGetKeySetResponse.PathElt;
+
+            /**
+             * Encodes the specified PathElt message. Does not implicitly {@link api.IdentityGetKeySetResponse.PathElt.verify|verify} messages.
+             * @param message PathElt message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: api.IdentityGetKeySetResponse.IPathElt, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified PathElt message, length delimited. Does not implicitly {@link api.IdentityGetKeySetResponse.PathElt.verify|verify} messages.
+             * @param message PathElt message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: api.IdentityGetKeySetResponse.IPathElt, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a PathElt message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns PathElt
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.IdentityGetKeySetResponse.PathElt;
+
+            /**
+             * Decodes a PathElt message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns PathElt
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.IdentityGetKeySetResponse.PathElt;
+
+            /**
+             * Verifies a PathElt message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a PathElt message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns PathElt
+             */
+            public static fromObject(object: { [k: string]: any }): api.IdentityGetKeySetResponse.PathElt;
+
+            /**
+             * Creates a plain object from a PathElt message. Also converts values to other types if specified.
+             * @param message PathElt
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: api.IdentityGetKeySetResponse.PathElt, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this PathElt to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+        }
     }
 
     /** Properties of an IdentityGetPublicKeysRequest. */
@@ -4026,10 +4305,7 @@ export namespace api {
     interface IIdentityGetEncryptionResponse {
 
         /** IdentityGetEncryptionResponse encryption */
-        encryption?: (api.IIdentityEncryption|null);
-
-        /** IdentityGetEncryptionResponse creator */
-        creator?: (api.IIdentityPublicKey|null);
+        encryption?: (api.IIdentityEncryptedKeySet|null);
     }
 
     /** Represents an IdentityGetEncryptionResponse. */
@@ -4042,10 +4318,7 @@ export namespace api {
         constructor(properties?: api.IIdentityGetEncryptionResponse);
 
         /** IdentityGetEncryptionResponse encryption. */
-        public encryption?: (api.IIdentityEncryption|null);
-
-        /** IdentityGetEncryptionResponse creator. */
-        public creator?: (api.IIdentityPublicKey|null);
+        public encryption?: (api.IIdentityEncryptedKeySet|null);
 
         /**
          * Creates a new IdentityGetEncryptionResponse instance using the specified properties.
@@ -4122,10 +4395,7 @@ export namespace api {
     interface IIdentityGetKeysToRenewResponse {
 
         /** IdentityGetKeysToRenewResponse encryption */
-        encryption?: (api.IIdentityEncryption|null);
-
-        /** IdentityGetKeysToRenewResponse creator */
-        creator?: (api.IIdentityPublicKey|null);
+        encryption?: (api.IIdentityEncryptedKeySet|null);
 
         /** IdentityGetKeysToRenewResponse sharingGroup */
         sharingGroup?: (api.IIdentityPublicKey[]|null);
@@ -4141,10 +4411,7 @@ export namespace api {
         constructor(properties?: api.IIdentityGetKeysToRenewResponse);
 
         /** IdentityGetKeysToRenewResponse encryption. */
-        public encryption?: (api.IIdentityEncryption|null);
-
-        /** IdentityGetKeysToRenewResponse creator. */
-        public creator?: (api.IIdentityPublicKey|null);
+        public encryption?: (api.IIdentityEncryptedKeySet|null);
 
         /** IdentityGetKeysToRenewResponse sharingGroup. */
         public sharingGroup: api.IIdentityPublicKey[];
@@ -4323,7 +4590,7 @@ export namespace api {
         login?: (string|null);
 
         /** IdentityPostKeysToRenewRequest encryption */
-        encryption?: (api.IIdentityEncryption|null);
+        encryption?: (api.IIdentityEncryptedKeySet|null);
 
         /** IdentityPostKeysToRenewRequest signChain */
         signChain?: (Uint8Array|null);
@@ -4348,7 +4615,7 @@ export namespace api {
         public login: string;
 
         /** IdentityPostKeysToRenewRequest encryption. */
-        public encryption?: (api.IIdentityEncryption|null);
+        public encryption?: (api.IIdentityEncryptedKeySet|null);
 
         /** IdentityPostKeysToRenewRequest signChain. */
         public signChain: Uint8Array;
@@ -4459,6 +4726,12 @@ export namespace api {
 
         /** IdentityGetSharingGraphElement latest */
         latest?: (boolean|null);
+
+        /** IdentityGetSharingGraphElement boxPublicKey */
+        boxPublicKey?: (Uint8Array|null);
+
+        /** IdentityGetSharingGraphElement signPublicKey */
+        signPublicKey?: (Uint8Array|null);
     }
 
     /** Represents an IdentityGetSharingGraphElement. */
@@ -4496,6 +4769,12 @@ export namespace api {
 
         /** IdentityGetSharingGraphElement latest. */
         public latest: boolean;
+
+        /** IdentityGetSharingGraphElement boxPublicKey. */
+        public boxPublicKey: Uint8Array;
+
+        /** IdentityGetSharingGraphElement signPublicKey. */
+        public signPublicKey: Uint8Array;
 
         /**
          * Creates a new IdentityGetSharingGraphElement instance using the specified properties.
@@ -4677,7 +4956,7 @@ export namespace api {
         backward?: (api.IIdentityBackwardKey|null);
 
         /** IdentityPostSharingGraphElement encryption */
-        encryption?: (api.IIdentityEncryption|null);
+        encryption?: (api.IIdentityEncryptedKeySet|null);
     }
 
     /** Represents an IdentityPostSharingGraphElement. */
@@ -4705,7 +4984,7 @@ export namespace api {
         public backward?: (api.IIdentityBackwardKey|null);
 
         /** IdentityPostSharingGraphElement encryption. */
-        public encryption?: (api.IIdentityEncryption|null);
+        public encryption?: (api.IIdentityEncryptedKeySet|null);
 
         /**
          * Creates a new IdentityPostSharingGraphElement instance using the specified properties.
@@ -5072,10 +5351,7 @@ export namespace api {
             token?: (Uint8Array|null);
 
             /** IdentityChallenge encryption */
-            encryption?: (api.IIdentityEncryption|null);
-
-            /** IdentityChallenge creator */
-            creator?: (api.IIdentityPublicKey|null);
+            encryption?: (api.IIdentityEncryptedKeySet|null);
         }
 
         /** Represents an IdentityChallenge. */
@@ -5094,10 +5370,7 @@ export namespace api {
             public token: Uint8Array;
 
             /** IdentityChallenge encryption. */
-            public encryption?: (api.IIdentityEncryption|null);
-
-            /** IdentityChallenge creator. */
-            public creator?: (api.IIdentityPublicKey|null);
+            public encryption?: (api.IIdentityEncryptedKeySet|null);
 
             /**
              * Creates a new IdentityChallenge instance using the specified properties.
@@ -5265,384 +5538,6 @@ export namespace api {
              */
             public toJSON(): { [k: string]: any };
         }
-    }
-
-    /** Properties of an IdentityAssociateEmailRequest. */
-    interface IIdentityAssociateEmailRequest {
-
-        /** IdentityAssociateEmailRequest login */
-        login?: (string|null);
-
-        /** IdentityAssociateEmailRequest email */
-        email?: (string|null);
-    }
-
-    /** Represents an IdentityAssociateEmailRequest. */
-    class IdentityAssociateEmailRequest implements IIdentityAssociateEmailRequest {
-
-        /**
-         * Constructs a new IdentityAssociateEmailRequest.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: api.IIdentityAssociateEmailRequest);
-
-        /** IdentityAssociateEmailRequest login. */
-        public login: string;
-
-        /** IdentityAssociateEmailRequest email. */
-        public email: string;
-
-        /**
-         * Creates a new IdentityAssociateEmailRequest instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns IdentityAssociateEmailRequest instance
-         */
-        public static create(properties?: api.IIdentityAssociateEmailRequest): api.IdentityAssociateEmailRequest;
-
-        /**
-         * Encodes the specified IdentityAssociateEmailRequest message. Does not implicitly {@link api.IdentityAssociateEmailRequest.verify|verify} messages.
-         * @param message IdentityAssociateEmailRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: api.IIdentityAssociateEmailRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified IdentityAssociateEmailRequest message, length delimited. Does not implicitly {@link api.IdentityAssociateEmailRequest.verify|verify} messages.
-         * @param message IdentityAssociateEmailRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: api.IIdentityAssociateEmailRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes an IdentityAssociateEmailRequest message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns IdentityAssociateEmailRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.IdentityAssociateEmailRequest;
-
-        /**
-         * Decodes an IdentityAssociateEmailRequest message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns IdentityAssociateEmailRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.IdentityAssociateEmailRequest;
-
-        /**
-         * Verifies an IdentityAssociateEmailRequest message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates an IdentityAssociateEmailRequest message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns IdentityAssociateEmailRequest
-         */
-        public static fromObject(object: { [k: string]: any }): api.IdentityAssociateEmailRequest;
-
-        /**
-         * Creates a plain object from an IdentityAssociateEmailRequest message. Also converts values to other types if specified.
-         * @param message IdentityAssociateEmailRequest
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: api.IdentityAssociateEmailRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this IdentityAssociateEmailRequest to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of an IdentitiyGetPrincipalEmailRequest. */
-    interface IIdentitiyGetPrincipalEmailRequest {
-
-        /** IdentitiyGetPrincipalEmailRequest login */
-        login?: (string|null);
-    }
-
-    /** Represents an IdentitiyGetPrincipalEmailRequest. */
-    class IdentitiyGetPrincipalEmailRequest implements IIdentitiyGetPrincipalEmailRequest {
-
-        /**
-         * Constructs a new IdentitiyGetPrincipalEmailRequest.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: api.IIdentitiyGetPrincipalEmailRequest);
-
-        /** IdentitiyGetPrincipalEmailRequest login. */
-        public login: string;
-
-        /**
-         * Creates a new IdentitiyGetPrincipalEmailRequest instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns IdentitiyGetPrincipalEmailRequest instance
-         */
-        public static create(properties?: api.IIdentitiyGetPrincipalEmailRequest): api.IdentitiyGetPrincipalEmailRequest;
-
-        /**
-         * Encodes the specified IdentitiyGetPrincipalEmailRequest message. Does not implicitly {@link api.IdentitiyGetPrincipalEmailRequest.verify|verify} messages.
-         * @param message IdentitiyGetPrincipalEmailRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: api.IIdentitiyGetPrincipalEmailRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified IdentitiyGetPrincipalEmailRequest message, length delimited. Does not implicitly {@link api.IdentitiyGetPrincipalEmailRequest.verify|verify} messages.
-         * @param message IdentitiyGetPrincipalEmailRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: api.IIdentitiyGetPrincipalEmailRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes an IdentitiyGetPrincipalEmailRequest message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns IdentitiyGetPrincipalEmailRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.IdentitiyGetPrincipalEmailRequest;
-
-        /**
-         * Decodes an IdentitiyGetPrincipalEmailRequest message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns IdentitiyGetPrincipalEmailRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.IdentitiyGetPrincipalEmailRequest;
-
-        /**
-         * Verifies an IdentitiyGetPrincipalEmailRequest message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates an IdentitiyGetPrincipalEmailRequest message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns IdentitiyGetPrincipalEmailRequest
-         */
-        public static fromObject(object: { [k: string]: any }): api.IdentitiyGetPrincipalEmailRequest;
-
-        /**
-         * Creates a plain object from an IdentitiyGetPrincipalEmailRequest message. Also converts values to other types if specified.
-         * @param message IdentitiyGetPrincipalEmailRequest
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: api.IdentitiyGetPrincipalEmailRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this IdentitiyGetPrincipalEmailRequest to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of an IdentityGetPrincipalEmailResponse. */
-    interface IIdentityGetPrincipalEmailResponse {
-
-        /** IdentityGetPrincipalEmailResponse login */
-        login?: (string|null);
-
-        /** IdentityGetPrincipalEmailResponse email */
-        email?: (string|null);
-    }
-
-    /** Represents an IdentityGetPrincipalEmailResponse. */
-    class IdentityGetPrincipalEmailResponse implements IIdentityGetPrincipalEmailResponse {
-
-        /**
-         * Constructs a new IdentityGetPrincipalEmailResponse.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: api.IIdentityGetPrincipalEmailResponse);
-
-        /** IdentityGetPrincipalEmailResponse login. */
-        public login: string;
-
-        /** IdentityGetPrincipalEmailResponse email. */
-        public email: string;
-
-        /**
-         * Creates a new IdentityGetPrincipalEmailResponse instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns IdentityGetPrincipalEmailResponse instance
-         */
-        public static create(properties?: api.IIdentityGetPrincipalEmailResponse): api.IdentityGetPrincipalEmailResponse;
-
-        /**
-         * Encodes the specified IdentityGetPrincipalEmailResponse message. Does not implicitly {@link api.IdentityGetPrincipalEmailResponse.verify|verify} messages.
-         * @param message IdentityGetPrincipalEmailResponse message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: api.IIdentityGetPrincipalEmailResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified IdentityGetPrincipalEmailResponse message, length delimited. Does not implicitly {@link api.IdentityGetPrincipalEmailResponse.verify|verify} messages.
-         * @param message IdentityGetPrincipalEmailResponse message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: api.IIdentityGetPrincipalEmailResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes an IdentityGetPrincipalEmailResponse message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns IdentityGetPrincipalEmailResponse
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.IdentityGetPrincipalEmailResponse;
-
-        /**
-         * Decodes an IdentityGetPrincipalEmailResponse message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns IdentityGetPrincipalEmailResponse
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.IdentityGetPrincipalEmailResponse;
-
-        /**
-         * Verifies an IdentityGetPrincipalEmailResponse message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates an IdentityGetPrincipalEmailResponse message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns IdentityGetPrincipalEmailResponse
-         */
-        public static fromObject(object: { [k: string]: any }): api.IdentityGetPrincipalEmailResponse;
-
-        /**
-         * Creates a plain object from an IdentityGetPrincipalEmailResponse message. Also converts values to other types if specified.
-         * @param message IdentityGetPrincipalEmailResponse
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: api.IdentityGetPrincipalEmailResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this IdentityGetPrincipalEmailResponse to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of an IdentitySetPrincipalEmailRequest. */
-    interface IIdentitySetPrincipalEmailRequest {
-
-        /** IdentitySetPrincipalEmailRequest login */
-        login?: (string|null);
-
-        /** IdentitySetPrincipalEmailRequest email */
-        email?: (string|null);
-    }
-
-    /** Represents an IdentitySetPrincipalEmailRequest. */
-    class IdentitySetPrincipalEmailRequest implements IIdentitySetPrincipalEmailRequest {
-
-        /**
-         * Constructs a new IdentitySetPrincipalEmailRequest.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: api.IIdentitySetPrincipalEmailRequest);
-
-        /** IdentitySetPrincipalEmailRequest login. */
-        public login: string;
-
-        /** IdentitySetPrincipalEmailRequest email. */
-        public email: string;
-
-        /**
-         * Creates a new IdentitySetPrincipalEmailRequest instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns IdentitySetPrincipalEmailRequest instance
-         */
-        public static create(properties?: api.IIdentitySetPrincipalEmailRequest): api.IdentitySetPrincipalEmailRequest;
-
-        /**
-         * Encodes the specified IdentitySetPrincipalEmailRequest message. Does not implicitly {@link api.IdentitySetPrincipalEmailRequest.verify|verify} messages.
-         * @param message IdentitySetPrincipalEmailRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: api.IIdentitySetPrincipalEmailRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified IdentitySetPrincipalEmailRequest message, length delimited. Does not implicitly {@link api.IdentitySetPrincipalEmailRequest.verify|verify} messages.
-         * @param message IdentitySetPrincipalEmailRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: api.IIdentitySetPrincipalEmailRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes an IdentitySetPrincipalEmailRequest message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns IdentitySetPrincipalEmailRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.IdentitySetPrincipalEmailRequest;
-
-        /**
-         * Decodes an IdentitySetPrincipalEmailRequest message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns IdentitySetPrincipalEmailRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.IdentitySetPrincipalEmailRequest;
-
-        /**
-         * Verifies an IdentitySetPrincipalEmailRequest message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates an IdentitySetPrincipalEmailRequest message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns IdentitySetPrincipalEmailRequest
-         */
-        public static fromObject(object: { [k: string]: any }): api.IdentitySetPrincipalEmailRequest;
-
-        /**
-         * Creates a plain object from an IdentitySetPrincipalEmailRequest message. Also converts values to other types if specified.
-         * @param message IdentitySetPrincipalEmailRequest
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: api.IdentitySetPrincipalEmailRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this IdentitySetPrincipalEmailRequest to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of an IdentitySetNamedResourceRequest. */
@@ -6064,10 +5959,7 @@ export namespace api {
         token?: (Uint8Array|null);
 
         /** SessionCreateChallengeResponse encryption */
-        encryption?: (api.IIdentityEncryption|null);
-
-        /** SessionCreateChallengeResponse creator */
-        creator?: (api.IIdentityPublicKey|null);
+        encryption?: (api.IIdentityEncryptedKeySet|null);
 
         /** SessionCreateChallengeResponse saltKind */
         saltKind?: (api.SessionSaltKind|null);
@@ -6089,10 +5981,7 @@ export namespace api {
         public token: Uint8Array;
 
         /** SessionCreateChallengeResponse encryption. */
-        public encryption?: (api.IIdentityEncryption|null);
-
-        /** SessionCreateChallengeResponse creator. */
-        public creator?: (api.IIdentityPublicKey|null);
+        public encryption?: (api.IIdentityEncryptedKeySet|null);
 
         /** SessionCreateChallengeResponse saltKind. */
         public saltKind: api.SessionSaltKind;
@@ -6480,6 +6369,9 @@ export namespace api {
         /** ApplicationIdentitySessionListRequest appID */
         appID?: (string|null);
 
+        /** ApplicationIdentitySessionListRequest since */
+        since?: (number|Long|null);
+
         /** ApplicationIdentitySessionListRequest offset */
         offset?: (number|null);
 
@@ -6498,6 +6390,9 @@ export namespace api {
 
         /** ApplicationIdentitySessionListRequest appID. */
         public appID: string;
+
+        /** ApplicationIdentitySessionListRequest since. */
+        public since: (number|Long);
 
         /** ApplicationIdentitySessionListRequest offset. */
         public offset: number;
@@ -6874,6 +6769,204 @@ export namespace api {
         }
     }
 
+    /** Properties of an ApplicationConfigID. */
+    interface IApplicationConfigID {
+
+        /** ApplicationConfigID appID */
+        appID?: (string|null);
+
+        /** ApplicationConfigID version */
+        version?: (number|null);
+    }
+
+    /** Represents an ApplicationConfigID. */
+    class ApplicationConfigID implements IApplicationConfigID {
+
+        /**
+         * Constructs a new ApplicationConfigID.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: api.IApplicationConfigID);
+
+        /** ApplicationConfigID appID. */
+        public appID: string;
+
+        /** ApplicationConfigID version. */
+        public version: number;
+
+        /**
+         * Creates a new ApplicationConfigID instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ApplicationConfigID instance
+         */
+        public static create(properties?: api.IApplicationConfigID): api.ApplicationConfigID;
+
+        /**
+         * Encodes the specified ApplicationConfigID message. Does not implicitly {@link api.ApplicationConfigID.verify|verify} messages.
+         * @param message ApplicationConfigID message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: api.IApplicationConfigID, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ApplicationConfigID message, length delimited. Does not implicitly {@link api.ApplicationConfigID.verify|verify} messages.
+         * @param message ApplicationConfigID message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: api.IApplicationConfigID, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an ApplicationConfigID message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ApplicationConfigID
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.ApplicationConfigID;
+
+        /**
+         * Decodes an ApplicationConfigID message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ApplicationConfigID
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.ApplicationConfigID;
+
+        /**
+         * Verifies an ApplicationConfigID message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an ApplicationConfigID message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ApplicationConfigID
+         */
+        public static fromObject(object: { [k: string]: any }): api.ApplicationConfigID;
+
+        /**
+         * Creates a plain object from an ApplicationConfigID message. Also converts values to other types if specified.
+         * @param message ApplicationConfigID
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: api.ApplicationConfigID, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ApplicationConfigID to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an IdentityConfigurationAsApplicationMetadata. */
+    interface IIdentityConfigurationAsApplicationMetadata {
+
+        /** IdentityConfigurationAsApplicationMetadata configID */
+        configID?: (api.IApplicationConfigID|null);
+
+        /** IdentityConfigurationAsApplicationMetadata creator */
+        creator?: (api.IIdentityKeyID|null);
+
+        /** IdentityConfigurationAsApplicationMetadata created */
+        created?: (number|Long|null);
+    }
+
+    /** Represents an IdentityConfigurationAsApplicationMetadata. */
+    class IdentityConfigurationAsApplicationMetadata implements IIdentityConfigurationAsApplicationMetadata {
+
+        /**
+         * Constructs a new IdentityConfigurationAsApplicationMetadata.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: api.IIdentityConfigurationAsApplicationMetadata);
+
+        /** IdentityConfigurationAsApplicationMetadata configID. */
+        public configID?: (api.IApplicationConfigID|null);
+
+        /** IdentityConfigurationAsApplicationMetadata creator. */
+        public creator?: (api.IIdentityKeyID|null);
+
+        /** IdentityConfigurationAsApplicationMetadata created. */
+        public created: (number|Long);
+
+        /**
+         * Creates a new IdentityConfigurationAsApplicationMetadata instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns IdentityConfigurationAsApplicationMetadata instance
+         */
+        public static create(properties?: api.IIdentityConfigurationAsApplicationMetadata): api.IdentityConfigurationAsApplicationMetadata;
+
+        /**
+         * Encodes the specified IdentityConfigurationAsApplicationMetadata message. Does not implicitly {@link api.IdentityConfigurationAsApplicationMetadata.verify|verify} messages.
+         * @param message IdentityConfigurationAsApplicationMetadata message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: api.IIdentityConfigurationAsApplicationMetadata, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified IdentityConfigurationAsApplicationMetadata message, length delimited. Does not implicitly {@link api.IdentityConfigurationAsApplicationMetadata.verify|verify} messages.
+         * @param message IdentityConfigurationAsApplicationMetadata message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: api.IIdentityConfigurationAsApplicationMetadata, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an IdentityConfigurationAsApplicationMetadata message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns IdentityConfigurationAsApplicationMetadata
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.IdentityConfigurationAsApplicationMetadata;
+
+        /**
+         * Decodes an IdentityConfigurationAsApplicationMetadata message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns IdentityConfigurationAsApplicationMetadata
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.IdentityConfigurationAsApplicationMetadata;
+
+        /**
+         * Verifies an IdentityConfigurationAsApplicationMetadata message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an IdentityConfigurationAsApplicationMetadata message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns IdentityConfigurationAsApplicationMetadata
+         */
+        public static fromObject(object: { [k: string]: any }): api.IdentityConfigurationAsApplicationMetadata;
+
+        /**
+         * Creates a plain object from an IdentityConfigurationAsApplicationMetadata message. Also converts values to other types if specified.
+         * @param message IdentityConfigurationAsApplicationMetadata
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: api.IdentityConfigurationAsApplicationMetadata, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this IdentityConfigurationAsApplicationMetadata to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of an IdentityConfigurationAsApplicationRequest. */
     interface IIdentityConfigurationAsApplicationRequest {
 
@@ -6970,91 +7063,97 @@ export namespace api {
         public toJSON(): { [k: string]: any };
     }
 
-    /** Properties of an IdentityConfigurationAsApplicationResponse. */
-    interface IIdentityConfigurationAsApplicationResponse {
+    /** Properties of an IdentityGetConfigurationResponse. */
+    interface IIdentityGetConfigurationResponse {
 
-        /** IdentityConfigurationAsApplicationResponse config */
+        /** IdentityGetConfigurationResponse config */
         config?: (api.IIdentityConfigurationAsApplication|null);
+
+        /** IdentityGetConfigurationResponse metadata */
+        metadata?: (api.IIdentityConfigurationAsApplicationMetadata|null);
     }
 
-    /** Represents an IdentityConfigurationAsApplicationResponse. */
-    class IdentityConfigurationAsApplicationResponse implements IIdentityConfigurationAsApplicationResponse {
+    /** Represents an IdentityGetConfigurationResponse. */
+    class IdentityGetConfigurationResponse implements IIdentityGetConfigurationResponse {
 
         /**
-         * Constructs a new IdentityConfigurationAsApplicationResponse.
+         * Constructs a new IdentityGetConfigurationResponse.
          * @param [properties] Properties to set
          */
-        constructor(properties?: api.IIdentityConfigurationAsApplicationResponse);
+        constructor(properties?: api.IIdentityGetConfigurationResponse);
 
-        /** IdentityConfigurationAsApplicationResponse config. */
+        /** IdentityGetConfigurationResponse config. */
         public config?: (api.IIdentityConfigurationAsApplication|null);
 
+        /** IdentityGetConfigurationResponse metadata. */
+        public metadata?: (api.IIdentityConfigurationAsApplicationMetadata|null);
+
         /**
-         * Creates a new IdentityConfigurationAsApplicationResponse instance using the specified properties.
+         * Creates a new IdentityGetConfigurationResponse instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns IdentityConfigurationAsApplicationResponse instance
+         * @returns IdentityGetConfigurationResponse instance
          */
-        public static create(properties?: api.IIdentityConfigurationAsApplicationResponse): api.IdentityConfigurationAsApplicationResponse;
+        public static create(properties?: api.IIdentityGetConfigurationResponse): api.IdentityGetConfigurationResponse;
 
         /**
-         * Encodes the specified IdentityConfigurationAsApplicationResponse message. Does not implicitly {@link api.IdentityConfigurationAsApplicationResponse.verify|verify} messages.
-         * @param message IdentityConfigurationAsApplicationResponse message or plain object to encode
+         * Encodes the specified IdentityGetConfigurationResponse message. Does not implicitly {@link api.IdentityGetConfigurationResponse.verify|verify} messages.
+         * @param message IdentityGetConfigurationResponse message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: api.IIdentityConfigurationAsApplicationResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: api.IIdentityGetConfigurationResponse, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified IdentityConfigurationAsApplicationResponse message, length delimited. Does not implicitly {@link api.IdentityConfigurationAsApplicationResponse.verify|verify} messages.
-         * @param message IdentityConfigurationAsApplicationResponse message or plain object to encode
+         * Encodes the specified IdentityGetConfigurationResponse message, length delimited. Does not implicitly {@link api.IdentityGetConfigurationResponse.verify|verify} messages.
+         * @param message IdentityGetConfigurationResponse message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: api.IIdentityConfigurationAsApplicationResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: api.IIdentityGetConfigurationResponse, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes an IdentityConfigurationAsApplicationResponse message from the specified reader or buffer.
+         * Decodes an IdentityGetConfigurationResponse message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns IdentityConfigurationAsApplicationResponse
+         * @returns IdentityGetConfigurationResponse
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.IdentityConfigurationAsApplicationResponse;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.IdentityGetConfigurationResponse;
 
         /**
-         * Decodes an IdentityConfigurationAsApplicationResponse message from the specified reader or buffer, length delimited.
+         * Decodes an IdentityGetConfigurationResponse message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns IdentityConfigurationAsApplicationResponse
+         * @returns IdentityGetConfigurationResponse
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.IdentityConfigurationAsApplicationResponse;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.IdentityGetConfigurationResponse;
 
         /**
-         * Verifies an IdentityConfigurationAsApplicationResponse message.
+         * Verifies an IdentityGetConfigurationResponse message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates an IdentityConfigurationAsApplicationResponse message from a plain object. Also converts values to their respective internal types.
+         * Creates an IdentityGetConfigurationResponse message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns IdentityConfigurationAsApplicationResponse
+         * @returns IdentityGetConfigurationResponse
          */
-        public static fromObject(object: { [k: string]: any }): api.IdentityConfigurationAsApplicationResponse;
+        public static fromObject(object: { [k: string]: any }): api.IdentityGetConfigurationResponse;
 
         /**
-         * Creates a plain object from an IdentityConfigurationAsApplicationResponse message. Also converts values to other types if specified.
-         * @param message IdentityConfigurationAsApplicationResponse
+         * Creates a plain object from an IdentityGetConfigurationResponse message. Also converts values to other types if specified.
+         * @param message IdentityGetConfigurationResponse
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: api.IdentityConfigurationAsApplicationResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: api.IdentityGetConfigurationResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this IdentityConfigurationAsApplicationResponse to JSON.
+         * Converts this IdentityGetConfigurationResponse to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -7869,10 +7968,7 @@ export namespace api {
     interface ISessionUnStaleResponse {
 
         /** SessionUnStaleResponse encryption */
-        encryption?: (api.IIdentityEncryption|null);
-
-        /** SessionUnStaleResponse creator */
-        creator?: (api.IIdentityPublicKey|null);
+        encryption?: (api.IIdentityEncryptedKeySet|null);
     }
 
     /** Represents a SessionUnStaleResponse. */
@@ -7885,10 +7981,7 @@ export namespace api {
         constructor(properties?: api.ISessionUnStaleResponse);
 
         /** SessionUnStaleResponse encryption. */
-        public encryption?: (api.IIdentityEncryption|null);
-
-        /** SessionUnStaleResponse creator. */
-        public creator?: (api.IIdentityPublicKey|null);
+        public encryption?: (api.IIdentityEncryptedKeySet|null);
 
         /**
          * Creates a new SessionUnStaleResponse instance using the specified properties.
@@ -8209,11 +8302,14 @@ export namespace api {
         /** ResourceGetResponse resource */
         resource?: (api.IResource|null);
 
+        /** ResourceGetResponse owner */
+        owner?: (api.IIdentityKeyID|null);
+
         /** ResourceGetResponse creator */
         creator?: (api.IIdentityKeyID|null);
 
         /** ResourceGetResponse encryptedKey */
-        encryptedKey?: (api.ICipher[]|null);
+        encryptedKey?: (api.ICipher|null);
     }
 
     /** Represents a ResourceGetResponse. */
@@ -8228,11 +8324,14 @@ export namespace api {
         /** ResourceGetResponse resource. */
         public resource?: (api.IResource|null);
 
+        /** ResourceGetResponse owner. */
+        public owner?: (api.IIdentityKeyID|null);
+
         /** ResourceGetResponse creator. */
         public creator?: (api.IIdentityKeyID|null);
 
         /** ResourceGetResponse encryptedKey. */
-        public encryptedKey: api.ICipher[];
+        public encryptedKey?: (api.ICipher|null);
 
         /**
          * Creates a new ResourceGetResponse instance using the specified properties.
@@ -8305,122 +8404,17 @@ export namespace api {
         public toJSON(): { [k: string]: any };
     }
 
-    /** Properties of a ResourceWithKey. */
-    interface IResourceWithKey {
-
-        /** ResourceWithKey resource */
-        resource?: (api.IResource|null);
-
-        /** ResourceWithKey owner */
-        owner?: (api.IIdentityKeyID|null);
-
-        /** ResourceWithKey creator */
-        creator?: (api.IIdentityKeyID|null);
-
-        /** ResourceWithKey encryptedKey */
-        encryptedKey?: (api.ICipher|null);
-    }
-
-    /** Represents a ResourceWithKey. */
-    class ResourceWithKey implements IResourceWithKey {
-
-        /**
-         * Constructs a new ResourceWithKey.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: api.IResourceWithKey);
-
-        /** ResourceWithKey resource. */
-        public resource?: (api.IResource|null);
-
-        /** ResourceWithKey owner. */
-        public owner?: (api.IIdentityKeyID|null);
-
-        /** ResourceWithKey creator. */
-        public creator?: (api.IIdentityKeyID|null);
-
-        /** ResourceWithKey encryptedKey. */
-        public encryptedKey?: (api.ICipher|null);
-
-        /**
-         * Creates a new ResourceWithKey instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns ResourceWithKey instance
-         */
-        public static create(properties?: api.IResourceWithKey): api.ResourceWithKey;
-
-        /**
-         * Encodes the specified ResourceWithKey message. Does not implicitly {@link api.ResourceWithKey.verify|verify} messages.
-         * @param message ResourceWithKey message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: api.IResourceWithKey, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified ResourceWithKey message, length delimited. Does not implicitly {@link api.ResourceWithKey.verify|verify} messages.
-         * @param message ResourceWithKey message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: api.IResourceWithKey, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a ResourceWithKey message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns ResourceWithKey
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.ResourceWithKey;
-
-        /**
-         * Decodes a ResourceWithKey message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns ResourceWithKey
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.ResourceWithKey;
-
-        /**
-         * Verifies a ResourceWithKey message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a ResourceWithKey message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns ResourceWithKey
-         */
-        public static fromObject(object: { [k: string]: any }): api.ResourceWithKey;
-
-        /**
-         * Creates a plain object from a ResourceWithKey message. Also converts values to other types if specified.
-         * @param message ResourceWithKey
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: api.ResourceWithKey, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this ResourceWithKey to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
     /** Properties of a ResourceGetKeyResponse. */
     interface IResourceGetKeyResponse {
 
         /** ResourceGetKeyResponse encryptedKey */
-        encryptedKey?: (api.ICipher[]|null);
+        encryptedKey?: (api.ICipher|null);
 
         /** ResourceGetKeyResponse type */
         type?: (api.ResourceType|null);
+
+        /** ResourceGetKeyResponse owner */
+        owner?: (api.IIdentityKeyID|null);
     }
 
     /** Represents a ResourceGetKeyResponse. */
@@ -8433,10 +8427,13 @@ export namespace api {
         constructor(properties?: api.IResourceGetKeyResponse);
 
         /** ResourceGetKeyResponse encryptedKey. */
-        public encryptedKey: api.ICipher[];
+        public encryptedKey?: (api.ICipher|null);
 
         /** ResourceGetKeyResponse type. */
         public type: api.ResourceType;
+
+        /** ResourceGetKeyResponse owner. */
+        public owner?: (api.IIdentityKeyID|null);
 
         /**
          * Creates a new ResourceGetKeyResponse instance using the specified properties.
@@ -8927,7 +8924,7 @@ export namespace api {
     interface IResourceListResponse {
 
         /** ResourceListResponse resources */
-        resources?: (api.IResourceWithKey[]|null);
+        resources?: (api.IResourceGetResponse[]|null);
     }
 
     /** Represents a ResourceListResponse. */
@@ -8940,7 +8937,7 @@ export namespace api {
         constructor(properties?: api.IResourceListResponse);
 
         /** ResourceListResponse resources. */
-        public resources: api.IResourceWithKey[];
+        public resources: api.IResourceGetResponse[];
 
         /**
          * Creates a new ResourceListResponse instance using the specified properties.
@@ -10588,8 +10585,8 @@ export namespace api {
     /** Properties of a DelegatedPostKeysRequest. */
     interface IDelegatedPostKeysRequest {
 
-        /** DelegatedPostKeysRequest DelegatedID */
-        DelegatedID?: (number|Long|null);
+        /** DelegatedPostKeysRequest delegatedID */
+        delegatedID?: (number|Long|null);
 
         /** DelegatedPostKeysRequest keys */
         keys?: (Uint8Array|null);
@@ -10604,8 +10601,8 @@ export namespace api {
          */
         constructor(properties?: api.IDelegatedPostKeysRequest);
 
-        /** DelegatedPostKeysRequest DelegatedID. */
-        public DelegatedID: (number|Long);
+        /** DelegatedPostKeysRequest delegatedID. */
+        public delegatedID: (number|Long);
 
         /** DelegatedPostKeysRequest keys. */
         public keys: Uint8Array;
@@ -11292,7 +11289,7 @@ export namespace api {
         identity?: (api.IIdentityFields|null);
 
         /** RegisterPostLinkTokenRequest encryption */
-        encryption?: (api.IIdentityEncryption|null);
+        encryption?: (api.IIdentityEncryptedKeySet|null);
     }
 
     /** Represents a RegisterPostLinkTokenRequest. */
@@ -11311,7 +11308,7 @@ export namespace api {
         public identity?: (api.IIdentityFields|null);
 
         /** RegisterPostLinkTokenRequest encryption. */
-        public encryption?: (api.IIdentityEncryption|null);
+        public encryption?: (api.IIdentityEncryptedKeySet|null);
 
         /**
          * Creates a new RegisterPostLinkTokenRequest instance using the specified properties.
@@ -11506,10 +11503,6 @@ export namespace api {
         IdentityVersionMismatch = 16,
         IdentityNotAdmin = 17,
         IdentitySharingKindMismatch = 19,
-        IdentityEmailNotAssociated = 20,
-        IdentityEmailAlreadyAssociated = 21,
-        IdentityPrincipalEmailNotSet = 22,
-        IdentityPrincipalEmailAlreadyExists = 23,
         ResourceNotFound = 24,
         RegisterInvalidEmail = 25,
         RegisterTokenNotFound = 26,
@@ -12716,384 +12709,6 @@ export namespace api {
         public toJSON(): { [k: string]: any };
     }
 
-    /** Properties of a PayloadIdentityEmailNotAssociated. */
-    interface IPayloadIdentityEmailNotAssociated {
-
-        /** PayloadIdentityEmailNotAssociated login */
-        login?: (string|null);
-
-        /** PayloadIdentityEmailNotAssociated email */
-        email?: (string|null);
-    }
-
-    /** Represents a PayloadIdentityEmailNotAssociated. */
-    class PayloadIdentityEmailNotAssociated implements IPayloadIdentityEmailNotAssociated {
-
-        /**
-         * Constructs a new PayloadIdentityEmailNotAssociated.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: api.IPayloadIdentityEmailNotAssociated);
-
-        /** PayloadIdentityEmailNotAssociated login. */
-        public login: string;
-
-        /** PayloadIdentityEmailNotAssociated email. */
-        public email: string;
-
-        /**
-         * Creates a new PayloadIdentityEmailNotAssociated instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns PayloadIdentityEmailNotAssociated instance
-         */
-        public static create(properties?: api.IPayloadIdentityEmailNotAssociated): api.PayloadIdentityEmailNotAssociated;
-
-        /**
-         * Encodes the specified PayloadIdentityEmailNotAssociated message. Does not implicitly {@link api.PayloadIdentityEmailNotAssociated.verify|verify} messages.
-         * @param message PayloadIdentityEmailNotAssociated message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: api.IPayloadIdentityEmailNotAssociated, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified PayloadIdentityEmailNotAssociated message, length delimited. Does not implicitly {@link api.PayloadIdentityEmailNotAssociated.verify|verify} messages.
-         * @param message PayloadIdentityEmailNotAssociated message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: api.IPayloadIdentityEmailNotAssociated, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a PayloadIdentityEmailNotAssociated message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns PayloadIdentityEmailNotAssociated
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.PayloadIdentityEmailNotAssociated;
-
-        /**
-         * Decodes a PayloadIdentityEmailNotAssociated message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns PayloadIdentityEmailNotAssociated
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.PayloadIdentityEmailNotAssociated;
-
-        /**
-         * Verifies a PayloadIdentityEmailNotAssociated message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a PayloadIdentityEmailNotAssociated message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns PayloadIdentityEmailNotAssociated
-         */
-        public static fromObject(object: { [k: string]: any }): api.PayloadIdentityEmailNotAssociated;
-
-        /**
-         * Creates a plain object from a PayloadIdentityEmailNotAssociated message. Also converts values to other types if specified.
-         * @param message PayloadIdentityEmailNotAssociated
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: api.PayloadIdentityEmailNotAssociated, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this PayloadIdentityEmailNotAssociated to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a PayloadIdentityEmailAlreadyAssociated. */
-    interface IPayloadIdentityEmailAlreadyAssociated {
-
-        /** PayloadIdentityEmailAlreadyAssociated login */
-        login?: (string|null);
-
-        /** PayloadIdentityEmailAlreadyAssociated email */
-        email?: (string|null);
-    }
-
-    /** Represents a PayloadIdentityEmailAlreadyAssociated. */
-    class PayloadIdentityEmailAlreadyAssociated implements IPayloadIdentityEmailAlreadyAssociated {
-
-        /**
-         * Constructs a new PayloadIdentityEmailAlreadyAssociated.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: api.IPayloadIdentityEmailAlreadyAssociated);
-
-        /** PayloadIdentityEmailAlreadyAssociated login. */
-        public login: string;
-
-        /** PayloadIdentityEmailAlreadyAssociated email. */
-        public email: string;
-
-        /**
-         * Creates a new PayloadIdentityEmailAlreadyAssociated instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns PayloadIdentityEmailAlreadyAssociated instance
-         */
-        public static create(properties?: api.IPayloadIdentityEmailAlreadyAssociated): api.PayloadIdentityEmailAlreadyAssociated;
-
-        /**
-         * Encodes the specified PayloadIdentityEmailAlreadyAssociated message. Does not implicitly {@link api.PayloadIdentityEmailAlreadyAssociated.verify|verify} messages.
-         * @param message PayloadIdentityEmailAlreadyAssociated message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: api.IPayloadIdentityEmailAlreadyAssociated, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified PayloadIdentityEmailAlreadyAssociated message, length delimited. Does not implicitly {@link api.PayloadIdentityEmailAlreadyAssociated.verify|verify} messages.
-         * @param message PayloadIdentityEmailAlreadyAssociated message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: api.IPayloadIdentityEmailAlreadyAssociated, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a PayloadIdentityEmailAlreadyAssociated message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns PayloadIdentityEmailAlreadyAssociated
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.PayloadIdentityEmailAlreadyAssociated;
-
-        /**
-         * Decodes a PayloadIdentityEmailAlreadyAssociated message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns PayloadIdentityEmailAlreadyAssociated
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.PayloadIdentityEmailAlreadyAssociated;
-
-        /**
-         * Verifies a PayloadIdentityEmailAlreadyAssociated message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a PayloadIdentityEmailAlreadyAssociated message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns PayloadIdentityEmailAlreadyAssociated
-         */
-        public static fromObject(object: { [k: string]: any }): api.PayloadIdentityEmailAlreadyAssociated;
-
-        /**
-         * Creates a plain object from a PayloadIdentityEmailAlreadyAssociated message. Also converts values to other types if specified.
-         * @param message PayloadIdentityEmailAlreadyAssociated
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: api.PayloadIdentityEmailAlreadyAssociated, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this PayloadIdentityEmailAlreadyAssociated to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a PayloadIdentityPrincipalEmailNotSet. */
-    interface IPayloadIdentityPrincipalEmailNotSet {
-
-        /** PayloadIdentityPrincipalEmailNotSet login */
-        login?: (string|null);
-    }
-
-    /** Represents a PayloadIdentityPrincipalEmailNotSet. */
-    class PayloadIdentityPrincipalEmailNotSet implements IPayloadIdentityPrincipalEmailNotSet {
-
-        /**
-         * Constructs a new PayloadIdentityPrincipalEmailNotSet.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: api.IPayloadIdentityPrincipalEmailNotSet);
-
-        /** PayloadIdentityPrincipalEmailNotSet login. */
-        public login: string;
-
-        /**
-         * Creates a new PayloadIdentityPrincipalEmailNotSet instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns PayloadIdentityPrincipalEmailNotSet instance
-         */
-        public static create(properties?: api.IPayloadIdentityPrincipalEmailNotSet): api.PayloadIdentityPrincipalEmailNotSet;
-
-        /**
-         * Encodes the specified PayloadIdentityPrincipalEmailNotSet message. Does not implicitly {@link api.PayloadIdentityPrincipalEmailNotSet.verify|verify} messages.
-         * @param message PayloadIdentityPrincipalEmailNotSet message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: api.IPayloadIdentityPrincipalEmailNotSet, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified PayloadIdentityPrincipalEmailNotSet message, length delimited. Does not implicitly {@link api.PayloadIdentityPrincipalEmailNotSet.verify|verify} messages.
-         * @param message PayloadIdentityPrincipalEmailNotSet message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: api.IPayloadIdentityPrincipalEmailNotSet, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a PayloadIdentityPrincipalEmailNotSet message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns PayloadIdentityPrincipalEmailNotSet
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.PayloadIdentityPrincipalEmailNotSet;
-
-        /**
-         * Decodes a PayloadIdentityPrincipalEmailNotSet message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns PayloadIdentityPrincipalEmailNotSet
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.PayloadIdentityPrincipalEmailNotSet;
-
-        /**
-         * Verifies a PayloadIdentityPrincipalEmailNotSet message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a PayloadIdentityPrincipalEmailNotSet message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns PayloadIdentityPrincipalEmailNotSet
-         */
-        public static fromObject(object: { [k: string]: any }): api.PayloadIdentityPrincipalEmailNotSet;
-
-        /**
-         * Creates a plain object from a PayloadIdentityPrincipalEmailNotSet message. Also converts values to other types if specified.
-         * @param message PayloadIdentityPrincipalEmailNotSet
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: api.PayloadIdentityPrincipalEmailNotSet, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this PayloadIdentityPrincipalEmailNotSet to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a PayloadIdentityPrincipalEmailAlreadyExists. */
-    interface IPayloadIdentityPrincipalEmailAlreadyExists {
-
-        /** PayloadIdentityPrincipalEmailAlreadyExists login */
-        login?: (string|null);
-
-        /** PayloadIdentityPrincipalEmailAlreadyExists email */
-        email?: (string|null);
-    }
-
-    /** Represents a PayloadIdentityPrincipalEmailAlreadyExists. */
-    class PayloadIdentityPrincipalEmailAlreadyExists implements IPayloadIdentityPrincipalEmailAlreadyExists {
-
-        /**
-         * Constructs a new PayloadIdentityPrincipalEmailAlreadyExists.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: api.IPayloadIdentityPrincipalEmailAlreadyExists);
-
-        /** PayloadIdentityPrincipalEmailAlreadyExists login. */
-        public login: string;
-
-        /** PayloadIdentityPrincipalEmailAlreadyExists email. */
-        public email: string;
-
-        /**
-         * Creates a new PayloadIdentityPrincipalEmailAlreadyExists instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns PayloadIdentityPrincipalEmailAlreadyExists instance
-         */
-        public static create(properties?: api.IPayloadIdentityPrincipalEmailAlreadyExists): api.PayloadIdentityPrincipalEmailAlreadyExists;
-
-        /**
-         * Encodes the specified PayloadIdentityPrincipalEmailAlreadyExists message. Does not implicitly {@link api.PayloadIdentityPrincipalEmailAlreadyExists.verify|verify} messages.
-         * @param message PayloadIdentityPrincipalEmailAlreadyExists message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: api.IPayloadIdentityPrincipalEmailAlreadyExists, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified PayloadIdentityPrincipalEmailAlreadyExists message, length delimited. Does not implicitly {@link api.PayloadIdentityPrincipalEmailAlreadyExists.verify|verify} messages.
-         * @param message PayloadIdentityPrincipalEmailAlreadyExists message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: api.IPayloadIdentityPrincipalEmailAlreadyExists, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a PayloadIdentityPrincipalEmailAlreadyExists message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns PayloadIdentityPrincipalEmailAlreadyExists
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.PayloadIdentityPrincipalEmailAlreadyExists;
-
-        /**
-         * Decodes a PayloadIdentityPrincipalEmailAlreadyExists message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns PayloadIdentityPrincipalEmailAlreadyExists
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.PayloadIdentityPrincipalEmailAlreadyExists;
-
-        /**
-         * Verifies a PayloadIdentityPrincipalEmailAlreadyExists message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a PayloadIdentityPrincipalEmailAlreadyExists message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns PayloadIdentityPrincipalEmailAlreadyExists
-         */
-        public static fromObject(object: { [k: string]: any }): api.PayloadIdentityPrincipalEmailAlreadyExists;
-
-        /**
-         * Creates a plain object from a PayloadIdentityPrincipalEmailAlreadyExists message. Also converts values to other types if specified.
-         * @param message PayloadIdentityPrincipalEmailAlreadyExists
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: api.PayloadIdentityPrincipalEmailAlreadyExists, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this PayloadIdentityPrincipalEmailAlreadyExists to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
     /** Properties of a PayloadResourceNotFound. */
     interface IPayloadResourceNotFound {
 
@@ -13825,6 +13440,9 @@ export namespace api {
 
         /** PayloadApplicationConfigNotFound login */
         login?: (string|null);
+
+        /** PayloadApplicationConfigNotFound version */
+        version?: (string|null);
     }
 
     /** Represents a PayloadApplicationConfigNotFound. */
@@ -13838,6 +13456,9 @@ export namespace api {
 
         /** PayloadApplicationConfigNotFound login. */
         public login: string;
+
+        /** PayloadApplicationConfigNotFound version. */
+        public version: string;
 
         /**
          * Creates a new PayloadApplicationConfigNotFound instance using the specified properties.

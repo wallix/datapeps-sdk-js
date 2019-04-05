@@ -1,11 +1,18 @@
 import { api } from "./proto";
 import { Uint8Tool } from "./Tools";
-import { Encryption } from "./CryptoFuncs";
+import { MasterPrivateSeed } from "./IdentityKeySet";
 import * as HTTP from "./HTTP";
 import { createWithEncryption } from "./ResourceInternal";
 import { IdentityFields } from "./IdentityAPI";
 import { Session } from "./Session";
 import { ResourceAPI } from "./ResourceAPI";
+import { IdentityKeySetAPI } from "./IdentityKeySetAPI";
+
+export type ApplicationIdentityAuth = {
+  jwt: {
+    token: string;
+  };
+};
 
 /**
  * Create a user thanks an external referential of identities
@@ -14,17 +21,19 @@ import { ResourceAPI } from "./ResourceAPI";
  * @param secret The identity secret
  * On error the promise will be rejected with an {@link Error} with kind:
  * - `ApplicationInvalidToken` if the JWT token returned by the connector is invalid.
- * - `IdentityNotFound` if the identity `appID` doesn't exists.
- * - `ApplicationConfigNotFound` if the `appID` is not configured.
+ * - `ApplicationConfigNotFound` if the `appID` is not configured or if the identity `appID` doesn't exists.
  */
 export async function createUser(
   appID: string,
-  auth: { jwt: { token: string } },
+  auth: ApplicationIdentityAuth,
   secret: string | Uint8Array
 ): Promise<api.RegisterApplicationIdentityResponse> {
-  let encryption = new Encryption();
   let secretBytes = Uint8Tool.convert(secret);
-  encryption.generate(secretBytes, null);
+
+  let { keySet, encryptedKeySet } = IdentityKeySetAPI.initWithSecret(
+    { version: 1, login: null },
+    secretBytes
+  );
 
   let payload = Uint8Tool.convert(
     JSON.stringify({
@@ -39,10 +48,11 @@ export async function createUser(
     payload
   };
 
+  const appIdentityResourceKind = "internal/application/secret";
   let resource = createWithEncryption<Uint8Array>(
-    "application/secret",
     secretBytes,
-    encryption,
+    keySet,
+    appIdentityResourceKind,
     { serialize: u => u }
   );
   let { body } = await HTTP.client.doRequest<
@@ -50,11 +60,11 @@ export async function createUser(
   >({
     method: "POST",
     expectedCode: 201,
-    path: `/api/v4/application/${appID}/identity`,
+    path: `/api/v1/application/${appID}/identity`,
     body: api.RegisterApplicationIdentityRequest.encode({
       appID,
       auth,
-      encryption,
+      encryption: encryptedKeySet,
       identity,
       resources: { appSecret: resource.resourceRequestBody }
     }).finish(),

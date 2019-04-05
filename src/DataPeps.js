@@ -29,4 +29,6 @@ __export(require("./ResourceAPI"));
 __export(require("./AdminAPI"));
 __export(require("./ApplicationAPI"));
 __export(require("./ApplicationJWT"));
+var Tools_1 = require("./Tools");
+exports.Uint8Converter = Tools_1.Uint8Converter;
 //# sourceMappingURL=DataPeps.js.map

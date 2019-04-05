@@ -1,12 +1,11 @@
-import * as DataPeps from "../../src/DataPeps";
-import { Resource, ResourceImpl } from "../../src/Resource";
-import * as Long from "long";
+import { Resource } from "../../src/DataPeps";
+import { ResourceBox } from "../../src/ResourceInternal";
 import * as nacl from "tweetnacl";
 import { expect } from "chai";
 
 describe("ut.resource", () => {
   it("encrypt/decrypt", () => {
-    let resource: DataPeps.Resource<null> = new Resource(
+    let resource: Resource<null> = new ResourceBox(
       null,
       "somekind",
       null,
@@ -19,7 +18,7 @@ describe("ut.resource", () => {
   });
 
   it("encryptString/decrypt with string", () => {
-    let resource: DataPeps.Resource<null> = new Resource(
+    let resource: Resource<null> = new ResourceBox(
       null,
       "somekind",
       null,

@@ -1,10 +1,11 @@
 import * as nacl from "tweetnacl";
 import { Resource, ResourceType } from "./ResourceAPI";
 import { api } from "./proto";
-import { Encryption, EncryptFuncs } from "./CryptoFuncs";
+import { Encryptor, CipherType } from "./Cryptor";
 import { IdentityPublicKey } from "./IdentityAPI";
 import { Session } from "./Session";
 import { ID } from "./ID";
+import { IdentityKeySet } from "./IdentityKeySet";
 export declare class ResourceBox<T> implements Resource<T> {
     id: ID;
     kind: string;
@@ -21,16 +22,16 @@ export declare class ResourceBox<T> implements Resource<T> {
     private decryptUint8Array(message);
     private decryptString(cipher);
 }
-export declare function createWithEncryption<T>(kind: string, payload: T, encryption: Encryption, options?: {
+export declare function createWithEncryption<T>(payload: T, encryption: IdentityKeySet, kind: string, options?: {
     serialize?: ((payload: T) => Uint8Array);
 }): {
     resourceRequestBody: api.IResourcePostRequest;
     resource: ResourceBox<T>;
 };
-export declare function makeResourceFromResponse<T>({resource, encryptedKey, creator}: api.IResourceGetResponse, typeOfKey: api.ResourceType, session: Session, parse?: any, assume?: string): Promise<ResourceBox<T>>;
-export declare function makeResource<T>({resource, encryptedKey, creator}: api.IResourceWithKey, typeOfKey: api.ResourceType, session: Session, boxKey?: Uint8Array, parse?: any): Promise<ResourceBox<T>>;
-export declare function makeResourcesFromResponses<T>(resources: api.IResourceWithKey[], session: Session, parse?: any): Promise<ResourceBox<T>[]>;
-export declare function createBodyRequest<T>(payload: T, sharingGroup: string[], crypto: EncryptFuncs, session: Session, options?: {
+export declare function makeResourceFromResponse<T>({resource, owner, creator, encryptedKey}: api.IResourceGetResponse, typeOfKey: CipherType, session: Session, parse?: any): Promise<ResourceBox<T>>;
+export declare function makeResource<T>({resource, encryptedKey, creator}: api.IResourceGetResponse, session: Session, ownerKeySet: IdentityKeySet, typeOfKey: CipherType, parse?: (u: any) => any): Promise<ResourceBox<T>>;
+export declare function makeResourcesFromResponses<T>(resources: api.IResourceGetResponse[], session: Session, parse?: any): Promise<ResourceBox<T>[]>;
+export declare function createBodyRequest<T>(payload: T, sharingGroup: string[], crypto: Encryptor, session: Session, options?: {
     serialize?: ((payload: T) => Uint8Array);
 }): Promise<{
     keypair: nacl.BoxKeyPair;
@@ -46,7 +47,7 @@ export declare function createBodyRequest<T>(payload: T, sharingGroup: string[],
         }[];
     };
 }>;
-export declare function encryptForSharingGroup(text: Uint8Array, sharingGroup: string[], crypto: EncryptFuncs, session: Session): Promise<{
+export declare function encryptForSharingGroup(text: Uint8Array, sharingGroup: string[], crypto: Encryptor, session: Session): Promise<{
     login: string;
     version: number;
     nonce: Uint8Array;

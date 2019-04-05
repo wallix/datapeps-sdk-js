@@ -43,10 +43,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var Error_1 = require("./Error");
 var proto_1 = require("./proto");
-var IdentityAPI_1 = require("./IdentityAPI");
 var IdentityInternal_1 = require("./IdentityInternal");
 exports.ApplicationIdentitySortingOrder = IdentityInternal_1.IdentitySortingOrder;
+var Tools_1 = require("./Tools");
 /** Allows to indicate which kind of field should be sorted. */
 var ApplicationIdentitySortingField;
 (function (ApplicationIdentitySortingField) {
@@ -62,7 +63,7 @@ var ApplicationAPI = /** @class */ (function () {
      * Put configuration of an application
      * @param appID the app ID
      * @param config The config of the application.
-     * @return(p) On success the promise will be resolved with void.
+     * @return(p) On success the promise will be resolved with ApplicationAPI.ApplicationConfigID.
      * On error the promise will be rejected with an {@link Error} with kind:
      * - `IdentityCannotAssumeAccess` if cannot have right to write the configuration.
      * - `ApplicationConfigInvalid` if configuration object is invalid.
@@ -78,21 +79,33 @@ var ApplicationAPI = /** @class */ (function () {
                             return [2 /*return*/];
                         }
                         jwtConfig = config.jwt;
-                        c = {
-                            jwt: { key: jwtConfig.key, claimForLogin: jwtConfig.claimForLogin }
-                        };
-                        if ("signAlgorithm" in jwtConfig) {
-                            c.jwt["signAlgorithm"] = jwtConfig.signAlgorithm.valueOf();
+                        if (jwtConfig.signAlgorithm == null) {
+                            throw new Error_1.Error({
+                                kind: Error_1.SDKKind.SDKInternalError,
+                                payload: {
+                                    hint: "configuration sign algorithm cannot be null or undefined"
+                                }
+                            });
                         }
+                        c = {
+                            jwt: {
+                                key: jwtConfig.key,
+                                claimForLogin: jwtConfig.claimForLogin,
+                                signAlgorithm: jwtConfig.signAlgorithm.valueOf()
+                            }
+                        };
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "PUT",
-                                assume: { login: appID, kind: IdentityAPI_1.IdentityAccessKind.WRITE },
+                                assume: { login: appID, kind: proto_1.api.IdentityAccessKeyKind.WRITE },
                                 expectedCode: 201,
-                                path: "/api/v4/identity/" + encodeURI(appID) + "/configure-as-application",
+                                path: "/api/v1/identity/" + encodeURI(appID) + "/configureAsApplication",
                                 body: proto_1.api.IdentityConfigurationAsApplicationRequest.encode({
                                     Login: appID,
                                     config: c
-                                }).finish()
+                                }).finish(),
+                                response: function (r) {
+                                    return proto_1.api.ApplicationConfigID.decode(r);
+                                }
                             })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
@@ -101,38 +114,93 @@ var ApplicationAPI = /** @class */ (function () {
     };
     /**
      * Get configuration of an application
-     * @param appID the app ID
-     * @return(p) On success the promise will be resolved with an ApplicationConfig.
+     * @param appConfigID the application configuration ID, that specifies tha application ID and the application configuration version.
+     * @return(p) On success the promise will be resolved with an ApplicationAPI.ConfigWithContext object.
      * On error the promise will be rejected with an {@link Error} with kind:
-     * - `IdentityCannotAssumeAccess` if cannot have right to read the configuration.
-     * - `IdentityNotFound` if the identity `appID` doesn't exists.
-     * - `ApplicationConfigNotFound` if configuration doesn't exists.
+     * - `IdentityCannotAssumeOwnership` if the client does not have a right to read the configuration.
+     * - `IdentityNotFound` if the identity `appID` doesn't exist.
+     * - `AppliacationConfigNotFound` if the `appConfigID` does not correspond to any existing application configuration.
      */
-    ApplicationAPI.prototype.getConfig = function (appID) {
+    ApplicationAPI.prototype.getConfig = function (appConfigID) {
         return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        // if appConfigID == null, the server returns IdenityNotFound as appID is empty
+                        appConfigID = appConfigID == null ? { appID: "", version: 1 } : appConfigID;
+                        return [4 /*yield*/, this.session.doProtoRequest({
+                                method: "POST",
+                                assume: {
+                                    login: appConfigID.appID,
+                                    kind: proto_1.api.IdentityAccessKeyKind.READ
+                                },
+                                expectedCode: 200,
+                                path: "/api/v1/application/" + encodeURI(appConfigID.appID) + "/configuration",
+                                body: proto_1.api.ApplicationConfigID.encode({
+                                    version: appConfigID.version
+                                }).finish(),
+                                response: function (r) {
+                                    return _this.decodeConfigWithMetadata(r);
+                                }
+                            })];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
+    /**
+     * Get the most recent configuration of an application
+     * @param appConfigID the app ID.
+     * @return(p) On success the promise will be resolved with an ApplicationAPI.ConfigWithContext object.
+     * On error the promise will be rejected with an {@link Error} with kind:
+     * - `IdentityCannotAssumeOwnership` if the client does not have a right to read the configuration.
+     * - `IdentityNotFound` if the identity `appID` doesn't exist.
+     */
+    ApplicationAPI.prototype.getLatestConfig = function (appID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "GET",
-                            assume: { login: appID, kind: IdentityAPI_1.IdentityAccessKind.READ },
+                            assume: {
+                                login: appID,
+                                kind: proto_1.api.IdentityAccessKeyKind.READ
+                            },
                             expectedCode: 200,
-                            path: "/api/v4/identity/" + encodeURI(appID) + "/configure-as-application",
+                            path: "/api/v1/application/" + encodeURI(appID) + "/latestConfiguration",
                             response: function (r) {
-                                var config = proto_1.api.IdentityConfigurationAsApplicationResponse.decode(r)
-                                    .config;
-                                return {
-                                    jwt: {
-                                        key: config.jwt.key,
-                                        signAlgorithm: config.jwt.signAlgorithm.valueOf(),
-                                        claimForLogin: config.jwt.claimForLogin
-                                    }
-                                };
+                                return _this.decodeConfigWithMetadata(r);
                             }
                         })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });
         });
+    };
+    ApplicationAPI.prototype.decodeConfigWithMetadata = function (r) {
+        var resp = proto_1.api.IdentityGetConfigurationResponse.decode(r);
+        return {
+            meta: {
+                applicationConfigID: {
+                    appID: resp.metadata.configID.appID,
+                    version: resp.metadata.configID.version
+                },
+                creator: {
+                    login: resp.metadata.creator.login,
+                    version: resp.metadata.creator.version
+                },
+                created: Tools_1.timestampToDate(resp.metadata.created)
+            },
+            payload: {
+                jwt: {
+                    key: resp.config.jwt.key,
+                    signAlgorithm: resp.config.jwt.signAlgorithm.valueOf(),
+                    claimForLogin: resp.config.jwt.claimForLogin
+                }
+            }
+        };
     };
     /**
      * Get usage overview of an application
@@ -154,9 +222,9 @@ var ApplicationAPI = /** @class */ (function () {
                         options = options == null ? {} : options;
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "POST",
-                                assume: { login: appID, kind: IdentityAPI_1.IdentityAccessKind.READ },
+                                assume: { login: appID, kind: proto_1.api.IdentityAccessKeyKind.READ },
                                 expectedCode: 200,
-                                path: "/api/v4/application/" + encodeURI(appID) + "/usage-overview",
+                                path: "/api/v1/application/" + encodeURI(appID) + "/usageOverview",
                                 body: proto_1.api.ApplicationUsageOverviewRequest.encode(__assign({ Login: appID }, options)).finish(),
                                 response: function (r) {
                                     return proto_1.api.ApplicationUsageOverviewResponse.decode(r).overview.map(function (_a) {
@@ -202,8 +270,8 @@ var ApplicationAPI = /** @class */ (function () {
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "POST",
                                 expectedCode: 200,
-                                path: "/api/v4/application/" + encodeURI(appID) + "/identities/list",
-                                assume: { login: appID, kind: IdentityAPI_1.IdentityAccessKind.READ },
+                                path: "/api/v1/application/" + encodeURI(appID) + "/identities/list",
+                                assume: { login: appID, kind: proto_1.api.IdentityAccessKeyKind.READ },
                                 body: proto_1.api.ApplicationListIdentitiesRequest.encode({
                                     options: {
                                         limit: options.limit,
@@ -233,6 +301,50 @@ var ApplicationAPI = /** @class */ (function () {
         });
     };
     /**
+     * Get the an application identity auth object.
+     * @param appID the app ID
+     * @param dataPepsLogin identity's DataPeps login
+     * @return(p) On success the promise will be resolved with the identity's auth object and its metadata that contains:
+     * - identity's DataPeps login
+     * - application configuration ID that corresponds to the auth object
+     * On error the promise will be rejected with an {@link Error} with kind:
+     * - `IdentityCannotAssumeOwnership` if the client cannot assume the application.
+     * - `IdentityNotFound` if the identity with the dataPepsLogin does not exist or is not configured as an application identty.
+     */
+    ApplicationAPI.prototype.getIdentityAuth = function (appID, dataPepsLogin) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.session.doProtoRequest({
+                            method: "GET",
+                            expectedCode: 200,
+                            path: "/api/v1/application/identity/" + encodeURI(dataPepsLogin) + "/auth",
+                            assume: {
+                                login: appID,
+                                kind: proto_1.api.IdentityAccessKeyKind.READ
+                            },
+                            response: function (r) {
+                                var response = proto_1.api.ApplicationGetIdentityAuthResponse.decode(r);
+                                return {
+                                    auth: {
+                                        jwt: {
+                                            token: response.auth.jwt.token
+                                        }
+                                    },
+                                    identityLogin: response.login,
+                                    applicationConfigID: {
+                                        appID: response.configID.appID,
+                                        version: response.configID.version
+                                    }
+                                };
+                            }
+                        })];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
+    /**
      * Get user's application login from the user's DataPeps login
      * @param dataPepsLogin the user's login in DataPeps
      * @return Returns the user's application login used to generate the given DataPeps login.
@@ -241,7 +353,7 @@ var ApplicationAPI = /** @class */ (function () {
     ApplicationAPI.extractLoginFromDataPepsLogin = function (dataPepsLogin) {
         dataPepsLogin = dataPepsLogin == null ? "" : dataPepsLogin;
         var i = dataPepsLogin.lastIndexOf("@");
-        if (i == -1) {
+        if (i === -1) {
             return "";
         }
         return dataPepsLogin.substr(0, i);
@@ -255,25 +367,28 @@ var ApplicationAPI = /** @class */ (function () {
      * - `IdentityCannotAssumeOwnership` if cannot have right to the application.
      * - `IdentityNotFound` if the identity `appID` doesn't exists.
      */
-    ApplicationAPI.prototype.listSessions = function (appID, offset, limit) {
+    ApplicationAPI.prototype.listSessions = function (appID, offset, limit, since) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.session.doProtoRequest({
-                            path: "/api/v4/application/" + encodeURI(appID) + "/identities-session/list",
-                            method: "POST",
-                            expectedCode: 200,
-                            assume: { login: appID, kind: IdentityAPI_1.IdentityAccessKind.READ },
-                            body: proto_1.api.ApplicationIdentitySessionListRequest.encode({
-                                appID: appID,
-                                offset: offset,
-                                limit: limit
-                            }).finish(),
-                            response: function (r) {
-                                var list = proto_1.api.ApplicationIdentitySessionListResponse.decode(r);
-                                return list.sessions;
-                            }
-                        })];
+                    case 0:
+                        since = since == null ? 0 : since;
+                        return [4 /*yield*/, this.session.doProtoRequest({
+                                path: "/api/v1/application/" + encodeURI(appID) + "/identitiesSession/list",
+                                method: "POST",
+                                expectedCode: 200,
+                                assume: { login: appID, kind: proto_1.api.IdentityAccessKeyKind.READ },
+                                body: proto_1.api.ApplicationIdentitySessionListRequest.encode({
+                                    appID: appID,
+                                    since: since,
+                                    offset: offset,
+                                    limit: limit
+                                }).finish(),
+                                response: function (r) {
+                                    var list = proto_1.api.ApplicationIdentitySessionListResponse.decode(r);
+                                    return list.sessions;
+                                }
+                            })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });

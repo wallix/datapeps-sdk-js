@@ -210,7 +210,7 @@ describe("identity.main", () => {
 
   let renewSecret = nacl.randomBytes(128);
   it("administrator overwrite keys for alice", async () => {
-    await new AdminAPI(adminSession).overwriteKeys(alice.login, renewSecret);
+    await new IdentityAPI(adminSession).overwriteKeys(alice.login, renewSecret);
   });
 
   it("alice attempt to list identities", async () => {

@@ -2,10 +2,11 @@ import * as Long from "long";
 import * as protobufjs from "protobufjs";
 import { api } from "./proto";
 import { Base64, Uint8Tool } from "./Tools";
-import { Encryption } from "./CryptoFuncs";
 import * as HTTP from "./HTTP";
 
 import { IdentityFields } from "./IdentityAPI";
+import { IdentityKeySet } from "./IdentityKeySet";
+import { IdentityKeySetAPI } from "./IdentityKeySetAPI";
 export {
   Error,
   ErrorKind,
@@ -29,7 +30,7 @@ export async function register(
   identity: IdentityFields,
   secret: string | Uint8Array
 ): Promise<void> {
-  return await _register("/api/v4/register", identity, secret, r =>
+  return await _register("/api/v1/register", identity, secret, r =>
     api.IdentityRegisterRequest.encode(r).finish()
   );
 }
@@ -51,7 +52,7 @@ export async function registerWithToken(
 ): Promise<void> {
   let btoken = token instanceof Uint8Array ? Base64.encode(token) : token;
   return await _register(
-    "/api/v4/register/link/" + encodeURIComponent(btoken),
+    "/api/v1/register/link/" + encodeURIComponent(btoken),
     identity,
     secret,
     r => api.RegisterPostLinkTokenRequest.encode(r).finish()
@@ -63,16 +64,21 @@ async function _register(
   identity: IdentityFields,
   secret: string | Uint8Array,
   request: (
-    r: { identity: api.IIdentityFields; encryption: api.IIdentityEncryption }
+    r: {
+      identity: api.IIdentityFields;
+      encryption: api.IIdentityEncryptedKeySet;
+    }
   ) => Uint8Array
 ): Promise<void> {
-  let encryption = new Encryption();
-  encryption.generate(Uint8Tool.convert(secret), null);
+  let { encryptedKeySet } = IdentityKeySetAPI.initWithSecret(
+    { version: 1, login: identity.login },
+    secret
+  );
   await HTTP.client.doRequest<void>({
     method: "POST",
     expectedCode: 201,
     path,
-    body: request({ identity, encryption }),
+    body: request({ identity, encryption: encryptedKeySet }),
     headers: new Headers({
       "content-type": "application/x-protobuf"
     })
@@ -93,7 +99,7 @@ export async function sendRegisterLink(email: string): Promise<void> {
   await HTTP.client.doRequest<void>({
     method: "POST",
     expectedCode: 201,
-    path: "/api/v4/register/link",
+    path: "/api/v1/register/link",
     body: api.RegisterLinkRequest.encode({
       email
     }).finish(),

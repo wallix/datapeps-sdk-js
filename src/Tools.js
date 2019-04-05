@@ -67,10 +67,36 @@ var Base64 = /** @class */ (function () {
     return Base64;
 }());
 exports.Base64 = Base64;
+/*
+Uint8Tool is a helper class that groups functions for working with Uint8Array typed arrays.
+*/
+var Uint8Converter = /** @class */ (function () {
+    function Uint8Converter() {
+    }
+    /**
+     * Converts a string to a Uint8Array typed array.
+     * @param s The string to convert
+     */
+    Uint8Converter.fromString = function (s) {
+        return Uint8Tool.encode(s);
+    };
+    /**
+     * Converts a Uint8Array typed array to string.
+     * @param u The Uint8Array typed array to convert
+     */
+    Uint8Converter.toString = function (u) {
+        return Uint8Tool.decode(u);
+    };
+    return Uint8Converter;
+}());
+exports.Uint8Converter = Uint8Converter;
 var Uint8Tool = /** @class */ (function () {
     function Uint8Tool() {
     }
     Uint8Tool.encode = function (s) {
+        if (s == null) {
+            return new Uint8Array([]);
+        }
         try {
             if (TextEncoder != null) {
                 return new TextEncoder().encode(s);
@@ -225,4 +251,8 @@ var Crypto = /** @class */ (function () {
     return Crypto;
 }());
 exports.Crypto = Crypto;
+function timestampToDate(timestamp) {
+    return new Date(timestamp * 1000);
+}
+exports.timestampToDate = timestampToDate;
 //# sourceMappingURL=Tools.js.map

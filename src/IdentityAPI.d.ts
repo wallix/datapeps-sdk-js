@@ -1,6 +1,6 @@
-import { api } from "./proto";
 import { Session } from "./Session";
-import { IdentitySortingOrder } from './IdentityInternal';
+import { IdentitySortingOrder } from "./IdentityInternal";
+import { api } from "./proto";
 export { IdentitySortingOrder };
 /**
  * An {@Identity} owns several keys, this is a reference to the unique version of an identity public key.
@@ -88,11 +88,6 @@ export declare type IdentityShareLink = {
     kind: IdentityKeyKind;
     locked: boolean;
 };
-/** Allows to indicate which kind of access shoudl be used in a {@link SessionRequest}*/
-export declare enum IdentityAccessKind {
-    READ = 0,
-    WRITE = 1,
-}
 /** Allows to indicate which kind of field should be sorted. */
 export declare enum IdentitySortingField {
     LOGIN = 0,
@@ -210,12 +205,18 @@ export declare class IdentityAPI {
      * - `IdentityNotFound` if the identity cannot be accessed.
      */
     replaceSharingGroup(login: string, sharingGroup: string[]): Promise<void>;
-    editSharingGraph(login: string, options?: {
-        sharingGroup?: string[];
-        overwriteKeys?: {
-            secret: string | Uint8Array;
-        };
-    }): Promise<void>;
+    /**
+     * Generate new keys for an identity.
+     * The identity will no longer be able access any things (resources, shared identities, ...) that have previously been shared with it.
+     * Only administrator can do this.
+     * @param login The login of the identity to set the active status.
+     * @return(p) On success the promise will be resolved with void.
+     * On error the promise will be rejected with an {@link Error} with kind:
+     * - `IdentityNotFound` if `login` does not exists.
+     * - `IdentityNotAdmin` if the identity logged along the current session is not an admin.
+     * - `IdentityNotAdminDomain` if the identity logged along with the current session cannot adinistrate the domain of `login`.
+     */
+    overwriteKeys(login: string, secret: string | Uint8Array): Promise<void>;
     /**
      * Get the access group of an identity. The access group of an identity is the set of identities that can
      * accessed by this identity.
@@ -255,5 +256,7 @@ export declare class IdentityAPI {
      * @return(p) On success the promise will be resolved with the list of unlocked identities.
      */
     unlockVersions(login: string, secret: string | Uint8Array): Promise<IdentityPublicKeyWithMetadata[]>;
-    private getSharingGraph(login, options?);
+    private getSharingGraphWithPublicKey(login);
+    private getSharingGraphWithKeySet(login);
+    private static createSharingGroup(keySet, publicKeys);
 }

@@ -1,17 +1,22 @@
-import * as nacl from "tweetnacl";
-import { api } from "./proto";
 import { Error, SDKKind } from "./Error";
-import { Encryption } from "./CryptoFuncs";
-import { Uint8Tool } from "./Tools";
-import { Session } from "./Session";
+import {
+  IdentityKeySet,
+  MasterPrivateSeed,
+  MasterPublicSeed
+} from "./IdentityKeySet";
+import { Uint8Tool, timestampToDate } from "./Tools";
+import { Session, AssumeOptions } from "./Session";
 import { client } from "./HTTP";
 import {
   IdentitySerializer,
   IdentitySortingOrder,
   IdentityRequestsUtils
-} from './IdentityInternal';
+} from "./IdentityInternal";
+import { api } from "./proto";
+import { SignedCipher } from "./Cryptor";
+import { IdentityKeySetAPI } from "./IdentityKeySetAPI";
 
-export { IdentitySortingOrder }
+export { IdentitySortingOrder };
 
 /**
  * An {@Identity} owns several keys, this is a reference to the unique version of an identity public key.
@@ -116,12 +121,6 @@ export type IdentityShareLink = {
   locked: boolean;
 };
 
-/** Allows to indicate which kind of access shoudl be used in a {@link SessionRequest}*/
-export enum IdentityAccessKind {
-  READ = 0,
-  WRITE = 1
-}
-
 /** Allows to indicate which kind of field should be sorted. */
 export enum IdentitySortingField {
   LOGIN = 0,
@@ -151,7 +150,7 @@ export class IdentityAPI {
     } = await client.doRequest({
       method: "POST",
       expectedCode: 200,
-      path: "/api/v4/identities/latestPublicKeys",
+      path: "/api/v1/identities/latestPublicKeys",
       body: api.IdentityGetLatestPublicKeysRequest.encode({ logins }).finish(),
       response: api.IdentityGetLatestPublicKeysResponse.decode,
       headers: new Headers({
@@ -184,7 +183,7 @@ export class IdentityAPI {
     return await this.session.doProtoRequest({
       method: "GET",
       expectedCode: 200,
-      path: "/api/v4/identity/" + encodeURI(login),
+      path: "/api/v1/identity/" + encodeURI(login),
       response: r => IdentitySerializer.deserialize(api.Identity.decode(r))
     });
   }
@@ -215,11 +214,13 @@ export class IdentityAPI {
     if (options.sortingField == null) {
       options.sortingField = IdentitySortingField.CREATED;
     }
-    let sortingOrder = IdentityRequestsUtils.resolveSortingOrder(options.sortingOrder)
+    let sortingOrder = IdentityRequestsUtils.resolveSortingOrder(
+      options.sortingOrder
+    );
     return await this.session.doProtoRequest({
       method: "POST",
       expectedCode: 200,
-      path: "/api/v4/identities/list",
+      path: "/api/v1/identities/list",
       body: api.IdentityListRequest.encode({
         options: {
           offset: options.offset,
@@ -266,41 +267,25 @@ export class IdentityAPI {
     options = options == null ? {} : options;
     let osharingGroup =
       options.sharingGroup == null ? [] : options.sharingGroup;
-    let encryption = new Encryption();
-    encryption.generate(
-      Uint8Tool.convert(options.secret),
-      (this.session as any).encryption
+    let { encryptedKeySet, keySet } = IdentityKeySetAPI.initWithSecret(
+      { version: 1, login: identity.login },
+      options.secret
     );
     let publicKeys = await this.session.getLatestPublicKeys(osharingGroup);
-    let sharingGroup = publicKeys.map(({ login, version, box, sign }) => {
-      let kind = api.IdentityShareKind.SHARING;
-      let { message, nonce } = encryption.encryptKey(
-        kind,
-        (this.session as any).encryption,
-        box
-      );
-      return {
-        login,
-        version,
-        nonce,
-        kind,
-        encryptedKey: message
-      };
-    });
-    let epub = encryption.getPublic();
+    let sharingGroup = IdentityAPI.createSharingGroup(keySet, publicKeys);
     return await this.session.doProtoRequest<void>({
       method: "POST",
       expectedCode: 201,
-      path: "/api/v4/identity",
+      path: "/api/v1/identity",
       body: api.IdentityCreateRequest.encode({
         identity,
         sharingGroup,
-        encryption,
+        encryption: encryptedKeySet,
         email: options.email,
         signChain: (this.session as any).encryption.sign(
           Uint8Tool.concat(
-            epub.boxEncrypted.publicKey,
-            epub.signEncrypted.publicKey
+            encryptedKeySet.boxEncrypted.publicKey,
+            encryptedKeySet.signEncrypted.publicKey
           )
         )
       }).finish()
@@ -318,7 +303,7 @@ export class IdentityAPI {
     return await this.session.doProtoRequest<void>({
       method: "PUT",
       expectedCode: 200,
-      path: "/api/v4/identity/" + encodeURI(identity.login),
+      path: "/api/v1/identity/" + encodeURI(identity.login),
       body: api.IdentityFields.encode(identity).finish()
     });
   }
@@ -332,75 +317,58 @@ export class IdentityAPI {
    * - `IdentityNotFound` if the identity cannot be accessed.
    */
   async renewKeys(login: string, secret?: string | Uint8Array): Promise<void> {
-    let kind = api.IdentityShareKind.SHARING;
-    let assume = { login, kind: IdentityAccessKind.WRITE };
-    let {
-      encryption,
-      creator,
-      sharingGroup
-    } = await this.session.doProtoRequest({
+    // Get the current IdentityEncryptedKeySet and its sharingGroup
+    let assume: AssumeOptions = {
+      login,
+      kind: api.IdentityAccessKeyKind.WRITE
+    };
+    let { encryption, sharingGroup } = await this.session.doProtoRequest({
       method: "GET",
       expectedCode: 200,
-      path: "/api/v4/identity/" + encodeURIComponent(login) + "/keysToRenew",
+      path: "/api/v1/identity/" + encodeURIComponent(login) + "/keysToRenew",
       response: api.IdentityGetKeysToRenewResponse.decode,
       assume
     });
-    let { key } = await (this.session as any).getAssumeParams({
-      login,
-      kind: IdentityAccessKind.WRITE
-    });
-    // Generate a fresh encryption
-    let next = new Encryption();
-    if (secret == null) {
-      next.generateWithMasterPublicKey(
-        encryption.masterPublicKey,
-        encryption.masterSalt,
-        (this.session as any).encryption
-      );
-    } else {
-      next.generate(
-        Uint8Tool.convert(secret),
-        (this.session as any).encryption
-      );
-    }
-    next.version = key.version + 1;
-    let epub = next.getPublic();
-    let { message, nonce } = (this.session as any).encryption
-      .encrypt(api.ResourceType.SES)
-      .encrypt(epub.boxEncrypted.publicKey, key.sharingKey);
-    let backward = { nonce, encryptedKey: message };
+    let currentKeySet = assume.keySet;
+    // Generate the next IdentityKeySet.
+    // The creator of this IdentityKeySet is the owner of the session.
+    let nextKeySetID = {
+      version: currentKeySet.id.version + 1,
+      login: currentKeySet.id.login
+    };
+    let { encryptedKeySet: nextEncryptedKeySet, keySet: nextKeySet } =
+      secret != null
+        ? IdentityKeySetAPI.initWithSecret(nextKeySetID, secret)
+        : IdentityKeySetAPI.initWithMasterSeed(nextKeySetID, {
+            publicKey: encryption.masterPublicKey,
+            masterSalt: encryption.masterSalt
+          });
+    // Create the backward link,
+    // i.e. share the key of the current IdentityKeySet with the next IdentityKeySet
+    let backward = currentKeySet.shareKey(
+      api.IdentityShareKind.SHARING,
+      nextKeySet.public()
+    );
+    // Share the next IdentityKeySet with the sharingGroup of the previous IdentityKeySet
+    let nextSharingGroup = IdentityAPI.createSharingGroup(
+      nextKeySet,
+      sharingGroup as IdentityPublicKey[]
+    );
+    // Sign the public keys of the next IdentityKeySet with the current IdentityKeySet
+    let signChain = currentKeySet.signKeys(nextKeySet);
+    // Push the next IdentityKeySet to DataPeps
     await this.session.doProtoRequest({
       method: "POST",
       expectedCode: 201,
-      path: "/api/v4/identity/" + encodeURIComponent(login) + "/keysToRenew",
+      path: "/api/v1/identity/" + encodeURIComponent(login) + "/keysToRenew",
       body: api.IdentityPostKeysToRenewRequest.encode({
-        encryption: epub,
+        encryption: nextEncryptedKeySet,
+        sharingGroup: nextSharingGroup,
         backward,
-        signChain: nacl.sign.detached(
-          Uint8Tool.concat(
-            epub.boxEncrypted.publicKey,
-            epub.signEncrypted.publicKey
-          ),
-          key.signKey
-        ),
-        sharingGroup: sharingGroup.map(({ login, version, box, sign }) => {
-          let { message, nonce } = next.encryptKey(
-            kind,
-            (this.session as any).encryption,
-            box
-          );
-          return {
-            login,
-            version,
-            encryptedKey: message,
-            nonce,
-            kind
-          };
-        })
+        signChain
       }).finish(),
       assume
     });
-    (this.session as any).clearAssumeParams(login);
   }
 
   /**
@@ -415,7 +383,7 @@ export class IdentityAPI {
     return await this.session.doProtoRequest({
       method: "GET",
       expectedCode: 200,
-      path: "/api/v4/identity/" + encodeURIComponent(login) + "/sharingGroup",
+      path: "/api/v1/identity/" + encodeURIComponent(login) + "/sharingGroup",
       response: r =>
         api.IdentityGetSharingGroupResponse.decode(r)
           .sharingGroup as IdentityShareLink[]
@@ -434,32 +402,20 @@ export class IdentityAPI {
     login: string,
     sharingGroup: string[]
   ): Promise<void> {
-    (this.session as any).clearAssumeParams(login);
-    let { key } = await (this.session as any).getAssumeParams({
-      login,
-      kind: IdentityAccessKind.WRITE
-    });
+    // Get the latest IdentityKeySet
+    let keySet = await this.session.getIdentityKeySet(login);
+    // Share key for the sharingGroup
     let publicKeys = await this.session.getLatestPublicKeys(sharingGroup);
+    let encryptedKeys = IdentityAPI.createSharingGroup(keySet, publicKeys);
+    // patch the sharingGroup to DataPeps
     return await this.session.doProtoRequest<void>({
       method: "PATCH",
       expectedCode: 201,
-      path: "/api/v4/identity/" + encodeURI(login) + "/sharingGroup",
-      assume: { login, kind: IdentityAccessKind.WRITE },
+      path: "/api/v1/identity/" + encodeURI(login) + "/sharingGroup",
+      assume: { login, kind: api.IdentityAccessKeyKind.WRITE },
       body: api.IdentityShareRequest.encode({
-        version: key.version,
-        sharingGroup: publicKeys.map(({ login, version, box, sign }) => {
-          let kind = api.IdentityShareKind.SHARING;
-          let { message, nonce } = (this.session as any).encryption
-            .encrypt(api.ResourceType.SES)
-            .encrypt(box, key.sharingKey);
-          return {
-            login,
-            version,
-            nonce,
-            kind,
-            encryptedKey: message
-          };
-        })
+        version: keySet.id.version,
+        sharingGroup: encryptedKeys
       }).finish()
     });
   }
@@ -477,131 +433,181 @@ export class IdentityAPI {
     login: string,
     sharingGroup: string[]
   ): Promise<void> {
-    return this.editSharingGraph(login, { sharingGroup });
-  }
-
-  async editSharingGraph(
-    login: string,
-    options?: {
-      sharingGroup?: string[];
-      overwriteKeys?: { secret: string | Uint8Array };
-    }
-  ) {
-    options = options != null ? options : {};
-    let graph = await this.getSharingGraph(login, {
-      withKeys: options.overwriteKeys == null
-    });
-    if (graph[0].login != login) {
+    // Get the current sharing graph of the identity
+    let graph = await this.getSharingGraphWithKeySet(login);
+    if (graph[0].value.keySet.id.login != login) {
       throw new Error({
         kind: SDKKind.SDKInternalError,
         payload: { login, graph, hint: "unexpected graph" }
       });
     }
-    if (options.sharingGroup != null) {
-      // Replace the sharing group of login
-      graph[0].sharingGroup = await this.session.getLatestPublicKeys(
-        options.sharingGroup
-      );
-    }
+    // Replace the sharing group of the root identity
+    graph[0].sharingGroup = await this.session.getLatestPublicKeys(
+      sharingGroup
+    );
     // Filter only latest identites
     graph = graph.filter(elt => elt.latest);
-    if (options.overwriteKeys != null) {
-      // If keys are overwritten, we only update:
-      // - the main identity
-      // - the graph elements in which the only element in sharing group is the main identity (for example a delegate, but not a group)
-      graph = graph.filter(
-        elt =>
-          elt.login == login ||
-          (elt.sharingGroup.length == 1 && elt.sharingGroup[0].login == login)
-      );
-    }
-    let newBoxPublicKeys = new Map<string, IdentityPublicKey>();
+
+    let nextPublicKeys = new Map<string, IdentityPublicKey>();
     let encryptedGraph = graph
       .map(elt => {
-        let encryption = new Encryption();
-        if (options.overwriteKeys != null && elt.login === login) {
-          // Overwrite the key of main identity with secret
-          encryption.generate(
-            Uint8Tool.convert(options.overwriteKeys.secret),
-            (this.session as any).encryption
-          );
-        } else {
-          encryption.generateWithMasterPublicKey(
-            elt.masterPublicKey,
-            null,
-            (this.session as any).encryption
-          );
-        }
-        encryption.version = elt.version + 1;
-        newBoxPublicKeys.set(elt.login, {
-          login,
-          sign: null,
-          box: encryption.getPublicKey(api.IdentityShareKind.BOX),
-          version: encryption.version
-        });
-        return { elt, encryption };
-      })
-      .map(({ elt, encryption }) => {
-        let epub = encryption.getPublic();
-        let backward:
-          | { nonce: Uint8Array; encryptedKey: Uint8Array }
-          | undefined;
-        let signChain: Uint8Array;
-        if (options.overwriteKeys != null) {
-          // administrator signs the 'overwrited' new version of identity
-          signChain = (this.session as any).encryption.sign(
-            Uint8Tool.concat(
-              epub.boxEncrypted.publicKey,
-              epub.signEncrypted.publicKey
-            )
-          );
-        } else {
-          // the new version of identity is signed by the previous one (as keys are accessible by current session)
-          let { message, nonce } = (this.session as any).encryption
-            .encrypt(api.ResourceType.SES)
-            .encrypt(epub.boxEncrypted.publicKey, elt.sharingKey);
-          backward = { nonce, encryptedKey: message };
-          signChain = nacl.sign.detached(
-            Uint8Tool.concat(
-              epub.boxEncrypted.publicKey,
-              epub.signEncrypted.publicKey
-            ),
-            elt.signKey
-          );
-        }
+        // Create the next IdentityKeySet, for each identities in the graph
+        let keySetID = {
+          version: elt.value.keySet.id.version + 1,
+          login: elt.value.keySet.id.login
+        };
+        let { encryptedKeySet, keySet } = IdentityKeySetAPI.initWithMasterSeed(
+          keySetID,
+          elt.value.seed
+        );
+        // Put the next IdentityPublicKey in a map
+        nextPublicKeys.set(keySetID.login, keySet.public());
         return {
-          login: elt.login,
-          version: elt.version + 1,
-          encryption: epub,
+          elt,
+          nextencryptedKeySet: encryptedKeySet,
+          nextKeySet: keySet
+        };
+      })
+      .map(({ elt, nextencryptedKeySet, nextKeySet }) => {
+        let currentKeySet = elt.value.keySet;
+        // Create the backward link
+        let backward = currentKeySet.shareKey(
+          api.IdentityShareKind.SHARING,
+          nextKeySet.public()
+        );
+        // Share the next IdentityKeySet with the sharingGroup of the previous IdentityKeySet
+        let sharingGroup = elt.sharingGroup.map(publicKey => {
+          let kind = api.IdentityShareKind.SHARING;
+          let nextPublicKey = nextPublicKeys.get(publicKey.login);
+          publicKey = nextPublicKey != null ? nextPublicKey : publicKey;
+          let { encryptedKey, nonce } = nextKeySet.shareKey(
+            kind,
+            publicKey as IdentityPublicKey
+          );
+          return {
+            login: publicKey.login,
+            version: publicKey.version,
+            encryptedKey,
+            nonce,
+            kind
+          };
+        });
+        // Sign the public keys of the next IdentityKeySet with the current IdentityKeySet
+        let signChain = currentKeySet.signKeys(nextKeySet);
+        return {
+          login: nextKeySet.id.login,
+          version: nextKeySet.id.version,
+          encryption: nextencryptedKeySet,
           signChain,
-          sharingGroup: elt.sharingGroup.map(pk => {
-            let kind = api.IdentityShareKind.SHARING;
-            let newPk = newBoxPublicKeys.get(pk.login);
-            pk = newPk != null ? newPk : pk;
-            let { message, nonce } = encryption.encryptKey(
-              kind,
-              (this.session as any).encryption,
-              pk.box
-            );
-            return {
-              login: pk.login,
-              version: pk.version,
-              encryptedKey: message,
-              nonce,
-              kind
-            };
-          }),
+          sharingGroup,
           backward
         };
       });
     return await this.session.doProtoRequest<void>({
       method: "POST",
       expectedCode: 201,
-      path: "/api/v4/identity/" + encodeURIComponent(login) + "/sharingGraph",
-      assume:
-        options.overwriteKeys != null
-          ? undefined
-          : { login, kind: IdentityAccessKind.WRITE },
+      path: "/api/v1/identity/" + encodeURIComponent(login) + "/sharingGraph",
+      assume: { login, kind: api.IdentityAccessKeyKind.WRITE },
+      body: api.IdentityPostSharingGraphRequest.encode({
+        graph: encryptedGraph
+      }).finish()
+    });
+  }
+
+  /**
+   * Generate new keys for an identity.
+   * The identity will no longer be able access any things (resources, shared identities, ...) that have previously been shared with it.
+   * Only administrator can do this.
+   * @param login The login of the identity to set the active status.
+   * @return(p) On success the promise will be resolved with void.
+   * On error the promise will be rejected with an {@link Error} with kind:
+   * - `IdentityNotFound` if `login` does not exists.
+   * - `IdentityNotAdmin` if the identity logged along the current session is not an admin.
+   * - `IdentityNotAdminDomain` if the identity logged along with the current session cannot adinistrate the domain of `login`.
+   */
+  async overwriteKeys(
+    login: string,
+    secret: string | Uint8Array
+  ): Promise<void> {
+    // Get the current sharing graph of the identity
+    let graph = await this.getSharingGraphWithPublicKey(login);
+    if (graph[0].value.id.login != login) {
+      throw new Error({
+        kind: SDKKind.SDKInternalError,
+        payload: { login, graph, hint: "unexpected graph" }
+      });
+    }
+    // Filter only latest identites
+    graph = graph.filter(elt => elt.latest);
+
+    // We do not replace the identities that are shared by another identity
+    // as overwrited identities cannot access to their history.
+    // So we update only:
+    // - the main identity
+    // - the graph elements in which the only element in sharing group is the main identity (for example a delegate, but not a group)
+    graph = graph.filter(
+      elt =>
+        elt.value.id.login == login ||
+        (elt.sharingGroup.length == 1 && elt.sharingGroup[0].login == login)
+    );
+    // Create the overwrited graph of identities
+    let nextPublicKeys = new Map<string, IdentityPublicKey>();
+    let encryptedGraph = graph
+      .map(elt => {
+        // Create the next IdentityKeySet, for each identities in the graph
+        let keySetID = {
+          version: elt.value.id.version + 1,
+          login: elt.value.id.login
+        };
+        let { encryptedKeySet, keySet } =
+          elt.value.id.login == login
+            ? IdentityKeySetAPI.initWithSecret(keySetID, secret)
+            : IdentityKeySetAPI.initWithMasterSeed(keySetID, elt.value.seed);
+        // Put the next IdentityPublicKey in a map
+        nextPublicKeys.set(keySetID.login, keySet.public());
+        return {
+          elt,
+          nextencryptedKeySet: encryptedKeySet,
+          nextKeySet: keySet
+        };
+      })
+      .map(({ elt, nextencryptedKeySet, nextKeySet }) => {
+        // administrator signs the 'overwrited' new version of identity
+        let signChain = (this.session as any).encryption.sign(
+          Uint8Tool.concat(
+            nextencryptedKeySet.boxEncrypted.publicKey,
+            nextencryptedKeySet.signEncrypted.publicKey
+          )
+        );
+        // Share the next IdentityKeySet with the sharingGroup of the previous IdentityKeySet
+        let sharingGroup = elt.sharingGroup.map(publicKey => {
+          let kind = api.IdentityShareKind.SHARING;
+          let nextPublicKey = nextPublicKeys.get(publicKey.login);
+          publicKey = nextPublicKey != null ? nextPublicKey : publicKey;
+          let { encryptedKey, nonce } = nextKeySet.shareKey(
+            kind,
+            publicKey as IdentityPublicKey
+          );
+          return {
+            login: publicKey.login,
+            version: publicKey.version,
+            encryptedKey,
+            nonce,
+            kind
+          };
+        });
+        return {
+          login: nextKeySet.id.login,
+          version: nextKeySet.id.version,
+          encryption: nextencryptedKeySet,
+          signChain,
+          sharingGroup
+        };
+      });
+    return await this.session.doProtoRequest<void>({
+      method: "POST",
+      expectedCode: 201,
+      path: "/api/v1/identity/" + encodeURIComponent(login) + "/sharingGraph",
       body: api.IdentityPostSharingGraphRequest.encode({
         graph: encryptedGraph
       }).finish()
@@ -620,7 +626,7 @@ export class IdentityAPI {
     return await this.session.doProtoRequest({
       method: "GET",
       expectedCode: 200,
-      path: "/api/v4/identity/" + encodeURIComponent(login) + "/accessGroup",
+      path: "/api/v1/identity/" + encodeURIComponent(login) + "/accessGroup",
       response: r =>
         api.IdentityGetAccessGroupResponse.decode(r)
           .accessGroup as IdentityShareLink[]
@@ -639,7 +645,7 @@ export class IdentityAPI {
     let { chains } = await this.session.doProtoRequest({
       method: "POST",
       expectedCode: 200,
-      path: "/api/v4/identities/latestPublicChains",
+      path: "/api/v1/identities/latestPublicChains",
       body: api.IdentityGetLatestPublicChainsRequest.encode({
         ids: [{ login, since: 0 }]
       }).finish(),
@@ -683,12 +689,12 @@ export class IdentityAPI {
     return await this.session.doProtoRequest({
       method: "GET",
       expectedCode: 200,
-      path: "/api/v4/identity/" + encodeURI(login) + "/lockedVersions",
+      path: "/api/v1/identity/" + encodeURI(login) + "/lockedVersions",
       params: options,
       assume:
         login == this.session.login
           ? null
-          : { login, kind: IdentityAccessKind.READ },
+          : { login, kind: api.IdentityAccessKeyKind.READ },
       response: r => {
         return api.IdentityGetLockedVersionsResponse.decode(
           r
@@ -697,9 +703,7 @@ export class IdentityAPI {
             ...lockedVersion,
             publicKey: {
               ...lockedVersion.publicKey.publicKey,
-              created: new Date(
-                (lockedVersion.publicKey.created as number) * 1000
-              )
+              created: timestampToDate(lockedVersion.publicKey.created)
             } as IdentityPublicKeyWithMetadata
           };
         });
@@ -721,13 +725,12 @@ export class IdentityAPI {
     });
     let unlockedVersions: IdentityPublicKeyWithMetadata[] = [];
     let resolvedChallengesWithEncryptedKeys: api.UnlockVersionsRequest.UnlockedVersion[] = [];
-    let publicKey: Uint8Array;
+    let publicKey: IdentityPublicKey;
     if (login == this.session.login) {
-      publicKey = (this.session as any).encryption.getPublic().boxEncrypted
-        .publicKey;
+      publicKey = this.session.getSessionPublicKey();
     } else {
       // TODO: possible race condition between the assumed version here and when sending the request
-      publicKey = (await this.session.getLatestPublicKey(login)).box;
+      publicKey = await this.session.getLatestPublicKey(login);
     }
     lockedVersions.forEach(locked => {
       if (locked.challenge == null) {
@@ -739,30 +742,27 @@ export class IdentityAPI {
           }
         });
       }
-      let encryption = new Encryption(
-        api.IdentityEncryption.create(locked.challenge.encryption)
-      );
       try {
-        encryption.recover(
-          Uint8Tool.convert(secret),
-          api.IdentityPublicKey.create(locked.challenge.creator)
+        let keySet = IdentityKeySetAPI.recoverWithSecret(
+          login,
+          secret,
+          locked.challenge.encryption
         );
         unlockedVersions.push(locked.publicKey);
 
         // the current version of session identity is signed by the unlocked one (as keys are accessible by current session)
-        let { message, nonce } = encryption.encryptKey(
+        let { encryptedKey, nonce } = keySet.shareKey(
           api.IdentityShareKind.SHARING,
-          encryption,
           publicKey
         );
-        let backward = { nonce, encryptedKey: message };
+        let backward = { nonce, encryptedKey };
 
         resolvedChallengesWithEncryptedKeys.push(
           new api.UnlockVersionsRequest.UnlockedVersion({
             resolvedChallenge: {
               token: locked.challenge.token,
               salt: locked.challenge.salt,
-              signature: encryption.sign(locked.challenge.salt)
+              signature: keySet.sign(locked.challenge.salt)
             },
             backward
           })
@@ -778,8 +778,8 @@ export class IdentityAPI {
         assume:
           login == this.session.login
             ? null
-            : { login, kind: IdentityAccessKind.WRITE },
-        path: "/api/v4/identity/" + encodeURI(login) + "/unlockVersions",
+            : { login, kind: api.IdentityAccessKeyKind.WRITE },
+        path: "/api/v1/identity/" + encodeURI(login) + "/unlockVersions",
         body: api.UnlockVersionsRequest.encode({
           unlockedVersions: resolvedChallengesWithEncryptedKeys
         }).finish(),
@@ -789,80 +789,145 @@ export class IdentityAPI {
     return unlockedVersions;
   }
 
-  private async getSharingGraph(
-    login: string,
-    options?: { withKeys?: boolean }
-  ): Promise<IdentitySharingElt[]> {
-    options = options != null ? options : {};
-    let withKeys = options.withKeys == null ? true : options.withKeys;
+  private async getSharingGraphWithPublicKey(
+    login: string
+  ): Promise<
+    IdentitySharingGraph<{ id: IdentityPublicKeyID; seed: MasterPublicSeed }>
+  > {
+    // Get the graph from DataPeps
     let { graph } = await this.session.doProtoRequest({
       method: "GET",
       expectedCode: 200,
-      path: "/api/v4/identity/" + encodeURIComponent(login) + "/sharingGraph",
-      assume: withKeys ? { login, kind: IdentityAccessKind.WRITE } : null,
+      path: "/api/v1/identity/" + encodeURIComponent(login) + "/sharingGraph",
       response: api.IdentityGetSharingGraphResponse.decode
     });
-    if (!withKeys) {
-      return graph as IdentitySharingElt[];
-    }
-    // Resolve ciphers in graph
-    let ciphers: api.ICipher[] = [];
-    graph.forEach((elt, i) => {
-      if (i != 0) {
-        ciphers.push(graph[i].sharingKey);
-      }
-      ciphers.push(graph[i].signKey);
-      ciphers.push(graph[i].boxKey);
-    });
-    let resolvedCiphers = await (this.session as any).resolveCipherList(
-      ciphers
+    // Return the graph with IdentityPublicKeyID
+    return graph.map(
+      ({ latest, login, version, sharingGroup, masterPublicKey }) => ({
+        value: {
+          id: { login, version },
+          seed: { publicKey: masterPublicKey, masterSalt: null }
+        },
+        sharingGroup,
+        latest
+      })
     );
-    let resolvedGraph = graph.map((elt, i) => {
-      let sharingKey = i == 0 ? null : resolvedCiphers.shift();
-      let signKey = resolvedCiphers.shift();
-      let boxKey = resolvedCiphers.shift();
-      return { ...elt, sharingKey, signKey, boxKey };
-    });
-    // Decrypt ciphers in graph
-    let { key } = await (this.session as any).getAssumeParams({
+  }
+
+  private async getSharingGraphWithKeySet(
+    login: string
+  ): Promise<
+    IdentitySharingGraph<{ keySet: IdentityKeySet; seed: MasterPublicSeed }>
+  > {
+    // Get the graph from DataPeps by assuming the root identity
+    let assume: AssumeOptions = {
       login,
-      kind: IdentityAccessKind.WRITE
+      kind: api.IdentityAccessKeyKind.WRITE
+    };
+    let { graph } = await this.session.doProtoRequest({
+      method: "GET",
+      expectedCode: 200,
+      path: "/api/v1/identity/" + encodeURIComponent(login) + "/sharingGraph",
+      assume,
+      response: api.IdentityGetSharingGraphResponse.decode
     });
-    let boxKeys: { [login: string]: Uint8Array } = {};
-    let firstSharingKey = (await (this.session as any).getAssumeParams({
-      login,
-      kind: IdentityAccessKind.WRITE
-    })).key.sharingKey;
-    let x = resolvedGraph.map((elt, i) => {
-      let sharingKey: Uint8Array;
-      if (i == 0) {
-        sharingKey = firstSharingKey;
-      } else {
-        let boxkey = boxKeys[elt.sharedFrom.login + elt.sharedFrom.version];
-        sharingKey = (this.session as any).encryption
-          .decrypt(api.ResourceType.SES, boxkey)
-          .decrypt(elt.sharingKey);
+    // Initialize the map of IdentityKeySet, that be used to decrypts sharingKey of identities in the graph
+    let rootKeySet = assume.keySet;
+    let identityKeySets = new Map<string, IdentityKeySet>();
+    identityKeySets.set(
+      rootKeySet.id.login + rootKeySet.id.version,
+      rootKeySet
+    );
+    // The root node is actually the identity that assume the request, so we doesn't need to decrypt it.
+    let rootNode = graph.shift();
+    if (
+      rootNode.login != rootKeySet.id.login ||
+      rootNode.version != rootKeySet.id.version
+    ) {
+      throw new Error({
+        kind: SDKKind.SDKInternalError,
+        payload: {
+          message: "unexpected rootNode"
+        }
+      });
+    }
+    // Resolve ciphers of sharingKey
+    // TODO - Better resolution
+    let resolvedGraph = await Promise.all(
+      graph.map(async elt => {
+        // TODO - session
+        let [sharingKey]: SignedCipher[] = await (this
+          .session as any).resolveCipherList([elt.sharingKey]);
+        return { ...elt, sharingKey };
+      })
+    );
+    // Decrypts IdentityKeySet of identities in the the graph
+    let decyptedGraph = resolvedGraph.map((elt, i) => {
+      let parentKeySet = identityKeySets.get(
+        elt.sharedFrom.login + elt.sharedFrom.version
+      );
+      let keySet = IdentityKeySetAPI.recoverWithEncrytedKeys(
+        { login: elt.login, version: elt.version },
+        parentKeySet,
+        [elt.sharingKey],
+        {
+          boxEncrypted: {
+            encryptedKey: elt.boxKey.message,
+            nonce: elt.boxKey.nonce,
+            publicKey: elt.boxPublicKey
+          },
+          signEncrypted: {
+            encryptedKey: elt.signKey.message,
+            nonce: elt.signKey.nonce,
+            publicKey: elt.signPublicKey
+          },
+          readEncrypted: null // TODO
+        }
+      );
+      identityKeySets.set(elt.login + elt.version, keySet);
+      let seed = { publicKey: elt.masterPublicKey, masterSalt: null };
+      return {
+        sharingGroup: elt.sharingGroup,
+        latest: elt.latest,
+        value: { keySet, seed }
+      };
+    });
+    // Reintroduce the rootNode in the graph
+    decyptedGraph.unshift({
+      latest: rootNode.latest,
+      sharingGroup: rootNode.sharingGroup,
+      value: {
+        keySet: rootKeySet,
+        seed: {
+          publicKey: rootNode.masterPublicKey,
+          masterSalt: null
+        }
       }
-      let boxKey = (this.session as any).encryption
-        .decrypt(api.ResourceType.SES, sharingKey)
-        .decrypt(elt.boxKey);
-      let signKey = (this.session as any).encryption
-        .decrypt(api.ResourceType.SES, sharingKey)
-        .decrypt(elt.signKey);
-      boxKeys[elt.login + elt.version] = boxKey;
-      return { ...elt, sharingKey, boxKey, signKey };
-    }) as IdentitySharingElt[];
-    return x;
+    });
+    return decyptedGraph;
+  }
+
+  private static createSharingGroup(
+    keySet: IdentityKeySet,
+    publicKeys: IdentityPublicKey[]
+  ): api.IIdentityShareEntry[] {
+    return publicKeys.map(pk => {
+      let kind = api.IdentityShareKind.SHARING;
+      let { encryptedKey, nonce } = keySet.shareKey(kind, pk);
+      return {
+        login: pk.login,
+        version: pk.version,
+        nonce,
+        kind,
+        encryptedKey
+      };
+    });
   }
 }
 
-interface IdentitySharingElt {
-  login: string;
-  version: number;
-  masterPublicKey: Uint8Array;
-  sharingKey: Uint8Array;
-  signKey: Uint8Array;
-  boxKey: Uint8Array;
-  sharingGroup: IdentityPublicKey[];
+type IdentitySharingGraph<T> = IdentitySharingGraphElt<T>[];
+interface IdentitySharingGraphElt<T> {
+  value: T;
+  sharingGroup: api.IIdentityPublicKey[];
   latest: boolean;
 }

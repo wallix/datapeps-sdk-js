@@ -34,6 +34,21 @@ export async function devWithAllConfigs(init: initCtx): Promise<devCtx> {
   return devCtx;
 }
 
+export type DevWithAllConfigsAndAPI = {
+  ctx: devCtx;
+  api: ApplicationAPI;
+};
+
+export async function devWithAllConfigsAndAPI(
+  initCtx: initCtx
+): Promise<DevWithAllConfigsAndAPI> {
+  let ctx = await devWithAllConfigs(initCtx);
+  return {
+    ctx,
+    api: new ApplicationAPI(ctx.dev.session)
+  };
+}
+
 export async function registerIdentitiesForEachApp(
   init: initCtx,
   dev: devCtx,
@@ -60,7 +75,7 @@ async function registerIdentitiesWithApp(
     async (field, secret) => {
       let token = JWT.sign(
         { [config.config.claimForLogin]: field.login },
-        Uint8Tool.decode(config.secretKey),
+        Uint8Tool.decode(config.keys.sk),
         { algorithm: ApplicationJWT.Algorithm[config.config.signAlgorithm] }
       );
       return await Application.createUser(

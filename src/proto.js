@@ -2411,30 +2411,30 @@ $root.api = (function() {
         return IdentityEncryptedKey;
     })();
 
-    api.IdentityEncryption = (function() {
+    api.IdentityEncryptedKeySet = (function() {
 
         /**
-         * Properties of an IdentityEncryption.
+         * Properties of an IdentityEncryptedKeySet.
          * @memberof api
-         * @interface IIdentityEncryption
-         * @property {number|null} [version] IdentityEncryption version
-         * @property {Uint8Array|null} [masterSalt] IdentityEncryption masterSalt
-         * @property {Uint8Array|null} [masterPublicKey] IdentityEncryption masterPublicKey
-         * @property {api.IIdentityEncryptedKey|null} [sharingEncrypted] IdentityEncryption sharingEncrypted
-         * @property {api.IIdentityEncryptedKey|null} [boxEncrypted] IdentityEncryption boxEncrypted
-         * @property {api.IIdentityEncryptedKey|null} [signEncrypted] IdentityEncryption signEncrypted
-         * @property {api.IIdentityEncryptedKey|null} [readEncrypted] IdentityEncryption readEncrypted
+         * @interface IIdentityEncryptedKeySet
+         * @property {number|null} [version] IdentityEncryptedKeySet version
+         * @property {Uint8Array|null} [masterSalt] IdentityEncryptedKeySet masterSalt
+         * @property {Uint8Array|null} [masterPublicKey] IdentityEncryptedKeySet masterPublicKey
+         * @property {api.IIdentityEncryptedKey|null} [sharingEncrypted] IdentityEncryptedKeySet sharingEncrypted
+         * @property {api.IIdentityEncryptedKey|null} [boxEncrypted] IdentityEncryptedKeySet boxEncrypted
+         * @property {api.IIdentityEncryptedKey|null} [signEncrypted] IdentityEncryptedKeySet signEncrypted
+         * @property {api.IIdentityEncryptedKey|null} [readEncrypted] IdentityEncryptedKeySet readEncrypted
          */
 
         /**
-         * Constructs a new IdentityEncryption.
+         * Constructs a new IdentityEncryptedKeySet.
          * @memberof api
-         * @classdesc Represents an IdentityEncryption.
-         * @implements IIdentityEncryption
+         * @classdesc Represents an IdentityEncryptedKeySet.
+         * @implements IIdentityEncryptedKeySet
          * @constructor
-         * @param {api.IIdentityEncryption=} [properties] Properties to set
+         * @param {api.IIdentityEncryptedKeySet=} [properties] Properties to set
          */
-        function IdentityEncryption(properties) {
+        function IdentityEncryptedKeySet(properties) {
             if (properties)
                 for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null)
@@ -2442,83 +2442,83 @@ $root.api = (function() {
         }
 
         /**
-         * IdentityEncryption version.
+         * IdentityEncryptedKeySet version.
          * @member {number} version
-         * @memberof api.IdentityEncryption
+         * @memberof api.IdentityEncryptedKeySet
          * @instance
          */
-        IdentityEncryption.prototype.version = 0;
+        IdentityEncryptedKeySet.prototype.version = 0;
 
         /**
-         * IdentityEncryption masterSalt.
+         * IdentityEncryptedKeySet masterSalt.
          * @member {Uint8Array} masterSalt
-         * @memberof api.IdentityEncryption
+         * @memberof api.IdentityEncryptedKeySet
          * @instance
          */
-        IdentityEncryption.prototype.masterSalt = $util.newBuffer([]);
+        IdentityEncryptedKeySet.prototype.masterSalt = $util.newBuffer([]);
 
         /**
-         * IdentityEncryption masterPublicKey.
+         * IdentityEncryptedKeySet masterPublicKey.
          * @member {Uint8Array} masterPublicKey
-         * @memberof api.IdentityEncryption
+         * @memberof api.IdentityEncryptedKeySet
          * @instance
          */
-        IdentityEncryption.prototype.masterPublicKey = $util.newBuffer([]);
+        IdentityEncryptedKeySet.prototype.masterPublicKey = $util.newBuffer([]);
 
         /**
-         * IdentityEncryption sharingEncrypted.
+         * IdentityEncryptedKeySet sharingEncrypted.
          * @member {api.IIdentityEncryptedKey|null|undefined} sharingEncrypted
-         * @memberof api.IdentityEncryption
+         * @memberof api.IdentityEncryptedKeySet
          * @instance
          */
-        IdentityEncryption.prototype.sharingEncrypted = null;
+        IdentityEncryptedKeySet.prototype.sharingEncrypted = null;
 
         /**
-         * IdentityEncryption boxEncrypted.
+         * IdentityEncryptedKeySet boxEncrypted.
          * @member {api.IIdentityEncryptedKey|null|undefined} boxEncrypted
-         * @memberof api.IdentityEncryption
+         * @memberof api.IdentityEncryptedKeySet
          * @instance
          */
-        IdentityEncryption.prototype.boxEncrypted = null;
+        IdentityEncryptedKeySet.prototype.boxEncrypted = null;
 
         /**
-         * IdentityEncryption signEncrypted.
+         * IdentityEncryptedKeySet signEncrypted.
          * @member {api.IIdentityEncryptedKey|null|undefined} signEncrypted
-         * @memberof api.IdentityEncryption
+         * @memberof api.IdentityEncryptedKeySet
          * @instance
          */
-        IdentityEncryption.prototype.signEncrypted = null;
+        IdentityEncryptedKeySet.prototype.signEncrypted = null;
 
         /**
-         * IdentityEncryption readEncrypted.
+         * IdentityEncryptedKeySet readEncrypted.
          * @member {api.IIdentityEncryptedKey|null|undefined} readEncrypted
-         * @memberof api.IdentityEncryption
+         * @memberof api.IdentityEncryptedKeySet
          * @instance
          */
-        IdentityEncryption.prototype.readEncrypted = null;
+        IdentityEncryptedKeySet.prototype.readEncrypted = null;
 
         /**
-         * Creates a new IdentityEncryption instance using the specified properties.
+         * Creates a new IdentityEncryptedKeySet instance using the specified properties.
          * @function create
-         * @memberof api.IdentityEncryption
+         * @memberof api.IdentityEncryptedKeySet
          * @static
-         * @param {api.IIdentityEncryption=} [properties] Properties to set
-         * @returns {api.IdentityEncryption} IdentityEncryption instance
+         * @param {api.IIdentityEncryptedKeySet=} [properties] Properties to set
+         * @returns {api.IdentityEncryptedKeySet} IdentityEncryptedKeySet instance
          */
-        IdentityEncryption.create = function create(properties) {
-            return new IdentityEncryption(properties);
+        IdentityEncryptedKeySet.create = function create(properties) {
+            return new IdentityEncryptedKeySet(properties);
         };
 
         /**
-         * Encodes the specified IdentityEncryption message. Does not implicitly {@link api.IdentityEncryption.verify|verify} messages.
+         * Encodes the specified IdentityEncryptedKeySet message. Does not implicitly {@link api.IdentityEncryptedKeySet.verify|verify} messages.
          * @function encode
-         * @memberof api.IdentityEncryption
+         * @memberof api.IdentityEncryptedKeySet
          * @static
-         * @param {api.IIdentityEncryption} message IdentityEncryption message or plain object to encode
+         * @param {api.IIdentityEncryptedKeySet} message IdentityEncryptedKeySet message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        IdentityEncryption.encode = function encode(message, writer) {
+        IdentityEncryptedKeySet.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
             if (message.version != null && message.hasOwnProperty("version"))
@@ -2539,33 +2539,33 @@ $root.api = (function() {
         };
 
         /**
-         * Encodes the specified IdentityEncryption message, length delimited. Does not implicitly {@link api.IdentityEncryption.verify|verify} messages.
+         * Encodes the specified IdentityEncryptedKeySet message, length delimited. Does not implicitly {@link api.IdentityEncryptedKeySet.verify|verify} messages.
          * @function encodeDelimited
-         * @memberof api.IdentityEncryption
+         * @memberof api.IdentityEncryptedKeySet
          * @static
-         * @param {api.IIdentityEncryption} message IdentityEncryption message or plain object to encode
+         * @param {api.IIdentityEncryptedKeySet} message IdentityEncryptedKeySet message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        IdentityEncryption.encodeDelimited = function encodeDelimited(message, writer) {
+        IdentityEncryptedKeySet.encodeDelimited = function encodeDelimited(message, writer) {
             return this.encode(message, writer).ldelim();
         };
 
         /**
-         * Decodes an IdentityEncryption message from the specified reader or buffer.
+         * Decodes an IdentityEncryptedKeySet message from the specified reader or buffer.
          * @function decode
-         * @memberof api.IdentityEncryption
+         * @memberof api.IdentityEncryptedKeySet
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {api.IdentityEncryption} IdentityEncryption
+         * @returns {api.IdentityEncryptedKeySet} IdentityEncryptedKeySet
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        IdentityEncryption.decode = function decode(reader, length) {
+        IdentityEncryptedKeySet.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.IdentityEncryption();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.IdentityEncryptedKeySet();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -2599,30 +2599,30 @@ $root.api = (function() {
         };
 
         /**
-         * Decodes an IdentityEncryption message from the specified reader or buffer, length delimited.
+         * Decodes an IdentityEncryptedKeySet message from the specified reader or buffer, length delimited.
          * @function decodeDelimited
-         * @memberof api.IdentityEncryption
+         * @memberof api.IdentityEncryptedKeySet
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {api.IdentityEncryption} IdentityEncryption
+         * @returns {api.IdentityEncryptedKeySet} IdentityEncryptedKeySet
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        IdentityEncryption.decodeDelimited = function decodeDelimited(reader) {
+        IdentityEncryptedKeySet.decodeDelimited = function decodeDelimited(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
             return this.decode(reader, reader.uint32());
         };
 
         /**
-         * Verifies an IdentityEncryption message.
+         * Verifies an IdentityEncryptedKeySet message.
          * @function verify
-         * @memberof api.IdentityEncryption
+         * @memberof api.IdentityEncryptedKeySet
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
          */
-        IdentityEncryption.verify = function verify(message) {
+        IdentityEncryptedKeySet.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
             if (message.version != null && message.hasOwnProperty("version"))
@@ -2658,17 +2658,17 @@ $root.api = (function() {
         };
 
         /**
-         * Creates an IdentityEncryption message from a plain object. Also converts values to their respective internal types.
+         * Creates an IdentityEncryptedKeySet message from a plain object. Also converts values to their respective internal types.
          * @function fromObject
-         * @memberof api.IdentityEncryption
+         * @memberof api.IdentityEncryptedKeySet
          * @static
          * @param {Object.<string,*>} object Plain object
-         * @returns {api.IdentityEncryption} IdentityEncryption
+         * @returns {api.IdentityEncryptedKeySet} IdentityEncryptedKeySet
          */
-        IdentityEncryption.fromObject = function fromObject(object) {
-            if (object instanceof $root.api.IdentityEncryption)
+        IdentityEncryptedKeySet.fromObject = function fromObject(object) {
+            if (object instanceof $root.api.IdentityEncryptedKeySet)
                 return object;
-            var message = new $root.api.IdentityEncryption();
+            var message = new $root.api.IdentityEncryptedKeySet();
             if (object.version != null)
                 message.version = object.version >>> 0;
             if (object.masterSalt != null)
@@ -2683,37 +2683,37 @@ $root.api = (function() {
                     message.masterPublicKey = object.masterPublicKey;
             if (object.sharingEncrypted != null) {
                 if (typeof object.sharingEncrypted !== "object")
-                    throw TypeError(".api.IdentityEncryption.sharingEncrypted: object expected");
+                    throw TypeError(".api.IdentityEncryptedKeySet.sharingEncrypted: object expected");
                 message.sharingEncrypted = $root.api.IdentityEncryptedKey.fromObject(object.sharingEncrypted);
             }
             if (object.boxEncrypted != null) {
                 if (typeof object.boxEncrypted !== "object")
-                    throw TypeError(".api.IdentityEncryption.boxEncrypted: object expected");
+                    throw TypeError(".api.IdentityEncryptedKeySet.boxEncrypted: object expected");
                 message.boxEncrypted = $root.api.IdentityEncryptedKey.fromObject(object.boxEncrypted);
             }
             if (object.signEncrypted != null) {
                 if (typeof object.signEncrypted !== "object")
-                    throw TypeError(".api.IdentityEncryption.signEncrypted: object expected");
+                    throw TypeError(".api.IdentityEncryptedKeySet.signEncrypted: object expected");
                 message.signEncrypted = $root.api.IdentityEncryptedKey.fromObject(object.signEncrypted);
             }
             if (object.readEncrypted != null) {
                 if (typeof object.readEncrypted !== "object")
-                    throw TypeError(".api.IdentityEncryption.readEncrypted: object expected");
+                    throw TypeError(".api.IdentityEncryptedKeySet.readEncrypted: object expected");
                 message.readEncrypted = $root.api.IdentityEncryptedKey.fromObject(object.readEncrypted);
             }
             return message;
         };
 
         /**
-         * Creates a plain object from an IdentityEncryption message. Also converts values to other types if specified.
+         * Creates a plain object from an IdentityEncryptedKeySet message. Also converts values to other types if specified.
          * @function toObject
-         * @memberof api.IdentityEncryption
+         * @memberof api.IdentityEncryptedKeySet
          * @static
-         * @param {api.IdentityEncryption} message IdentityEncryption
+         * @param {api.IdentityEncryptedKeySet} message IdentityEncryptedKeySet
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
-        IdentityEncryption.toObject = function toObject(message, options) {
+        IdentityEncryptedKeySet.toObject = function toObject(message, options) {
             if (!options)
                 options = {};
             var object = {};
@@ -2756,17 +2756,17 @@ $root.api = (function() {
         };
 
         /**
-         * Converts this IdentityEncryption to JSON.
+         * Converts this IdentityEncryptedKeySet to JSON.
          * @function toJSON
-         * @memberof api.IdentityEncryption
+         * @memberof api.IdentityEncryptedKeySet
          * @instance
          * @returns {Object.<string,*>} JSON object
          */
-        IdentityEncryption.prototype.toJSON = function toJSON() {
+        IdentityEncryptedKeySet.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
 
-        return IdentityEncryption;
+        return IdentityEncryptedKeySet;
     })();
 
     /**
@@ -3024,7 +3024,7 @@ $root.api = (function() {
          * @memberof api
          * @interface IIdentityRegisterRequest
          * @property {api.IIdentityFields|null} [identity] IdentityRegisterRequest identity
-         * @property {api.IIdentityEncryption|null} [encryption] IdentityRegisterRequest encryption
+         * @property {api.IIdentityEncryptedKeySet|null} [encryption] IdentityRegisterRequest encryption
          */
 
         /**
@@ -3052,7 +3052,7 @@ $root.api = (function() {
 
         /**
          * IdentityRegisterRequest encryption.
-         * @member {api.IIdentityEncryption|null|undefined} encryption
+         * @member {api.IIdentityEncryptedKeySet|null|undefined} encryption
          * @memberof api.IdentityRegisterRequest
          * @instance
          */
@@ -3085,7 +3085,7 @@ $root.api = (function() {
             if (message.identity != null && message.hasOwnProperty("identity"))
                 $root.api.IdentityFields.encode(message.identity, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
             if (message.encryption != null && message.hasOwnProperty("encryption"))
-                $root.api.IdentityEncryption.encode(message.encryption, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                $root.api.IdentityEncryptedKeySet.encode(message.encryption, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
             return writer;
         };
 
@@ -3124,7 +3124,7 @@ $root.api = (function() {
                     message.identity = $root.api.IdentityFields.decode(reader, reader.uint32());
                     break;
                 case 2:
-                    message.encryption = $root.api.IdentityEncryption.decode(reader, reader.uint32());
+                    message.encryption = $root.api.IdentityEncryptedKeySet.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -3167,7 +3167,7 @@ $root.api = (function() {
                     return "identity." + error;
             }
             if (message.encryption != null && message.hasOwnProperty("encryption")) {
-                var error = $root.api.IdentityEncryption.verify(message.encryption);
+                var error = $root.api.IdentityEncryptedKeySet.verify(message.encryption);
                 if (error)
                     return "encryption." + error;
             }
@@ -3194,7 +3194,7 @@ $root.api = (function() {
             if (object.encryption != null) {
                 if (typeof object.encryption !== "object")
                     throw TypeError(".api.IdentityRegisterRequest.encryption: object expected");
-                message.encryption = $root.api.IdentityEncryption.fromObject(object.encryption);
+                message.encryption = $root.api.IdentityEncryptedKeySet.fromObject(object.encryption);
             }
             return message;
         };
@@ -3219,7 +3219,7 @@ $root.api = (function() {
             if (message.identity != null && message.hasOwnProperty("identity"))
                 object.identity = $root.api.IdentityFields.toObject(message.identity, options);
             if (message.encryption != null && message.hasOwnProperty("encryption"))
-                object.encryption = $root.api.IdentityEncryption.toObject(message.encryption, options);
+                object.encryption = $root.api.IdentityEncryptedKeySet.toObject(message.encryption, options);
             return object;
         };
 
@@ -3624,7 +3624,7 @@ $root.api = (function() {
          * @interface IRegisterApplicationIdentityRequest
          * @property {string|null} [appID] RegisterApplicationIdentityRequest appID
          * @property {api.IIdentityFields|null} [identity] RegisterApplicationIdentityRequest identity
-         * @property {api.IIdentityEncryption|null} [encryption] RegisterApplicationIdentityRequest encryption
+         * @property {api.IIdentityEncryptedKeySet|null} [encryption] RegisterApplicationIdentityRequest encryption
          * @property {Object.<string,api.IResourcePostRequest>|null} [resources] RegisterApplicationIdentityRequest resources
          * @property {api.IIdentityExternalAuth|null} [auth] RegisterApplicationIdentityRequest auth
          */
@@ -3663,7 +3663,7 @@ $root.api = (function() {
 
         /**
          * RegisterApplicationIdentityRequest encryption.
-         * @member {api.IIdentityEncryption|null|undefined} encryption
+         * @member {api.IIdentityEncryptedKeySet|null|undefined} encryption
          * @memberof api.RegisterApplicationIdentityRequest
          * @instance
          */
@@ -3714,7 +3714,7 @@ $root.api = (function() {
             if (message.identity != null && message.hasOwnProperty("identity"))
                 $root.api.IdentityFields.encode(message.identity, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
             if (message.encryption != null && message.hasOwnProperty("encryption"))
-                $root.api.IdentityEncryption.encode(message.encryption, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+                $root.api.IdentityEncryptedKeySet.encode(message.encryption, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
             if (message.resources != null && message.hasOwnProperty("resources"))
                 for (var keys = Object.keys(message.resources), i = 0; i < keys.length; ++i) {
                     writer.uint32(/* id 4, wireType 2 =*/34).fork().uint32(/* id 1, wireType 2 =*/10).string(keys[i]);
@@ -3763,7 +3763,7 @@ $root.api = (function() {
                     message.identity = $root.api.IdentityFields.decode(reader, reader.uint32());
                     break;
                 case 3:
-                    message.encryption = $root.api.IdentityEncryption.decode(reader, reader.uint32());
+                    message.encryption = $root.api.IdentityEncryptedKeySet.decode(reader, reader.uint32());
                     break;
                 case 4:
                     reader.skip().pos++;
@@ -3820,7 +3820,7 @@ $root.api = (function() {
                     return "identity." + error;
             }
             if (message.encryption != null && message.hasOwnProperty("encryption")) {
-                var error = $root.api.IdentityEncryption.verify(message.encryption);
+                var error = $root.api.IdentityEncryptedKeySet.verify(message.encryption);
                 if (error)
                     return "encryption." + error;
             }
@@ -3864,7 +3864,7 @@ $root.api = (function() {
             if (object.encryption != null) {
                 if (typeof object.encryption !== "object")
                     throw TypeError(".api.RegisterApplicationIdentityRequest.encryption: object expected");
-                message.encryption = $root.api.IdentityEncryption.fromObject(object.encryption);
+                message.encryption = $root.api.IdentityEncryptedKeySet.fromObject(object.encryption);
             }
             if (object.resources) {
                 if (typeof object.resources !== "object")
@@ -3910,7 +3910,7 @@ $root.api = (function() {
             if (message.identity != null && message.hasOwnProperty("identity"))
                 object.identity = $root.api.IdentityFields.toObject(message.identity, options);
             if (message.encryption != null && message.hasOwnProperty("encryption"))
-                object.encryption = $root.api.IdentityEncryption.toObject(message.encryption, options);
+                object.encryption = $root.api.IdentityEncryptedKeySet.toObject(message.encryption, options);
             var keys2;
             if (message.resources && (keys2 = Object.keys(message.resources)).length) {
                 object.resources = {};
@@ -4130,7 +4130,7 @@ $root.api = (function() {
          * @memberof api
          * @interface IIdentityCreateRequest
          * @property {api.IIdentityFields|null} [identity] IdentityCreateRequest identity
-         * @property {api.IIdentityEncryption|null} [encryption] IdentityCreateRequest encryption
+         * @property {api.IIdentityEncryptedKeySet|null} [encryption] IdentityCreateRequest encryption
          * @property {Uint8Array|null} [signChain] IdentityCreateRequest signChain
          * @property {Array.<api.IIdentityShareEntry>|null} [sharingGroup] IdentityCreateRequest sharingGroup
          * @property {string|null} [email] IdentityCreateRequest email
@@ -4162,7 +4162,7 @@ $root.api = (function() {
 
         /**
          * IdentityCreateRequest encryption.
-         * @member {api.IIdentityEncryption|null|undefined} encryption
+         * @member {api.IIdentityEncryptedKeySet|null|undefined} encryption
          * @memberof api.IdentityCreateRequest
          * @instance
          */
@@ -4219,7 +4219,7 @@ $root.api = (function() {
             if (message.identity != null && message.hasOwnProperty("identity"))
                 $root.api.IdentityFields.encode(message.identity, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
             if (message.encryption != null && message.hasOwnProperty("encryption"))
-                $root.api.IdentityEncryption.encode(message.encryption, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                $root.api.IdentityEncryptedKeySet.encode(message.encryption, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
             if (message.signChain != null && message.hasOwnProperty("signChain"))
                 writer.uint32(/* id 3, wireType 2 =*/26).bytes(message.signChain);
             if (message.sharingGroup != null && message.sharingGroup.length)
@@ -4265,7 +4265,7 @@ $root.api = (function() {
                     message.identity = $root.api.IdentityFields.decode(reader, reader.uint32());
                     break;
                 case 2:
-                    message.encryption = $root.api.IdentityEncryption.decode(reader, reader.uint32());
+                    message.encryption = $root.api.IdentityEncryptedKeySet.decode(reader, reader.uint32());
                     break;
                 case 3:
                     message.signChain = reader.bytes();
@@ -4319,7 +4319,7 @@ $root.api = (function() {
                     return "identity." + error;
             }
             if (message.encryption != null && message.hasOwnProperty("encryption")) {
-                var error = $root.api.IdentityEncryption.verify(message.encryption);
+                var error = $root.api.IdentityEncryptedKeySet.verify(message.encryption);
                 if (error)
                     return "encryption." + error;
             }
@@ -4361,7 +4361,7 @@ $root.api = (function() {
             if (object.encryption != null) {
                 if (typeof object.encryption !== "object")
                     throw TypeError(".api.IdentityCreateRequest.encryption: object expected");
-                message.encryption = $root.api.IdentityEncryption.fromObject(object.encryption);
+                message.encryption = $root.api.IdentityEncryptedKeySet.fromObject(object.encryption);
             }
             if (object.signChain != null)
                 if (typeof object.signChain === "string")
@@ -4413,7 +4413,7 @@ $root.api = (function() {
             if (message.identity != null && message.hasOwnProperty("identity"))
                 object.identity = $root.api.IdentityFields.toObject(message.identity, options);
             if (message.encryption != null && message.hasOwnProperty("encryption"))
-                object.encryption = $root.api.IdentityEncryption.toObject(message.encryption, options);
+                object.encryption = $root.api.IdentityEncryptedKeySet.toObject(message.encryption, options);
             if (message.signChain != null && message.hasOwnProperty("signChain"))
                 object.signChain = options.bytes === String ? $util.base64.encode(message.signChain, 0, message.signChain.length) : options.bytes === Array ? Array.prototype.slice.call(message.signChain) : message.signChain;
             if (message.sharingGroup && message.sharingGroup.length) {
@@ -4447,7 +4447,7 @@ $root.api = (function() {
          * @memberof api
          * @interface IIdentityKeysToReplaceRequest
          * @property {string|null} [login] IdentityKeysToReplaceRequest login
-         * @property {api.IIdentityEncryption|null} [encryption] IdentityKeysToReplaceRequest encryption
+         * @property {api.IIdentityEncryptedKeySet|null} [encryption] IdentityKeysToReplaceRequest encryption
          * @property {Uint8Array|null} [signChain] IdentityKeysToReplaceRequest signChain
          * @property {Array.<api.IIdentityShareEntry>|null} [sharingGroup] IdentityKeysToReplaceRequest sharingGroup
          */
@@ -4478,7 +4478,7 @@ $root.api = (function() {
 
         /**
          * IdentityKeysToReplaceRequest encryption.
-         * @member {api.IIdentityEncryption|null|undefined} encryption
+         * @member {api.IIdentityEncryptedKeySet|null|undefined} encryption
          * @memberof api.IdentityKeysToReplaceRequest
          * @instance
          */
@@ -4527,7 +4527,7 @@ $root.api = (function() {
             if (message.login != null && message.hasOwnProperty("login"))
                 writer.uint32(/* id 1, wireType 2 =*/10).string(message.login);
             if (message.encryption != null && message.hasOwnProperty("encryption"))
-                $root.api.IdentityEncryption.encode(message.encryption, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                $root.api.IdentityEncryptedKeySet.encode(message.encryption, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
             if (message.signChain != null && message.hasOwnProperty("signChain"))
                 writer.uint32(/* id 3, wireType 2 =*/26).bytes(message.signChain);
             if (message.sharingGroup != null && message.sharingGroup.length)
@@ -4571,7 +4571,7 @@ $root.api = (function() {
                     message.login = reader.string();
                     break;
                 case 2:
-                    message.encryption = $root.api.IdentityEncryption.decode(reader, reader.uint32());
+                    message.encryption = $root.api.IdentityEncryptedKeySet.decode(reader, reader.uint32());
                     break;
                 case 3:
                     message.signChain = reader.bytes();
@@ -4620,7 +4620,7 @@ $root.api = (function() {
                 if (!$util.isString(message.login))
                     return "login: string expected";
             if (message.encryption != null && message.hasOwnProperty("encryption")) {
-                var error = $root.api.IdentityEncryption.verify(message.encryption);
+                var error = $root.api.IdentityEncryptedKeySet.verify(message.encryption);
                 if (error)
                     return "encryption." + error;
             }
@@ -4656,7 +4656,7 @@ $root.api = (function() {
             if (object.encryption != null) {
                 if (typeof object.encryption !== "object")
                     throw TypeError(".api.IdentityKeysToReplaceRequest.encryption: object expected");
-                message.encryption = $root.api.IdentityEncryption.fromObject(object.encryption);
+                message.encryption = $root.api.IdentityEncryptedKeySet.fromObject(object.encryption);
             }
             if (object.signChain != null)
                 if (typeof object.signChain === "string")
@@ -4705,7 +4705,7 @@ $root.api = (function() {
             if (message.login != null && message.hasOwnProperty("login"))
                 object.login = message.login;
             if (message.encryption != null && message.hasOwnProperty("encryption"))
-                object.encryption = $root.api.IdentityEncryption.toObject(message.encryption, options);
+                object.encryption = $root.api.IdentityEncryptedKeySet.toObject(message.encryption, options);
             if (message.signChain != null && message.hasOwnProperty("signChain"))
                 object.signChain = options.bytes === String ? $util.base64.encode(message.signChain, 0, message.signChain.length) : options.bytes === Array ? Array.prototype.slice.call(message.signChain) : message.signChain;
             if (message.sharingGroup && message.sharingGroup.length) {
@@ -5928,6 +5928,248 @@ $root.api = (function() {
         return ApplicationListIdentitiesResponse;
     })();
 
+    api.ApplicationGetIdentityAuthResponse = (function() {
+
+        /**
+         * Properties of an ApplicationGetIdentityAuthResponse.
+         * @memberof api
+         * @interface IApplicationGetIdentityAuthResponse
+         * @property {api.IIdentityExternalAuth|null} [auth] ApplicationGetIdentityAuthResponse auth
+         * @property {string|null} [login] ApplicationGetIdentityAuthResponse login
+         * @property {api.IApplicationConfigID|null} [configID] ApplicationGetIdentityAuthResponse configID
+         */
+
+        /**
+         * Constructs a new ApplicationGetIdentityAuthResponse.
+         * @memberof api
+         * @classdesc Represents an ApplicationGetIdentityAuthResponse.
+         * @implements IApplicationGetIdentityAuthResponse
+         * @constructor
+         * @param {api.IApplicationGetIdentityAuthResponse=} [properties] Properties to set
+         */
+        function ApplicationGetIdentityAuthResponse(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * ApplicationGetIdentityAuthResponse auth.
+         * @member {api.IIdentityExternalAuth|null|undefined} auth
+         * @memberof api.ApplicationGetIdentityAuthResponse
+         * @instance
+         */
+        ApplicationGetIdentityAuthResponse.prototype.auth = null;
+
+        /**
+         * ApplicationGetIdentityAuthResponse login.
+         * @member {string} login
+         * @memberof api.ApplicationGetIdentityAuthResponse
+         * @instance
+         */
+        ApplicationGetIdentityAuthResponse.prototype.login = "";
+
+        /**
+         * ApplicationGetIdentityAuthResponse configID.
+         * @member {api.IApplicationConfigID|null|undefined} configID
+         * @memberof api.ApplicationGetIdentityAuthResponse
+         * @instance
+         */
+        ApplicationGetIdentityAuthResponse.prototype.configID = null;
+
+        /**
+         * Creates a new ApplicationGetIdentityAuthResponse instance using the specified properties.
+         * @function create
+         * @memberof api.ApplicationGetIdentityAuthResponse
+         * @static
+         * @param {api.IApplicationGetIdentityAuthResponse=} [properties] Properties to set
+         * @returns {api.ApplicationGetIdentityAuthResponse} ApplicationGetIdentityAuthResponse instance
+         */
+        ApplicationGetIdentityAuthResponse.create = function create(properties) {
+            return new ApplicationGetIdentityAuthResponse(properties);
+        };
+
+        /**
+         * Encodes the specified ApplicationGetIdentityAuthResponse message. Does not implicitly {@link api.ApplicationGetIdentityAuthResponse.verify|verify} messages.
+         * @function encode
+         * @memberof api.ApplicationGetIdentityAuthResponse
+         * @static
+         * @param {api.IApplicationGetIdentityAuthResponse} message ApplicationGetIdentityAuthResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ApplicationGetIdentityAuthResponse.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.auth != null && message.hasOwnProperty("auth"))
+                $root.api.IdentityExternalAuth.encode(message.auth, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            if (message.login != null && message.hasOwnProperty("login"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.login);
+            if (message.configID != null && message.hasOwnProperty("configID"))
+                $root.api.ApplicationConfigID.encode(message.configID, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified ApplicationGetIdentityAuthResponse message, length delimited. Does not implicitly {@link api.ApplicationGetIdentityAuthResponse.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof api.ApplicationGetIdentityAuthResponse
+         * @static
+         * @param {api.IApplicationGetIdentityAuthResponse} message ApplicationGetIdentityAuthResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ApplicationGetIdentityAuthResponse.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an ApplicationGetIdentityAuthResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof api.ApplicationGetIdentityAuthResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {api.ApplicationGetIdentityAuthResponse} ApplicationGetIdentityAuthResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ApplicationGetIdentityAuthResponse.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.ApplicationGetIdentityAuthResponse();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.auth = $root.api.IdentityExternalAuth.decode(reader, reader.uint32());
+                    break;
+                case 2:
+                    message.login = reader.string();
+                    break;
+                case 3:
+                    message.configID = $root.api.ApplicationConfigID.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an ApplicationGetIdentityAuthResponse message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof api.ApplicationGetIdentityAuthResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {api.ApplicationGetIdentityAuthResponse} ApplicationGetIdentityAuthResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ApplicationGetIdentityAuthResponse.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an ApplicationGetIdentityAuthResponse message.
+         * @function verify
+         * @memberof api.ApplicationGetIdentityAuthResponse
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        ApplicationGetIdentityAuthResponse.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.auth != null && message.hasOwnProperty("auth")) {
+                var error = $root.api.IdentityExternalAuth.verify(message.auth);
+                if (error)
+                    return "auth." + error;
+            }
+            if (message.login != null && message.hasOwnProperty("login"))
+                if (!$util.isString(message.login))
+                    return "login: string expected";
+            if (message.configID != null && message.hasOwnProperty("configID")) {
+                var error = $root.api.ApplicationConfigID.verify(message.configID);
+                if (error)
+                    return "configID." + error;
+            }
+            return null;
+        };
+
+        /**
+         * Creates an ApplicationGetIdentityAuthResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof api.ApplicationGetIdentityAuthResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {api.ApplicationGetIdentityAuthResponse} ApplicationGetIdentityAuthResponse
+         */
+        ApplicationGetIdentityAuthResponse.fromObject = function fromObject(object) {
+            if (object instanceof $root.api.ApplicationGetIdentityAuthResponse)
+                return object;
+            var message = new $root.api.ApplicationGetIdentityAuthResponse();
+            if (object.auth != null) {
+                if (typeof object.auth !== "object")
+                    throw TypeError(".api.ApplicationGetIdentityAuthResponse.auth: object expected");
+                message.auth = $root.api.IdentityExternalAuth.fromObject(object.auth);
+            }
+            if (object.login != null)
+                message.login = String(object.login);
+            if (object.configID != null) {
+                if (typeof object.configID !== "object")
+                    throw TypeError(".api.ApplicationGetIdentityAuthResponse.configID: object expected");
+                message.configID = $root.api.ApplicationConfigID.fromObject(object.configID);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an ApplicationGetIdentityAuthResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof api.ApplicationGetIdentityAuthResponse
+         * @static
+         * @param {api.ApplicationGetIdentityAuthResponse} message ApplicationGetIdentityAuthResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        ApplicationGetIdentityAuthResponse.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.auth = null;
+                object.login = "";
+                object.configID = null;
+            }
+            if (message.auth != null && message.hasOwnProperty("auth"))
+                object.auth = $root.api.IdentityExternalAuth.toObject(message.auth, options);
+            if (message.login != null && message.hasOwnProperty("login"))
+                object.login = message.login;
+            if (message.configID != null && message.hasOwnProperty("configID"))
+                object.configID = $root.api.ApplicationConfigID.toObject(message.configID, options);
+            return object;
+        };
+
+        /**
+         * Converts this ApplicationGetIdentityAuthResponse to JSON.
+         * @function toJSON
+         * @memberof api.ApplicationGetIdentityAuthResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        ApplicationGetIdentityAuthResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return ApplicationGetIdentityAuthResponse;
+    })();
+
     api.IdentityPromoteRequest = (function() {
 
         /**
@@ -6138,29 +6380,25 @@ $root.api = (function() {
         return IdentityPromoteRequest;
     })();
 
-    api.IdentityGetKeysResponse = (function() {
+    api.IdentityGetKeySetRequest = (function() {
 
         /**
-         * Properties of an IdentityGetKeysResponse.
+         * Properties of an IdentityGetKeySetRequest.
          * @memberof api
-         * @interface IIdentityGetKeysResponse
-         * @property {Array.<api.ICipher>|null} [sharingKey] IdentityGetKeysResponse sharingKey
-         * @property {api.ICipher|null} [signKey] IdentityGetKeysResponse signKey
-         * @property {api.ICipher|null} [boxKey] IdentityGetKeysResponse boxKey
-         * @property {api.ICipher|null} [readKey] IdentityGetKeysResponse readKey
-         * @property {number|null} [version] IdentityGetKeysResponse version
+         * @interface IIdentityGetKeySetRequest
+         * @property {number|null} [version] IdentityGetKeySetRequest version
+         * @property {string|null} [login] IdentityGetKeySetRequest login
          */
 
         /**
-         * Constructs a new IdentityGetKeysResponse.
+         * Constructs a new IdentityGetKeySetRequest.
          * @memberof api
-         * @classdesc Represents an IdentityGetKeysResponse.
-         * @implements IIdentityGetKeysResponse
+         * @classdesc Represents an IdentityGetKeySetRequest.
+         * @implements IIdentityGetKeySetRequest
          * @constructor
-         * @param {api.IIdentityGetKeysResponse=} [properties] Properties to set
+         * @param {api.IIdentityGetKeySetRequest=} [properties] Properties to set
          */
-        function IdentityGetKeysResponse(properties) {
-            this.sharingKey = [];
+        function IdentityGetKeySetRequest(properties) {
             if (properties)
                 for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null)
@@ -6168,130 +6406,88 @@ $root.api = (function() {
         }
 
         /**
-         * IdentityGetKeysResponse sharingKey.
-         * @member {Array.<api.ICipher>} sharingKey
-         * @memberof api.IdentityGetKeysResponse
-         * @instance
-         */
-        IdentityGetKeysResponse.prototype.sharingKey = $util.emptyArray;
-
-        /**
-         * IdentityGetKeysResponse signKey.
-         * @member {api.ICipher|null|undefined} signKey
-         * @memberof api.IdentityGetKeysResponse
-         * @instance
-         */
-        IdentityGetKeysResponse.prototype.signKey = null;
-
-        /**
-         * IdentityGetKeysResponse boxKey.
-         * @member {api.ICipher|null|undefined} boxKey
-         * @memberof api.IdentityGetKeysResponse
-         * @instance
-         */
-        IdentityGetKeysResponse.prototype.boxKey = null;
-
-        /**
-         * IdentityGetKeysResponse readKey.
-         * @member {api.ICipher|null|undefined} readKey
-         * @memberof api.IdentityGetKeysResponse
-         * @instance
-         */
-        IdentityGetKeysResponse.prototype.readKey = null;
-
-        /**
-         * IdentityGetKeysResponse version.
+         * IdentityGetKeySetRequest version.
          * @member {number} version
-         * @memberof api.IdentityGetKeysResponse
+         * @memberof api.IdentityGetKeySetRequest
          * @instance
          */
-        IdentityGetKeysResponse.prototype.version = 0;
+        IdentityGetKeySetRequest.prototype.version = 0;
 
         /**
-         * Creates a new IdentityGetKeysResponse instance using the specified properties.
-         * @function create
-         * @memberof api.IdentityGetKeysResponse
-         * @static
-         * @param {api.IIdentityGetKeysResponse=} [properties] Properties to set
-         * @returns {api.IdentityGetKeysResponse} IdentityGetKeysResponse instance
+         * IdentityGetKeySetRequest login.
+         * @member {string} login
+         * @memberof api.IdentityGetKeySetRequest
+         * @instance
          */
-        IdentityGetKeysResponse.create = function create(properties) {
-            return new IdentityGetKeysResponse(properties);
+        IdentityGetKeySetRequest.prototype.login = "";
+
+        /**
+         * Creates a new IdentityGetKeySetRequest instance using the specified properties.
+         * @function create
+         * @memberof api.IdentityGetKeySetRequest
+         * @static
+         * @param {api.IIdentityGetKeySetRequest=} [properties] Properties to set
+         * @returns {api.IdentityGetKeySetRequest} IdentityGetKeySetRequest instance
+         */
+        IdentityGetKeySetRequest.create = function create(properties) {
+            return new IdentityGetKeySetRequest(properties);
         };
 
         /**
-         * Encodes the specified IdentityGetKeysResponse message. Does not implicitly {@link api.IdentityGetKeysResponse.verify|verify} messages.
+         * Encodes the specified IdentityGetKeySetRequest message. Does not implicitly {@link api.IdentityGetKeySetRequest.verify|verify} messages.
          * @function encode
-         * @memberof api.IdentityGetKeysResponse
+         * @memberof api.IdentityGetKeySetRequest
          * @static
-         * @param {api.IIdentityGetKeysResponse} message IdentityGetKeysResponse message or plain object to encode
+         * @param {api.IIdentityGetKeySetRequest} message IdentityGetKeySetRequest message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        IdentityGetKeysResponse.encode = function encode(message, writer) {
+        IdentityGetKeySetRequest.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.sharingKey != null && message.sharingKey.length)
-                for (var i = 0; i < message.sharingKey.length; ++i)
-                    $root.api.Cipher.encode(message.sharingKey[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
-            if (message.signKey != null && message.hasOwnProperty("signKey"))
-                $root.api.Cipher.encode(message.signKey, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
-            if (message.boxKey != null && message.hasOwnProperty("boxKey"))
-                $root.api.Cipher.encode(message.boxKey, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
-            if (message.readKey != null && message.hasOwnProperty("readKey"))
-                $root.api.Cipher.encode(message.readKey, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
             if (message.version != null && message.hasOwnProperty("version"))
-                writer.uint32(/* id 5, wireType 0 =*/40).uint32(message.version);
+                writer.uint32(/* id 1, wireType 0 =*/8).uint32(message.version);
+            if (message.login != null && message.hasOwnProperty("login"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.login);
             return writer;
         };
 
         /**
-         * Encodes the specified IdentityGetKeysResponse message, length delimited. Does not implicitly {@link api.IdentityGetKeysResponse.verify|verify} messages.
+         * Encodes the specified IdentityGetKeySetRequest message, length delimited. Does not implicitly {@link api.IdentityGetKeySetRequest.verify|verify} messages.
          * @function encodeDelimited
-         * @memberof api.IdentityGetKeysResponse
+         * @memberof api.IdentityGetKeySetRequest
          * @static
-         * @param {api.IIdentityGetKeysResponse} message IdentityGetKeysResponse message or plain object to encode
+         * @param {api.IIdentityGetKeySetRequest} message IdentityGetKeySetRequest message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        IdentityGetKeysResponse.encodeDelimited = function encodeDelimited(message, writer) {
+        IdentityGetKeySetRequest.encodeDelimited = function encodeDelimited(message, writer) {
             return this.encode(message, writer).ldelim();
         };
 
         /**
-         * Decodes an IdentityGetKeysResponse message from the specified reader or buffer.
+         * Decodes an IdentityGetKeySetRequest message from the specified reader or buffer.
          * @function decode
-         * @memberof api.IdentityGetKeysResponse
+         * @memberof api.IdentityGetKeySetRequest
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {api.IdentityGetKeysResponse} IdentityGetKeysResponse
+         * @returns {api.IdentityGetKeySetRequest} IdentityGetKeySetRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        IdentityGetKeysResponse.decode = function decode(reader, length) {
+        IdentityGetKeySetRequest.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.IdentityGetKeysResponse();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.IdentityGetKeySetRequest();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
-                    if (!(message.sharingKey && message.sharingKey.length))
-                        message.sharingKey = [];
-                    message.sharingKey.push($root.api.Cipher.decode(reader, reader.uint32()));
+                    message.version = reader.uint32();
                     break;
                 case 2:
-                    message.signKey = $root.api.Cipher.decode(reader, reader.uint32());
-                    break;
-                case 3:
-                    message.boxKey = $root.api.Cipher.decode(reader, reader.uint32());
-                    break;
-                case 4:
-                    message.readKey = $root.api.Cipher.decode(reader, reader.uint32());
-                    break;
-                case 5:
-                    message.version = reader.uint32();
+                    message.login = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -6302,153 +6498,551 @@ $root.api = (function() {
         };
 
         /**
-         * Decodes an IdentityGetKeysResponse message from the specified reader or buffer, length delimited.
+         * Decodes an IdentityGetKeySetRequest message from the specified reader or buffer, length delimited.
          * @function decodeDelimited
-         * @memberof api.IdentityGetKeysResponse
+         * @memberof api.IdentityGetKeySetRequest
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {api.IdentityGetKeysResponse} IdentityGetKeysResponse
+         * @returns {api.IdentityGetKeySetRequest} IdentityGetKeySetRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        IdentityGetKeysResponse.decodeDelimited = function decodeDelimited(reader) {
+        IdentityGetKeySetRequest.decodeDelimited = function decodeDelimited(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
             return this.decode(reader, reader.uint32());
         };
 
         /**
-         * Verifies an IdentityGetKeysResponse message.
+         * Verifies an IdentityGetKeySetRequest message.
          * @function verify
-         * @memberof api.IdentityGetKeysResponse
+         * @memberof api.IdentityGetKeySetRequest
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
          */
-        IdentityGetKeysResponse.verify = function verify(message) {
+        IdentityGetKeySetRequest.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (message.sharingKey != null && message.hasOwnProperty("sharingKey")) {
-                if (!Array.isArray(message.sharingKey))
-                    return "sharingKey: array expected";
-                for (var i = 0; i < message.sharingKey.length; ++i) {
-                    var error = $root.api.Cipher.verify(message.sharingKey[i]);
-                    if (error)
-                        return "sharingKey." + error;
-                }
-            }
-            if (message.signKey != null && message.hasOwnProperty("signKey")) {
-                var error = $root.api.Cipher.verify(message.signKey);
-                if (error)
-                    return "signKey." + error;
-            }
-            if (message.boxKey != null && message.hasOwnProperty("boxKey")) {
-                var error = $root.api.Cipher.verify(message.boxKey);
-                if (error)
-                    return "boxKey." + error;
-            }
-            if (message.readKey != null && message.hasOwnProperty("readKey")) {
-                var error = $root.api.Cipher.verify(message.readKey);
-                if (error)
-                    return "readKey." + error;
-            }
             if (message.version != null && message.hasOwnProperty("version"))
                 if (!$util.isInteger(message.version))
                     return "version: integer expected";
+            if (message.login != null && message.hasOwnProperty("login"))
+                if (!$util.isString(message.login))
+                    return "login: string expected";
             return null;
         };
 
         /**
-         * Creates an IdentityGetKeysResponse message from a plain object. Also converts values to their respective internal types.
+         * Creates an IdentityGetKeySetRequest message from a plain object. Also converts values to their respective internal types.
          * @function fromObject
-         * @memberof api.IdentityGetKeysResponse
+         * @memberof api.IdentityGetKeySetRequest
          * @static
          * @param {Object.<string,*>} object Plain object
-         * @returns {api.IdentityGetKeysResponse} IdentityGetKeysResponse
+         * @returns {api.IdentityGetKeySetRequest} IdentityGetKeySetRequest
          */
-        IdentityGetKeysResponse.fromObject = function fromObject(object) {
-            if (object instanceof $root.api.IdentityGetKeysResponse)
+        IdentityGetKeySetRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.api.IdentityGetKeySetRequest)
                 return object;
-            var message = new $root.api.IdentityGetKeysResponse();
-            if (object.sharingKey) {
-                if (!Array.isArray(object.sharingKey))
-                    throw TypeError(".api.IdentityGetKeysResponse.sharingKey: array expected");
-                message.sharingKey = [];
-                for (var i = 0; i < object.sharingKey.length; ++i) {
-                    if (typeof object.sharingKey[i] !== "object")
-                        throw TypeError(".api.IdentityGetKeysResponse.sharingKey: object expected");
-                    message.sharingKey[i] = $root.api.Cipher.fromObject(object.sharingKey[i]);
-                }
-            }
-            if (object.signKey != null) {
-                if (typeof object.signKey !== "object")
-                    throw TypeError(".api.IdentityGetKeysResponse.signKey: object expected");
-                message.signKey = $root.api.Cipher.fromObject(object.signKey);
-            }
-            if (object.boxKey != null) {
-                if (typeof object.boxKey !== "object")
-                    throw TypeError(".api.IdentityGetKeysResponse.boxKey: object expected");
-                message.boxKey = $root.api.Cipher.fromObject(object.boxKey);
-            }
-            if (object.readKey != null) {
-                if (typeof object.readKey !== "object")
-                    throw TypeError(".api.IdentityGetKeysResponse.readKey: object expected");
-                message.readKey = $root.api.Cipher.fromObject(object.readKey);
-            }
+            var message = new $root.api.IdentityGetKeySetRequest();
             if (object.version != null)
                 message.version = object.version >>> 0;
+            if (object.login != null)
+                message.login = String(object.login);
             return message;
         };
 
         /**
-         * Creates a plain object from an IdentityGetKeysResponse message. Also converts values to other types if specified.
+         * Creates a plain object from an IdentityGetKeySetRequest message. Also converts values to other types if specified.
          * @function toObject
-         * @memberof api.IdentityGetKeysResponse
+         * @memberof api.IdentityGetKeySetRequest
          * @static
-         * @param {api.IdentityGetKeysResponse} message IdentityGetKeysResponse
+         * @param {api.IdentityGetKeySetRequest} message IdentityGetKeySetRequest
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
-        IdentityGetKeysResponse.toObject = function toObject(message, options) {
+        IdentityGetKeySetRequest.toObject = function toObject(message, options) {
             if (!options)
                 options = {};
             var object = {};
-            if (options.arrays || options.defaults)
-                object.sharingKey = [];
             if (options.defaults) {
-                object.signKey = null;
-                object.boxKey = null;
-                object.readKey = null;
                 object.version = 0;
+                object.login = "";
             }
-            if (message.sharingKey && message.sharingKey.length) {
-                object.sharingKey = [];
-                for (var j = 0; j < message.sharingKey.length; ++j)
-                    object.sharingKey[j] = $root.api.Cipher.toObject(message.sharingKey[j], options);
-            }
-            if (message.signKey != null && message.hasOwnProperty("signKey"))
-                object.signKey = $root.api.Cipher.toObject(message.signKey, options);
-            if (message.boxKey != null && message.hasOwnProperty("boxKey"))
-                object.boxKey = $root.api.Cipher.toObject(message.boxKey, options);
-            if (message.readKey != null && message.hasOwnProperty("readKey"))
-                object.readKey = $root.api.Cipher.toObject(message.readKey, options);
             if (message.version != null && message.hasOwnProperty("version"))
                 object.version = message.version;
+            if (message.login != null && message.hasOwnProperty("login"))
+                object.login = message.login;
             return object;
         };
 
         /**
-         * Converts this IdentityGetKeysResponse to JSON.
+         * Converts this IdentityGetKeySetRequest to JSON.
          * @function toJSON
-         * @memberof api.IdentityGetKeysResponse
+         * @memberof api.IdentityGetKeySetRequest
          * @instance
          * @returns {Object.<string,*>} JSON object
          */
-        IdentityGetKeysResponse.prototype.toJSON = function toJSON() {
+        IdentityGetKeySetRequest.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
 
-        return IdentityGetKeysResponse;
+        return IdentityGetKeySetRequest;
+    })();
+
+    api.IdentityGetKeySetResponse = (function() {
+
+        /**
+         * Properties of an IdentityGetKeySetResponse.
+         * @memberof api
+         * @interface IIdentityGetKeySetResponse
+         * @property {Array.<api.IdentityGetKeySetResponse.IPathElt>|null} [path] IdentityGetKeySetResponse path
+         */
+
+        /**
+         * Constructs a new IdentityGetKeySetResponse.
+         * @memberof api
+         * @classdesc Represents an IdentityGetKeySetResponse.
+         * @implements IIdentityGetKeySetResponse
+         * @constructor
+         * @param {api.IIdentityGetKeySetResponse=} [properties] Properties to set
+         */
+        function IdentityGetKeySetResponse(properties) {
+            this.path = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * IdentityGetKeySetResponse path.
+         * @member {Array.<api.IdentityGetKeySetResponse.IPathElt>} path
+         * @memberof api.IdentityGetKeySetResponse
+         * @instance
+         */
+        IdentityGetKeySetResponse.prototype.path = $util.emptyArray;
+
+        /**
+         * Creates a new IdentityGetKeySetResponse instance using the specified properties.
+         * @function create
+         * @memberof api.IdentityGetKeySetResponse
+         * @static
+         * @param {api.IIdentityGetKeySetResponse=} [properties] Properties to set
+         * @returns {api.IdentityGetKeySetResponse} IdentityGetKeySetResponse instance
+         */
+        IdentityGetKeySetResponse.create = function create(properties) {
+            return new IdentityGetKeySetResponse(properties);
+        };
+
+        /**
+         * Encodes the specified IdentityGetKeySetResponse message. Does not implicitly {@link api.IdentityGetKeySetResponse.verify|verify} messages.
+         * @function encode
+         * @memberof api.IdentityGetKeySetResponse
+         * @static
+         * @param {api.IIdentityGetKeySetResponse} message IdentityGetKeySetResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        IdentityGetKeySetResponse.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.path != null && message.path.length)
+                for (var i = 0; i < message.path.length; ++i)
+                    $root.api.IdentityGetKeySetResponse.PathElt.encode(message.path[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified IdentityGetKeySetResponse message, length delimited. Does not implicitly {@link api.IdentityGetKeySetResponse.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof api.IdentityGetKeySetResponse
+         * @static
+         * @param {api.IIdentityGetKeySetResponse} message IdentityGetKeySetResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        IdentityGetKeySetResponse.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an IdentityGetKeySetResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof api.IdentityGetKeySetResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {api.IdentityGetKeySetResponse} IdentityGetKeySetResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        IdentityGetKeySetResponse.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.IdentityGetKeySetResponse();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    if (!(message.path && message.path.length))
+                        message.path = [];
+                    message.path.push($root.api.IdentityGetKeySetResponse.PathElt.decode(reader, reader.uint32()));
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an IdentityGetKeySetResponse message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof api.IdentityGetKeySetResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {api.IdentityGetKeySetResponse} IdentityGetKeySetResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        IdentityGetKeySetResponse.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an IdentityGetKeySetResponse message.
+         * @function verify
+         * @memberof api.IdentityGetKeySetResponse
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        IdentityGetKeySetResponse.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.path != null && message.hasOwnProperty("path")) {
+                if (!Array.isArray(message.path))
+                    return "path: array expected";
+                for (var i = 0; i < message.path.length; ++i) {
+                    var error = $root.api.IdentityGetKeySetResponse.PathElt.verify(message.path[i]);
+                    if (error)
+                        return "path." + error;
+                }
+            }
+            return null;
+        };
+
+        /**
+         * Creates an IdentityGetKeySetResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof api.IdentityGetKeySetResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {api.IdentityGetKeySetResponse} IdentityGetKeySetResponse
+         */
+        IdentityGetKeySetResponse.fromObject = function fromObject(object) {
+            if (object instanceof $root.api.IdentityGetKeySetResponse)
+                return object;
+            var message = new $root.api.IdentityGetKeySetResponse();
+            if (object.path) {
+                if (!Array.isArray(object.path))
+                    throw TypeError(".api.IdentityGetKeySetResponse.path: array expected");
+                message.path = [];
+                for (var i = 0; i < object.path.length; ++i) {
+                    if (typeof object.path[i] !== "object")
+                        throw TypeError(".api.IdentityGetKeySetResponse.path: object expected");
+                    message.path[i] = $root.api.IdentityGetKeySetResponse.PathElt.fromObject(object.path[i]);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an IdentityGetKeySetResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof api.IdentityGetKeySetResponse
+         * @static
+         * @param {api.IdentityGetKeySetResponse} message IdentityGetKeySetResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        IdentityGetKeySetResponse.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.arrays || options.defaults)
+                object.path = [];
+            if (message.path && message.path.length) {
+                object.path = [];
+                for (var j = 0; j < message.path.length; ++j)
+                    object.path[j] = $root.api.IdentityGetKeySetResponse.PathElt.toObject(message.path[j], options);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this IdentityGetKeySetResponse to JSON.
+         * @function toJSON
+         * @memberof api.IdentityGetKeySetResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        IdentityGetKeySetResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        IdentityGetKeySetResponse.PathElt = (function() {
+
+            /**
+             * Properties of a PathElt.
+             * @memberof api.IdentityGetKeySetResponse
+             * @interface IPathElt
+             * @property {api.ICipher|null} [sharedKey] PathElt sharedKey
+             * @property {api.IIdentityEncryptedKeySet|null} [encryptedKeySet] PathElt encryptedKeySet
+             * @property {api.IIdentityKeyID|null} [id] PathElt id
+             */
+
+            /**
+             * Constructs a new PathElt.
+             * @memberof api.IdentityGetKeySetResponse
+             * @classdesc Represents a PathElt.
+             * @implements IPathElt
+             * @constructor
+             * @param {api.IdentityGetKeySetResponse.IPathElt=} [properties] Properties to set
+             */
+            function PathElt(properties) {
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * PathElt sharedKey.
+             * @member {api.ICipher|null|undefined} sharedKey
+             * @memberof api.IdentityGetKeySetResponse.PathElt
+             * @instance
+             */
+            PathElt.prototype.sharedKey = null;
+
+            /**
+             * PathElt encryptedKeySet.
+             * @member {api.IIdentityEncryptedKeySet|null|undefined} encryptedKeySet
+             * @memberof api.IdentityGetKeySetResponse.PathElt
+             * @instance
+             */
+            PathElt.prototype.encryptedKeySet = null;
+
+            /**
+             * PathElt id.
+             * @member {api.IIdentityKeyID|null|undefined} id
+             * @memberof api.IdentityGetKeySetResponse.PathElt
+             * @instance
+             */
+            PathElt.prototype.id = null;
+
+            /**
+             * Creates a new PathElt instance using the specified properties.
+             * @function create
+             * @memberof api.IdentityGetKeySetResponse.PathElt
+             * @static
+             * @param {api.IdentityGetKeySetResponse.IPathElt=} [properties] Properties to set
+             * @returns {api.IdentityGetKeySetResponse.PathElt} PathElt instance
+             */
+            PathElt.create = function create(properties) {
+                return new PathElt(properties);
+            };
+
+            /**
+             * Encodes the specified PathElt message. Does not implicitly {@link api.IdentityGetKeySetResponse.PathElt.verify|verify} messages.
+             * @function encode
+             * @memberof api.IdentityGetKeySetResponse.PathElt
+             * @static
+             * @param {api.IdentityGetKeySetResponse.IPathElt} message PathElt message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            PathElt.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.sharedKey != null && message.hasOwnProperty("sharedKey"))
+                    $root.api.Cipher.encode(message.sharedKey, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                if (message.encryptedKeySet != null && message.hasOwnProperty("encryptedKeySet"))
+                    $root.api.IdentityEncryptedKeySet.encode(message.encryptedKeySet, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                if (message.id != null && message.hasOwnProperty("id"))
+                    $root.api.IdentityKeyID.encode(message.id, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+                return writer;
+            };
+
+            /**
+             * Encodes the specified PathElt message, length delimited. Does not implicitly {@link api.IdentityGetKeySetResponse.PathElt.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof api.IdentityGetKeySetResponse.PathElt
+             * @static
+             * @param {api.IdentityGetKeySetResponse.IPathElt} message PathElt message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            PathElt.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a PathElt message from the specified reader or buffer.
+             * @function decode
+             * @memberof api.IdentityGetKeySetResponse.PathElt
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {api.IdentityGetKeySetResponse.PathElt} PathElt
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            PathElt.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.IdentityGetKeySetResponse.PathElt();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1:
+                        message.sharedKey = $root.api.Cipher.decode(reader, reader.uint32());
+                        break;
+                    case 2:
+                        message.encryptedKeySet = $root.api.IdentityEncryptedKeySet.decode(reader, reader.uint32());
+                        break;
+                    case 3:
+                        message.id = $root.api.IdentityKeyID.decode(reader, reader.uint32());
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a PathElt message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof api.IdentityGetKeySetResponse.PathElt
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {api.IdentityGetKeySetResponse.PathElt} PathElt
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            PathElt.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a PathElt message.
+             * @function verify
+             * @memberof api.IdentityGetKeySetResponse.PathElt
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            PathElt.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.sharedKey != null && message.hasOwnProperty("sharedKey")) {
+                    var error = $root.api.Cipher.verify(message.sharedKey);
+                    if (error)
+                        return "sharedKey." + error;
+                }
+                if (message.encryptedKeySet != null && message.hasOwnProperty("encryptedKeySet")) {
+                    var error = $root.api.IdentityEncryptedKeySet.verify(message.encryptedKeySet);
+                    if (error)
+                        return "encryptedKeySet." + error;
+                }
+                if (message.id != null && message.hasOwnProperty("id")) {
+                    var error = $root.api.IdentityKeyID.verify(message.id);
+                    if (error)
+                        return "id." + error;
+                }
+                return null;
+            };
+
+            /**
+             * Creates a PathElt message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof api.IdentityGetKeySetResponse.PathElt
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {api.IdentityGetKeySetResponse.PathElt} PathElt
+             */
+            PathElt.fromObject = function fromObject(object) {
+                if (object instanceof $root.api.IdentityGetKeySetResponse.PathElt)
+                    return object;
+                var message = new $root.api.IdentityGetKeySetResponse.PathElt();
+                if (object.sharedKey != null) {
+                    if (typeof object.sharedKey !== "object")
+                        throw TypeError(".api.IdentityGetKeySetResponse.PathElt.sharedKey: object expected");
+                    message.sharedKey = $root.api.Cipher.fromObject(object.sharedKey);
+                }
+                if (object.encryptedKeySet != null) {
+                    if (typeof object.encryptedKeySet !== "object")
+                        throw TypeError(".api.IdentityGetKeySetResponse.PathElt.encryptedKeySet: object expected");
+                    message.encryptedKeySet = $root.api.IdentityEncryptedKeySet.fromObject(object.encryptedKeySet);
+                }
+                if (object.id != null) {
+                    if (typeof object.id !== "object")
+                        throw TypeError(".api.IdentityGetKeySetResponse.PathElt.id: object expected");
+                    message.id = $root.api.IdentityKeyID.fromObject(object.id);
+                }
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a PathElt message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof api.IdentityGetKeySetResponse.PathElt
+             * @static
+             * @param {api.IdentityGetKeySetResponse.PathElt} message PathElt
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            PathElt.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                var object = {};
+                if (options.defaults) {
+                    object.sharedKey = null;
+                    object.encryptedKeySet = null;
+                    object.id = null;
+                }
+                if (message.sharedKey != null && message.hasOwnProperty("sharedKey"))
+                    object.sharedKey = $root.api.Cipher.toObject(message.sharedKey, options);
+                if (message.encryptedKeySet != null && message.hasOwnProperty("encryptedKeySet"))
+                    object.encryptedKeySet = $root.api.IdentityEncryptedKeySet.toObject(message.encryptedKeySet, options);
+                if (message.id != null && message.hasOwnProperty("id"))
+                    object.id = $root.api.IdentityKeyID.toObject(message.id, options);
+                return object;
+            };
+
+            /**
+             * Converts this PathElt to JSON.
+             * @function toJSON
+             * @memberof api.IdentityGetKeySetResponse.PathElt
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            PathElt.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            return PathElt;
+        })();
+
+        return IdentityGetKeySetResponse;
     })();
 
     api.IdentityGetPublicKeysRequest = (function() {
@@ -9768,8 +10362,7 @@ $root.api = (function() {
          * Properties of an IdentityGetEncryptionResponse.
          * @memberof api
          * @interface IIdentityGetEncryptionResponse
-         * @property {api.IIdentityEncryption|null} [encryption] IdentityGetEncryptionResponse encryption
-         * @property {api.IIdentityPublicKey|null} [creator] IdentityGetEncryptionResponse creator
+         * @property {api.IIdentityEncryptedKeySet|null} [encryption] IdentityGetEncryptionResponse encryption
          */
 
         /**
@@ -9789,19 +10382,11 @@ $root.api = (function() {
 
         /**
          * IdentityGetEncryptionResponse encryption.
-         * @member {api.IIdentityEncryption|null|undefined} encryption
+         * @member {api.IIdentityEncryptedKeySet|null|undefined} encryption
          * @memberof api.IdentityGetEncryptionResponse
          * @instance
          */
         IdentityGetEncryptionResponse.prototype.encryption = null;
-
-        /**
-         * IdentityGetEncryptionResponse creator.
-         * @member {api.IIdentityPublicKey|null|undefined} creator
-         * @memberof api.IdentityGetEncryptionResponse
-         * @instance
-         */
-        IdentityGetEncryptionResponse.prototype.creator = null;
 
         /**
          * Creates a new IdentityGetEncryptionResponse instance using the specified properties.
@@ -9828,9 +10413,7 @@ $root.api = (function() {
             if (!writer)
                 writer = $Writer.create();
             if (message.encryption != null && message.hasOwnProperty("encryption"))
-                $root.api.IdentityEncryption.encode(message.encryption, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
-            if (message.creator != null && message.hasOwnProperty("creator"))
-                $root.api.IdentityPublicKey.encode(message.creator, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                $root.api.IdentityEncryptedKeySet.encode(message.encryption, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
             return writer;
         };
 
@@ -9866,10 +10449,7 @@ $root.api = (function() {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
-                    message.encryption = $root.api.IdentityEncryption.decode(reader, reader.uint32());
-                    break;
-                case 2:
-                    message.creator = $root.api.IdentityPublicKey.decode(reader, reader.uint32());
+                    message.encryption = $root.api.IdentityEncryptedKeySet.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -9907,14 +10487,9 @@ $root.api = (function() {
             if (typeof message !== "object" || message === null)
                 return "object expected";
             if (message.encryption != null && message.hasOwnProperty("encryption")) {
-                var error = $root.api.IdentityEncryption.verify(message.encryption);
+                var error = $root.api.IdentityEncryptedKeySet.verify(message.encryption);
                 if (error)
                     return "encryption." + error;
-            }
-            if (message.creator != null && message.hasOwnProperty("creator")) {
-                var error = $root.api.IdentityPublicKey.verify(message.creator);
-                if (error)
-                    return "creator." + error;
             }
             return null;
         };
@@ -9934,12 +10509,7 @@ $root.api = (function() {
             if (object.encryption != null) {
                 if (typeof object.encryption !== "object")
                     throw TypeError(".api.IdentityGetEncryptionResponse.encryption: object expected");
-                message.encryption = $root.api.IdentityEncryption.fromObject(object.encryption);
-            }
-            if (object.creator != null) {
-                if (typeof object.creator !== "object")
-                    throw TypeError(".api.IdentityGetEncryptionResponse.creator: object expected");
-                message.creator = $root.api.IdentityPublicKey.fromObject(object.creator);
+                message.encryption = $root.api.IdentityEncryptedKeySet.fromObject(object.encryption);
             }
             return message;
         };
@@ -9957,14 +10527,10 @@ $root.api = (function() {
             if (!options)
                 options = {};
             var object = {};
-            if (options.defaults) {
+            if (options.defaults)
                 object.encryption = null;
-                object.creator = null;
-            }
             if (message.encryption != null && message.hasOwnProperty("encryption"))
-                object.encryption = $root.api.IdentityEncryption.toObject(message.encryption, options);
-            if (message.creator != null && message.hasOwnProperty("creator"))
-                object.creator = $root.api.IdentityPublicKey.toObject(message.creator, options);
+                object.encryption = $root.api.IdentityEncryptedKeySet.toObject(message.encryption, options);
             return object;
         };
 
@@ -9988,8 +10554,7 @@ $root.api = (function() {
          * Properties of an IdentityGetKeysToRenewResponse.
          * @memberof api
          * @interface IIdentityGetKeysToRenewResponse
-         * @property {api.IIdentityEncryption|null} [encryption] IdentityGetKeysToRenewResponse encryption
-         * @property {api.IIdentityPublicKey|null} [creator] IdentityGetKeysToRenewResponse creator
+         * @property {api.IIdentityEncryptedKeySet|null} [encryption] IdentityGetKeysToRenewResponse encryption
          * @property {Array.<api.IIdentityPublicKey>|null} [sharingGroup] IdentityGetKeysToRenewResponse sharingGroup
          */
 
@@ -10011,19 +10576,11 @@ $root.api = (function() {
 
         /**
          * IdentityGetKeysToRenewResponse encryption.
-         * @member {api.IIdentityEncryption|null|undefined} encryption
+         * @member {api.IIdentityEncryptedKeySet|null|undefined} encryption
          * @memberof api.IdentityGetKeysToRenewResponse
          * @instance
          */
         IdentityGetKeysToRenewResponse.prototype.encryption = null;
-
-        /**
-         * IdentityGetKeysToRenewResponse creator.
-         * @member {api.IIdentityPublicKey|null|undefined} creator
-         * @memberof api.IdentityGetKeysToRenewResponse
-         * @instance
-         */
-        IdentityGetKeysToRenewResponse.prototype.creator = null;
 
         /**
          * IdentityGetKeysToRenewResponse sharingGroup.
@@ -10058,9 +10615,7 @@ $root.api = (function() {
             if (!writer)
                 writer = $Writer.create();
             if (message.encryption != null && message.hasOwnProperty("encryption"))
-                $root.api.IdentityEncryption.encode(message.encryption, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
-            if (message.creator != null && message.hasOwnProperty("creator"))
-                $root.api.IdentityPublicKey.encode(message.creator, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                $root.api.IdentityEncryptedKeySet.encode(message.encryption, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
             if (message.sharingGroup != null && message.sharingGroup.length)
                 for (var i = 0; i < message.sharingGroup.length; ++i)
                     $root.api.IdentityPublicKey.encode(message.sharingGroup[i], writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
@@ -10099,10 +10654,7 @@ $root.api = (function() {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
-                    message.encryption = $root.api.IdentityEncryption.decode(reader, reader.uint32());
-                    break;
-                case 2:
-                    message.creator = $root.api.IdentityPublicKey.decode(reader, reader.uint32());
+                    message.encryption = $root.api.IdentityEncryptedKeySet.decode(reader, reader.uint32());
                     break;
                 case 3:
                     if (!(message.sharingGroup && message.sharingGroup.length))
@@ -10145,14 +10697,9 @@ $root.api = (function() {
             if (typeof message !== "object" || message === null)
                 return "object expected";
             if (message.encryption != null && message.hasOwnProperty("encryption")) {
-                var error = $root.api.IdentityEncryption.verify(message.encryption);
+                var error = $root.api.IdentityEncryptedKeySet.verify(message.encryption);
                 if (error)
                     return "encryption." + error;
-            }
-            if (message.creator != null && message.hasOwnProperty("creator")) {
-                var error = $root.api.IdentityPublicKey.verify(message.creator);
-                if (error)
-                    return "creator." + error;
             }
             if (message.sharingGroup != null && message.hasOwnProperty("sharingGroup")) {
                 if (!Array.isArray(message.sharingGroup))
@@ -10181,12 +10728,7 @@ $root.api = (function() {
             if (object.encryption != null) {
                 if (typeof object.encryption !== "object")
                     throw TypeError(".api.IdentityGetKeysToRenewResponse.encryption: object expected");
-                message.encryption = $root.api.IdentityEncryption.fromObject(object.encryption);
-            }
-            if (object.creator != null) {
-                if (typeof object.creator !== "object")
-                    throw TypeError(".api.IdentityGetKeysToRenewResponse.creator: object expected");
-                message.creator = $root.api.IdentityPublicKey.fromObject(object.creator);
+                message.encryption = $root.api.IdentityEncryptedKeySet.fromObject(object.encryption);
             }
             if (object.sharingGroup) {
                 if (!Array.isArray(object.sharingGroup))
@@ -10216,14 +10758,10 @@ $root.api = (function() {
             var object = {};
             if (options.arrays || options.defaults)
                 object.sharingGroup = [];
-            if (options.defaults) {
+            if (options.defaults)
                 object.encryption = null;
-                object.creator = null;
-            }
             if (message.encryption != null && message.hasOwnProperty("encryption"))
-                object.encryption = $root.api.IdentityEncryption.toObject(message.encryption, options);
-            if (message.creator != null && message.hasOwnProperty("creator"))
-                object.creator = $root.api.IdentityPublicKey.toObject(message.creator, options);
+                object.encryption = $root.api.IdentityEncryptedKeySet.toObject(message.encryption, options);
             if (message.sharingGroup && message.sharingGroup.length) {
                 object.sharingGroup = [];
                 for (var j = 0; j < message.sharingGroup.length; ++j)
@@ -10481,7 +11019,7 @@ $root.api = (function() {
          * @memberof api
          * @interface IIdentityPostKeysToRenewRequest
          * @property {string|null} [login] IdentityPostKeysToRenewRequest login
-         * @property {api.IIdentityEncryption|null} [encryption] IdentityPostKeysToRenewRequest encryption
+         * @property {api.IIdentityEncryptedKeySet|null} [encryption] IdentityPostKeysToRenewRequest encryption
          * @property {Uint8Array|null} [signChain] IdentityPostKeysToRenewRequest signChain
          * @property {Array.<api.IIdentityShareEntry>|null} [sharingGroup] IdentityPostKeysToRenewRequest sharingGroup
          * @property {api.IIdentityBackwardKey|null} [backward] IdentityPostKeysToRenewRequest backward
@@ -10513,7 +11051,7 @@ $root.api = (function() {
 
         /**
          * IdentityPostKeysToRenewRequest encryption.
-         * @member {api.IIdentityEncryption|null|undefined} encryption
+         * @member {api.IIdentityEncryptedKeySet|null|undefined} encryption
          * @memberof api.IdentityPostKeysToRenewRequest
          * @instance
          */
@@ -10570,7 +11108,7 @@ $root.api = (function() {
             if (message.login != null && message.hasOwnProperty("login"))
                 writer.uint32(/* id 1, wireType 2 =*/10).string(message.login);
             if (message.encryption != null && message.hasOwnProperty("encryption"))
-                $root.api.IdentityEncryption.encode(message.encryption, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                $root.api.IdentityEncryptedKeySet.encode(message.encryption, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
             if (message.signChain != null && message.hasOwnProperty("signChain"))
                 writer.uint32(/* id 3, wireType 2 =*/26).bytes(message.signChain);
             if (message.sharingGroup != null && message.sharingGroup.length)
@@ -10616,7 +11154,7 @@ $root.api = (function() {
                     message.login = reader.string();
                     break;
                 case 2:
-                    message.encryption = $root.api.IdentityEncryption.decode(reader, reader.uint32());
+                    message.encryption = $root.api.IdentityEncryptedKeySet.decode(reader, reader.uint32());
                     break;
                 case 3:
                     message.signChain = reader.bytes();
@@ -10668,7 +11206,7 @@ $root.api = (function() {
                 if (!$util.isString(message.login))
                     return "login: string expected";
             if (message.encryption != null && message.hasOwnProperty("encryption")) {
-                var error = $root.api.IdentityEncryption.verify(message.encryption);
+                var error = $root.api.IdentityEncryptedKeySet.verify(message.encryption);
                 if (error)
                     return "encryption." + error;
             }
@@ -10709,7 +11247,7 @@ $root.api = (function() {
             if (object.encryption != null) {
                 if (typeof object.encryption !== "object")
                     throw TypeError(".api.IdentityPostKeysToRenewRequest.encryption: object expected");
-                message.encryption = $root.api.IdentityEncryption.fromObject(object.encryption);
+                message.encryption = $root.api.IdentityEncryptedKeySet.fromObject(object.encryption);
             }
             if (object.signChain != null)
                 if (typeof object.signChain === "string")
@@ -10764,7 +11302,7 @@ $root.api = (function() {
             if (message.login != null && message.hasOwnProperty("login"))
                 object.login = message.login;
             if (message.encryption != null && message.hasOwnProperty("encryption"))
-                object.encryption = $root.api.IdentityEncryption.toObject(message.encryption, options);
+                object.encryption = $root.api.IdentityEncryptedKeySet.toObject(message.encryption, options);
             if (message.signChain != null && message.hasOwnProperty("signChain"))
                 object.signChain = options.bytes === String ? $util.base64.encode(message.signChain, 0, message.signChain.length) : options.bytes === Array ? Array.prototype.slice.call(message.signChain) : message.signChain;
             if (message.sharingGroup && message.sharingGroup.length) {
@@ -10806,6 +11344,8 @@ $root.api = (function() {
          * @property {Array.<api.IIdentityPublicKey>|null} [sharingGroup] IdentityGetSharingGraphElement sharingGroup
          * @property {api.IIdentityKeyID|null} [sharedFrom] IdentityGetSharingGraphElement sharedFrom
          * @property {boolean|null} [latest] IdentityGetSharingGraphElement latest
+         * @property {Uint8Array|null} [boxPublicKey] IdentityGetSharingGraphElement boxPublicKey
+         * @property {Uint8Array|null} [signPublicKey] IdentityGetSharingGraphElement signPublicKey
          */
 
         /**
@@ -10897,6 +11437,22 @@ $root.api = (function() {
         IdentityGetSharingGraphElement.prototype.latest = false;
 
         /**
+         * IdentityGetSharingGraphElement boxPublicKey.
+         * @member {Uint8Array} boxPublicKey
+         * @memberof api.IdentityGetSharingGraphElement
+         * @instance
+         */
+        IdentityGetSharingGraphElement.prototype.boxPublicKey = $util.newBuffer([]);
+
+        /**
+         * IdentityGetSharingGraphElement signPublicKey.
+         * @member {Uint8Array} signPublicKey
+         * @memberof api.IdentityGetSharingGraphElement
+         * @instance
+         */
+        IdentityGetSharingGraphElement.prototype.signPublicKey = $util.newBuffer([]);
+
+        /**
          * Creates a new IdentityGetSharingGraphElement instance using the specified properties.
          * @function create
          * @memberof api.IdentityGetSharingGraphElement
@@ -10939,6 +11495,10 @@ $root.api = (function() {
                 $root.api.IdentityKeyID.encode(message.sharedFrom, writer.uint32(/* id 9, wireType 2 =*/74).fork()).ldelim();
             if (message.latest != null && message.hasOwnProperty("latest"))
                 writer.uint32(/* id 10, wireType 0 =*/80).bool(message.latest);
+            if (message.boxPublicKey != null && message.hasOwnProperty("boxPublicKey"))
+                writer.uint32(/* id 11, wireType 2 =*/90).bytes(message.boxPublicKey);
+            if (message.signPublicKey != null && message.hasOwnProperty("signPublicKey"))
+                writer.uint32(/* id 12, wireType 2 =*/98).bytes(message.signPublicKey);
             return writer;
         };
 
@@ -11001,6 +11561,12 @@ $root.api = (function() {
                     break;
                 case 10:
                     message.latest = reader.bool();
+                    break;
+                case 11:
+                    message.boxPublicKey = reader.bytes();
+                    break;
+                case 12:
+                    message.signPublicKey = reader.bytes();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -11078,6 +11644,12 @@ $root.api = (function() {
             if (message.latest != null && message.hasOwnProperty("latest"))
                 if (typeof message.latest !== "boolean")
                     return "latest: boolean expected";
+            if (message.boxPublicKey != null && message.hasOwnProperty("boxPublicKey"))
+                if (!(message.boxPublicKey && typeof message.boxPublicKey.length === "number" || $util.isString(message.boxPublicKey)))
+                    return "boxPublicKey: buffer expected";
+            if (message.signPublicKey != null && message.hasOwnProperty("signPublicKey"))
+                if (!(message.signPublicKey && typeof message.signPublicKey.length === "number" || $util.isString(message.signPublicKey)))
+                    return "signPublicKey: buffer expected";
             return null;
         };
 
@@ -11134,6 +11706,16 @@ $root.api = (function() {
             }
             if (object.latest != null)
                 message.latest = Boolean(object.latest);
+            if (object.boxPublicKey != null)
+                if (typeof object.boxPublicKey === "string")
+                    $util.base64.decode(object.boxPublicKey, message.boxPublicKey = $util.newBuffer($util.base64.length(object.boxPublicKey)), 0);
+                else if (object.boxPublicKey.length)
+                    message.boxPublicKey = object.boxPublicKey;
+            if (object.signPublicKey != null)
+                if (typeof object.signPublicKey === "string")
+                    $util.base64.decode(object.signPublicKey, message.signPublicKey = $util.newBuffer($util.base64.length(object.signPublicKey)), 0);
+                else if (object.signPublicKey.length)
+                    message.signPublicKey = object.signPublicKey;
             return message;
         };
 
@@ -11167,6 +11749,20 @@ $root.api = (function() {
                 object.signKey = null;
                 object.sharedFrom = null;
                 object.latest = false;
+                if (options.bytes === String)
+                    object.boxPublicKey = "";
+                else {
+                    object.boxPublicKey = [];
+                    if (options.bytes !== Array)
+                        object.boxPublicKey = $util.newBuffer(object.boxPublicKey);
+                }
+                if (options.bytes === String)
+                    object.signPublicKey = "";
+                else {
+                    object.signPublicKey = [];
+                    if (options.bytes !== Array)
+                        object.signPublicKey = $util.newBuffer(object.signPublicKey);
+                }
             }
             if (message.login != null && message.hasOwnProperty("login"))
                 object.login = message.login;
@@ -11189,6 +11785,10 @@ $root.api = (function() {
                 object.sharedFrom = $root.api.IdentityKeyID.toObject(message.sharedFrom, options);
             if (message.latest != null && message.hasOwnProperty("latest"))
                 object.latest = message.latest;
+            if (message.boxPublicKey != null && message.hasOwnProperty("boxPublicKey"))
+                object.boxPublicKey = options.bytes === String ? $util.base64.encode(message.boxPublicKey, 0, message.boxPublicKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.boxPublicKey) : message.boxPublicKey;
+            if (message.signPublicKey != null && message.hasOwnProperty("signPublicKey"))
+                object.signPublicKey = options.bytes === String ? $util.base64.encode(message.signPublicKey, 0, message.signPublicKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.signPublicKey) : message.signPublicKey;
             return object;
         };
 
@@ -11425,7 +12025,7 @@ $root.api = (function() {
          * @property {Uint8Array|null} [signChain] IdentityPostSharingGraphElement signChain
          * @property {Array.<api.IIdentityShareEntry>|null} [sharingGroup] IdentityPostSharingGraphElement sharingGroup
          * @property {api.IIdentityBackwardKey|null} [backward] IdentityPostSharingGraphElement backward
-         * @property {api.IIdentityEncryption|null} [encryption] IdentityPostSharingGraphElement encryption
+         * @property {api.IIdentityEncryptedKeySet|null} [encryption] IdentityPostSharingGraphElement encryption
          */
 
         /**
@@ -11486,7 +12086,7 @@ $root.api = (function() {
 
         /**
          * IdentityPostSharingGraphElement encryption.
-         * @member {api.IIdentityEncryption|null|undefined} encryption
+         * @member {api.IIdentityEncryptedKeySet|null|undefined} encryption
          * @memberof api.IdentityPostSharingGraphElement
          * @instance
          */
@@ -11528,7 +12128,7 @@ $root.api = (function() {
             if (message.backward != null && message.hasOwnProperty("backward"))
                 $root.api.IdentityBackwardKey.encode(message.backward, writer.uint32(/* id 9, wireType 2 =*/74).fork()).ldelim();
             if (message.encryption != null && message.hasOwnProperty("encryption"))
-                $root.api.IdentityEncryption.encode(message.encryption, writer.uint32(/* id 10, wireType 2 =*/82).fork()).ldelim();
+                $root.api.IdentityEncryptedKeySet.encode(message.encryption, writer.uint32(/* id 10, wireType 2 =*/82).fork()).ldelim();
             return writer;
         };
 
@@ -11581,7 +12181,7 @@ $root.api = (function() {
                     message.backward = $root.api.IdentityBackwardKey.decode(reader, reader.uint32());
                     break;
                 case 10:
-                    message.encryption = $root.api.IdentityEncryption.decode(reader, reader.uint32());
+                    message.encryption = $root.api.IdentityEncryptedKeySet.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -11642,7 +12242,7 @@ $root.api = (function() {
                     return "backward." + error;
             }
             if (message.encryption != null && message.hasOwnProperty("encryption")) {
-                var error = $root.api.IdentityEncryption.verify(message.encryption);
+                var error = $root.api.IdentityEncryptedKeySet.verify(message.encryption);
                 if (error)
                     return "encryption." + error;
             }
@@ -11688,7 +12288,7 @@ $root.api = (function() {
             if (object.encryption != null) {
                 if (typeof object.encryption !== "object")
                     throw TypeError(".api.IdentityPostSharingGraphElement.encryption: object expected");
-                message.encryption = $root.api.IdentityEncryption.fromObject(object.encryption);
+                message.encryption = $root.api.IdentityEncryptedKeySet.fromObject(object.encryption);
             }
             return message;
         };
@@ -11735,7 +12335,7 @@ $root.api = (function() {
             if (message.backward != null && message.hasOwnProperty("backward"))
                 object.backward = $root.api.IdentityBackwardKey.toObject(message.backward, options);
             if (message.encryption != null && message.hasOwnProperty("encryption"))
-                object.encryption = $root.api.IdentityEncryption.toObject(message.encryption, options);
+                object.encryption = $root.api.IdentityEncryptedKeySet.toObject(message.encryption, options);
             return object;
         };
 
@@ -12407,8 +13007,7 @@ $root.api = (function() {
              * @interface IIdentityChallenge
              * @property {Uint8Array|null} [salt] IdentityChallenge salt
              * @property {Uint8Array|null} [token] IdentityChallenge token
-             * @property {api.IIdentityEncryption|null} [encryption] IdentityChallenge encryption
-             * @property {api.IIdentityPublicKey|null} [creator] IdentityChallenge creator
+             * @property {api.IIdentityEncryptedKeySet|null} [encryption] IdentityChallenge encryption
              */
 
             /**
@@ -12444,19 +13043,11 @@ $root.api = (function() {
 
             /**
              * IdentityChallenge encryption.
-             * @member {api.IIdentityEncryption|null|undefined} encryption
+             * @member {api.IIdentityEncryptedKeySet|null|undefined} encryption
              * @memberof api.IdentityGetLockedVersionsResponse.IdentityChallenge
              * @instance
              */
             IdentityChallenge.prototype.encryption = null;
-
-            /**
-             * IdentityChallenge creator.
-             * @member {api.IIdentityPublicKey|null|undefined} creator
-             * @memberof api.IdentityGetLockedVersionsResponse.IdentityChallenge
-             * @instance
-             */
-            IdentityChallenge.prototype.creator = null;
 
             /**
              * Creates a new IdentityChallenge instance using the specified properties.
@@ -12487,9 +13078,7 @@ $root.api = (function() {
                 if (message.token != null && message.hasOwnProperty("token"))
                     writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.token);
                 if (message.encryption != null && message.hasOwnProperty("encryption"))
-                    $root.api.IdentityEncryption.encode(message.encryption, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
-                if (message.creator != null && message.hasOwnProperty("creator"))
-                    $root.api.IdentityPublicKey.encode(message.creator, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+                    $root.api.IdentityEncryptedKeySet.encode(message.encryption, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
                 return writer;
             };
 
@@ -12531,10 +13120,7 @@ $root.api = (function() {
                         message.token = reader.bytes();
                         break;
                     case 3:
-                        message.encryption = $root.api.IdentityEncryption.decode(reader, reader.uint32());
-                        break;
-                    case 4:
-                        message.creator = $root.api.IdentityPublicKey.decode(reader, reader.uint32());
+                        message.encryption = $root.api.IdentityEncryptedKeySet.decode(reader, reader.uint32());
                         break;
                     default:
                         reader.skipType(tag & 7);
@@ -12578,14 +13164,9 @@ $root.api = (function() {
                     if (!(message.token && typeof message.token.length === "number" || $util.isString(message.token)))
                         return "token: buffer expected";
                 if (message.encryption != null && message.hasOwnProperty("encryption")) {
-                    var error = $root.api.IdentityEncryption.verify(message.encryption);
+                    var error = $root.api.IdentityEncryptedKeySet.verify(message.encryption);
                     if (error)
                         return "encryption." + error;
-                }
-                if (message.creator != null && message.hasOwnProperty("creator")) {
-                    var error = $root.api.IdentityPublicKey.verify(message.creator);
-                    if (error)
-                        return "creator." + error;
                 }
                 return null;
             };
@@ -12615,12 +13196,7 @@ $root.api = (function() {
                 if (object.encryption != null) {
                     if (typeof object.encryption !== "object")
                         throw TypeError(".api.IdentityGetLockedVersionsResponse.IdentityChallenge.encryption: object expected");
-                    message.encryption = $root.api.IdentityEncryption.fromObject(object.encryption);
-                }
-                if (object.creator != null) {
-                    if (typeof object.creator !== "object")
-                        throw TypeError(".api.IdentityGetLockedVersionsResponse.IdentityChallenge.creator: object expected");
-                    message.creator = $root.api.IdentityPublicKey.fromObject(object.creator);
+                    message.encryption = $root.api.IdentityEncryptedKeySet.fromObject(object.encryption);
                 }
                 return message;
             };
@@ -12654,16 +13230,13 @@ $root.api = (function() {
                             object.token = $util.newBuffer(object.token);
                     }
                     object.encryption = null;
-                    object.creator = null;
                 }
                 if (message.salt != null && message.hasOwnProperty("salt"))
                     object.salt = options.bytes === String ? $util.base64.encode(message.salt, 0, message.salt.length) : options.bytes === Array ? Array.prototype.slice.call(message.salt) : message.salt;
                 if (message.token != null && message.hasOwnProperty("token"))
                     object.token = options.bytes === String ? $util.base64.encode(message.token, 0, message.token.length) : options.bytes === Array ? Array.prototype.slice.call(message.token) : message.token;
                 if (message.encryption != null && message.hasOwnProperty("encryption"))
-                    object.encryption = $root.api.IdentityEncryption.toObject(message.encryption, options);
-                if (message.creator != null && message.hasOwnProperty("creator"))
-                    object.creator = $root.api.IdentityPublicKey.toObject(message.creator, options);
+                    object.encryption = $root.api.IdentityEncryptedKeySet.toObject(message.encryption, options);
                 return object;
             };
 
@@ -12902,823 +13475,6 @@ $root.api = (function() {
         })();
 
         return IdentityGetLockedVersionsResponse;
-    })();
-
-    api.IdentityAssociateEmailRequest = (function() {
-
-        /**
-         * Properties of an IdentityAssociateEmailRequest.
-         * @memberof api
-         * @interface IIdentityAssociateEmailRequest
-         * @property {string|null} [login] IdentityAssociateEmailRequest login
-         * @property {string|null} [email] IdentityAssociateEmailRequest email
-         */
-
-        /**
-         * Constructs a new IdentityAssociateEmailRequest.
-         * @memberof api
-         * @classdesc Represents an IdentityAssociateEmailRequest.
-         * @implements IIdentityAssociateEmailRequest
-         * @constructor
-         * @param {api.IIdentityAssociateEmailRequest=} [properties] Properties to set
-         */
-        function IdentityAssociateEmailRequest(properties) {
-            if (properties)
-                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                    if (properties[keys[i]] != null)
-                        this[keys[i]] = properties[keys[i]];
-        }
-
-        /**
-         * IdentityAssociateEmailRequest login.
-         * @member {string} login
-         * @memberof api.IdentityAssociateEmailRequest
-         * @instance
-         */
-        IdentityAssociateEmailRequest.prototype.login = "";
-
-        /**
-         * IdentityAssociateEmailRequest email.
-         * @member {string} email
-         * @memberof api.IdentityAssociateEmailRequest
-         * @instance
-         */
-        IdentityAssociateEmailRequest.prototype.email = "";
-
-        /**
-         * Creates a new IdentityAssociateEmailRequest instance using the specified properties.
-         * @function create
-         * @memberof api.IdentityAssociateEmailRequest
-         * @static
-         * @param {api.IIdentityAssociateEmailRequest=} [properties] Properties to set
-         * @returns {api.IdentityAssociateEmailRequest} IdentityAssociateEmailRequest instance
-         */
-        IdentityAssociateEmailRequest.create = function create(properties) {
-            return new IdentityAssociateEmailRequest(properties);
-        };
-
-        /**
-         * Encodes the specified IdentityAssociateEmailRequest message. Does not implicitly {@link api.IdentityAssociateEmailRequest.verify|verify} messages.
-         * @function encode
-         * @memberof api.IdentityAssociateEmailRequest
-         * @static
-         * @param {api.IIdentityAssociateEmailRequest} message IdentityAssociateEmailRequest message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        IdentityAssociateEmailRequest.encode = function encode(message, writer) {
-            if (!writer)
-                writer = $Writer.create();
-            if (message.login != null && message.hasOwnProperty("login"))
-                writer.uint32(/* id 1, wireType 2 =*/10).string(message.login);
-            if (message.email != null && message.hasOwnProperty("email"))
-                writer.uint32(/* id 2, wireType 2 =*/18).string(message.email);
-            return writer;
-        };
-
-        /**
-         * Encodes the specified IdentityAssociateEmailRequest message, length delimited. Does not implicitly {@link api.IdentityAssociateEmailRequest.verify|verify} messages.
-         * @function encodeDelimited
-         * @memberof api.IdentityAssociateEmailRequest
-         * @static
-         * @param {api.IIdentityAssociateEmailRequest} message IdentityAssociateEmailRequest message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        IdentityAssociateEmailRequest.encodeDelimited = function encodeDelimited(message, writer) {
-            return this.encode(message, writer).ldelim();
-        };
-
-        /**
-         * Decodes an IdentityAssociateEmailRequest message from the specified reader or buffer.
-         * @function decode
-         * @memberof api.IdentityAssociateEmailRequest
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @param {number} [length] Message length if known beforehand
-         * @returns {api.IdentityAssociateEmailRequest} IdentityAssociateEmailRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        IdentityAssociateEmailRequest.decode = function decode(reader, length) {
-            if (!(reader instanceof $Reader))
-                reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.IdentityAssociateEmailRequest();
-            while (reader.pos < end) {
-                var tag = reader.uint32();
-                switch (tag >>> 3) {
-                case 1:
-                    message.login = reader.string();
-                    break;
-                case 2:
-                    message.email = reader.string();
-                    break;
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-                }
-            }
-            return message;
-        };
-
-        /**
-         * Decodes an IdentityAssociateEmailRequest message from the specified reader or buffer, length delimited.
-         * @function decodeDelimited
-         * @memberof api.IdentityAssociateEmailRequest
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {api.IdentityAssociateEmailRequest} IdentityAssociateEmailRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        IdentityAssociateEmailRequest.decodeDelimited = function decodeDelimited(reader) {
-            if (!(reader instanceof $Reader))
-                reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
-        };
-
-        /**
-         * Verifies an IdentityAssociateEmailRequest message.
-         * @function verify
-         * @memberof api.IdentityAssociateEmailRequest
-         * @static
-         * @param {Object.<string,*>} message Plain object to verify
-         * @returns {string|null} `null` if valid, otherwise the reason why it is not
-         */
-        IdentityAssociateEmailRequest.verify = function verify(message) {
-            if (typeof message !== "object" || message === null)
-                return "object expected";
-            if (message.login != null && message.hasOwnProperty("login"))
-                if (!$util.isString(message.login))
-                    return "login: string expected";
-            if (message.email != null && message.hasOwnProperty("email"))
-                if (!$util.isString(message.email))
-                    return "email: string expected";
-            return null;
-        };
-
-        /**
-         * Creates an IdentityAssociateEmailRequest message from a plain object. Also converts values to their respective internal types.
-         * @function fromObject
-         * @memberof api.IdentityAssociateEmailRequest
-         * @static
-         * @param {Object.<string,*>} object Plain object
-         * @returns {api.IdentityAssociateEmailRequest} IdentityAssociateEmailRequest
-         */
-        IdentityAssociateEmailRequest.fromObject = function fromObject(object) {
-            if (object instanceof $root.api.IdentityAssociateEmailRequest)
-                return object;
-            var message = new $root.api.IdentityAssociateEmailRequest();
-            if (object.login != null)
-                message.login = String(object.login);
-            if (object.email != null)
-                message.email = String(object.email);
-            return message;
-        };
-
-        /**
-         * Creates a plain object from an IdentityAssociateEmailRequest message. Also converts values to other types if specified.
-         * @function toObject
-         * @memberof api.IdentityAssociateEmailRequest
-         * @static
-         * @param {api.IdentityAssociateEmailRequest} message IdentityAssociateEmailRequest
-         * @param {$protobuf.IConversionOptions} [options] Conversion options
-         * @returns {Object.<string,*>} Plain object
-         */
-        IdentityAssociateEmailRequest.toObject = function toObject(message, options) {
-            if (!options)
-                options = {};
-            var object = {};
-            if (options.defaults) {
-                object.login = "";
-                object.email = "";
-            }
-            if (message.login != null && message.hasOwnProperty("login"))
-                object.login = message.login;
-            if (message.email != null && message.hasOwnProperty("email"))
-                object.email = message.email;
-            return object;
-        };
-
-        /**
-         * Converts this IdentityAssociateEmailRequest to JSON.
-         * @function toJSON
-         * @memberof api.IdentityAssociateEmailRequest
-         * @instance
-         * @returns {Object.<string,*>} JSON object
-         */
-        IdentityAssociateEmailRequest.prototype.toJSON = function toJSON() {
-            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-        };
-
-        return IdentityAssociateEmailRequest;
-    })();
-
-    api.IdentitiyGetPrincipalEmailRequest = (function() {
-
-        /**
-         * Properties of an IdentitiyGetPrincipalEmailRequest.
-         * @memberof api
-         * @interface IIdentitiyGetPrincipalEmailRequest
-         * @property {string|null} [login] IdentitiyGetPrincipalEmailRequest login
-         */
-
-        /**
-         * Constructs a new IdentitiyGetPrincipalEmailRequest.
-         * @memberof api
-         * @classdesc Represents an IdentitiyGetPrincipalEmailRequest.
-         * @implements IIdentitiyGetPrincipalEmailRequest
-         * @constructor
-         * @param {api.IIdentitiyGetPrincipalEmailRequest=} [properties] Properties to set
-         */
-        function IdentitiyGetPrincipalEmailRequest(properties) {
-            if (properties)
-                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                    if (properties[keys[i]] != null)
-                        this[keys[i]] = properties[keys[i]];
-        }
-
-        /**
-         * IdentitiyGetPrincipalEmailRequest login.
-         * @member {string} login
-         * @memberof api.IdentitiyGetPrincipalEmailRequest
-         * @instance
-         */
-        IdentitiyGetPrincipalEmailRequest.prototype.login = "";
-
-        /**
-         * Creates a new IdentitiyGetPrincipalEmailRequest instance using the specified properties.
-         * @function create
-         * @memberof api.IdentitiyGetPrincipalEmailRequest
-         * @static
-         * @param {api.IIdentitiyGetPrincipalEmailRequest=} [properties] Properties to set
-         * @returns {api.IdentitiyGetPrincipalEmailRequest} IdentitiyGetPrincipalEmailRequest instance
-         */
-        IdentitiyGetPrincipalEmailRequest.create = function create(properties) {
-            return new IdentitiyGetPrincipalEmailRequest(properties);
-        };
-
-        /**
-         * Encodes the specified IdentitiyGetPrincipalEmailRequest message. Does not implicitly {@link api.IdentitiyGetPrincipalEmailRequest.verify|verify} messages.
-         * @function encode
-         * @memberof api.IdentitiyGetPrincipalEmailRequest
-         * @static
-         * @param {api.IIdentitiyGetPrincipalEmailRequest} message IdentitiyGetPrincipalEmailRequest message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        IdentitiyGetPrincipalEmailRequest.encode = function encode(message, writer) {
-            if (!writer)
-                writer = $Writer.create();
-            if (message.login != null && message.hasOwnProperty("login"))
-                writer.uint32(/* id 1, wireType 2 =*/10).string(message.login);
-            return writer;
-        };
-
-        /**
-         * Encodes the specified IdentitiyGetPrincipalEmailRequest message, length delimited. Does not implicitly {@link api.IdentitiyGetPrincipalEmailRequest.verify|verify} messages.
-         * @function encodeDelimited
-         * @memberof api.IdentitiyGetPrincipalEmailRequest
-         * @static
-         * @param {api.IIdentitiyGetPrincipalEmailRequest} message IdentitiyGetPrincipalEmailRequest message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        IdentitiyGetPrincipalEmailRequest.encodeDelimited = function encodeDelimited(message, writer) {
-            return this.encode(message, writer).ldelim();
-        };
-
-        /**
-         * Decodes an IdentitiyGetPrincipalEmailRequest message from the specified reader or buffer.
-         * @function decode
-         * @memberof api.IdentitiyGetPrincipalEmailRequest
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @param {number} [length] Message length if known beforehand
-         * @returns {api.IdentitiyGetPrincipalEmailRequest} IdentitiyGetPrincipalEmailRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        IdentitiyGetPrincipalEmailRequest.decode = function decode(reader, length) {
-            if (!(reader instanceof $Reader))
-                reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.IdentitiyGetPrincipalEmailRequest();
-            while (reader.pos < end) {
-                var tag = reader.uint32();
-                switch (tag >>> 3) {
-                case 1:
-                    message.login = reader.string();
-                    break;
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-                }
-            }
-            return message;
-        };
-
-        /**
-         * Decodes an IdentitiyGetPrincipalEmailRequest message from the specified reader or buffer, length delimited.
-         * @function decodeDelimited
-         * @memberof api.IdentitiyGetPrincipalEmailRequest
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {api.IdentitiyGetPrincipalEmailRequest} IdentitiyGetPrincipalEmailRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        IdentitiyGetPrincipalEmailRequest.decodeDelimited = function decodeDelimited(reader) {
-            if (!(reader instanceof $Reader))
-                reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
-        };
-
-        /**
-         * Verifies an IdentitiyGetPrincipalEmailRequest message.
-         * @function verify
-         * @memberof api.IdentitiyGetPrincipalEmailRequest
-         * @static
-         * @param {Object.<string,*>} message Plain object to verify
-         * @returns {string|null} `null` if valid, otherwise the reason why it is not
-         */
-        IdentitiyGetPrincipalEmailRequest.verify = function verify(message) {
-            if (typeof message !== "object" || message === null)
-                return "object expected";
-            if (message.login != null && message.hasOwnProperty("login"))
-                if (!$util.isString(message.login))
-                    return "login: string expected";
-            return null;
-        };
-
-        /**
-         * Creates an IdentitiyGetPrincipalEmailRequest message from a plain object. Also converts values to their respective internal types.
-         * @function fromObject
-         * @memberof api.IdentitiyGetPrincipalEmailRequest
-         * @static
-         * @param {Object.<string,*>} object Plain object
-         * @returns {api.IdentitiyGetPrincipalEmailRequest} IdentitiyGetPrincipalEmailRequest
-         */
-        IdentitiyGetPrincipalEmailRequest.fromObject = function fromObject(object) {
-            if (object instanceof $root.api.IdentitiyGetPrincipalEmailRequest)
-                return object;
-            var message = new $root.api.IdentitiyGetPrincipalEmailRequest();
-            if (object.login != null)
-                message.login = String(object.login);
-            return message;
-        };
-
-        /**
-         * Creates a plain object from an IdentitiyGetPrincipalEmailRequest message. Also converts values to other types if specified.
-         * @function toObject
-         * @memberof api.IdentitiyGetPrincipalEmailRequest
-         * @static
-         * @param {api.IdentitiyGetPrincipalEmailRequest} message IdentitiyGetPrincipalEmailRequest
-         * @param {$protobuf.IConversionOptions} [options] Conversion options
-         * @returns {Object.<string,*>} Plain object
-         */
-        IdentitiyGetPrincipalEmailRequest.toObject = function toObject(message, options) {
-            if (!options)
-                options = {};
-            var object = {};
-            if (options.defaults)
-                object.login = "";
-            if (message.login != null && message.hasOwnProperty("login"))
-                object.login = message.login;
-            return object;
-        };
-
-        /**
-         * Converts this IdentitiyGetPrincipalEmailRequest to JSON.
-         * @function toJSON
-         * @memberof api.IdentitiyGetPrincipalEmailRequest
-         * @instance
-         * @returns {Object.<string,*>} JSON object
-         */
-        IdentitiyGetPrincipalEmailRequest.prototype.toJSON = function toJSON() {
-            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-        };
-
-        return IdentitiyGetPrincipalEmailRequest;
-    })();
-
-    api.IdentityGetPrincipalEmailResponse = (function() {
-
-        /**
-         * Properties of an IdentityGetPrincipalEmailResponse.
-         * @memberof api
-         * @interface IIdentityGetPrincipalEmailResponse
-         * @property {string|null} [login] IdentityGetPrincipalEmailResponse login
-         * @property {string|null} [email] IdentityGetPrincipalEmailResponse email
-         */
-
-        /**
-         * Constructs a new IdentityGetPrincipalEmailResponse.
-         * @memberof api
-         * @classdesc Represents an IdentityGetPrincipalEmailResponse.
-         * @implements IIdentityGetPrincipalEmailResponse
-         * @constructor
-         * @param {api.IIdentityGetPrincipalEmailResponse=} [properties] Properties to set
-         */
-        function IdentityGetPrincipalEmailResponse(properties) {
-            if (properties)
-                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                    if (properties[keys[i]] != null)
-                        this[keys[i]] = properties[keys[i]];
-        }
-
-        /**
-         * IdentityGetPrincipalEmailResponse login.
-         * @member {string} login
-         * @memberof api.IdentityGetPrincipalEmailResponse
-         * @instance
-         */
-        IdentityGetPrincipalEmailResponse.prototype.login = "";
-
-        /**
-         * IdentityGetPrincipalEmailResponse email.
-         * @member {string} email
-         * @memberof api.IdentityGetPrincipalEmailResponse
-         * @instance
-         */
-        IdentityGetPrincipalEmailResponse.prototype.email = "";
-
-        /**
-         * Creates a new IdentityGetPrincipalEmailResponse instance using the specified properties.
-         * @function create
-         * @memberof api.IdentityGetPrincipalEmailResponse
-         * @static
-         * @param {api.IIdentityGetPrincipalEmailResponse=} [properties] Properties to set
-         * @returns {api.IdentityGetPrincipalEmailResponse} IdentityGetPrincipalEmailResponse instance
-         */
-        IdentityGetPrincipalEmailResponse.create = function create(properties) {
-            return new IdentityGetPrincipalEmailResponse(properties);
-        };
-
-        /**
-         * Encodes the specified IdentityGetPrincipalEmailResponse message. Does not implicitly {@link api.IdentityGetPrincipalEmailResponse.verify|verify} messages.
-         * @function encode
-         * @memberof api.IdentityGetPrincipalEmailResponse
-         * @static
-         * @param {api.IIdentityGetPrincipalEmailResponse} message IdentityGetPrincipalEmailResponse message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        IdentityGetPrincipalEmailResponse.encode = function encode(message, writer) {
-            if (!writer)
-                writer = $Writer.create();
-            if (message.login != null && message.hasOwnProperty("login"))
-                writer.uint32(/* id 1, wireType 2 =*/10).string(message.login);
-            if (message.email != null && message.hasOwnProperty("email"))
-                writer.uint32(/* id 2, wireType 2 =*/18).string(message.email);
-            return writer;
-        };
-
-        /**
-         * Encodes the specified IdentityGetPrincipalEmailResponse message, length delimited. Does not implicitly {@link api.IdentityGetPrincipalEmailResponse.verify|verify} messages.
-         * @function encodeDelimited
-         * @memberof api.IdentityGetPrincipalEmailResponse
-         * @static
-         * @param {api.IIdentityGetPrincipalEmailResponse} message IdentityGetPrincipalEmailResponse message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        IdentityGetPrincipalEmailResponse.encodeDelimited = function encodeDelimited(message, writer) {
-            return this.encode(message, writer).ldelim();
-        };
-
-        /**
-         * Decodes an IdentityGetPrincipalEmailResponse message from the specified reader or buffer.
-         * @function decode
-         * @memberof api.IdentityGetPrincipalEmailResponse
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @param {number} [length] Message length if known beforehand
-         * @returns {api.IdentityGetPrincipalEmailResponse} IdentityGetPrincipalEmailResponse
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        IdentityGetPrincipalEmailResponse.decode = function decode(reader, length) {
-            if (!(reader instanceof $Reader))
-                reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.IdentityGetPrincipalEmailResponse();
-            while (reader.pos < end) {
-                var tag = reader.uint32();
-                switch (tag >>> 3) {
-                case 1:
-                    message.login = reader.string();
-                    break;
-                case 2:
-                    message.email = reader.string();
-                    break;
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-                }
-            }
-            return message;
-        };
-
-        /**
-         * Decodes an IdentityGetPrincipalEmailResponse message from the specified reader or buffer, length delimited.
-         * @function decodeDelimited
-         * @memberof api.IdentityGetPrincipalEmailResponse
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {api.IdentityGetPrincipalEmailResponse} IdentityGetPrincipalEmailResponse
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        IdentityGetPrincipalEmailResponse.decodeDelimited = function decodeDelimited(reader) {
-            if (!(reader instanceof $Reader))
-                reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
-        };
-
-        /**
-         * Verifies an IdentityGetPrincipalEmailResponse message.
-         * @function verify
-         * @memberof api.IdentityGetPrincipalEmailResponse
-         * @static
-         * @param {Object.<string,*>} message Plain object to verify
-         * @returns {string|null} `null` if valid, otherwise the reason why it is not
-         */
-        IdentityGetPrincipalEmailResponse.verify = function verify(message) {
-            if (typeof message !== "object" || message === null)
-                return "object expected";
-            if (message.login != null && message.hasOwnProperty("login"))
-                if (!$util.isString(message.login))
-                    return "login: string expected";
-            if (message.email != null && message.hasOwnProperty("email"))
-                if (!$util.isString(message.email))
-                    return "email: string expected";
-            return null;
-        };
-
-        /**
-         * Creates an IdentityGetPrincipalEmailResponse message from a plain object. Also converts values to their respective internal types.
-         * @function fromObject
-         * @memberof api.IdentityGetPrincipalEmailResponse
-         * @static
-         * @param {Object.<string,*>} object Plain object
-         * @returns {api.IdentityGetPrincipalEmailResponse} IdentityGetPrincipalEmailResponse
-         */
-        IdentityGetPrincipalEmailResponse.fromObject = function fromObject(object) {
-            if (object instanceof $root.api.IdentityGetPrincipalEmailResponse)
-                return object;
-            var message = new $root.api.IdentityGetPrincipalEmailResponse();
-            if (object.login != null)
-                message.login = String(object.login);
-            if (object.email != null)
-                message.email = String(object.email);
-            return message;
-        };
-
-        /**
-         * Creates a plain object from an IdentityGetPrincipalEmailResponse message. Also converts values to other types if specified.
-         * @function toObject
-         * @memberof api.IdentityGetPrincipalEmailResponse
-         * @static
-         * @param {api.IdentityGetPrincipalEmailResponse} message IdentityGetPrincipalEmailResponse
-         * @param {$protobuf.IConversionOptions} [options] Conversion options
-         * @returns {Object.<string,*>} Plain object
-         */
-        IdentityGetPrincipalEmailResponse.toObject = function toObject(message, options) {
-            if (!options)
-                options = {};
-            var object = {};
-            if (options.defaults) {
-                object.login = "";
-                object.email = "";
-            }
-            if (message.login != null && message.hasOwnProperty("login"))
-                object.login = message.login;
-            if (message.email != null && message.hasOwnProperty("email"))
-                object.email = message.email;
-            return object;
-        };
-
-        /**
-         * Converts this IdentityGetPrincipalEmailResponse to JSON.
-         * @function toJSON
-         * @memberof api.IdentityGetPrincipalEmailResponse
-         * @instance
-         * @returns {Object.<string,*>} JSON object
-         */
-        IdentityGetPrincipalEmailResponse.prototype.toJSON = function toJSON() {
-            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-        };
-
-        return IdentityGetPrincipalEmailResponse;
-    })();
-
-    api.IdentitySetPrincipalEmailRequest = (function() {
-
-        /**
-         * Properties of an IdentitySetPrincipalEmailRequest.
-         * @memberof api
-         * @interface IIdentitySetPrincipalEmailRequest
-         * @property {string|null} [login] IdentitySetPrincipalEmailRequest login
-         * @property {string|null} [email] IdentitySetPrincipalEmailRequest email
-         */
-
-        /**
-         * Constructs a new IdentitySetPrincipalEmailRequest.
-         * @memberof api
-         * @classdesc Represents an IdentitySetPrincipalEmailRequest.
-         * @implements IIdentitySetPrincipalEmailRequest
-         * @constructor
-         * @param {api.IIdentitySetPrincipalEmailRequest=} [properties] Properties to set
-         */
-        function IdentitySetPrincipalEmailRequest(properties) {
-            if (properties)
-                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                    if (properties[keys[i]] != null)
-                        this[keys[i]] = properties[keys[i]];
-        }
-
-        /**
-         * IdentitySetPrincipalEmailRequest login.
-         * @member {string} login
-         * @memberof api.IdentitySetPrincipalEmailRequest
-         * @instance
-         */
-        IdentitySetPrincipalEmailRequest.prototype.login = "";
-
-        /**
-         * IdentitySetPrincipalEmailRequest email.
-         * @member {string} email
-         * @memberof api.IdentitySetPrincipalEmailRequest
-         * @instance
-         */
-        IdentitySetPrincipalEmailRequest.prototype.email = "";
-
-        /**
-         * Creates a new IdentitySetPrincipalEmailRequest instance using the specified properties.
-         * @function create
-         * @memberof api.IdentitySetPrincipalEmailRequest
-         * @static
-         * @param {api.IIdentitySetPrincipalEmailRequest=} [properties] Properties to set
-         * @returns {api.IdentitySetPrincipalEmailRequest} IdentitySetPrincipalEmailRequest instance
-         */
-        IdentitySetPrincipalEmailRequest.create = function create(properties) {
-            return new IdentitySetPrincipalEmailRequest(properties);
-        };
-
-        /**
-         * Encodes the specified IdentitySetPrincipalEmailRequest message. Does not implicitly {@link api.IdentitySetPrincipalEmailRequest.verify|verify} messages.
-         * @function encode
-         * @memberof api.IdentitySetPrincipalEmailRequest
-         * @static
-         * @param {api.IIdentitySetPrincipalEmailRequest} message IdentitySetPrincipalEmailRequest message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        IdentitySetPrincipalEmailRequest.encode = function encode(message, writer) {
-            if (!writer)
-                writer = $Writer.create();
-            if (message.login != null && message.hasOwnProperty("login"))
-                writer.uint32(/* id 1, wireType 2 =*/10).string(message.login);
-            if (message.email != null && message.hasOwnProperty("email"))
-                writer.uint32(/* id 2, wireType 2 =*/18).string(message.email);
-            return writer;
-        };
-
-        /**
-         * Encodes the specified IdentitySetPrincipalEmailRequest message, length delimited. Does not implicitly {@link api.IdentitySetPrincipalEmailRequest.verify|verify} messages.
-         * @function encodeDelimited
-         * @memberof api.IdentitySetPrincipalEmailRequest
-         * @static
-         * @param {api.IIdentitySetPrincipalEmailRequest} message IdentitySetPrincipalEmailRequest message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        IdentitySetPrincipalEmailRequest.encodeDelimited = function encodeDelimited(message, writer) {
-            return this.encode(message, writer).ldelim();
-        };
-
-        /**
-         * Decodes an IdentitySetPrincipalEmailRequest message from the specified reader or buffer.
-         * @function decode
-         * @memberof api.IdentitySetPrincipalEmailRequest
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @param {number} [length] Message length if known beforehand
-         * @returns {api.IdentitySetPrincipalEmailRequest} IdentitySetPrincipalEmailRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        IdentitySetPrincipalEmailRequest.decode = function decode(reader, length) {
-            if (!(reader instanceof $Reader))
-                reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.IdentitySetPrincipalEmailRequest();
-            while (reader.pos < end) {
-                var tag = reader.uint32();
-                switch (tag >>> 3) {
-                case 1:
-                    message.login = reader.string();
-                    break;
-                case 2:
-                    message.email = reader.string();
-                    break;
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-                }
-            }
-            return message;
-        };
-
-        /**
-         * Decodes an IdentitySetPrincipalEmailRequest message from the specified reader or buffer, length delimited.
-         * @function decodeDelimited
-         * @memberof api.IdentitySetPrincipalEmailRequest
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {api.IdentitySetPrincipalEmailRequest} IdentitySetPrincipalEmailRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        IdentitySetPrincipalEmailRequest.decodeDelimited = function decodeDelimited(reader) {
-            if (!(reader instanceof $Reader))
-                reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
-        };
-
-        /**
-         * Verifies an IdentitySetPrincipalEmailRequest message.
-         * @function verify
-         * @memberof api.IdentitySetPrincipalEmailRequest
-         * @static
-         * @param {Object.<string,*>} message Plain object to verify
-         * @returns {string|null} `null` if valid, otherwise the reason why it is not
-         */
-        IdentitySetPrincipalEmailRequest.verify = function verify(message) {
-            if (typeof message !== "object" || message === null)
-                return "object expected";
-            if (message.login != null && message.hasOwnProperty("login"))
-                if (!$util.isString(message.login))
-                    return "login: string expected";
-            if (message.email != null && message.hasOwnProperty("email"))
-                if (!$util.isString(message.email))
-                    return "email: string expected";
-            return null;
-        };
-
-        /**
-         * Creates an IdentitySetPrincipalEmailRequest message from a plain object. Also converts values to their respective internal types.
-         * @function fromObject
-         * @memberof api.IdentitySetPrincipalEmailRequest
-         * @static
-         * @param {Object.<string,*>} object Plain object
-         * @returns {api.IdentitySetPrincipalEmailRequest} IdentitySetPrincipalEmailRequest
-         */
-        IdentitySetPrincipalEmailRequest.fromObject = function fromObject(object) {
-            if (object instanceof $root.api.IdentitySetPrincipalEmailRequest)
-                return object;
-            var message = new $root.api.IdentitySetPrincipalEmailRequest();
-            if (object.login != null)
-                message.login = String(object.login);
-            if (object.email != null)
-                message.email = String(object.email);
-            return message;
-        };
-
-        /**
-         * Creates a plain object from an IdentitySetPrincipalEmailRequest message. Also converts values to other types if specified.
-         * @function toObject
-         * @memberof api.IdentitySetPrincipalEmailRequest
-         * @static
-         * @param {api.IdentitySetPrincipalEmailRequest} message IdentitySetPrincipalEmailRequest
-         * @param {$protobuf.IConversionOptions} [options] Conversion options
-         * @returns {Object.<string,*>} Plain object
-         */
-        IdentitySetPrincipalEmailRequest.toObject = function toObject(message, options) {
-            if (!options)
-                options = {};
-            var object = {};
-            if (options.defaults) {
-                object.login = "";
-                object.email = "";
-            }
-            if (message.login != null && message.hasOwnProperty("login"))
-                object.login = message.login;
-            if (message.email != null && message.hasOwnProperty("email"))
-                object.email = message.email;
-            return object;
-        };
-
-        /**
-         * Converts this IdentitySetPrincipalEmailRequest to JSON.
-         * @function toJSON
-         * @memberof api.IdentitySetPrincipalEmailRequest
-         * @instance
-         * @returns {Object.<string,*>} JSON object
-         */
-        IdentitySetPrincipalEmailRequest.prototype.toJSON = function toJSON() {
-            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-        };
-
-        return IdentitySetPrincipalEmailRequest;
     })();
 
     api.IdentitySetNamedResourceRequest = (function() {
@@ -14666,8 +14422,7 @@ $root.api = (function() {
          * @interface ISessionCreateChallengeResponse
          * @property {Uint8Array|null} [salt] SessionCreateChallengeResponse salt
          * @property {Uint8Array|null} [token] SessionCreateChallengeResponse token
-         * @property {api.IIdentityEncryption|null} [encryption] SessionCreateChallengeResponse encryption
-         * @property {api.IIdentityPublicKey|null} [creator] SessionCreateChallengeResponse creator
+         * @property {api.IIdentityEncryptedKeySet|null} [encryption] SessionCreateChallengeResponse encryption
          * @property {api.SessionSaltKind|null} [saltKind] SessionCreateChallengeResponse saltKind
          */
 
@@ -14704,19 +14459,11 @@ $root.api = (function() {
 
         /**
          * SessionCreateChallengeResponse encryption.
-         * @member {api.IIdentityEncryption|null|undefined} encryption
+         * @member {api.IIdentityEncryptedKeySet|null|undefined} encryption
          * @memberof api.SessionCreateChallengeResponse
          * @instance
          */
         SessionCreateChallengeResponse.prototype.encryption = null;
-
-        /**
-         * SessionCreateChallengeResponse creator.
-         * @member {api.IIdentityPublicKey|null|undefined} creator
-         * @memberof api.SessionCreateChallengeResponse
-         * @instance
-         */
-        SessionCreateChallengeResponse.prototype.creator = null;
 
         /**
          * SessionCreateChallengeResponse saltKind.
@@ -14755,9 +14502,7 @@ $root.api = (function() {
             if (message.token != null && message.hasOwnProperty("token"))
                 writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.token);
             if (message.encryption != null && message.hasOwnProperty("encryption"))
-                $root.api.IdentityEncryption.encode(message.encryption, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
-            if (message.creator != null && message.hasOwnProperty("creator"))
-                $root.api.IdentityPublicKey.encode(message.creator, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+                $root.api.IdentityEncryptedKeySet.encode(message.encryption, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
             if (message.saltKind != null && message.hasOwnProperty("saltKind"))
                 writer.uint32(/* id 5, wireType 0 =*/40).int32(message.saltKind);
             return writer;
@@ -14801,10 +14546,7 @@ $root.api = (function() {
                     message.token = reader.bytes();
                     break;
                 case 3:
-                    message.encryption = $root.api.IdentityEncryption.decode(reader, reader.uint32());
-                    break;
-                case 4:
-                    message.creator = $root.api.IdentityPublicKey.decode(reader, reader.uint32());
+                    message.encryption = $root.api.IdentityEncryptedKeySet.decode(reader, reader.uint32());
                     break;
                 case 5:
                     message.saltKind = reader.int32();
@@ -14851,14 +14593,9 @@ $root.api = (function() {
                 if (!(message.token && typeof message.token.length === "number" || $util.isString(message.token)))
                     return "token: buffer expected";
             if (message.encryption != null && message.hasOwnProperty("encryption")) {
-                var error = $root.api.IdentityEncryption.verify(message.encryption);
+                var error = $root.api.IdentityEncryptedKeySet.verify(message.encryption);
                 if (error)
                     return "encryption." + error;
-            }
-            if (message.creator != null && message.hasOwnProperty("creator")) {
-                var error = $root.api.IdentityPublicKey.verify(message.creator);
-                if (error)
-                    return "creator." + error;
             }
             if (message.saltKind != null && message.hasOwnProperty("saltKind"))
                 switch (message.saltKind) {
@@ -14896,12 +14633,7 @@ $root.api = (function() {
             if (object.encryption != null) {
                 if (typeof object.encryption !== "object")
                     throw TypeError(".api.SessionCreateChallengeResponse.encryption: object expected");
-                message.encryption = $root.api.IdentityEncryption.fromObject(object.encryption);
-            }
-            if (object.creator != null) {
-                if (typeof object.creator !== "object")
-                    throw TypeError(".api.SessionCreateChallengeResponse.creator: object expected");
-                message.creator = $root.api.IdentityPublicKey.fromObject(object.creator);
+                message.encryption = $root.api.IdentityEncryptedKeySet.fromObject(object.encryption);
             }
             switch (object.saltKind) {
             case "TIME":
@@ -14945,7 +14677,6 @@ $root.api = (function() {
                         object.token = $util.newBuffer(object.token);
                 }
                 object.encryption = null;
-                object.creator = null;
                 object.saltKind = options.enums === String ? "TIME" : 0;
             }
             if (message.salt != null && message.hasOwnProperty("salt"))
@@ -14953,9 +14684,7 @@ $root.api = (function() {
             if (message.token != null && message.hasOwnProperty("token"))
                 object.token = options.bytes === String ? $util.base64.encode(message.token, 0, message.token.length) : options.bytes === Array ? Array.prototype.slice.call(message.token) : message.token;
             if (message.encryption != null && message.hasOwnProperty("encryption"))
-                object.encryption = $root.api.IdentityEncryption.toObject(message.encryption, options);
-            if (message.creator != null && message.hasOwnProperty("creator"))
-                object.creator = $root.api.IdentityPublicKey.toObject(message.creator, options);
+                object.encryption = $root.api.IdentityEncryptedKeySet.toObject(message.encryption, options);
             if (message.saltKind != null && message.hasOwnProperty("saltKind"))
                 object.saltKind = options.enums === String ? $root.api.SessionSaltKind[message.saltKind] : message.saltKind;
             return object;
@@ -15751,6 +15480,7 @@ $root.api = (function() {
          * @memberof api
          * @interface IApplicationIdentitySessionListRequest
          * @property {string|null} [appID] ApplicationIdentitySessionListRequest appID
+         * @property {number|Long|null} [since] ApplicationIdentitySessionListRequest since
          * @property {number|null} [offset] ApplicationIdentitySessionListRequest offset
          * @property {number|null} [limit] ApplicationIdentitySessionListRequest limit
          */
@@ -15777,6 +15507,14 @@ $root.api = (function() {
          * @instance
          */
         ApplicationIdentitySessionListRequest.prototype.appID = "";
+
+        /**
+         * ApplicationIdentitySessionListRequest since.
+         * @member {number|Long} since
+         * @memberof api.ApplicationIdentitySessionListRequest
+         * @instance
+         */
+        ApplicationIdentitySessionListRequest.prototype.since = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
 
         /**
          * ApplicationIdentitySessionListRequest offset.
@@ -15820,10 +15558,12 @@ $root.api = (function() {
                 writer = $Writer.create();
             if (message.appID != null && message.hasOwnProperty("appID"))
                 writer.uint32(/* id 1, wireType 2 =*/10).string(message.appID);
+            if (message.since != null && message.hasOwnProperty("since"))
+                writer.uint32(/* id 2, wireType 0 =*/16).uint64(message.since);
             if (message.offset != null && message.hasOwnProperty("offset"))
-                writer.uint32(/* id 2, wireType 0 =*/16).uint32(message.offset);
+                writer.uint32(/* id 3, wireType 0 =*/24).uint32(message.offset);
             if (message.limit != null && message.hasOwnProperty("limit"))
-                writer.uint32(/* id 3, wireType 0 =*/24).uint32(message.limit);
+                writer.uint32(/* id 4, wireType 0 =*/32).uint32(message.limit);
             return writer;
         };
 
@@ -15862,9 +15602,12 @@ $root.api = (function() {
                     message.appID = reader.string();
                     break;
                 case 2:
-                    message.offset = reader.uint32();
+                    message.since = reader.uint64();
                     break;
                 case 3:
+                    message.offset = reader.uint32();
+                    break;
+                case 4:
                     message.limit = reader.uint32();
                     break;
                 default:
@@ -15905,6 +15648,9 @@ $root.api = (function() {
             if (message.appID != null && message.hasOwnProperty("appID"))
                 if (!$util.isString(message.appID))
                     return "appID: string expected";
+            if (message.since != null && message.hasOwnProperty("since"))
+                if (!$util.isInteger(message.since) && !(message.since && $util.isInteger(message.since.low) && $util.isInteger(message.since.high)))
+                    return "since: integer|Long expected";
             if (message.offset != null && message.hasOwnProperty("offset"))
                 if (!$util.isInteger(message.offset))
                     return "offset: integer expected";
@@ -15928,6 +15674,15 @@ $root.api = (function() {
             var message = new $root.api.ApplicationIdentitySessionListRequest();
             if (object.appID != null)
                 message.appID = String(object.appID);
+            if (object.since != null)
+                if ($util.Long)
+                    (message.since = $util.Long.fromValue(object.since)).unsigned = true;
+                else if (typeof object.since === "string")
+                    message.since = parseInt(object.since, 10);
+                else if (typeof object.since === "number")
+                    message.since = object.since;
+                else if (typeof object.since === "object")
+                    message.since = new $util.LongBits(object.since.low >>> 0, object.since.high >>> 0).toNumber(true);
             if (object.offset != null)
                 message.offset = object.offset >>> 0;
             if (object.limit != null)
@@ -15950,11 +15705,21 @@ $root.api = (function() {
             var object = {};
             if (options.defaults) {
                 object.appID = "";
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, true);
+                    object.since = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.since = options.longs === String ? "0" : 0;
                 object.offset = 0;
                 object.limit = 0;
             }
             if (message.appID != null && message.hasOwnProperty("appID"))
                 object.appID = message.appID;
+            if (message.since != null && message.hasOwnProperty("since"))
+                if (typeof message.since === "number")
+                    object.since = options.longs === String ? String(message.since) : message.since;
+                else
+                    object.since = options.longs === String ? $util.Long.prototype.toString.call(message.since) : options.longs === Number ? new $util.LongBits(message.since.low >>> 0, message.since.high >>> 0).toNumber(true) : message.since;
             if (message.offset != null && message.hasOwnProperty("offset"))
                 object.offset = message.offset;
             if (message.limit != null && message.hasOwnProperty("limit"))
@@ -16693,6 +16458,472 @@ $root.api = (function() {
         return IdentityConfigurationAsApplication;
     })();
 
+    api.ApplicationConfigID = (function() {
+
+        /**
+         * Properties of an ApplicationConfigID.
+         * @memberof api
+         * @interface IApplicationConfigID
+         * @property {string|null} [appID] ApplicationConfigID appID
+         * @property {number|null} [version] ApplicationConfigID version
+         */
+
+        /**
+         * Constructs a new ApplicationConfigID.
+         * @memberof api
+         * @classdesc Represents an ApplicationConfigID.
+         * @implements IApplicationConfigID
+         * @constructor
+         * @param {api.IApplicationConfigID=} [properties] Properties to set
+         */
+        function ApplicationConfigID(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * ApplicationConfigID appID.
+         * @member {string} appID
+         * @memberof api.ApplicationConfigID
+         * @instance
+         */
+        ApplicationConfigID.prototype.appID = "";
+
+        /**
+         * ApplicationConfigID version.
+         * @member {number} version
+         * @memberof api.ApplicationConfigID
+         * @instance
+         */
+        ApplicationConfigID.prototype.version = 0;
+
+        /**
+         * Creates a new ApplicationConfigID instance using the specified properties.
+         * @function create
+         * @memberof api.ApplicationConfigID
+         * @static
+         * @param {api.IApplicationConfigID=} [properties] Properties to set
+         * @returns {api.ApplicationConfigID} ApplicationConfigID instance
+         */
+        ApplicationConfigID.create = function create(properties) {
+            return new ApplicationConfigID(properties);
+        };
+
+        /**
+         * Encodes the specified ApplicationConfigID message. Does not implicitly {@link api.ApplicationConfigID.verify|verify} messages.
+         * @function encode
+         * @memberof api.ApplicationConfigID
+         * @static
+         * @param {api.IApplicationConfigID} message ApplicationConfigID message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ApplicationConfigID.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.appID != null && message.hasOwnProperty("appID"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.appID);
+            if (message.version != null && message.hasOwnProperty("version"))
+                writer.uint32(/* id 2, wireType 0 =*/16).uint32(message.version);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified ApplicationConfigID message, length delimited. Does not implicitly {@link api.ApplicationConfigID.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof api.ApplicationConfigID
+         * @static
+         * @param {api.IApplicationConfigID} message ApplicationConfigID message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ApplicationConfigID.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an ApplicationConfigID message from the specified reader or buffer.
+         * @function decode
+         * @memberof api.ApplicationConfigID
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {api.ApplicationConfigID} ApplicationConfigID
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ApplicationConfigID.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.ApplicationConfigID();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.appID = reader.string();
+                    break;
+                case 2:
+                    message.version = reader.uint32();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an ApplicationConfigID message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof api.ApplicationConfigID
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {api.ApplicationConfigID} ApplicationConfigID
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ApplicationConfigID.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an ApplicationConfigID message.
+         * @function verify
+         * @memberof api.ApplicationConfigID
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        ApplicationConfigID.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.appID != null && message.hasOwnProperty("appID"))
+                if (!$util.isString(message.appID))
+                    return "appID: string expected";
+            if (message.version != null && message.hasOwnProperty("version"))
+                if (!$util.isInteger(message.version))
+                    return "version: integer expected";
+            return null;
+        };
+
+        /**
+         * Creates an ApplicationConfigID message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof api.ApplicationConfigID
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {api.ApplicationConfigID} ApplicationConfigID
+         */
+        ApplicationConfigID.fromObject = function fromObject(object) {
+            if (object instanceof $root.api.ApplicationConfigID)
+                return object;
+            var message = new $root.api.ApplicationConfigID();
+            if (object.appID != null)
+                message.appID = String(object.appID);
+            if (object.version != null)
+                message.version = object.version >>> 0;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an ApplicationConfigID message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof api.ApplicationConfigID
+         * @static
+         * @param {api.ApplicationConfigID} message ApplicationConfigID
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        ApplicationConfigID.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.appID = "";
+                object.version = 0;
+            }
+            if (message.appID != null && message.hasOwnProperty("appID"))
+                object.appID = message.appID;
+            if (message.version != null && message.hasOwnProperty("version"))
+                object.version = message.version;
+            return object;
+        };
+
+        /**
+         * Converts this ApplicationConfigID to JSON.
+         * @function toJSON
+         * @memberof api.ApplicationConfigID
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        ApplicationConfigID.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return ApplicationConfigID;
+    })();
+
+    api.IdentityConfigurationAsApplicationMetadata = (function() {
+
+        /**
+         * Properties of an IdentityConfigurationAsApplicationMetadata.
+         * @memberof api
+         * @interface IIdentityConfigurationAsApplicationMetadata
+         * @property {api.IApplicationConfigID|null} [configID] IdentityConfigurationAsApplicationMetadata configID
+         * @property {api.IIdentityKeyID|null} [creator] IdentityConfigurationAsApplicationMetadata creator
+         * @property {number|Long|null} [created] IdentityConfigurationAsApplicationMetadata created
+         */
+
+        /**
+         * Constructs a new IdentityConfigurationAsApplicationMetadata.
+         * @memberof api
+         * @classdesc Represents an IdentityConfigurationAsApplicationMetadata.
+         * @implements IIdentityConfigurationAsApplicationMetadata
+         * @constructor
+         * @param {api.IIdentityConfigurationAsApplicationMetadata=} [properties] Properties to set
+         */
+        function IdentityConfigurationAsApplicationMetadata(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * IdentityConfigurationAsApplicationMetadata configID.
+         * @member {api.IApplicationConfigID|null|undefined} configID
+         * @memberof api.IdentityConfigurationAsApplicationMetadata
+         * @instance
+         */
+        IdentityConfigurationAsApplicationMetadata.prototype.configID = null;
+
+        /**
+         * IdentityConfigurationAsApplicationMetadata creator.
+         * @member {api.IIdentityKeyID|null|undefined} creator
+         * @memberof api.IdentityConfigurationAsApplicationMetadata
+         * @instance
+         */
+        IdentityConfigurationAsApplicationMetadata.prototype.creator = null;
+
+        /**
+         * IdentityConfigurationAsApplicationMetadata created.
+         * @member {number|Long} created
+         * @memberof api.IdentityConfigurationAsApplicationMetadata
+         * @instance
+         */
+        IdentityConfigurationAsApplicationMetadata.prototype.created = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * Creates a new IdentityConfigurationAsApplicationMetadata instance using the specified properties.
+         * @function create
+         * @memberof api.IdentityConfigurationAsApplicationMetadata
+         * @static
+         * @param {api.IIdentityConfigurationAsApplicationMetadata=} [properties] Properties to set
+         * @returns {api.IdentityConfigurationAsApplicationMetadata} IdentityConfigurationAsApplicationMetadata instance
+         */
+        IdentityConfigurationAsApplicationMetadata.create = function create(properties) {
+            return new IdentityConfigurationAsApplicationMetadata(properties);
+        };
+
+        /**
+         * Encodes the specified IdentityConfigurationAsApplicationMetadata message. Does not implicitly {@link api.IdentityConfigurationAsApplicationMetadata.verify|verify} messages.
+         * @function encode
+         * @memberof api.IdentityConfigurationAsApplicationMetadata
+         * @static
+         * @param {api.IIdentityConfigurationAsApplicationMetadata} message IdentityConfigurationAsApplicationMetadata message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        IdentityConfigurationAsApplicationMetadata.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.configID != null && message.hasOwnProperty("configID"))
+                $root.api.ApplicationConfigID.encode(message.configID, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            if (message.creator != null && message.hasOwnProperty("creator"))
+                $root.api.IdentityKeyID.encode(message.creator, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+            if (message.created != null && message.hasOwnProperty("created"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int64(message.created);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified IdentityConfigurationAsApplicationMetadata message, length delimited. Does not implicitly {@link api.IdentityConfigurationAsApplicationMetadata.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof api.IdentityConfigurationAsApplicationMetadata
+         * @static
+         * @param {api.IIdentityConfigurationAsApplicationMetadata} message IdentityConfigurationAsApplicationMetadata message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        IdentityConfigurationAsApplicationMetadata.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an IdentityConfigurationAsApplicationMetadata message from the specified reader or buffer.
+         * @function decode
+         * @memberof api.IdentityConfigurationAsApplicationMetadata
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {api.IdentityConfigurationAsApplicationMetadata} IdentityConfigurationAsApplicationMetadata
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        IdentityConfigurationAsApplicationMetadata.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.IdentityConfigurationAsApplicationMetadata();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.configID = $root.api.ApplicationConfigID.decode(reader, reader.uint32());
+                    break;
+                case 2:
+                    message.creator = $root.api.IdentityKeyID.decode(reader, reader.uint32());
+                    break;
+                case 3:
+                    message.created = reader.int64();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an IdentityConfigurationAsApplicationMetadata message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof api.IdentityConfigurationAsApplicationMetadata
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {api.IdentityConfigurationAsApplicationMetadata} IdentityConfigurationAsApplicationMetadata
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        IdentityConfigurationAsApplicationMetadata.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an IdentityConfigurationAsApplicationMetadata message.
+         * @function verify
+         * @memberof api.IdentityConfigurationAsApplicationMetadata
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        IdentityConfigurationAsApplicationMetadata.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.configID != null && message.hasOwnProperty("configID")) {
+                var error = $root.api.ApplicationConfigID.verify(message.configID);
+                if (error)
+                    return "configID." + error;
+            }
+            if (message.creator != null && message.hasOwnProperty("creator")) {
+                var error = $root.api.IdentityKeyID.verify(message.creator);
+                if (error)
+                    return "creator." + error;
+            }
+            if (message.created != null && message.hasOwnProperty("created"))
+                if (!$util.isInteger(message.created) && !(message.created && $util.isInteger(message.created.low) && $util.isInteger(message.created.high)))
+                    return "created: integer|Long expected";
+            return null;
+        };
+
+        /**
+         * Creates an IdentityConfigurationAsApplicationMetadata message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof api.IdentityConfigurationAsApplicationMetadata
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {api.IdentityConfigurationAsApplicationMetadata} IdentityConfigurationAsApplicationMetadata
+         */
+        IdentityConfigurationAsApplicationMetadata.fromObject = function fromObject(object) {
+            if (object instanceof $root.api.IdentityConfigurationAsApplicationMetadata)
+                return object;
+            var message = new $root.api.IdentityConfigurationAsApplicationMetadata();
+            if (object.configID != null) {
+                if (typeof object.configID !== "object")
+                    throw TypeError(".api.IdentityConfigurationAsApplicationMetadata.configID: object expected");
+                message.configID = $root.api.ApplicationConfigID.fromObject(object.configID);
+            }
+            if (object.creator != null) {
+                if (typeof object.creator !== "object")
+                    throw TypeError(".api.IdentityConfigurationAsApplicationMetadata.creator: object expected");
+                message.creator = $root.api.IdentityKeyID.fromObject(object.creator);
+            }
+            if (object.created != null)
+                if ($util.Long)
+                    (message.created = $util.Long.fromValue(object.created)).unsigned = false;
+                else if (typeof object.created === "string")
+                    message.created = parseInt(object.created, 10);
+                else if (typeof object.created === "number")
+                    message.created = object.created;
+                else if (typeof object.created === "object")
+                    message.created = new $util.LongBits(object.created.low >>> 0, object.created.high >>> 0).toNumber();
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an IdentityConfigurationAsApplicationMetadata message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof api.IdentityConfigurationAsApplicationMetadata
+         * @static
+         * @param {api.IdentityConfigurationAsApplicationMetadata} message IdentityConfigurationAsApplicationMetadata
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        IdentityConfigurationAsApplicationMetadata.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.configID = null;
+                object.creator = null;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.created = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.created = options.longs === String ? "0" : 0;
+            }
+            if (message.configID != null && message.hasOwnProperty("configID"))
+                object.configID = $root.api.ApplicationConfigID.toObject(message.configID, options);
+            if (message.creator != null && message.hasOwnProperty("creator"))
+                object.creator = $root.api.IdentityKeyID.toObject(message.creator, options);
+            if (message.created != null && message.hasOwnProperty("created"))
+                if (typeof message.created === "number")
+                    object.created = options.longs === String ? String(message.created) : message.created;
+                else
+                    object.created = options.longs === String ? $util.Long.prototype.toString.call(message.created) : options.longs === Number ? new $util.LongBits(message.created.low >>> 0, message.created.high >>> 0).toNumber() : message.created;
+            return object;
+        };
+
+        /**
+         * Converts this IdentityConfigurationAsApplicationMetadata to JSON.
+         * @function toJSON
+         * @memberof api.IdentityConfigurationAsApplicationMetadata
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        IdentityConfigurationAsApplicationMetadata.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return IdentityConfigurationAsApplicationMetadata;
+    })();
+
     api.IdentityConfigurationAsApplicationRequest = (function() {
 
         /**
@@ -16908,24 +17139,25 @@ $root.api = (function() {
         return IdentityConfigurationAsApplicationRequest;
     })();
 
-    api.IdentityConfigurationAsApplicationResponse = (function() {
+    api.IdentityGetConfigurationResponse = (function() {
 
         /**
-         * Properties of an IdentityConfigurationAsApplicationResponse.
+         * Properties of an IdentityGetConfigurationResponse.
          * @memberof api
-         * @interface IIdentityConfigurationAsApplicationResponse
-         * @property {api.IIdentityConfigurationAsApplication|null} [config] IdentityConfigurationAsApplicationResponse config
+         * @interface IIdentityGetConfigurationResponse
+         * @property {api.IIdentityConfigurationAsApplication|null} [config] IdentityGetConfigurationResponse config
+         * @property {api.IIdentityConfigurationAsApplicationMetadata|null} [metadata] IdentityGetConfigurationResponse metadata
          */
 
         /**
-         * Constructs a new IdentityConfigurationAsApplicationResponse.
+         * Constructs a new IdentityGetConfigurationResponse.
          * @memberof api
-         * @classdesc Represents an IdentityConfigurationAsApplicationResponse.
-         * @implements IIdentityConfigurationAsApplicationResponse
+         * @classdesc Represents an IdentityGetConfigurationResponse.
+         * @implements IIdentityGetConfigurationResponse
          * @constructor
-         * @param {api.IIdentityConfigurationAsApplicationResponse=} [properties] Properties to set
+         * @param {api.IIdentityGetConfigurationResponse=} [properties] Properties to set
          */
-        function IdentityConfigurationAsApplicationResponse(properties) {
+        function IdentityGetConfigurationResponse(properties) {
             if (properties)
                 for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null)
@@ -16933,75 +17165,88 @@ $root.api = (function() {
         }
 
         /**
-         * IdentityConfigurationAsApplicationResponse config.
+         * IdentityGetConfigurationResponse config.
          * @member {api.IIdentityConfigurationAsApplication|null|undefined} config
-         * @memberof api.IdentityConfigurationAsApplicationResponse
+         * @memberof api.IdentityGetConfigurationResponse
          * @instance
          */
-        IdentityConfigurationAsApplicationResponse.prototype.config = null;
+        IdentityGetConfigurationResponse.prototype.config = null;
 
         /**
-         * Creates a new IdentityConfigurationAsApplicationResponse instance using the specified properties.
-         * @function create
-         * @memberof api.IdentityConfigurationAsApplicationResponse
-         * @static
-         * @param {api.IIdentityConfigurationAsApplicationResponse=} [properties] Properties to set
-         * @returns {api.IdentityConfigurationAsApplicationResponse} IdentityConfigurationAsApplicationResponse instance
+         * IdentityGetConfigurationResponse metadata.
+         * @member {api.IIdentityConfigurationAsApplicationMetadata|null|undefined} metadata
+         * @memberof api.IdentityGetConfigurationResponse
+         * @instance
          */
-        IdentityConfigurationAsApplicationResponse.create = function create(properties) {
-            return new IdentityConfigurationAsApplicationResponse(properties);
+        IdentityGetConfigurationResponse.prototype.metadata = null;
+
+        /**
+         * Creates a new IdentityGetConfigurationResponse instance using the specified properties.
+         * @function create
+         * @memberof api.IdentityGetConfigurationResponse
+         * @static
+         * @param {api.IIdentityGetConfigurationResponse=} [properties] Properties to set
+         * @returns {api.IdentityGetConfigurationResponse} IdentityGetConfigurationResponse instance
+         */
+        IdentityGetConfigurationResponse.create = function create(properties) {
+            return new IdentityGetConfigurationResponse(properties);
         };
 
         /**
-         * Encodes the specified IdentityConfigurationAsApplicationResponse message. Does not implicitly {@link api.IdentityConfigurationAsApplicationResponse.verify|verify} messages.
+         * Encodes the specified IdentityGetConfigurationResponse message. Does not implicitly {@link api.IdentityGetConfigurationResponse.verify|verify} messages.
          * @function encode
-         * @memberof api.IdentityConfigurationAsApplicationResponse
+         * @memberof api.IdentityGetConfigurationResponse
          * @static
-         * @param {api.IIdentityConfigurationAsApplicationResponse} message IdentityConfigurationAsApplicationResponse message or plain object to encode
+         * @param {api.IIdentityGetConfigurationResponse} message IdentityGetConfigurationResponse message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        IdentityConfigurationAsApplicationResponse.encode = function encode(message, writer) {
+        IdentityGetConfigurationResponse.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
             if (message.config != null && message.hasOwnProperty("config"))
                 $root.api.IdentityConfigurationAsApplication.encode(message.config, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            if (message.metadata != null && message.hasOwnProperty("metadata"))
+                $root.api.IdentityConfigurationAsApplicationMetadata.encode(message.metadata, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
             return writer;
         };
 
         /**
-         * Encodes the specified IdentityConfigurationAsApplicationResponse message, length delimited. Does not implicitly {@link api.IdentityConfigurationAsApplicationResponse.verify|verify} messages.
+         * Encodes the specified IdentityGetConfigurationResponse message, length delimited. Does not implicitly {@link api.IdentityGetConfigurationResponse.verify|verify} messages.
          * @function encodeDelimited
-         * @memberof api.IdentityConfigurationAsApplicationResponse
+         * @memberof api.IdentityGetConfigurationResponse
          * @static
-         * @param {api.IIdentityConfigurationAsApplicationResponse} message IdentityConfigurationAsApplicationResponse message or plain object to encode
+         * @param {api.IIdentityGetConfigurationResponse} message IdentityGetConfigurationResponse message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        IdentityConfigurationAsApplicationResponse.encodeDelimited = function encodeDelimited(message, writer) {
+        IdentityGetConfigurationResponse.encodeDelimited = function encodeDelimited(message, writer) {
             return this.encode(message, writer).ldelim();
         };
 
         /**
-         * Decodes an IdentityConfigurationAsApplicationResponse message from the specified reader or buffer.
+         * Decodes an IdentityGetConfigurationResponse message from the specified reader or buffer.
          * @function decode
-         * @memberof api.IdentityConfigurationAsApplicationResponse
+         * @memberof api.IdentityGetConfigurationResponse
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {api.IdentityConfigurationAsApplicationResponse} IdentityConfigurationAsApplicationResponse
+         * @returns {api.IdentityGetConfigurationResponse} IdentityGetConfigurationResponse
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        IdentityConfigurationAsApplicationResponse.decode = function decode(reader, length) {
+        IdentityGetConfigurationResponse.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.IdentityConfigurationAsApplicationResponse();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.IdentityGetConfigurationResponse();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
                     message.config = $root.api.IdentityConfigurationAsApplication.decode(reader, reader.uint32());
+                    break;
+                case 2:
+                    message.metadata = $root.api.IdentityConfigurationAsApplicationMetadata.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -17012,30 +17257,30 @@ $root.api = (function() {
         };
 
         /**
-         * Decodes an IdentityConfigurationAsApplicationResponse message from the specified reader or buffer, length delimited.
+         * Decodes an IdentityGetConfigurationResponse message from the specified reader or buffer, length delimited.
          * @function decodeDelimited
-         * @memberof api.IdentityConfigurationAsApplicationResponse
+         * @memberof api.IdentityGetConfigurationResponse
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {api.IdentityConfigurationAsApplicationResponse} IdentityConfigurationAsApplicationResponse
+         * @returns {api.IdentityGetConfigurationResponse} IdentityGetConfigurationResponse
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        IdentityConfigurationAsApplicationResponse.decodeDelimited = function decodeDelimited(reader) {
+        IdentityGetConfigurationResponse.decodeDelimited = function decodeDelimited(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
             return this.decode(reader, reader.uint32());
         };
 
         /**
-         * Verifies an IdentityConfigurationAsApplicationResponse message.
+         * Verifies an IdentityGetConfigurationResponse message.
          * @function verify
-         * @memberof api.IdentityConfigurationAsApplicationResponse
+         * @memberof api.IdentityGetConfigurationResponse
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
          */
-        IdentityConfigurationAsApplicationResponse.verify = function verify(message) {
+        IdentityGetConfigurationResponse.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
             if (message.config != null && message.hasOwnProperty("config")) {
@@ -17043,61 +17288,75 @@ $root.api = (function() {
                 if (error)
                     return "config." + error;
             }
+            if (message.metadata != null && message.hasOwnProperty("metadata")) {
+                var error = $root.api.IdentityConfigurationAsApplicationMetadata.verify(message.metadata);
+                if (error)
+                    return "metadata." + error;
+            }
             return null;
         };
 
         /**
-         * Creates an IdentityConfigurationAsApplicationResponse message from a plain object. Also converts values to their respective internal types.
+         * Creates an IdentityGetConfigurationResponse message from a plain object. Also converts values to their respective internal types.
          * @function fromObject
-         * @memberof api.IdentityConfigurationAsApplicationResponse
+         * @memberof api.IdentityGetConfigurationResponse
          * @static
          * @param {Object.<string,*>} object Plain object
-         * @returns {api.IdentityConfigurationAsApplicationResponse} IdentityConfigurationAsApplicationResponse
+         * @returns {api.IdentityGetConfigurationResponse} IdentityGetConfigurationResponse
          */
-        IdentityConfigurationAsApplicationResponse.fromObject = function fromObject(object) {
-            if (object instanceof $root.api.IdentityConfigurationAsApplicationResponse)
+        IdentityGetConfigurationResponse.fromObject = function fromObject(object) {
+            if (object instanceof $root.api.IdentityGetConfigurationResponse)
                 return object;
-            var message = new $root.api.IdentityConfigurationAsApplicationResponse();
+            var message = new $root.api.IdentityGetConfigurationResponse();
             if (object.config != null) {
                 if (typeof object.config !== "object")
-                    throw TypeError(".api.IdentityConfigurationAsApplicationResponse.config: object expected");
+                    throw TypeError(".api.IdentityGetConfigurationResponse.config: object expected");
                 message.config = $root.api.IdentityConfigurationAsApplication.fromObject(object.config);
+            }
+            if (object.metadata != null) {
+                if (typeof object.metadata !== "object")
+                    throw TypeError(".api.IdentityGetConfigurationResponse.metadata: object expected");
+                message.metadata = $root.api.IdentityConfigurationAsApplicationMetadata.fromObject(object.metadata);
             }
             return message;
         };
 
         /**
-         * Creates a plain object from an IdentityConfigurationAsApplicationResponse message. Also converts values to other types if specified.
+         * Creates a plain object from an IdentityGetConfigurationResponse message. Also converts values to other types if specified.
          * @function toObject
-         * @memberof api.IdentityConfigurationAsApplicationResponse
+         * @memberof api.IdentityGetConfigurationResponse
          * @static
-         * @param {api.IdentityConfigurationAsApplicationResponse} message IdentityConfigurationAsApplicationResponse
+         * @param {api.IdentityGetConfigurationResponse} message IdentityGetConfigurationResponse
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
-        IdentityConfigurationAsApplicationResponse.toObject = function toObject(message, options) {
+        IdentityGetConfigurationResponse.toObject = function toObject(message, options) {
             if (!options)
                 options = {};
             var object = {};
-            if (options.defaults)
+            if (options.defaults) {
                 object.config = null;
+                object.metadata = null;
+            }
             if (message.config != null && message.hasOwnProperty("config"))
                 object.config = $root.api.IdentityConfigurationAsApplication.toObject(message.config, options);
+            if (message.metadata != null && message.hasOwnProperty("metadata"))
+                object.metadata = $root.api.IdentityConfigurationAsApplicationMetadata.toObject(message.metadata, options);
             return object;
         };
 
         /**
-         * Converts this IdentityConfigurationAsApplicationResponse to JSON.
+         * Converts this IdentityGetConfigurationResponse to JSON.
          * @function toJSON
-         * @memberof api.IdentityConfigurationAsApplicationResponse
+         * @memberof api.IdentityGetConfigurationResponse
          * @instance
          * @returns {Object.<string,*>} JSON object
          */
-        IdentityConfigurationAsApplicationResponse.prototype.toJSON = function toJSON() {
+        IdentityGetConfigurationResponse.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
 
-        return IdentityConfigurationAsApplicationResponse;
+        return IdentityGetConfigurationResponse;
     })();
 
     api.ApplicationUsageOverview = (function() {
@@ -18983,8 +19242,7 @@ $root.api = (function() {
          * Properties of a SessionUnStaleResponse.
          * @memberof api
          * @interface ISessionUnStaleResponse
-         * @property {api.IIdentityEncryption|null} [encryption] SessionUnStaleResponse encryption
-         * @property {api.IIdentityPublicKey|null} [creator] SessionUnStaleResponse creator
+         * @property {api.IIdentityEncryptedKeySet|null} [encryption] SessionUnStaleResponse encryption
          */
 
         /**
@@ -19004,19 +19262,11 @@ $root.api = (function() {
 
         /**
          * SessionUnStaleResponse encryption.
-         * @member {api.IIdentityEncryption|null|undefined} encryption
+         * @member {api.IIdentityEncryptedKeySet|null|undefined} encryption
          * @memberof api.SessionUnStaleResponse
          * @instance
          */
         SessionUnStaleResponse.prototype.encryption = null;
-
-        /**
-         * SessionUnStaleResponse creator.
-         * @member {api.IIdentityPublicKey|null|undefined} creator
-         * @memberof api.SessionUnStaleResponse
-         * @instance
-         */
-        SessionUnStaleResponse.prototype.creator = null;
 
         /**
          * Creates a new SessionUnStaleResponse instance using the specified properties.
@@ -19043,9 +19293,7 @@ $root.api = (function() {
             if (!writer)
                 writer = $Writer.create();
             if (message.encryption != null && message.hasOwnProperty("encryption"))
-                $root.api.IdentityEncryption.encode(message.encryption, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
-            if (message.creator != null && message.hasOwnProperty("creator"))
-                $root.api.IdentityPublicKey.encode(message.creator, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                $root.api.IdentityEncryptedKeySet.encode(message.encryption, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
             return writer;
         };
 
@@ -19081,10 +19329,7 @@ $root.api = (function() {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
-                    message.encryption = $root.api.IdentityEncryption.decode(reader, reader.uint32());
-                    break;
-                case 2:
-                    message.creator = $root.api.IdentityPublicKey.decode(reader, reader.uint32());
+                    message.encryption = $root.api.IdentityEncryptedKeySet.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -19122,14 +19367,9 @@ $root.api = (function() {
             if (typeof message !== "object" || message === null)
                 return "object expected";
             if (message.encryption != null && message.hasOwnProperty("encryption")) {
-                var error = $root.api.IdentityEncryption.verify(message.encryption);
+                var error = $root.api.IdentityEncryptedKeySet.verify(message.encryption);
                 if (error)
                     return "encryption." + error;
-            }
-            if (message.creator != null && message.hasOwnProperty("creator")) {
-                var error = $root.api.IdentityPublicKey.verify(message.creator);
-                if (error)
-                    return "creator." + error;
             }
             return null;
         };
@@ -19149,12 +19389,7 @@ $root.api = (function() {
             if (object.encryption != null) {
                 if (typeof object.encryption !== "object")
                     throw TypeError(".api.SessionUnStaleResponse.encryption: object expected");
-                message.encryption = $root.api.IdentityEncryption.fromObject(object.encryption);
-            }
-            if (object.creator != null) {
-                if (typeof object.creator !== "object")
-                    throw TypeError(".api.SessionUnStaleResponse.creator: object expected");
-                message.creator = $root.api.IdentityPublicKey.fromObject(object.creator);
+                message.encryption = $root.api.IdentityEncryptedKeySet.fromObject(object.encryption);
             }
             return message;
         };
@@ -19172,14 +19407,10 @@ $root.api = (function() {
             if (!options)
                 options = {};
             var object = {};
-            if (options.defaults) {
+            if (options.defaults)
                 object.encryption = null;
-                object.creator = null;
-            }
             if (message.encryption != null && message.hasOwnProperty("encryption"))
-                object.encryption = $root.api.IdentityEncryption.toObject(message.encryption, options);
-            if (message.creator != null && message.hasOwnProperty("creator"))
-                object.creator = $root.api.IdentityPublicKey.toObject(message.creator, options);
+                object.encryption = $root.api.IdentityEncryptedKeySet.toObject(message.encryption, options);
             return object;
         };
 
@@ -19869,8 +20100,9 @@ $root.api = (function() {
          * @memberof api
          * @interface IResourceGetResponse
          * @property {api.IResource|null} [resource] ResourceGetResponse resource
+         * @property {api.IIdentityKeyID|null} [owner] ResourceGetResponse owner
          * @property {api.IIdentityKeyID|null} [creator] ResourceGetResponse creator
-         * @property {Array.<api.ICipher>|null} [encryptedKey] ResourceGetResponse encryptedKey
+         * @property {api.ICipher|null} [encryptedKey] ResourceGetResponse encryptedKey
          */
 
         /**
@@ -19882,7 +20114,6 @@ $root.api = (function() {
          * @param {api.IResourceGetResponse=} [properties] Properties to set
          */
         function ResourceGetResponse(properties) {
-            this.encryptedKey = [];
             if (properties)
                 for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null)
@@ -19898,6 +20129,14 @@ $root.api = (function() {
         ResourceGetResponse.prototype.resource = null;
 
         /**
+         * ResourceGetResponse owner.
+         * @member {api.IIdentityKeyID|null|undefined} owner
+         * @memberof api.ResourceGetResponse
+         * @instance
+         */
+        ResourceGetResponse.prototype.owner = null;
+
+        /**
          * ResourceGetResponse creator.
          * @member {api.IIdentityKeyID|null|undefined} creator
          * @memberof api.ResourceGetResponse
@@ -19907,11 +20146,11 @@ $root.api = (function() {
 
         /**
          * ResourceGetResponse encryptedKey.
-         * @member {Array.<api.ICipher>} encryptedKey
+         * @member {api.ICipher|null|undefined} encryptedKey
          * @memberof api.ResourceGetResponse
          * @instance
          */
-        ResourceGetResponse.prototype.encryptedKey = $util.emptyArray;
+        ResourceGetResponse.prototype.encryptedKey = null;
 
         /**
          * Creates a new ResourceGetResponse instance using the specified properties.
@@ -19939,11 +20178,12 @@ $root.api = (function() {
                 writer = $Writer.create();
             if (message.resource != null && message.hasOwnProperty("resource"))
                 $root.api.Resource.encode(message.resource, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            if (message.owner != null && message.hasOwnProperty("owner"))
+                $root.api.IdentityKeyID.encode(message.owner, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
             if (message.creator != null && message.hasOwnProperty("creator"))
-                $root.api.IdentityKeyID.encode(message.creator, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
-            if (message.encryptedKey != null && message.encryptedKey.length)
-                for (var i = 0; i < message.encryptedKey.length; ++i)
-                    $root.api.Cipher.encode(message.encryptedKey[i], writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+                $root.api.IdentityKeyID.encode(message.creator, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+            if (message.encryptedKey != null && message.hasOwnProperty("encryptedKey"))
+                $root.api.Cipher.encode(message.encryptedKey, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
             return writer;
         };
 
@@ -19982,12 +20222,13 @@ $root.api = (function() {
                     message.resource = $root.api.Resource.decode(reader, reader.uint32());
                     break;
                 case 2:
-                    message.creator = $root.api.IdentityKeyID.decode(reader, reader.uint32());
+                    message.owner = $root.api.IdentityKeyID.decode(reader, reader.uint32());
                     break;
                 case 3:
-                    if (!(message.encryptedKey && message.encryptedKey.length))
-                        message.encryptedKey = [];
-                    message.encryptedKey.push($root.api.Cipher.decode(reader, reader.uint32()));
+                    message.creator = $root.api.IdentityKeyID.decode(reader, reader.uint32());
+                    break;
+                case 4:
+                    message.encryptedKey = $root.api.Cipher.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -20029,19 +20270,20 @@ $root.api = (function() {
                 if (error)
                     return "resource." + error;
             }
+            if (message.owner != null && message.hasOwnProperty("owner")) {
+                var error = $root.api.IdentityKeyID.verify(message.owner);
+                if (error)
+                    return "owner." + error;
+            }
             if (message.creator != null && message.hasOwnProperty("creator")) {
                 var error = $root.api.IdentityKeyID.verify(message.creator);
                 if (error)
                     return "creator." + error;
             }
             if (message.encryptedKey != null && message.hasOwnProperty("encryptedKey")) {
-                if (!Array.isArray(message.encryptedKey))
-                    return "encryptedKey: array expected";
-                for (var i = 0; i < message.encryptedKey.length; ++i) {
-                    var error = $root.api.Cipher.verify(message.encryptedKey[i]);
-                    if (error)
-                        return "encryptedKey." + error;
-                }
+                var error = $root.api.Cipher.verify(message.encryptedKey);
+                if (error)
+                    return "encryptedKey." + error;
             }
             return null;
         };
@@ -20063,20 +20305,20 @@ $root.api = (function() {
                     throw TypeError(".api.ResourceGetResponse.resource: object expected");
                 message.resource = $root.api.Resource.fromObject(object.resource);
             }
+            if (object.owner != null) {
+                if (typeof object.owner !== "object")
+                    throw TypeError(".api.ResourceGetResponse.owner: object expected");
+                message.owner = $root.api.IdentityKeyID.fromObject(object.owner);
+            }
             if (object.creator != null) {
                 if (typeof object.creator !== "object")
                     throw TypeError(".api.ResourceGetResponse.creator: object expected");
                 message.creator = $root.api.IdentityKeyID.fromObject(object.creator);
             }
-            if (object.encryptedKey) {
-                if (!Array.isArray(object.encryptedKey))
-                    throw TypeError(".api.ResourceGetResponse.encryptedKey: array expected");
-                message.encryptedKey = [];
-                for (var i = 0; i < object.encryptedKey.length; ++i) {
-                    if (typeof object.encryptedKey[i] !== "object")
-                        throw TypeError(".api.ResourceGetResponse.encryptedKey: object expected");
-                    message.encryptedKey[i] = $root.api.Cipher.fromObject(object.encryptedKey[i]);
-                }
+            if (object.encryptedKey != null) {
+                if (typeof object.encryptedKey !== "object")
+                    throw TypeError(".api.ResourceGetResponse.encryptedKey: object expected");
+                message.encryptedKey = $root.api.Cipher.fromObject(object.encryptedKey);
             }
             return message;
         };
@@ -20091,281 +20333,6 @@ $root.api = (function() {
          * @returns {Object.<string,*>} Plain object
          */
         ResourceGetResponse.toObject = function toObject(message, options) {
-            if (!options)
-                options = {};
-            var object = {};
-            if (options.arrays || options.defaults)
-                object.encryptedKey = [];
-            if (options.defaults) {
-                object.resource = null;
-                object.creator = null;
-            }
-            if (message.resource != null && message.hasOwnProperty("resource"))
-                object.resource = $root.api.Resource.toObject(message.resource, options);
-            if (message.creator != null && message.hasOwnProperty("creator"))
-                object.creator = $root.api.IdentityKeyID.toObject(message.creator, options);
-            if (message.encryptedKey && message.encryptedKey.length) {
-                object.encryptedKey = [];
-                for (var j = 0; j < message.encryptedKey.length; ++j)
-                    object.encryptedKey[j] = $root.api.Cipher.toObject(message.encryptedKey[j], options);
-            }
-            return object;
-        };
-
-        /**
-         * Converts this ResourceGetResponse to JSON.
-         * @function toJSON
-         * @memberof api.ResourceGetResponse
-         * @instance
-         * @returns {Object.<string,*>} JSON object
-         */
-        ResourceGetResponse.prototype.toJSON = function toJSON() {
-            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-        };
-
-        return ResourceGetResponse;
-    })();
-
-    api.ResourceWithKey = (function() {
-
-        /**
-         * Properties of a ResourceWithKey.
-         * @memberof api
-         * @interface IResourceWithKey
-         * @property {api.IResource|null} [resource] ResourceWithKey resource
-         * @property {api.IIdentityKeyID|null} [owner] ResourceWithKey owner
-         * @property {api.IIdentityKeyID|null} [creator] ResourceWithKey creator
-         * @property {api.ICipher|null} [encryptedKey] ResourceWithKey encryptedKey
-         */
-
-        /**
-         * Constructs a new ResourceWithKey.
-         * @memberof api
-         * @classdesc Represents a ResourceWithKey.
-         * @implements IResourceWithKey
-         * @constructor
-         * @param {api.IResourceWithKey=} [properties] Properties to set
-         */
-        function ResourceWithKey(properties) {
-            if (properties)
-                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                    if (properties[keys[i]] != null)
-                        this[keys[i]] = properties[keys[i]];
-        }
-
-        /**
-         * ResourceWithKey resource.
-         * @member {api.IResource|null|undefined} resource
-         * @memberof api.ResourceWithKey
-         * @instance
-         */
-        ResourceWithKey.prototype.resource = null;
-
-        /**
-         * ResourceWithKey owner.
-         * @member {api.IIdentityKeyID|null|undefined} owner
-         * @memberof api.ResourceWithKey
-         * @instance
-         */
-        ResourceWithKey.prototype.owner = null;
-
-        /**
-         * ResourceWithKey creator.
-         * @member {api.IIdentityKeyID|null|undefined} creator
-         * @memberof api.ResourceWithKey
-         * @instance
-         */
-        ResourceWithKey.prototype.creator = null;
-
-        /**
-         * ResourceWithKey encryptedKey.
-         * @member {api.ICipher|null|undefined} encryptedKey
-         * @memberof api.ResourceWithKey
-         * @instance
-         */
-        ResourceWithKey.prototype.encryptedKey = null;
-
-        /**
-         * Creates a new ResourceWithKey instance using the specified properties.
-         * @function create
-         * @memberof api.ResourceWithKey
-         * @static
-         * @param {api.IResourceWithKey=} [properties] Properties to set
-         * @returns {api.ResourceWithKey} ResourceWithKey instance
-         */
-        ResourceWithKey.create = function create(properties) {
-            return new ResourceWithKey(properties);
-        };
-
-        /**
-         * Encodes the specified ResourceWithKey message. Does not implicitly {@link api.ResourceWithKey.verify|verify} messages.
-         * @function encode
-         * @memberof api.ResourceWithKey
-         * @static
-         * @param {api.IResourceWithKey} message ResourceWithKey message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        ResourceWithKey.encode = function encode(message, writer) {
-            if (!writer)
-                writer = $Writer.create();
-            if (message.resource != null && message.hasOwnProperty("resource"))
-                $root.api.Resource.encode(message.resource, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
-            if (message.owner != null && message.hasOwnProperty("owner"))
-                $root.api.IdentityKeyID.encode(message.owner, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
-            if (message.creator != null && message.hasOwnProperty("creator"))
-                $root.api.IdentityKeyID.encode(message.creator, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
-            if (message.encryptedKey != null && message.hasOwnProperty("encryptedKey"))
-                $root.api.Cipher.encode(message.encryptedKey, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
-            return writer;
-        };
-
-        /**
-         * Encodes the specified ResourceWithKey message, length delimited. Does not implicitly {@link api.ResourceWithKey.verify|verify} messages.
-         * @function encodeDelimited
-         * @memberof api.ResourceWithKey
-         * @static
-         * @param {api.IResourceWithKey} message ResourceWithKey message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        ResourceWithKey.encodeDelimited = function encodeDelimited(message, writer) {
-            return this.encode(message, writer).ldelim();
-        };
-
-        /**
-         * Decodes a ResourceWithKey message from the specified reader or buffer.
-         * @function decode
-         * @memberof api.ResourceWithKey
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @param {number} [length] Message length if known beforehand
-         * @returns {api.ResourceWithKey} ResourceWithKey
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        ResourceWithKey.decode = function decode(reader, length) {
-            if (!(reader instanceof $Reader))
-                reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.ResourceWithKey();
-            while (reader.pos < end) {
-                var tag = reader.uint32();
-                switch (tag >>> 3) {
-                case 1:
-                    message.resource = $root.api.Resource.decode(reader, reader.uint32());
-                    break;
-                case 2:
-                    message.owner = $root.api.IdentityKeyID.decode(reader, reader.uint32());
-                    break;
-                case 3:
-                    message.creator = $root.api.IdentityKeyID.decode(reader, reader.uint32());
-                    break;
-                case 4:
-                    message.encryptedKey = $root.api.Cipher.decode(reader, reader.uint32());
-                    break;
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-                }
-            }
-            return message;
-        };
-
-        /**
-         * Decodes a ResourceWithKey message from the specified reader or buffer, length delimited.
-         * @function decodeDelimited
-         * @memberof api.ResourceWithKey
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {api.ResourceWithKey} ResourceWithKey
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        ResourceWithKey.decodeDelimited = function decodeDelimited(reader) {
-            if (!(reader instanceof $Reader))
-                reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
-        };
-
-        /**
-         * Verifies a ResourceWithKey message.
-         * @function verify
-         * @memberof api.ResourceWithKey
-         * @static
-         * @param {Object.<string,*>} message Plain object to verify
-         * @returns {string|null} `null` if valid, otherwise the reason why it is not
-         */
-        ResourceWithKey.verify = function verify(message) {
-            if (typeof message !== "object" || message === null)
-                return "object expected";
-            if (message.resource != null && message.hasOwnProperty("resource")) {
-                var error = $root.api.Resource.verify(message.resource);
-                if (error)
-                    return "resource." + error;
-            }
-            if (message.owner != null && message.hasOwnProperty("owner")) {
-                var error = $root.api.IdentityKeyID.verify(message.owner);
-                if (error)
-                    return "owner." + error;
-            }
-            if (message.creator != null && message.hasOwnProperty("creator")) {
-                var error = $root.api.IdentityKeyID.verify(message.creator);
-                if (error)
-                    return "creator." + error;
-            }
-            if (message.encryptedKey != null && message.hasOwnProperty("encryptedKey")) {
-                var error = $root.api.Cipher.verify(message.encryptedKey);
-                if (error)
-                    return "encryptedKey." + error;
-            }
-            return null;
-        };
-
-        /**
-         * Creates a ResourceWithKey message from a plain object. Also converts values to their respective internal types.
-         * @function fromObject
-         * @memberof api.ResourceWithKey
-         * @static
-         * @param {Object.<string,*>} object Plain object
-         * @returns {api.ResourceWithKey} ResourceWithKey
-         */
-        ResourceWithKey.fromObject = function fromObject(object) {
-            if (object instanceof $root.api.ResourceWithKey)
-                return object;
-            var message = new $root.api.ResourceWithKey();
-            if (object.resource != null) {
-                if (typeof object.resource !== "object")
-                    throw TypeError(".api.ResourceWithKey.resource: object expected");
-                message.resource = $root.api.Resource.fromObject(object.resource);
-            }
-            if (object.owner != null) {
-                if (typeof object.owner !== "object")
-                    throw TypeError(".api.ResourceWithKey.owner: object expected");
-                message.owner = $root.api.IdentityKeyID.fromObject(object.owner);
-            }
-            if (object.creator != null) {
-                if (typeof object.creator !== "object")
-                    throw TypeError(".api.ResourceWithKey.creator: object expected");
-                message.creator = $root.api.IdentityKeyID.fromObject(object.creator);
-            }
-            if (object.encryptedKey != null) {
-                if (typeof object.encryptedKey !== "object")
-                    throw TypeError(".api.ResourceWithKey.encryptedKey: object expected");
-                message.encryptedKey = $root.api.Cipher.fromObject(object.encryptedKey);
-            }
-            return message;
-        };
-
-        /**
-         * Creates a plain object from a ResourceWithKey message. Also converts values to other types if specified.
-         * @function toObject
-         * @memberof api.ResourceWithKey
-         * @static
-         * @param {api.ResourceWithKey} message ResourceWithKey
-         * @param {$protobuf.IConversionOptions} [options] Conversion options
-         * @returns {Object.<string,*>} Plain object
-         */
-        ResourceWithKey.toObject = function toObject(message, options) {
             if (!options)
                 options = {};
             var object = {};
@@ -20387,17 +20354,17 @@ $root.api = (function() {
         };
 
         /**
-         * Converts this ResourceWithKey to JSON.
+         * Converts this ResourceGetResponse to JSON.
          * @function toJSON
-         * @memberof api.ResourceWithKey
+         * @memberof api.ResourceGetResponse
          * @instance
          * @returns {Object.<string,*>} JSON object
          */
-        ResourceWithKey.prototype.toJSON = function toJSON() {
+        ResourceGetResponse.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
 
-        return ResourceWithKey;
+        return ResourceGetResponse;
     })();
 
     api.ResourceGetKeyResponse = (function() {
@@ -20406,8 +20373,9 @@ $root.api = (function() {
          * Properties of a ResourceGetKeyResponse.
          * @memberof api
          * @interface IResourceGetKeyResponse
-         * @property {Array.<api.ICipher>|null} [encryptedKey] ResourceGetKeyResponse encryptedKey
+         * @property {api.ICipher|null} [encryptedKey] ResourceGetKeyResponse encryptedKey
          * @property {api.ResourceType|null} [type] ResourceGetKeyResponse type
+         * @property {api.IIdentityKeyID|null} [owner] ResourceGetKeyResponse owner
          */
 
         /**
@@ -20419,7 +20387,6 @@ $root.api = (function() {
          * @param {api.IResourceGetKeyResponse=} [properties] Properties to set
          */
         function ResourceGetKeyResponse(properties) {
-            this.encryptedKey = [];
             if (properties)
                 for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null)
@@ -20428,11 +20395,11 @@ $root.api = (function() {
 
         /**
          * ResourceGetKeyResponse encryptedKey.
-         * @member {Array.<api.ICipher>} encryptedKey
+         * @member {api.ICipher|null|undefined} encryptedKey
          * @memberof api.ResourceGetKeyResponse
          * @instance
          */
-        ResourceGetKeyResponse.prototype.encryptedKey = $util.emptyArray;
+        ResourceGetKeyResponse.prototype.encryptedKey = null;
 
         /**
          * ResourceGetKeyResponse type.
@@ -20441,6 +20408,14 @@ $root.api = (function() {
          * @instance
          */
         ResourceGetKeyResponse.prototype.type = 0;
+
+        /**
+         * ResourceGetKeyResponse owner.
+         * @member {api.IIdentityKeyID|null|undefined} owner
+         * @memberof api.ResourceGetKeyResponse
+         * @instance
+         */
+        ResourceGetKeyResponse.prototype.owner = null;
 
         /**
          * Creates a new ResourceGetKeyResponse instance using the specified properties.
@@ -20466,11 +20441,12 @@ $root.api = (function() {
         ResourceGetKeyResponse.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.encryptedKey != null && message.encryptedKey.length)
-                for (var i = 0; i < message.encryptedKey.length; ++i)
-                    $root.api.Cipher.encode(message.encryptedKey[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            if (message.encryptedKey != null && message.hasOwnProperty("encryptedKey"))
+                $root.api.Cipher.encode(message.encryptedKey, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
             if (message.type != null && message.hasOwnProperty("type"))
                 writer.uint32(/* id 2, wireType 0 =*/16).int32(message.type);
+            if (message.owner != null && message.hasOwnProperty("owner"))
+                $root.api.IdentityKeyID.encode(message.owner, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
             return writer;
         };
 
@@ -20506,12 +20482,13 @@ $root.api = (function() {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
-                    if (!(message.encryptedKey && message.encryptedKey.length))
-                        message.encryptedKey = [];
-                    message.encryptedKey.push($root.api.Cipher.decode(reader, reader.uint32()));
+                    message.encryptedKey = $root.api.Cipher.decode(reader, reader.uint32());
                     break;
                 case 2:
                     message.type = reader.int32();
+                    break;
+                case 3:
+                    message.owner = $root.api.IdentityKeyID.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -20549,13 +20526,9 @@ $root.api = (function() {
             if (typeof message !== "object" || message === null)
                 return "object expected";
             if (message.encryptedKey != null && message.hasOwnProperty("encryptedKey")) {
-                if (!Array.isArray(message.encryptedKey))
-                    return "encryptedKey: array expected";
-                for (var i = 0; i < message.encryptedKey.length; ++i) {
-                    var error = $root.api.Cipher.verify(message.encryptedKey[i]);
-                    if (error)
-                        return "encryptedKey." + error;
-                }
+                var error = $root.api.Cipher.verify(message.encryptedKey);
+                if (error)
+                    return "encryptedKey." + error;
             }
             if (message.type != null && message.hasOwnProperty("type"))
                 switch (message.type) {
@@ -20565,6 +20538,11 @@ $root.api = (function() {
                 case 1:
                     break;
                 }
+            if (message.owner != null && message.hasOwnProperty("owner")) {
+                var error = $root.api.IdentityKeyID.verify(message.owner);
+                if (error)
+                    return "owner." + error;
+            }
             return null;
         };
 
@@ -20580,15 +20558,10 @@ $root.api = (function() {
             if (object instanceof $root.api.ResourceGetKeyResponse)
                 return object;
             var message = new $root.api.ResourceGetKeyResponse();
-            if (object.encryptedKey) {
-                if (!Array.isArray(object.encryptedKey))
-                    throw TypeError(".api.ResourceGetKeyResponse.encryptedKey: array expected");
-                message.encryptedKey = [];
-                for (var i = 0; i < object.encryptedKey.length; ++i) {
-                    if (typeof object.encryptedKey[i] !== "object")
-                        throw TypeError(".api.ResourceGetKeyResponse.encryptedKey: object expected");
-                    message.encryptedKey[i] = $root.api.Cipher.fromObject(object.encryptedKey[i]);
-                }
+            if (object.encryptedKey != null) {
+                if (typeof object.encryptedKey !== "object")
+                    throw TypeError(".api.ResourceGetKeyResponse.encryptedKey: object expected");
+                message.encryptedKey = $root.api.Cipher.fromObject(object.encryptedKey);
             }
             switch (object.type) {
             case "ANONYMOUS":
@@ -20599,6 +20572,11 @@ $root.api = (function() {
             case 1:
                 message.type = 1;
                 break;
+            }
+            if (object.owner != null) {
+                if (typeof object.owner !== "object")
+                    throw TypeError(".api.ResourceGetKeyResponse.owner: object expected");
+                message.owner = $root.api.IdentityKeyID.fromObject(object.owner);
             }
             return message;
         };
@@ -20616,17 +20594,17 @@ $root.api = (function() {
             if (!options)
                 options = {};
             var object = {};
-            if (options.arrays || options.defaults)
-                object.encryptedKey = [];
-            if (options.defaults)
+            if (options.defaults) {
+                object.encryptedKey = null;
                 object.type = options.enums === String ? "ANONYMOUS" : 0;
-            if (message.encryptedKey && message.encryptedKey.length) {
-                object.encryptedKey = [];
-                for (var j = 0; j < message.encryptedKey.length; ++j)
-                    object.encryptedKey[j] = $root.api.Cipher.toObject(message.encryptedKey[j], options);
+                object.owner = null;
             }
+            if (message.encryptedKey != null && message.hasOwnProperty("encryptedKey"))
+                object.encryptedKey = $root.api.Cipher.toObject(message.encryptedKey, options);
             if (message.type != null && message.hasOwnProperty("type"))
                 object.type = options.enums === String ? $root.api.ResourceType[message.type] : message.type;
+            if (message.owner != null && message.hasOwnProperty("owner"))
+                object.owner = $root.api.IdentityKeyID.toObject(message.owner, options);
             return object;
         };
 
@@ -21728,7 +21706,7 @@ $root.api = (function() {
          * Properties of a ResourceListResponse.
          * @memberof api
          * @interface IResourceListResponse
-         * @property {Array.<api.IResourceWithKey>|null} [resources] ResourceListResponse resources
+         * @property {Array.<api.IResourceGetResponse>|null} [resources] ResourceListResponse resources
          */
 
         /**
@@ -21749,7 +21727,7 @@ $root.api = (function() {
 
         /**
          * ResourceListResponse resources.
-         * @member {Array.<api.IResourceWithKey>} resources
+         * @member {Array.<api.IResourceGetResponse>} resources
          * @memberof api.ResourceListResponse
          * @instance
          */
@@ -21781,7 +21759,7 @@ $root.api = (function() {
                 writer = $Writer.create();
             if (message.resources != null && message.resources.length)
                 for (var i = 0; i < message.resources.length; ++i)
-                    $root.api.ResourceWithKey.encode(message.resources[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                    $root.api.ResourceGetResponse.encode(message.resources[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
             return writer;
         };
 
@@ -21819,7 +21797,7 @@ $root.api = (function() {
                 case 1:
                     if (!(message.resources && message.resources.length))
                         message.resources = [];
-                    message.resources.push($root.api.ResourceWithKey.decode(reader, reader.uint32()));
+                    message.resources.push($root.api.ResourceGetResponse.decode(reader, reader.uint32()));
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -21860,7 +21838,7 @@ $root.api = (function() {
                 if (!Array.isArray(message.resources))
                     return "resources: array expected";
                 for (var i = 0; i < message.resources.length; ++i) {
-                    var error = $root.api.ResourceWithKey.verify(message.resources[i]);
+                    var error = $root.api.ResourceGetResponse.verify(message.resources[i]);
                     if (error)
                         return "resources." + error;
                 }
@@ -21887,7 +21865,7 @@ $root.api = (function() {
                 for (var i = 0; i < object.resources.length; ++i) {
                     if (typeof object.resources[i] !== "object")
                         throw TypeError(".api.ResourceListResponse.resources: object expected");
-                    message.resources[i] = $root.api.ResourceWithKey.fromObject(object.resources[i]);
+                    message.resources[i] = $root.api.ResourceGetResponse.fromObject(object.resources[i]);
                 }
             }
             return message;
@@ -21911,7 +21889,7 @@ $root.api = (function() {
             if (message.resources && message.resources.length) {
                 object.resources = [];
                 for (var j = 0; j < message.resources.length; ++j)
-                    object.resources[j] = $root.api.ResourceWithKey.toObject(message.resources[j], options);
+                    object.resources[j] = $root.api.ResourceGetResponse.toObject(message.resources[j], options);
             }
             return object;
         };
@@ -25783,7 +25761,7 @@ $root.api = (function() {
          * Properties of a DelegatedPostKeysRequest.
          * @memberof api
          * @interface IDelegatedPostKeysRequest
-         * @property {number|Long|null} [DelegatedID] DelegatedPostKeysRequest DelegatedID
+         * @property {number|Long|null} [delegatedID] DelegatedPostKeysRequest delegatedID
          * @property {Uint8Array|null} [keys] DelegatedPostKeysRequest keys
          */
 
@@ -25803,12 +25781,12 @@ $root.api = (function() {
         }
 
         /**
-         * DelegatedPostKeysRequest DelegatedID.
-         * @member {number|Long} DelegatedID
+         * DelegatedPostKeysRequest delegatedID.
+         * @member {number|Long} delegatedID
          * @memberof api.DelegatedPostKeysRequest
          * @instance
          */
-        DelegatedPostKeysRequest.prototype.DelegatedID = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
+        DelegatedPostKeysRequest.prototype.delegatedID = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
 
         /**
          * DelegatedPostKeysRequest keys.
@@ -25842,8 +25820,8 @@ $root.api = (function() {
         DelegatedPostKeysRequest.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.DelegatedID != null && message.hasOwnProperty("DelegatedID"))
-                writer.uint32(/* id 1, wireType 0 =*/8).uint64(message.DelegatedID);
+            if (message.delegatedID != null && message.hasOwnProperty("delegatedID"))
+                writer.uint32(/* id 1, wireType 0 =*/8).uint64(message.delegatedID);
             if (message.keys != null && message.hasOwnProperty("keys"))
                 writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.keys);
             return writer;
@@ -25881,7 +25859,7 @@ $root.api = (function() {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
-                    message.DelegatedID = reader.uint64();
+                    message.delegatedID = reader.uint64();
                     break;
                 case 2:
                     message.keys = reader.bytes();
@@ -25921,9 +25899,9 @@ $root.api = (function() {
         DelegatedPostKeysRequest.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (message.DelegatedID != null && message.hasOwnProperty("DelegatedID"))
-                if (!$util.isInteger(message.DelegatedID) && !(message.DelegatedID && $util.isInteger(message.DelegatedID.low) && $util.isInteger(message.DelegatedID.high)))
-                    return "DelegatedID: integer|Long expected";
+            if (message.delegatedID != null && message.hasOwnProperty("delegatedID"))
+                if (!$util.isInteger(message.delegatedID) && !(message.delegatedID && $util.isInteger(message.delegatedID.low) && $util.isInteger(message.delegatedID.high)))
+                    return "delegatedID: integer|Long expected";
             if (message.keys != null && message.hasOwnProperty("keys"))
                 if (!(message.keys && typeof message.keys.length === "number" || $util.isString(message.keys)))
                     return "keys: buffer expected";
@@ -25942,15 +25920,15 @@ $root.api = (function() {
             if (object instanceof $root.api.DelegatedPostKeysRequest)
                 return object;
             var message = new $root.api.DelegatedPostKeysRequest();
-            if (object.DelegatedID != null)
+            if (object.delegatedID != null)
                 if ($util.Long)
-                    (message.DelegatedID = $util.Long.fromValue(object.DelegatedID)).unsigned = true;
-                else if (typeof object.DelegatedID === "string")
-                    message.DelegatedID = parseInt(object.DelegatedID, 10);
-                else if (typeof object.DelegatedID === "number")
-                    message.DelegatedID = object.DelegatedID;
-                else if (typeof object.DelegatedID === "object")
-                    message.DelegatedID = new $util.LongBits(object.DelegatedID.low >>> 0, object.DelegatedID.high >>> 0).toNumber(true);
+                    (message.delegatedID = $util.Long.fromValue(object.delegatedID)).unsigned = true;
+                else if (typeof object.delegatedID === "string")
+                    message.delegatedID = parseInt(object.delegatedID, 10);
+                else if (typeof object.delegatedID === "number")
+                    message.delegatedID = object.delegatedID;
+                else if (typeof object.delegatedID === "object")
+                    message.delegatedID = new $util.LongBits(object.delegatedID.low >>> 0, object.delegatedID.high >>> 0).toNumber(true);
             if (object.keys != null)
                 if (typeof object.keys === "string")
                     $util.base64.decode(object.keys, message.keys = $util.newBuffer($util.base64.length(object.keys)), 0);
@@ -25975,9 +25953,9 @@ $root.api = (function() {
             if (options.defaults) {
                 if ($util.Long) {
                     var long = new $util.Long(0, 0, true);
-                    object.DelegatedID = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                    object.delegatedID = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
                 } else
-                    object.DelegatedID = options.longs === String ? "0" : 0;
+                    object.delegatedID = options.longs === String ? "0" : 0;
                 if (options.bytes === String)
                     object.keys = "";
                 else {
@@ -25986,11 +25964,11 @@ $root.api = (function() {
                         object.keys = $util.newBuffer(object.keys);
                 }
             }
-            if (message.DelegatedID != null && message.hasOwnProperty("DelegatedID"))
-                if (typeof message.DelegatedID === "number")
-                    object.DelegatedID = options.longs === String ? String(message.DelegatedID) : message.DelegatedID;
+            if (message.delegatedID != null && message.hasOwnProperty("delegatedID"))
+                if (typeof message.delegatedID === "number")
+                    object.delegatedID = options.longs === String ? String(message.delegatedID) : message.delegatedID;
                 else
-                    object.DelegatedID = options.longs === String ? $util.Long.prototype.toString.call(message.DelegatedID) : options.longs === Number ? new $util.LongBits(message.DelegatedID.low >>> 0, message.DelegatedID.high >>> 0).toNumber(true) : message.DelegatedID;
+                    object.delegatedID = options.longs === String ? $util.Long.prototype.toString.call(message.delegatedID) : options.longs === Number ? new $util.LongBits(message.delegatedID.low >>> 0, message.delegatedID.high >>> 0).toNumber(true) : message.delegatedID;
             if (message.keys != null && message.hasOwnProperty("keys"))
                 object.keys = options.bytes === String ? $util.base64.encode(message.keys, 0, message.keys.length) : options.bytes === Array ? Array.prototype.slice.call(message.keys) : message.keys;
             return object;
@@ -27495,7 +27473,7 @@ $root.api = (function() {
          * @interface IRegisterPostLinkTokenRequest
          * @property {string|null} [token] RegisterPostLinkTokenRequest token
          * @property {api.IIdentityFields|null} [identity] RegisterPostLinkTokenRequest identity
-         * @property {api.IIdentityEncryption|null} [encryption] RegisterPostLinkTokenRequest encryption
+         * @property {api.IIdentityEncryptedKeySet|null} [encryption] RegisterPostLinkTokenRequest encryption
          */
 
         /**
@@ -27531,7 +27509,7 @@ $root.api = (function() {
 
         /**
          * RegisterPostLinkTokenRequest encryption.
-         * @member {api.IIdentityEncryption|null|undefined} encryption
+         * @member {api.IIdentityEncryptedKeySet|null|undefined} encryption
          * @memberof api.RegisterPostLinkTokenRequest
          * @instance
          */
@@ -27566,7 +27544,7 @@ $root.api = (function() {
             if (message.identity != null && message.hasOwnProperty("identity"))
                 $root.api.IdentityFields.encode(message.identity, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
             if (message.encryption != null && message.hasOwnProperty("encryption"))
-                $root.api.IdentityEncryption.encode(message.encryption, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+                $root.api.IdentityEncryptedKeySet.encode(message.encryption, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
             return writer;
         };
 
@@ -27608,7 +27586,7 @@ $root.api = (function() {
                     message.identity = $root.api.IdentityFields.decode(reader, reader.uint32());
                     break;
                 case 3:
-                    message.encryption = $root.api.IdentityEncryption.decode(reader, reader.uint32());
+                    message.encryption = $root.api.IdentityEncryptedKeySet.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -27654,7 +27632,7 @@ $root.api = (function() {
                     return "identity." + error;
             }
             if (message.encryption != null && message.hasOwnProperty("encryption")) {
-                var error = $root.api.IdentityEncryption.verify(message.encryption);
+                var error = $root.api.IdentityEncryptedKeySet.verify(message.encryption);
                 if (error)
                     return "encryption." + error;
             }
@@ -27683,7 +27661,7 @@ $root.api = (function() {
             if (object.encryption != null) {
                 if (typeof object.encryption !== "object")
                     throw TypeError(".api.RegisterPostLinkTokenRequest.encryption: object expected");
-                message.encryption = $root.api.IdentityEncryption.fromObject(object.encryption);
+                message.encryption = $root.api.IdentityEncryptedKeySet.fromObject(object.encryption);
             }
             return message;
         };
@@ -27711,7 +27689,7 @@ $root.api = (function() {
             if (message.identity != null && message.hasOwnProperty("identity"))
                 object.identity = $root.api.IdentityFields.toObject(message.identity, options);
             if (message.encryption != null && message.hasOwnProperty("encryption"))
-                object.encryption = $root.api.IdentityEncryption.toObject(message.encryption, options);
+                object.encryption = $root.api.IdentityEncryptedKeySet.toObject(message.encryption, options);
             return object;
         };
 
@@ -27912,10 +27890,6 @@ $root.api = (function() {
                 case 16:
                 case 17:
                 case 19:
-                case 20:
-                case 21:
-                case 22:
-                case 23:
                 case 24:
                 case 25:
                 case 26:
@@ -28022,22 +27996,6 @@ $root.api = (function() {
             case "IdentitySharingKindMismatch":
             case 19:
                 message.kind = 19;
-                break;
-            case "IdentityEmailNotAssociated":
-            case 20:
-                message.kind = 20;
-                break;
-            case "IdentityEmailAlreadyAssociated":
-            case 21:
-                message.kind = 21;
-                break;
-            case "IdentityPrincipalEmailNotSet":
-            case 22:
-                message.kind = 22;
-                break;
-            case "IdentityPrincipalEmailAlreadyExists":
-            case 23:
-                message.kind = 23;
                 break;
             case "ResourceNotFound":
             case 24:
@@ -28151,10 +28109,6 @@ $root.api = (function() {
      * @property {number} IdentityVersionMismatch=16 IdentityVersionMismatch value
      * @property {number} IdentityNotAdmin=17 IdentityNotAdmin value
      * @property {number} IdentitySharingKindMismatch=19 IdentitySharingKindMismatch value
-     * @property {number} IdentityEmailNotAssociated=20 IdentityEmailNotAssociated value
-     * @property {number} IdentityEmailAlreadyAssociated=21 IdentityEmailAlreadyAssociated value
-     * @property {number} IdentityPrincipalEmailNotSet=22 IdentityPrincipalEmailNotSet value
-     * @property {number} IdentityPrincipalEmailAlreadyExists=23 IdentityPrincipalEmailAlreadyExists value
      * @property {number} ResourceNotFound=24 ResourceNotFound value
      * @property {number} RegisterInvalidEmail=25 RegisterInvalidEmail value
      * @property {number} RegisterTokenNotFound=26 RegisterTokenNotFound value
@@ -28186,10 +28140,6 @@ $root.api = (function() {
         values[valuesById[16] = "IdentityVersionMismatch"] = 16;
         values[valuesById[17] = "IdentityNotAdmin"] = 17;
         values[valuesById[19] = "IdentitySharingKindMismatch"] = 19;
-        values[valuesById[20] = "IdentityEmailNotAssociated"] = 20;
-        values[valuesById[21] = "IdentityEmailAlreadyAssociated"] = 21;
-        values[valuesById[22] = "IdentityPrincipalEmailNotSet"] = 22;
-        values[valuesById[23] = "IdentityPrincipalEmailAlreadyExists"] = 23;
         values[valuesById[24] = "ResourceNotFound"] = 24;
         values[valuesById[25] = "RegisterInvalidEmail"] = 25;
         values[valuesById[26] = "RegisterTokenNotFound"] = 26;
@@ -30748,823 +30698,6 @@ $root.api = (function() {
         return PayloadIdentityNotAdmin;
     })();
 
-    api.PayloadIdentityEmailNotAssociated = (function() {
-
-        /**
-         * Properties of a PayloadIdentityEmailNotAssociated.
-         * @memberof api
-         * @interface IPayloadIdentityEmailNotAssociated
-         * @property {string|null} [login] PayloadIdentityEmailNotAssociated login
-         * @property {string|null} [email] PayloadIdentityEmailNotAssociated email
-         */
-
-        /**
-         * Constructs a new PayloadIdentityEmailNotAssociated.
-         * @memberof api
-         * @classdesc Represents a PayloadIdentityEmailNotAssociated.
-         * @implements IPayloadIdentityEmailNotAssociated
-         * @constructor
-         * @param {api.IPayloadIdentityEmailNotAssociated=} [properties] Properties to set
-         */
-        function PayloadIdentityEmailNotAssociated(properties) {
-            if (properties)
-                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                    if (properties[keys[i]] != null)
-                        this[keys[i]] = properties[keys[i]];
-        }
-
-        /**
-         * PayloadIdentityEmailNotAssociated login.
-         * @member {string} login
-         * @memberof api.PayloadIdentityEmailNotAssociated
-         * @instance
-         */
-        PayloadIdentityEmailNotAssociated.prototype.login = "";
-
-        /**
-         * PayloadIdentityEmailNotAssociated email.
-         * @member {string} email
-         * @memberof api.PayloadIdentityEmailNotAssociated
-         * @instance
-         */
-        PayloadIdentityEmailNotAssociated.prototype.email = "";
-
-        /**
-         * Creates a new PayloadIdentityEmailNotAssociated instance using the specified properties.
-         * @function create
-         * @memberof api.PayloadIdentityEmailNotAssociated
-         * @static
-         * @param {api.IPayloadIdentityEmailNotAssociated=} [properties] Properties to set
-         * @returns {api.PayloadIdentityEmailNotAssociated} PayloadIdentityEmailNotAssociated instance
-         */
-        PayloadIdentityEmailNotAssociated.create = function create(properties) {
-            return new PayloadIdentityEmailNotAssociated(properties);
-        };
-
-        /**
-         * Encodes the specified PayloadIdentityEmailNotAssociated message. Does not implicitly {@link api.PayloadIdentityEmailNotAssociated.verify|verify} messages.
-         * @function encode
-         * @memberof api.PayloadIdentityEmailNotAssociated
-         * @static
-         * @param {api.IPayloadIdentityEmailNotAssociated} message PayloadIdentityEmailNotAssociated message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        PayloadIdentityEmailNotAssociated.encode = function encode(message, writer) {
-            if (!writer)
-                writer = $Writer.create();
-            if (message.login != null && message.hasOwnProperty("login"))
-                writer.uint32(/* id 1, wireType 2 =*/10).string(message.login);
-            if (message.email != null && message.hasOwnProperty("email"))
-                writer.uint32(/* id 2, wireType 2 =*/18).string(message.email);
-            return writer;
-        };
-
-        /**
-         * Encodes the specified PayloadIdentityEmailNotAssociated message, length delimited. Does not implicitly {@link api.PayloadIdentityEmailNotAssociated.verify|verify} messages.
-         * @function encodeDelimited
-         * @memberof api.PayloadIdentityEmailNotAssociated
-         * @static
-         * @param {api.IPayloadIdentityEmailNotAssociated} message PayloadIdentityEmailNotAssociated message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        PayloadIdentityEmailNotAssociated.encodeDelimited = function encodeDelimited(message, writer) {
-            return this.encode(message, writer).ldelim();
-        };
-
-        /**
-         * Decodes a PayloadIdentityEmailNotAssociated message from the specified reader or buffer.
-         * @function decode
-         * @memberof api.PayloadIdentityEmailNotAssociated
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @param {number} [length] Message length if known beforehand
-         * @returns {api.PayloadIdentityEmailNotAssociated} PayloadIdentityEmailNotAssociated
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        PayloadIdentityEmailNotAssociated.decode = function decode(reader, length) {
-            if (!(reader instanceof $Reader))
-                reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.PayloadIdentityEmailNotAssociated();
-            while (reader.pos < end) {
-                var tag = reader.uint32();
-                switch (tag >>> 3) {
-                case 1:
-                    message.login = reader.string();
-                    break;
-                case 2:
-                    message.email = reader.string();
-                    break;
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-                }
-            }
-            return message;
-        };
-
-        /**
-         * Decodes a PayloadIdentityEmailNotAssociated message from the specified reader or buffer, length delimited.
-         * @function decodeDelimited
-         * @memberof api.PayloadIdentityEmailNotAssociated
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {api.PayloadIdentityEmailNotAssociated} PayloadIdentityEmailNotAssociated
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        PayloadIdentityEmailNotAssociated.decodeDelimited = function decodeDelimited(reader) {
-            if (!(reader instanceof $Reader))
-                reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
-        };
-
-        /**
-         * Verifies a PayloadIdentityEmailNotAssociated message.
-         * @function verify
-         * @memberof api.PayloadIdentityEmailNotAssociated
-         * @static
-         * @param {Object.<string,*>} message Plain object to verify
-         * @returns {string|null} `null` if valid, otherwise the reason why it is not
-         */
-        PayloadIdentityEmailNotAssociated.verify = function verify(message) {
-            if (typeof message !== "object" || message === null)
-                return "object expected";
-            if (message.login != null && message.hasOwnProperty("login"))
-                if (!$util.isString(message.login))
-                    return "login: string expected";
-            if (message.email != null && message.hasOwnProperty("email"))
-                if (!$util.isString(message.email))
-                    return "email: string expected";
-            return null;
-        };
-
-        /**
-         * Creates a PayloadIdentityEmailNotAssociated message from a plain object. Also converts values to their respective internal types.
-         * @function fromObject
-         * @memberof api.PayloadIdentityEmailNotAssociated
-         * @static
-         * @param {Object.<string,*>} object Plain object
-         * @returns {api.PayloadIdentityEmailNotAssociated} PayloadIdentityEmailNotAssociated
-         */
-        PayloadIdentityEmailNotAssociated.fromObject = function fromObject(object) {
-            if (object instanceof $root.api.PayloadIdentityEmailNotAssociated)
-                return object;
-            var message = new $root.api.PayloadIdentityEmailNotAssociated();
-            if (object.login != null)
-                message.login = String(object.login);
-            if (object.email != null)
-                message.email = String(object.email);
-            return message;
-        };
-
-        /**
-         * Creates a plain object from a PayloadIdentityEmailNotAssociated message. Also converts values to other types if specified.
-         * @function toObject
-         * @memberof api.PayloadIdentityEmailNotAssociated
-         * @static
-         * @param {api.PayloadIdentityEmailNotAssociated} message PayloadIdentityEmailNotAssociated
-         * @param {$protobuf.IConversionOptions} [options] Conversion options
-         * @returns {Object.<string,*>} Plain object
-         */
-        PayloadIdentityEmailNotAssociated.toObject = function toObject(message, options) {
-            if (!options)
-                options = {};
-            var object = {};
-            if (options.defaults) {
-                object.login = "";
-                object.email = "";
-            }
-            if (message.login != null && message.hasOwnProperty("login"))
-                object.login = message.login;
-            if (message.email != null && message.hasOwnProperty("email"))
-                object.email = message.email;
-            return object;
-        };
-
-        /**
-         * Converts this PayloadIdentityEmailNotAssociated to JSON.
-         * @function toJSON
-         * @memberof api.PayloadIdentityEmailNotAssociated
-         * @instance
-         * @returns {Object.<string,*>} JSON object
-         */
-        PayloadIdentityEmailNotAssociated.prototype.toJSON = function toJSON() {
-            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-        };
-
-        return PayloadIdentityEmailNotAssociated;
-    })();
-
-    api.PayloadIdentityEmailAlreadyAssociated = (function() {
-
-        /**
-         * Properties of a PayloadIdentityEmailAlreadyAssociated.
-         * @memberof api
-         * @interface IPayloadIdentityEmailAlreadyAssociated
-         * @property {string|null} [login] PayloadIdentityEmailAlreadyAssociated login
-         * @property {string|null} [email] PayloadIdentityEmailAlreadyAssociated email
-         */
-
-        /**
-         * Constructs a new PayloadIdentityEmailAlreadyAssociated.
-         * @memberof api
-         * @classdesc Represents a PayloadIdentityEmailAlreadyAssociated.
-         * @implements IPayloadIdentityEmailAlreadyAssociated
-         * @constructor
-         * @param {api.IPayloadIdentityEmailAlreadyAssociated=} [properties] Properties to set
-         */
-        function PayloadIdentityEmailAlreadyAssociated(properties) {
-            if (properties)
-                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                    if (properties[keys[i]] != null)
-                        this[keys[i]] = properties[keys[i]];
-        }
-
-        /**
-         * PayloadIdentityEmailAlreadyAssociated login.
-         * @member {string} login
-         * @memberof api.PayloadIdentityEmailAlreadyAssociated
-         * @instance
-         */
-        PayloadIdentityEmailAlreadyAssociated.prototype.login = "";
-
-        /**
-         * PayloadIdentityEmailAlreadyAssociated email.
-         * @member {string} email
-         * @memberof api.PayloadIdentityEmailAlreadyAssociated
-         * @instance
-         */
-        PayloadIdentityEmailAlreadyAssociated.prototype.email = "";
-
-        /**
-         * Creates a new PayloadIdentityEmailAlreadyAssociated instance using the specified properties.
-         * @function create
-         * @memberof api.PayloadIdentityEmailAlreadyAssociated
-         * @static
-         * @param {api.IPayloadIdentityEmailAlreadyAssociated=} [properties] Properties to set
-         * @returns {api.PayloadIdentityEmailAlreadyAssociated} PayloadIdentityEmailAlreadyAssociated instance
-         */
-        PayloadIdentityEmailAlreadyAssociated.create = function create(properties) {
-            return new PayloadIdentityEmailAlreadyAssociated(properties);
-        };
-
-        /**
-         * Encodes the specified PayloadIdentityEmailAlreadyAssociated message. Does not implicitly {@link api.PayloadIdentityEmailAlreadyAssociated.verify|verify} messages.
-         * @function encode
-         * @memberof api.PayloadIdentityEmailAlreadyAssociated
-         * @static
-         * @param {api.IPayloadIdentityEmailAlreadyAssociated} message PayloadIdentityEmailAlreadyAssociated message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        PayloadIdentityEmailAlreadyAssociated.encode = function encode(message, writer) {
-            if (!writer)
-                writer = $Writer.create();
-            if (message.login != null && message.hasOwnProperty("login"))
-                writer.uint32(/* id 1, wireType 2 =*/10).string(message.login);
-            if (message.email != null && message.hasOwnProperty("email"))
-                writer.uint32(/* id 2, wireType 2 =*/18).string(message.email);
-            return writer;
-        };
-
-        /**
-         * Encodes the specified PayloadIdentityEmailAlreadyAssociated message, length delimited. Does not implicitly {@link api.PayloadIdentityEmailAlreadyAssociated.verify|verify} messages.
-         * @function encodeDelimited
-         * @memberof api.PayloadIdentityEmailAlreadyAssociated
-         * @static
-         * @param {api.IPayloadIdentityEmailAlreadyAssociated} message PayloadIdentityEmailAlreadyAssociated message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        PayloadIdentityEmailAlreadyAssociated.encodeDelimited = function encodeDelimited(message, writer) {
-            return this.encode(message, writer).ldelim();
-        };
-
-        /**
-         * Decodes a PayloadIdentityEmailAlreadyAssociated message from the specified reader or buffer.
-         * @function decode
-         * @memberof api.PayloadIdentityEmailAlreadyAssociated
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @param {number} [length] Message length if known beforehand
-         * @returns {api.PayloadIdentityEmailAlreadyAssociated} PayloadIdentityEmailAlreadyAssociated
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        PayloadIdentityEmailAlreadyAssociated.decode = function decode(reader, length) {
-            if (!(reader instanceof $Reader))
-                reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.PayloadIdentityEmailAlreadyAssociated();
-            while (reader.pos < end) {
-                var tag = reader.uint32();
-                switch (tag >>> 3) {
-                case 1:
-                    message.login = reader.string();
-                    break;
-                case 2:
-                    message.email = reader.string();
-                    break;
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-                }
-            }
-            return message;
-        };
-
-        /**
-         * Decodes a PayloadIdentityEmailAlreadyAssociated message from the specified reader or buffer, length delimited.
-         * @function decodeDelimited
-         * @memberof api.PayloadIdentityEmailAlreadyAssociated
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {api.PayloadIdentityEmailAlreadyAssociated} PayloadIdentityEmailAlreadyAssociated
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        PayloadIdentityEmailAlreadyAssociated.decodeDelimited = function decodeDelimited(reader) {
-            if (!(reader instanceof $Reader))
-                reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
-        };
-
-        /**
-         * Verifies a PayloadIdentityEmailAlreadyAssociated message.
-         * @function verify
-         * @memberof api.PayloadIdentityEmailAlreadyAssociated
-         * @static
-         * @param {Object.<string,*>} message Plain object to verify
-         * @returns {string|null} `null` if valid, otherwise the reason why it is not
-         */
-        PayloadIdentityEmailAlreadyAssociated.verify = function verify(message) {
-            if (typeof message !== "object" || message === null)
-                return "object expected";
-            if (message.login != null && message.hasOwnProperty("login"))
-                if (!$util.isString(message.login))
-                    return "login: string expected";
-            if (message.email != null && message.hasOwnProperty("email"))
-                if (!$util.isString(message.email))
-                    return "email: string expected";
-            return null;
-        };
-
-        /**
-         * Creates a PayloadIdentityEmailAlreadyAssociated message from a plain object. Also converts values to their respective internal types.
-         * @function fromObject
-         * @memberof api.PayloadIdentityEmailAlreadyAssociated
-         * @static
-         * @param {Object.<string,*>} object Plain object
-         * @returns {api.PayloadIdentityEmailAlreadyAssociated} PayloadIdentityEmailAlreadyAssociated
-         */
-        PayloadIdentityEmailAlreadyAssociated.fromObject = function fromObject(object) {
-            if (object instanceof $root.api.PayloadIdentityEmailAlreadyAssociated)
-                return object;
-            var message = new $root.api.PayloadIdentityEmailAlreadyAssociated();
-            if (object.login != null)
-                message.login = String(object.login);
-            if (object.email != null)
-                message.email = String(object.email);
-            return message;
-        };
-
-        /**
-         * Creates a plain object from a PayloadIdentityEmailAlreadyAssociated message. Also converts values to other types if specified.
-         * @function toObject
-         * @memberof api.PayloadIdentityEmailAlreadyAssociated
-         * @static
-         * @param {api.PayloadIdentityEmailAlreadyAssociated} message PayloadIdentityEmailAlreadyAssociated
-         * @param {$protobuf.IConversionOptions} [options] Conversion options
-         * @returns {Object.<string,*>} Plain object
-         */
-        PayloadIdentityEmailAlreadyAssociated.toObject = function toObject(message, options) {
-            if (!options)
-                options = {};
-            var object = {};
-            if (options.defaults) {
-                object.login = "";
-                object.email = "";
-            }
-            if (message.login != null && message.hasOwnProperty("login"))
-                object.login = message.login;
-            if (message.email != null && message.hasOwnProperty("email"))
-                object.email = message.email;
-            return object;
-        };
-
-        /**
-         * Converts this PayloadIdentityEmailAlreadyAssociated to JSON.
-         * @function toJSON
-         * @memberof api.PayloadIdentityEmailAlreadyAssociated
-         * @instance
-         * @returns {Object.<string,*>} JSON object
-         */
-        PayloadIdentityEmailAlreadyAssociated.prototype.toJSON = function toJSON() {
-            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-        };
-
-        return PayloadIdentityEmailAlreadyAssociated;
-    })();
-
-    api.PayloadIdentityPrincipalEmailNotSet = (function() {
-
-        /**
-         * Properties of a PayloadIdentityPrincipalEmailNotSet.
-         * @memberof api
-         * @interface IPayloadIdentityPrincipalEmailNotSet
-         * @property {string|null} [login] PayloadIdentityPrincipalEmailNotSet login
-         */
-
-        /**
-         * Constructs a new PayloadIdentityPrincipalEmailNotSet.
-         * @memberof api
-         * @classdesc Represents a PayloadIdentityPrincipalEmailNotSet.
-         * @implements IPayloadIdentityPrincipalEmailNotSet
-         * @constructor
-         * @param {api.IPayloadIdentityPrincipalEmailNotSet=} [properties] Properties to set
-         */
-        function PayloadIdentityPrincipalEmailNotSet(properties) {
-            if (properties)
-                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                    if (properties[keys[i]] != null)
-                        this[keys[i]] = properties[keys[i]];
-        }
-
-        /**
-         * PayloadIdentityPrincipalEmailNotSet login.
-         * @member {string} login
-         * @memberof api.PayloadIdentityPrincipalEmailNotSet
-         * @instance
-         */
-        PayloadIdentityPrincipalEmailNotSet.prototype.login = "";
-
-        /**
-         * Creates a new PayloadIdentityPrincipalEmailNotSet instance using the specified properties.
-         * @function create
-         * @memberof api.PayloadIdentityPrincipalEmailNotSet
-         * @static
-         * @param {api.IPayloadIdentityPrincipalEmailNotSet=} [properties] Properties to set
-         * @returns {api.PayloadIdentityPrincipalEmailNotSet} PayloadIdentityPrincipalEmailNotSet instance
-         */
-        PayloadIdentityPrincipalEmailNotSet.create = function create(properties) {
-            return new PayloadIdentityPrincipalEmailNotSet(properties);
-        };
-
-        /**
-         * Encodes the specified PayloadIdentityPrincipalEmailNotSet message. Does not implicitly {@link api.PayloadIdentityPrincipalEmailNotSet.verify|verify} messages.
-         * @function encode
-         * @memberof api.PayloadIdentityPrincipalEmailNotSet
-         * @static
-         * @param {api.IPayloadIdentityPrincipalEmailNotSet} message PayloadIdentityPrincipalEmailNotSet message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        PayloadIdentityPrincipalEmailNotSet.encode = function encode(message, writer) {
-            if (!writer)
-                writer = $Writer.create();
-            if (message.login != null && message.hasOwnProperty("login"))
-                writer.uint32(/* id 1, wireType 2 =*/10).string(message.login);
-            return writer;
-        };
-
-        /**
-         * Encodes the specified PayloadIdentityPrincipalEmailNotSet message, length delimited. Does not implicitly {@link api.PayloadIdentityPrincipalEmailNotSet.verify|verify} messages.
-         * @function encodeDelimited
-         * @memberof api.PayloadIdentityPrincipalEmailNotSet
-         * @static
-         * @param {api.IPayloadIdentityPrincipalEmailNotSet} message PayloadIdentityPrincipalEmailNotSet message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        PayloadIdentityPrincipalEmailNotSet.encodeDelimited = function encodeDelimited(message, writer) {
-            return this.encode(message, writer).ldelim();
-        };
-
-        /**
-         * Decodes a PayloadIdentityPrincipalEmailNotSet message from the specified reader or buffer.
-         * @function decode
-         * @memberof api.PayloadIdentityPrincipalEmailNotSet
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @param {number} [length] Message length if known beforehand
-         * @returns {api.PayloadIdentityPrincipalEmailNotSet} PayloadIdentityPrincipalEmailNotSet
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        PayloadIdentityPrincipalEmailNotSet.decode = function decode(reader, length) {
-            if (!(reader instanceof $Reader))
-                reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.PayloadIdentityPrincipalEmailNotSet();
-            while (reader.pos < end) {
-                var tag = reader.uint32();
-                switch (tag >>> 3) {
-                case 1:
-                    message.login = reader.string();
-                    break;
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-                }
-            }
-            return message;
-        };
-
-        /**
-         * Decodes a PayloadIdentityPrincipalEmailNotSet message from the specified reader or buffer, length delimited.
-         * @function decodeDelimited
-         * @memberof api.PayloadIdentityPrincipalEmailNotSet
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {api.PayloadIdentityPrincipalEmailNotSet} PayloadIdentityPrincipalEmailNotSet
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        PayloadIdentityPrincipalEmailNotSet.decodeDelimited = function decodeDelimited(reader) {
-            if (!(reader instanceof $Reader))
-                reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
-        };
-
-        /**
-         * Verifies a PayloadIdentityPrincipalEmailNotSet message.
-         * @function verify
-         * @memberof api.PayloadIdentityPrincipalEmailNotSet
-         * @static
-         * @param {Object.<string,*>} message Plain object to verify
-         * @returns {string|null} `null` if valid, otherwise the reason why it is not
-         */
-        PayloadIdentityPrincipalEmailNotSet.verify = function verify(message) {
-            if (typeof message !== "object" || message === null)
-                return "object expected";
-            if (message.login != null && message.hasOwnProperty("login"))
-                if (!$util.isString(message.login))
-                    return "login: string expected";
-            return null;
-        };
-
-        /**
-         * Creates a PayloadIdentityPrincipalEmailNotSet message from a plain object. Also converts values to their respective internal types.
-         * @function fromObject
-         * @memberof api.PayloadIdentityPrincipalEmailNotSet
-         * @static
-         * @param {Object.<string,*>} object Plain object
-         * @returns {api.PayloadIdentityPrincipalEmailNotSet} PayloadIdentityPrincipalEmailNotSet
-         */
-        PayloadIdentityPrincipalEmailNotSet.fromObject = function fromObject(object) {
-            if (object instanceof $root.api.PayloadIdentityPrincipalEmailNotSet)
-                return object;
-            var message = new $root.api.PayloadIdentityPrincipalEmailNotSet();
-            if (object.login != null)
-                message.login = String(object.login);
-            return message;
-        };
-
-        /**
-         * Creates a plain object from a PayloadIdentityPrincipalEmailNotSet message. Also converts values to other types if specified.
-         * @function toObject
-         * @memberof api.PayloadIdentityPrincipalEmailNotSet
-         * @static
-         * @param {api.PayloadIdentityPrincipalEmailNotSet} message PayloadIdentityPrincipalEmailNotSet
-         * @param {$protobuf.IConversionOptions} [options] Conversion options
-         * @returns {Object.<string,*>} Plain object
-         */
-        PayloadIdentityPrincipalEmailNotSet.toObject = function toObject(message, options) {
-            if (!options)
-                options = {};
-            var object = {};
-            if (options.defaults)
-                object.login = "";
-            if (message.login != null && message.hasOwnProperty("login"))
-                object.login = message.login;
-            return object;
-        };
-
-        /**
-         * Converts this PayloadIdentityPrincipalEmailNotSet to JSON.
-         * @function toJSON
-         * @memberof api.PayloadIdentityPrincipalEmailNotSet
-         * @instance
-         * @returns {Object.<string,*>} JSON object
-         */
-        PayloadIdentityPrincipalEmailNotSet.prototype.toJSON = function toJSON() {
-            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-        };
-
-        return PayloadIdentityPrincipalEmailNotSet;
-    })();
-
-    api.PayloadIdentityPrincipalEmailAlreadyExists = (function() {
-
-        /**
-         * Properties of a PayloadIdentityPrincipalEmailAlreadyExists.
-         * @memberof api
-         * @interface IPayloadIdentityPrincipalEmailAlreadyExists
-         * @property {string|null} [login] PayloadIdentityPrincipalEmailAlreadyExists login
-         * @property {string|null} [email] PayloadIdentityPrincipalEmailAlreadyExists email
-         */
-
-        /**
-         * Constructs a new PayloadIdentityPrincipalEmailAlreadyExists.
-         * @memberof api
-         * @classdesc Represents a PayloadIdentityPrincipalEmailAlreadyExists.
-         * @implements IPayloadIdentityPrincipalEmailAlreadyExists
-         * @constructor
-         * @param {api.IPayloadIdentityPrincipalEmailAlreadyExists=} [properties] Properties to set
-         */
-        function PayloadIdentityPrincipalEmailAlreadyExists(properties) {
-            if (properties)
-                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                    if (properties[keys[i]] != null)
-                        this[keys[i]] = properties[keys[i]];
-        }
-
-        /**
-         * PayloadIdentityPrincipalEmailAlreadyExists login.
-         * @member {string} login
-         * @memberof api.PayloadIdentityPrincipalEmailAlreadyExists
-         * @instance
-         */
-        PayloadIdentityPrincipalEmailAlreadyExists.prototype.login = "";
-
-        /**
-         * PayloadIdentityPrincipalEmailAlreadyExists email.
-         * @member {string} email
-         * @memberof api.PayloadIdentityPrincipalEmailAlreadyExists
-         * @instance
-         */
-        PayloadIdentityPrincipalEmailAlreadyExists.prototype.email = "";
-
-        /**
-         * Creates a new PayloadIdentityPrincipalEmailAlreadyExists instance using the specified properties.
-         * @function create
-         * @memberof api.PayloadIdentityPrincipalEmailAlreadyExists
-         * @static
-         * @param {api.IPayloadIdentityPrincipalEmailAlreadyExists=} [properties] Properties to set
-         * @returns {api.PayloadIdentityPrincipalEmailAlreadyExists} PayloadIdentityPrincipalEmailAlreadyExists instance
-         */
-        PayloadIdentityPrincipalEmailAlreadyExists.create = function create(properties) {
-            return new PayloadIdentityPrincipalEmailAlreadyExists(properties);
-        };
-
-        /**
-         * Encodes the specified PayloadIdentityPrincipalEmailAlreadyExists message. Does not implicitly {@link api.PayloadIdentityPrincipalEmailAlreadyExists.verify|verify} messages.
-         * @function encode
-         * @memberof api.PayloadIdentityPrincipalEmailAlreadyExists
-         * @static
-         * @param {api.IPayloadIdentityPrincipalEmailAlreadyExists} message PayloadIdentityPrincipalEmailAlreadyExists message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        PayloadIdentityPrincipalEmailAlreadyExists.encode = function encode(message, writer) {
-            if (!writer)
-                writer = $Writer.create();
-            if (message.login != null && message.hasOwnProperty("login"))
-                writer.uint32(/* id 1, wireType 2 =*/10).string(message.login);
-            if (message.email != null && message.hasOwnProperty("email"))
-                writer.uint32(/* id 2, wireType 2 =*/18).string(message.email);
-            return writer;
-        };
-
-        /**
-         * Encodes the specified PayloadIdentityPrincipalEmailAlreadyExists message, length delimited. Does not implicitly {@link api.PayloadIdentityPrincipalEmailAlreadyExists.verify|verify} messages.
-         * @function encodeDelimited
-         * @memberof api.PayloadIdentityPrincipalEmailAlreadyExists
-         * @static
-         * @param {api.IPayloadIdentityPrincipalEmailAlreadyExists} message PayloadIdentityPrincipalEmailAlreadyExists message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        PayloadIdentityPrincipalEmailAlreadyExists.encodeDelimited = function encodeDelimited(message, writer) {
-            return this.encode(message, writer).ldelim();
-        };
-
-        /**
-         * Decodes a PayloadIdentityPrincipalEmailAlreadyExists message from the specified reader or buffer.
-         * @function decode
-         * @memberof api.PayloadIdentityPrincipalEmailAlreadyExists
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @param {number} [length] Message length if known beforehand
-         * @returns {api.PayloadIdentityPrincipalEmailAlreadyExists} PayloadIdentityPrincipalEmailAlreadyExists
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        PayloadIdentityPrincipalEmailAlreadyExists.decode = function decode(reader, length) {
-            if (!(reader instanceof $Reader))
-                reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.PayloadIdentityPrincipalEmailAlreadyExists();
-            while (reader.pos < end) {
-                var tag = reader.uint32();
-                switch (tag >>> 3) {
-                case 1:
-                    message.login = reader.string();
-                    break;
-                case 2:
-                    message.email = reader.string();
-                    break;
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-                }
-            }
-            return message;
-        };
-
-        /**
-         * Decodes a PayloadIdentityPrincipalEmailAlreadyExists message from the specified reader or buffer, length delimited.
-         * @function decodeDelimited
-         * @memberof api.PayloadIdentityPrincipalEmailAlreadyExists
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {api.PayloadIdentityPrincipalEmailAlreadyExists} PayloadIdentityPrincipalEmailAlreadyExists
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        PayloadIdentityPrincipalEmailAlreadyExists.decodeDelimited = function decodeDelimited(reader) {
-            if (!(reader instanceof $Reader))
-                reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
-        };
-
-        /**
-         * Verifies a PayloadIdentityPrincipalEmailAlreadyExists message.
-         * @function verify
-         * @memberof api.PayloadIdentityPrincipalEmailAlreadyExists
-         * @static
-         * @param {Object.<string,*>} message Plain object to verify
-         * @returns {string|null} `null` if valid, otherwise the reason why it is not
-         */
-        PayloadIdentityPrincipalEmailAlreadyExists.verify = function verify(message) {
-            if (typeof message !== "object" || message === null)
-                return "object expected";
-            if (message.login != null && message.hasOwnProperty("login"))
-                if (!$util.isString(message.login))
-                    return "login: string expected";
-            if (message.email != null && message.hasOwnProperty("email"))
-                if (!$util.isString(message.email))
-                    return "email: string expected";
-            return null;
-        };
-
-        /**
-         * Creates a PayloadIdentityPrincipalEmailAlreadyExists message from a plain object. Also converts values to their respective internal types.
-         * @function fromObject
-         * @memberof api.PayloadIdentityPrincipalEmailAlreadyExists
-         * @static
-         * @param {Object.<string,*>} object Plain object
-         * @returns {api.PayloadIdentityPrincipalEmailAlreadyExists} PayloadIdentityPrincipalEmailAlreadyExists
-         */
-        PayloadIdentityPrincipalEmailAlreadyExists.fromObject = function fromObject(object) {
-            if (object instanceof $root.api.PayloadIdentityPrincipalEmailAlreadyExists)
-                return object;
-            var message = new $root.api.PayloadIdentityPrincipalEmailAlreadyExists();
-            if (object.login != null)
-                message.login = String(object.login);
-            if (object.email != null)
-                message.email = String(object.email);
-            return message;
-        };
-
-        /**
-         * Creates a plain object from a PayloadIdentityPrincipalEmailAlreadyExists message. Also converts values to other types if specified.
-         * @function toObject
-         * @memberof api.PayloadIdentityPrincipalEmailAlreadyExists
-         * @static
-         * @param {api.PayloadIdentityPrincipalEmailAlreadyExists} message PayloadIdentityPrincipalEmailAlreadyExists
-         * @param {$protobuf.IConversionOptions} [options] Conversion options
-         * @returns {Object.<string,*>} Plain object
-         */
-        PayloadIdentityPrincipalEmailAlreadyExists.toObject = function toObject(message, options) {
-            if (!options)
-                options = {};
-            var object = {};
-            if (options.defaults) {
-                object.login = "";
-                object.email = "";
-            }
-            if (message.login != null && message.hasOwnProperty("login"))
-                object.login = message.login;
-            if (message.email != null && message.hasOwnProperty("email"))
-                object.email = message.email;
-            return object;
-        };
-
-        /**
-         * Converts this PayloadIdentityPrincipalEmailAlreadyExists to JSON.
-         * @function toJSON
-         * @memberof api.PayloadIdentityPrincipalEmailAlreadyExists
-         * @instance
-         * @returns {Object.<string,*>} JSON object
-         */
-        PayloadIdentityPrincipalEmailAlreadyExists.prototype.toJSON = function toJSON() {
-            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-        };
-
-        return PayloadIdentityPrincipalEmailAlreadyExists;
-    })();
-
     api.PayloadResourceNotFound = (function() {
 
         /**
@@ -33151,6 +32284,7 @@ $root.api = (function() {
          * @memberof api
          * @interface IPayloadApplicationConfigNotFound
          * @property {string|null} [login] PayloadApplicationConfigNotFound login
+         * @property {string|null} [version] PayloadApplicationConfigNotFound version
          */
 
         /**
@@ -33175,6 +32309,14 @@ $root.api = (function() {
          * @instance
          */
         PayloadApplicationConfigNotFound.prototype.login = "";
+
+        /**
+         * PayloadApplicationConfigNotFound version.
+         * @member {string} version
+         * @memberof api.PayloadApplicationConfigNotFound
+         * @instance
+         */
+        PayloadApplicationConfigNotFound.prototype.version = "";
 
         /**
          * Creates a new PayloadApplicationConfigNotFound instance using the specified properties.
@@ -33202,6 +32344,8 @@ $root.api = (function() {
                 writer = $Writer.create();
             if (message.login != null && message.hasOwnProperty("login"))
                 writer.uint32(/* id 1, wireType 2 =*/10).string(message.login);
+            if (message.version != null && message.hasOwnProperty("version"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.version);
             return writer;
         };
 
@@ -33238,6 +32382,9 @@ $root.api = (function() {
                 switch (tag >>> 3) {
                 case 1:
                     message.login = reader.string();
+                    break;
+                case 2:
+                    message.version = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -33277,6 +32424,9 @@ $root.api = (function() {
             if (message.login != null && message.hasOwnProperty("login"))
                 if (!$util.isString(message.login))
                     return "login: string expected";
+            if (message.version != null && message.hasOwnProperty("version"))
+                if (!$util.isString(message.version))
+                    return "version: string expected";
             return null;
         };
 
@@ -33294,6 +32444,8 @@ $root.api = (function() {
             var message = new $root.api.PayloadApplicationConfigNotFound();
             if (object.login != null)
                 message.login = String(object.login);
+            if (object.version != null)
+                message.version = String(object.version);
             return message;
         };
 
@@ -33310,10 +32462,14 @@ $root.api = (function() {
             if (!options)
                 options = {};
             var object = {};
-            if (options.defaults)
+            if (options.defaults) {
                 object.login = "";
+                object.version = "";
+            }
             if (message.login != null && message.hasOwnProperty("login"))
                 object.login = message.login;
+            if (message.version != null && message.hasOwnProperty("version"))
+                object.version = message.version;
             return object;
         };
 

@@ -26,7 +26,7 @@ export class AdminAPI {
     return await this.session.doProtoRequest<void>({
       method: "POST",
       expectedCode: 200,
-      path: "/api/v4/identity/" + encodeURIComponent(login) + "/promote",
+      path: "/api/v1/identity/" + encodeURIComponent(login) + "/promote",
       body: api.IdentityPromoteRequest.encode({
         admin
       }).finish()
@@ -46,30 +46,11 @@ export class AdminAPI {
     return await this.session.doProtoRequest<void>({
       method: "POST",
       expectedCode: 200,
-      path: "/api/v4/identity/" + encodeURI(login) + "/active",
+      path: "/api/v1/identity/" + encodeURI(login) + "/active",
       body: api.IdentityToggleActiveStatusRequest.encode({
         login,
         active
       }).finish()
-    });
-  }
-
-  /**
-   * Generate new keys for an identity.
-   * The identity will no longer be able access any things (resources, shared identities, ...) that have previously been shared with it.
-   * @param login The login of the identity to set the active status.
-   * @return(p) On success the promise will be resolved with void.
-   * On error the promise will be rejected with an {@link Error} with kind:
-   * - `IdentityNotFound` if `login` does not exists.
-   * - `IdentityNotAdmin` if the identity logged along the current session is not an admin.
-   * - `IdentityNotAdminDomain` if the identity logged along with the current session cannot adinistrate the domain of `login`.
-   */
-  async overwriteKeys(
-    login: string,
-    secret: string | Uint8Array
-  ): Promise<void> {
-    await new IdentityAPI(this.session).editSharingGraph(login, {
-      overwriteKeys: { secret }
     });
   }
 
@@ -87,7 +68,7 @@ export class AdminAPI {
     let { links } = await this.session.doProtoRequest({
       method: "GET",
       expectedCode: 200,
-      path: "/api/v4/register/links",
+      path: "/api/v1/register/links",
       params: options,
       response: api.LinksGetResponse.decode
     });

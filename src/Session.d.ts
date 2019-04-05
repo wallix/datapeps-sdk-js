@@ -1,21 +1,27 @@
 import { api } from "./proto";
-import { IdentityPublicKey, IdentityPublicKeyID, IdentityAccessKind } from "./IdentityAPI";
-import { Request } from "./HTTP";
+import { IdentityPublicKey, IdentityPublicKeyID } from "./IdentityAPI";
+import { Client, Request } from "./HTTP";
 import { TrustPolicy, PublicKeysCache } from "./SessionUtils";
+import { IdentityKeySet } from "./IdentityKeySet";
 /**
  * Specify how the sdk request should be authenticated by the DataPeps service.
  * - "RAND" means that the service generates a fresh salt for each request `n` which is used to sign request `n+1`. It is the most secure kind of salt, but implies that all requests MUST be done sequentially.
  * - "TIME" means that the service generates a salt based on a timestamp, so a signed request can be authenticated within a time window.
  */
 export declare type SessionSaltKind = api.SessionSaltKind;
+export declare type AssumeOptions = {
+    login: string;
+    kind: api.IdentityAccessKeyKind;
+    keySet?: IdentityKeySet;
+};
 /**
  * A object that can be used to make authenticated request by a {@link_Session}.
  */
 export interface SessionRequest<T> extends Request<T> {
-    assume?: {
-        login: string;
-        kind: IdentityAccessKind;
-    };
+    /**
+     * An optional assume parameters to assume the request as another identity.
+     */
+    assume?: AssumeOptions;
 }
 export declare namespace Session {
     /**
@@ -28,9 +34,8 @@ export declare namespace Session {
      * On error the promise will be rejected with an {@link Error} with kind
      * - `IdentityNotFound` if the `login` does not exists or if the identity has no secret.
      */
-    function login(login: string, secret: string | Uint8Array, options?: {
-        saltKind?: SessionSaltKind;
-    }): Promise<Session>;
+    function login(login: string, secret: string | Uint8Array, options?: LoginOptions): Promise<Session>;
+    function create(client: Client, login: string, recover: (e: api.IdentityEncryptedKeySet) => IdentityKeySet, options?: LoginOptions): Promise<Session>;
 }
 /**
  * A Session is used to perform authenticated requests to the DataPeps service and allows access to the authenticated API of the DataPeps service.
@@ -86,6 +91,7 @@ export interface Session {
      * - `IdentityNotFound` if an identity is not found.
      */
     getPublicKeys(ids: IdentityPublicKeyID[]): Promise<IdentityPublicKey[]>;
+    getIdentityKeySet(login: string, version?: number): Promise<IdentityKeySet>;
     /**
      * Create a new session for an identity that the current session identity can access.
      * @param login The login of the identity to login with.
@@ -120,10 +126,12 @@ export interface Session {
      */
     doProtoRequest<T>(request: SessionRequest<T>): Promise<T>;
 }
-export declare function loginWithKeys(client: any, keys: any): Promise<Session>;
-export interface SessionParameters {
+export declare type LoginOptions = {
+    saltKind?: api.SessionSaltKind;
+};
+export declare type SessionParameters = {
     token: Uint8Array;
     login: string;
     salt: Uint8Array;
     saltKind: api.SessionSaltKind;
-}
+};

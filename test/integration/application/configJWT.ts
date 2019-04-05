@@ -1,7 +1,9 @@
 import {
   ApplicationAPI,
   ApplicationJWT,
-  ServerError
+  ServerError,
+  IdentityAPI,
+  IdentityPublicKeyID
 } from "../../../src/DataPeps";
 import {
   init,
@@ -16,66 +18,143 @@ import { itError } from "../../Utils";
 import { configs, invalidKey } from "./Utils";
 import { Uint8Tool } from "../../../src/Tools";
 
+const defaultLoginClaim = "sub";
+const firstAppConfigVersion = 1;
+
 describe("applicationAPI.config.JWT", () => {
-  let ctx: devCtx & { otherDev: userAndSessionCtx };
+  let ctx: devCtx & { nonConfiguredDev: devCtx; otherDev: userAndSessionCtx };
 
   before(async () => {
     let initCtx = init();
-    let devCtx = await dev(initCtx, configs.length + 1);
+    let devCtx = await dev(initCtx, configs.length);
+    let nonConfiguredDev = await dev(initCtx, 1);
     let otherDev = await userAndSession(initCtx, "otherDev");
-    ctx = { ...devCtx, otherDev };
+    ctx = { ...devCtx, nonConfiguredDev, otherDev };
   });
 
   ///////////////////////////////////////////////
   // Test nominal cases of putConfig / getConfig
   ///////////////////////////////////////////////
 
-  configs.forEach(({ secretKey, config }, i) => {
-    let signAlgorithm = config.signAlgorithm;
-    it(`should configure an application with signAlgorithm(${
-      ApplicationJWT.Algorithm[signAlgorithm]
-    })`, async () => {
+  configs.forEach(({ keys, config }, i) => {
+    let algorithm = ApplicationJWT.Algorithm[config.signAlgorithm];
+
+    it(`should configure an application (${algorithm})`, async () => {
       let api = new ApplicationAPI(ctx.dev.session);
-      await api.putConfig(ctx.apps[i].identity.login, { jwt: config });
-      let getConfig = await api.getConfig(ctx.apps[i].identity.login);
-      expect(getConfig.jwt).not.null;
+      let appLogin = ctx.apps[i].identity.login;
+      let appConfigID = await api.putConfig(appLogin, { jwt: config });
+      expect(appConfigID.version).equal(firstAppConfigVersion);
+      let configReceived = await api.getConfig(appConfigID);
+      expect(configReceived.payload.jwt).not.null;
       Object.keys(config).forEach(k => {
-        expect(getConfig.jwt[k], `config field ${k}`).deep.equals(config[k]);
+        expect(configReceived.payload.jwt[k], `config field ${k}`).deep.equals(
+          config[k]
+        );
+      });
+      expectMetadata(configReceived.meta, {
+        appID: appLogin,
+        creatorLogin: ctx.dev.identity.login,
+        version: appConfigID.version
       });
     });
-  });
 
-  it(`configure an application with default value`, async () => {
-    let config: ApplicationAPI.Config = {
-      jwt: {
-        key: nacl.randomBytes(128)
-      }
-    };
+    it(`configure an application with default value (${algorithm})`, async () => {
+      let defaultConfig: ApplicationAPI.Config = {
+        jwt: {
+          key: config.key,
+          signAlgorithm: config.signAlgorithm
+        }
+      };
+      let appLogin = ctx.apps[i].identity.login;
+      let api = new ApplicationAPI(ctx.dev.session);
+      let appConfigID = await api.putConfig(appLogin, defaultConfig);
+      let configReceived = await api.getConfig(appConfigID);
+      expect(configReceived.payload.jwt).to.exist;
+      expect(configReceived.payload.jwt.key).to.deep.equal(
+        defaultConfig.jwt.key
+      );
+      expect(configReceived.payload.jwt.claimForLogin).to.equal(
+        defaultLoginClaim
+      );
+      expectMetadata(configReceived.meta, {
+        appID: appLogin,
+        creatorLogin: ctx.dev.identity.login,
+        version: appConfigID.version
+      });
+    });
 
-    let api = new ApplicationAPI(ctx.dev.session);
-    await api.putConfig(ctx.app.identity.login, config);
-    let storedConfig = await api.getConfig(ctx.app.identity.login);
-    expect(storedConfig.jwt).to.exist;
-    expect(storedConfig.jwt.key).to.deep.equal(config.jwt.key);
-    expect(storedConfig.jwt.signAlgorithm).to.equal(
-      ApplicationJWT.Algorithm.HS256
-    );
-    expect(storedConfig.jwt.claimForLogin).to.equal("sub");
-  });
+    it(`overwrite configuration (${algorithm})`, async () => {
+      let newConfig = {
+        jwt: {
+          key: keys.pk,
+          signAlgorithm: config.signAlgorithm,
+          claimForLogin: "field_1"
+        }
+      };
+      let appLogin = ctx.apps[i].identity.login;
+      let api = new ApplicationAPI(ctx.dev.session);
+      await api.putConfig(appLogin, newConfig);
 
-  it(`overwrite configuration`, async () => {
-    let config = {
-      jwt: { key: nacl.randomBytes(128), claimForLogin: "field_1" }
-    };
-    let api = new ApplicationAPI(ctx.dev.session);
-    await api.putConfig(ctx.app.identity.login, config);
+      newConfig = {
+        jwt: {
+          key: keys.secondPk,
+          signAlgorithm: config.signAlgorithm,
+          claimForLogin: "field_2"
+        }
+      };
+      let appConfigID = await api.putConfig(appLogin, newConfig);
 
-    config = { jwt: { key: nacl.randomBytes(128), claimForLogin: "field_2" } };
-    await api.putConfig(ctx.app.identity.login, config);
+      let configReceived = await api.getConfig(appConfigID);
+      expect(configReceived.payload.jwt.claimForLogin).to.equal(
+        newConfig.jwt.claimForLogin
+      );
+      expect(configReceived.payload.jwt.key).to.deep.equals(newConfig.jwt.key);
+      expectMetadata(configReceived.meta, {
+        appID: appLogin,
+        creatorLogin: ctx.dev.identity.login,
+        version: appConfigID.version
+      });
+    });
 
-    let storedConfig = await api.getConfig(ctx.app.identity.login);
-    expect(storedConfig.jwt.claimForLogin).to.equal(config.jwt.claimForLogin);
-    expect(storedConfig.jwt.key).to.deep.equals(config.jwt.key);
+    it(`overwrite configuration with a new version of a creator (${algorithm})`, async () => {
+      let appConfig = {
+        jwt: {
+          key: keys.pk,
+          signAlgorithm: config.signAlgorithm,
+          claimForLogin: "field_1"
+        }
+      };
+      let appLogin = ctx.apps[i].identity.login;
+      let api = new ApplicationAPI(ctx.dev.session);
+      // Developer reconfigures its application
+      let firstConfigID = await api.putConfig(appLogin, appConfig);
+      let firstConfigReceived = await api.getConfig(firstConfigID);
+
+      // Developer renews its keys
+      await new IdentityAPI(ctx.dev.session).renewKeys(ctx.dev.session.login);
+
+      // Developer gets the configuration of its application. It should not have changed
+      let secondConfigReceived = await api.getConfig(firstConfigID);
+      expect(secondConfigReceived).to.deep.equal(firstConfigReceived);
+
+      // Developer reconfigures the application
+      let secondConfigID = await api.putConfig(appLogin, appConfig);
+      let thirdConfigReceived = await api.getConfig(secondConfigID);
+
+      expect(thirdConfigReceived.payload).to.deep.equal(
+        firstConfigReceived.payload
+      );
+      expect(thirdConfigReceived.meta.applicationConfigID).to.not.equal(
+        firstConfigReceived.meta.applicationConfigID
+      );
+      expect(thirdConfigReceived.meta.creator.login).to.equal(
+        firstConfigReceived.meta.creator.login
+      );
+      // The developer's encryption version should have changed
+      expect(thirdConfigReceived.meta.creator.version).to.not.equal(
+        firstConfigReceived.meta.creator.version
+      );
+    });
   });
 
   ///////////////////////////////////////////////
@@ -89,7 +168,11 @@ describe("applicationAPI.config.JWT", () => {
       new ApplicationAPI(ctx.otherDev.session).putConfig(
         ctx.app.identity.login,
         {
-          jwt: { key: nacl.randomBytes(128), claimForLogin: "login" }
+          jwt: {
+            key: nacl.randomBytes(128),
+            signAlgorithm: ApplicationJWT.Algorithm.HS256,
+            claimForLogin: "login"
+          }
         }
       ),
     ServerError.IdentityCannotAssumeOwnership
@@ -133,7 +216,7 @@ fwIDAQAB
   );
 
   // ApplicationConfigInvalid` if configuration object is invalid.
-  configs.forEach(({ secretKey, config }, i) => {
+  configs.forEach(({ keys, config }, i) => {
     let signAlgorithm = config.signAlgorithm;
     itError(
       `should not configure with a invalid type of key for the signAlgorithm(${
@@ -156,7 +239,11 @@ fwIDAQAB
     `should not configure a non existent application`,
     () =>
       new ApplicationAPI(ctx.dev.session).putConfig("non.existent.app", {
-        jwt: { key: nacl.randomBytes(128), claimForLogin: "login" }
+        jwt: {
+          key: nacl.randomBytes(128),
+          signAlgorithm: ApplicationJWT.Algorithm.HS256,
+          claimForLogin: "login"
+        }
       }),
     ServerError.IdentityNotFound
   );
@@ -165,30 +252,96 @@ fwIDAQAB
   // Error cases: getConfig
   ///////////////////////////////////////////////
 
-  // `IdentityCannotAssumeAccess` if cannot have right to read the configuration.
   itError(
     `should not get the configuration of an application of someone else`,
     () =>
-      new ApplicationAPI(ctx.otherDev.session).getConfig(
-        ctx.app.identity.login
-      ),
+      new ApplicationAPI(ctx.otherDev.session).getConfig({
+        appID: ctx.app.identity.login,
+        version: firstAppConfigVersion
+      }),
     ServerError.IdentityCannotAssumeOwnership
   );
 
-  // `IdentityNotFound` if the identity `appID` doesn't exists.
+  const nonExistantAppID = "non.existant.identity";
+  let invalidAppIDs = [null, undefined, nonExistantAppID, ""];
+  invalidAppIDs.map(appID => {
+    itError(
+      `should not get the configuration of an application with an empty ID (${appID})`,
+      () =>
+        new ApplicationAPI(ctx.dev.session).getConfig({
+          appID,
+          version: 1
+        }),
+      ServerError.IdentityNotFound
+    );
+  });
+
   itError(
-    `should not get the configuration rof a non existent identity`,
-    () => new ApplicationAPI(ctx.dev.session).getConfig("non.existent.app"),
-    ServerError.IdentityNotFound
+    `should receive correct error trying to get a config of a application not yet configured`,
+    () =>
+      new ApplicationAPI(ctx.nonConfiguredDev.dev.session).getConfig({
+        appID: ctx.nonConfiguredDev.app.identity.login,
+        version: firstAppConfigVersion
+      }),
+    ServerError.ApplicationConfigNotFound,
+    () => ({
+      login: ctx.nonConfiguredDev.app.identity.login,
+      version: firstAppConfigVersion.toString()
+    })
   );
 
-  // `ApplicationConfigNotFound` if configuration doesn't exists.
-  itError(
-    `should receive correct error trying to get non existent configuration as application`,
-    () =>
-      new ApplicationAPI(ctx.dev.session).getConfig(
-        ctx.apps[configs.length].identity.login
-      ),
-    ServerError.ApplicationConfigNotFound
+  const maxInt32 = 2147483647;
+  const nonExistantVersion = 42;
+  let invalidConfigVersions = [
+    { actual: null, expectedInErrPayload: "0" },
+    { actual: undefined, expectedInErrPayload: "0" },
+    { actual: -1, expectedInErrPayload: "4294967295" },
+    { actual: 0, expectedInErrPayload: "0" },
+    {
+      actual: nonExistantVersion,
+      expectedInErrPayload: nonExistantVersion.toString()
+    },
+    { actual: maxInt32 + 1, expectedInErrPayload: (maxInt32 + 1).toString() }
+  ];
+  invalidConfigVersions.map(version =>
+    itError(
+      `should fail when getting an application configuration with an invalid version (${version.actual})`,
+      () =>
+        new ApplicationAPI(ctx.dev.session).getConfig({
+          appID: ctx.app.identity.login,
+          version: version.actual
+        }),
+      ServerError.ApplicationConfigNotFound,
+      () => ({
+        login: ctx.app.identity.login,
+        version: version.expectedInErrPayload
+      })
+    )
+  );
+
+  let nullAppConfigIDs = [null, undefined];
+  nullAppConfigIDs.map(appConfigID =>
+    itError(
+      `should fail client side if the passed application configuration ID is null or undefined`,
+      () => new ApplicationAPI(ctx.dev.session).getConfig(appConfigID),
+      ServerError.IdentityNotFound
+    )
   );
 });
+
+let expectMetadata = (
+  meta: {
+    applicationConfigID: ApplicationAPI.ApplicationConfigID;
+    creator: IdentityPublicKeyID;
+    created: Date;
+  },
+  expected: {
+    appID: string;
+    creatorLogin: string;
+    version: number;
+  }
+) => {
+  expect(meta.applicationConfigID.appID).equal(expected.appID);
+  expect(meta.applicationConfigID.version).equal(expected.version);
+  expect(meta.creator.login).equal(expected.creatorLogin);
+};

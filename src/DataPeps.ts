@@ -29,3 +29,4 @@ export * from "./ResourceAPI";
 export * from "./AdminAPI";
 export * from "./ApplicationAPI";
 export * from "./ApplicationJWT";
+export { Uint8Converter } from "./Tools";

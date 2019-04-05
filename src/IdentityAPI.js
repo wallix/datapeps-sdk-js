@@ -43,14 +43,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var nacl = require("tweetnacl");
-var proto_1 = require("./proto");
 var Error_1 = require("./Error");
-var CryptoFuncs_1 = require("./CryptoFuncs");
 var Tools_1 = require("./Tools");
 var HTTP_1 = require("./HTTP");
 var IdentityInternal_1 = require("./IdentityInternal");
 exports.IdentitySortingOrder = IdentityInternal_1.IdentitySortingOrder;
+var proto_1 = require("./proto");
+var IdentityKeySetAPI_1 = require("./IdentityKeySetAPI");
 var IdentityPublicKey;
 (function (IdentityPublicKey) {
     var bs58 = require("bs58");
@@ -75,12 +74,6 @@ var IdentityPublicKey;
         return bs58.encode(IdentityPublicKey.hash(key));
     };
 })(IdentityPublicKey = exports.IdentityPublicKey || (exports.IdentityPublicKey = {}));
-/** Allows to indicate which kind of access shoudl be used in a {@link SessionRequest}*/
-var IdentityAccessKind;
-(function (IdentityAccessKind) {
-    IdentityAccessKind[IdentityAccessKind["READ"] = 0] = "READ";
-    IdentityAccessKind[IdentityAccessKind["WRITE"] = 1] = "WRITE";
-})(IdentityAccessKind = exports.IdentityAccessKind || (exports.IdentityAccessKind = {}));
 /** Allows to indicate which kind of field should be sorted. */
 var IdentitySortingField;
 (function (IdentitySortingField) {
@@ -107,7 +100,7 @@ var IdentityAPI = /** @class */ (function () {
                     case 0: return [4 /*yield*/, HTTP_1.client.doRequest({
                             method: "POST",
                             expectedCode: 200,
-                            path: "/api/v4/identities/latestPublicKeys",
+                            path: "/api/v1/identities/latestPublicKeys",
                             body: proto_1.api.IdentityGetLatestPublicKeysRequest.encode({ logins: logins }).finish(),
                             response: proto_1.api.IdentityGetLatestPublicKeysResponse.decode,
                             headers: new Headers({
@@ -155,7 +148,7 @@ var IdentityAPI = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "GET",
                             expectedCode: 200,
-                            path: "/api/v4/identity/" + encodeURI(login),
+                            path: "/api/v1/identity/" + encodeURI(login),
                             response: function (r) { return IdentityInternal_1.IdentitySerializer.deserialize(proto_1.api.Identity.decode(r)); }
                         })];
                     case 1: return [2 /*return*/, _a.sent()];
@@ -188,7 +181,7 @@ var IdentityAPI = /** @class */ (function () {
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "POST",
                                 expectedCode: 200,
-                                path: "/api/v4/identities/list",
+                                path: "/api/v1/identities/list",
                                 body: proto_1.api.IdentityListRequest.encode({
                                     options: {
                                         offset: options.offset,
@@ -226,44 +219,30 @@ var IdentityAPI = /** @class */ (function () {
      */
     IdentityAPI.prototype.create = function (identity, options) {
         return __awaiter(this, void 0, void 0, function () {
-            var _this = this;
-            var osharingGroup, encryption, publicKeys, sharingGroup, epub;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            var osharingGroup, _a, encryptedKeySet, keySet, publicKeys, sharingGroup;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
                         options = options == null ? {} : options;
                         osharingGroup = options.sharingGroup == null ? [] : options.sharingGroup;
-                        encryption = new CryptoFuncs_1.Encryption();
-                        encryption.generate(Tools_1.Uint8Tool.convert(options.secret), this.session.encryption);
+                        _a = IdentityKeySetAPI_1.IdentityKeySetAPI.initWithSecret({ version: 1, login: identity.login }, options.secret), encryptedKeySet = _a.encryptedKeySet, keySet = _a.keySet;
                         return [4 /*yield*/, this.session.getLatestPublicKeys(osharingGroup)];
                     case 1:
-                        publicKeys = _a.sent();
-                        sharingGroup = publicKeys.map(function (_a) {
-                            var login = _a.login, version = _a.version, box = _a.box, sign = _a.sign;
-                            var kind = proto_1.api.IdentityShareKind.SHARING;
-                            var _b = encryption.encryptKey(kind, _this.session.encryption, box), message = _b.message, nonce = _b.nonce;
-                            return {
-                                login: login,
-                                version: version,
-                                nonce: nonce,
-                                kind: kind,
-                                encryptedKey: message
-                            };
-                        });
-                        epub = encryption.getPublic();
+                        publicKeys = _b.sent();
+                        sharingGroup = IdentityAPI.createSharingGroup(keySet, publicKeys);
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "POST",
                                 expectedCode: 201,
-                                path: "/api/v4/identity",
+                                path: "/api/v1/identity",
                                 body: proto_1.api.IdentityCreateRequest.encode({
                                     identity: identity,
                                     sharingGroup: sharingGroup,
-                                    encryption: encryption,
+                                    encryption: encryptedKeySet,
                                     email: options.email,
-                                    signChain: this.session.encryption.sign(Tools_1.Uint8Tool.concat(epub.boxEncrypted.publicKey, epub.signEncrypted.publicKey))
+                                    signChain: this.session.encryption.sign(Tools_1.Uint8Tool.concat(encryptedKeySet.boxEncrypted.publicKey, encryptedKeySet.signEncrypted.publicKey))
                                 }).finish()
                             })];
-                    case 2: return [2 /*return*/, _a.sent()];
+                    case 2: return [2 /*return*/, _b.sent()];
                 }
             });
         });
@@ -282,7 +261,7 @@ var IdentityAPI = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "PUT",
                             expectedCode: 200,
-                            path: "/api/v4/identity/" + encodeURI(identity.login),
+                            path: "/api/v1/identity/" + encodeURI(identity.login),
                             body: proto_1.api.IdentityFields.encode(identity).finish()
                         })];
                     case 1: return [2 /*return*/, _a.sent()];
@@ -300,66 +279,53 @@ var IdentityAPI = /** @class */ (function () {
      */
     IdentityAPI.prototype.renewKeys = function (login, secret) {
         return __awaiter(this, void 0, void 0, function () {
-            var _this = this;
-            var kind, assume, _a, encryption, creator, sharingGroup, key, next, epub, _b, message, nonce, backward;
+            var assume, _a, encryption, sharingGroup, currentKeySet, nextKeySetID, _b, nextEncryptedKeySet, nextKeySet, backward, nextSharingGroup, signChain;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        kind = proto_1.api.IdentityShareKind.SHARING;
-                        assume = { login: login, kind: IdentityAccessKind.WRITE };
+                        assume = {
+                            login: login,
+                            kind: proto_1.api.IdentityAccessKeyKind.WRITE
+                        };
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "GET",
                                 expectedCode: 200,
-                                path: "/api/v4/identity/" + encodeURIComponent(login) + "/keysToRenew",
+                                path: "/api/v1/identity/" + encodeURIComponent(login) + "/keysToRenew",
                                 response: proto_1.api.IdentityGetKeysToRenewResponse.decode,
                                 assume: assume
                             })];
                     case 1:
-                        _a = _c.sent(), encryption = _a.encryption, creator = _a.creator, sharingGroup = _a.sharingGroup;
-                        return [4 /*yield*/, this.session.getAssumeParams({
-                                login: login,
-                                kind: IdentityAccessKind.WRITE
-                            })];
-                    case 2:
-                        key = (_c.sent()).key;
-                        next = new CryptoFuncs_1.Encryption();
-                        if (secret == null) {
-                            next.generateWithMasterPublicKey(encryption.masterPublicKey, encryption.masterSalt, this.session.encryption);
-                        }
-                        else {
-                            next.generate(Tools_1.Uint8Tool.convert(secret), this.session.encryption);
-                        }
-                        next.version = key.version + 1;
-                        epub = next.getPublic();
-                        _b = this.session.encryption
-                            .encrypt(proto_1.api.ResourceType.SES)
-                            .encrypt(epub.boxEncrypted.publicKey, key.sharingKey), message = _b.message, nonce = _b.nonce;
-                        backward = { nonce: nonce, encryptedKey: message };
+                        _a = _c.sent(), encryption = _a.encryption, sharingGroup = _a.sharingGroup;
+                        currentKeySet = assume.keySet;
+                        nextKeySetID = {
+                            version: currentKeySet.id.version + 1,
+                            login: currentKeySet.id.login
+                        };
+                        _b = secret != null
+                            ? IdentityKeySetAPI_1.IdentityKeySetAPI.initWithSecret(nextKeySetID, secret)
+                            : IdentityKeySetAPI_1.IdentityKeySetAPI.initWithMasterSeed(nextKeySetID, {
+                                publicKey: encryption.masterPublicKey,
+                                masterSalt: encryption.masterSalt
+                            }), nextEncryptedKeySet = _b.encryptedKeySet, nextKeySet = _b.keySet;
+                        backward = currentKeySet.shareKey(proto_1.api.IdentityShareKind.SHARING, nextKeySet.public());
+                        nextSharingGroup = IdentityAPI.createSharingGroup(nextKeySet, sharingGroup);
+                        signChain = currentKeySet.signKeys(nextKeySet);
+                        // Push the next IdentityKeySet to DataPeps
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "POST",
                                 expectedCode: 201,
-                                path: "/api/v4/identity/" + encodeURIComponent(login) + "/keysToRenew",
+                                path: "/api/v1/identity/" + encodeURIComponent(login) + "/keysToRenew",
                                 body: proto_1.api.IdentityPostKeysToRenewRequest.encode({
-                                    encryption: epub,
+                                    encryption: nextEncryptedKeySet,
+                                    sharingGroup: nextSharingGroup,
                                     backward: backward,
-                                    signChain: nacl.sign.detached(Tools_1.Uint8Tool.concat(epub.boxEncrypted.publicKey, epub.signEncrypted.publicKey), key.signKey),
-                                    sharingGroup: sharingGroup.map(function (_a) {
-                                        var login = _a.login, version = _a.version, box = _a.box, sign = _a.sign;
-                                        var _b = next.encryptKey(kind, _this.session.encryption, box), message = _b.message, nonce = _b.nonce;
-                                        return {
-                                            login: login,
-                                            version: version,
-                                            encryptedKey: message,
-                                            nonce: nonce,
-                                            kind: kind
-                                        };
-                                    })
+                                    signChain: signChain
                                 }).finish(),
                                 assume: assume
                             })];
-                    case 3:
+                    case 2:
+                        // Push the next IdentityKeySet to DataPeps
                         _c.sent();
-                        this.session.clearAssumeParams(login);
                         return [2 /*return*/];
                 }
             });
@@ -380,7 +346,7 @@ var IdentityAPI = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "GET",
                             expectedCode: 200,
-                            path: "/api/v4/identity/" + encodeURIComponent(login) + "/sharingGroup",
+                            path: "/api/v1/identity/" + encodeURIComponent(login) + "/sharingGroup",
                             response: function (r) {
                                 return proto_1.api.IdentityGetSharingGroupResponse.decode(r)
                                     .sharingGroup;
@@ -401,45 +367,29 @@ var IdentityAPI = /** @class */ (function () {
      */
     IdentityAPI.prototype.extendSharingGroup = function (login, sharingGroup) {
         return __awaiter(this, void 0, void 0, function () {
-            var _this = this;
-            var key, publicKeys;
+            var keySet, publicKeys, encryptedKeys;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        this.session.clearAssumeParams(login);
-                        return [4 /*yield*/, this.session.getAssumeParams({
-                                login: login,
-                                kind: IdentityAccessKind.WRITE
-                            })];
+                    case 0: return [4 /*yield*/, this.session.getIdentityKeySet(login)];
                     case 1:
-                        key = (_a.sent()).key;
+                        keySet = _a.sent();
                         return [4 /*yield*/, this.session.getLatestPublicKeys(sharingGroup)];
                     case 2:
                         publicKeys = _a.sent();
+                        encryptedKeys = IdentityAPI.createSharingGroup(keySet, publicKeys);
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "PATCH",
                                 expectedCode: 201,
-                                path: "/api/v4/identity/" + encodeURI(login) + "/sharingGroup",
-                                assume: { login: login, kind: IdentityAccessKind.WRITE },
+                                path: "/api/v1/identity/" + encodeURI(login) + "/sharingGroup",
+                                assume: { login: login, kind: proto_1.api.IdentityAccessKeyKind.WRITE },
                                 body: proto_1.api.IdentityShareRequest.encode({
-                                    version: key.version,
-                                    sharingGroup: publicKeys.map(function (_a) {
-                                        var login = _a.login, version = _a.version, box = _a.box, sign = _a.sign;
-                                        var kind = proto_1.api.IdentityShareKind.SHARING;
-                                        var _b = _this.session.encryption
-                                            .encrypt(proto_1.api.ResourceType.SES)
-                                            .encrypt(box, key.sharingKey), message = _b.message, nonce = _b.nonce;
-                                        return {
-                                            login: login,
-                                            version: version,
-                                            nonce: nonce,
-                                            kind: kind,
-                                            encryptedKey: message
-                                        };
-                                    })
+                                    version: keySet.id.version,
+                                    sharingGroup: encryptedKeys
                                 }).finish()
                             })];
-                    case 3: return [2 /*return*/, _a.sent()];
+                    case 3: 
+                    // patch the sharingGroup to DataPeps
+                    return [2 /*return*/, _a.sent()];
                 }
             });
         });
@@ -455,120 +405,178 @@ var IdentityAPI = /** @class */ (function () {
      */
     IdentityAPI.prototype.replaceSharingGroup = function (login, sharingGroup) {
         return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/, this.editSharingGraph(login, { sharingGroup: sharingGroup })];
-            });
-        });
-    };
-    IdentityAPI.prototype.editSharingGraph = function (login, options) {
-        return __awaiter(this, void 0, void 0, function () {
-            var _this = this;
-            var graph, _a, newBoxPublicKeys, encryptedGraph;
+            var graph, _a, nextPublicKeys, encryptedGraph;
             return __generator(this, function (_b) {
                 switch (_b.label) {
-                    case 0:
-                        options = options != null ? options : {};
-                        return [4 /*yield*/, this.getSharingGraph(login, {
-                                withKeys: options.overwriteKeys == null
-                            })];
+                    case 0: return [4 /*yield*/, this.getSharingGraphWithKeySet(login)];
                     case 1:
                         graph = _b.sent();
-                        if (graph[0].login != login) {
+                        if (graph[0].value.keySet.id.login != login) {
                             throw new Error_1.Error({
                                 kind: Error_1.SDKKind.SDKInternalError,
                                 payload: { login: login, graph: graph, hint: "unexpected graph" }
                             });
                         }
-                        if (!(options.sharingGroup != null)) return [3 /*break*/, 3];
-                        // Replace the sharing group of login
+                        // Replace the sharing group of the root identity
                         _a = graph[0];
-                        return [4 /*yield*/, this.session.getLatestPublicKeys(options.sharingGroup)];
+                        return [4 /*yield*/, this.session.getLatestPublicKeys(sharingGroup)];
                     case 2:
-                        // Replace the sharing group of login
+                        // Replace the sharing group of the root identity
                         _a.sharingGroup = _b.sent();
-                        _b.label = 3;
-                    case 3:
                         // Filter only latest identites
                         graph = graph.filter(function (elt) { return elt.latest; });
-                        if (options.overwriteKeys != null) {
-                            // If keys are overwritten, we only update:
-                            // - the main identity
-                            // - the graph elements in which the only element in sharing group is the main identity (for example a delegate, but not a group)
-                            graph = graph.filter(function (elt) {
-                                return elt.login == login ||
-                                    (elt.sharingGroup.length == 1 && elt.sharingGroup[0].login == login);
-                            });
-                        }
-                        newBoxPublicKeys = new Map();
+                        nextPublicKeys = new Map();
                         encryptedGraph = graph
                             .map(function (elt) {
-                            var encryption = new CryptoFuncs_1.Encryption();
-                            if (options.overwriteKeys != null && elt.login === login) {
-                                // Overwrite the key of main identity with secret
-                                encryption.generate(Tools_1.Uint8Tool.convert(options.overwriteKeys.secret), _this.session.encryption);
-                            }
-                            else {
-                                encryption.generateWithMasterPublicKey(elt.masterPublicKey, null, _this.session.encryption);
-                            }
-                            encryption.version = elt.version + 1;
-                            newBoxPublicKeys.set(elt.login, {
-                                login: login,
-                                sign: null,
-                                box: encryption.getPublicKey(proto_1.api.IdentityShareKind.BOX),
-                                version: encryption.version
-                            });
-                            return { elt: elt, encryption: encryption };
+                            // Create the next IdentityKeySet, for each identities in the graph
+                            var keySetID = {
+                                version: elt.value.keySet.id.version + 1,
+                                login: elt.value.keySet.id.login
+                            };
+                            var _a = IdentityKeySetAPI_1.IdentityKeySetAPI.initWithMasterSeed(keySetID, elt.value.seed), encryptedKeySet = _a.encryptedKeySet, keySet = _a.keySet;
+                            // Put the next IdentityPublicKey in a map
+                            nextPublicKeys.set(keySetID.login, keySet.public());
+                            return {
+                                elt: elt,
+                                nextencryptedKeySet: encryptedKeySet,
+                                nextKeySet: keySet
+                            };
                         })
                             .map(function (_a) {
-                            var elt = _a.elt, encryption = _a.encryption;
-                            var epub = encryption.getPublic();
-                            var backward;
-                            var signChain;
-                            if (options.overwriteKeys != null) {
-                                // administrator signs the 'overwrited' new version of identity
-                                signChain = _this.session.encryption.sign(Tools_1.Uint8Tool.concat(epub.boxEncrypted.publicKey, epub.signEncrypted.publicKey));
-                            }
-                            else {
-                                // the new version of identity is signed by the previous one (as keys are accessible by current session)
-                                var _b = _this.session.encryption
-                                    .encrypt(proto_1.api.ResourceType.SES)
-                                    .encrypt(epub.boxEncrypted.publicKey, elt.sharingKey), message = _b.message, nonce = _b.nonce;
-                                backward = { nonce: nonce, encryptedKey: message };
-                                signChain = nacl.sign.detached(Tools_1.Uint8Tool.concat(epub.boxEncrypted.publicKey, epub.signEncrypted.publicKey), elt.signKey);
-                            }
+                            var elt = _a.elt, nextencryptedKeySet = _a.nextencryptedKeySet, nextKeySet = _a.nextKeySet;
+                            var currentKeySet = elt.value.keySet;
+                            // Create the backward link
+                            var backward = currentKeySet.shareKey(proto_1.api.IdentityShareKind.SHARING, nextKeySet.public());
+                            // Share the next IdentityKeySet with the sharingGroup of the previous IdentityKeySet
+                            var sharingGroup = elt.sharingGroup.map(function (publicKey) {
+                                var kind = proto_1.api.IdentityShareKind.SHARING;
+                                var nextPublicKey = nextPublicKeys.get(publicKey.login);
+                                publicKey = nextPublicKey != null ? nextPublicKey : publicKey;
+                                var _a = nextKeySet.shareKey(kind, publicKey), encryptedKey = _a.encryptedKey, nonce = _a.nonce;
+                                return {
+                                    login: publicKey.login,
+                                    version: publicKey.version,
+                                    encryptedKey: encryptedKey,
+                                    nonce: nonce,
+                                    kind: kind
+                                };
+                            });
+                            // Sign the public keys of the next IdentityKeySet with the current IdentityKeySet
+                            var signChain = currentKeySet.signKeys(nextKeySet);
                             return {
-                                login: elt.login,
-                                version: elt.version + 1,
-                                encryption: epub,
+                                login: nextKeySet.id.login,
+                                version: nextKeySet.id.version,
+                                encryption: nextencryptedKeySet,
                                 signChain: signChain,
-                                sharingGroup: elt.sharingGroup.map(function (pk) {
-                                    var kind = proto_1.api.IdentityShareKind.SHARING;
-                                    var newPk = newBoxPublicKeys.get(pk.login);
-                                    pk = newPk != null ? newPk : pk;
-                                    var _a = encryption.encryptKey(kind, _this.session.encryption, pk.box), message = _a.message, nonce = _a.nonce;
-                                    return {
-                                        login: pk.login,
-                                        version: pk.version,
-                                        encryptedKey: message,
-                                        nonce: nonce,
-                                        kind: kind
-                                    };
-                                }),
+                                sharingGroup: sharingGroup,
                                 backward: backward
                             };
                         });
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "POST",
                                 expectedCode: 201,
-                                path: "/api/v4/identity/" + encodeURIComponent(login) + "/sharingGraph",
-                                assume: options.overwriteKeys != null
-                                    ? undefined
-                                    : { login: login, kind: IdentityAccessKind.WRITE },
+                                path: "/api/v1/identity/" + encodeURIComponent(login) + "/sharingGraph",
+                                assume: { login: login, kind: proto_1.api.IdentityAccessKeyKind.WRITE },
                                 body: proto_1.api.IdentityPostSharingGraphRequest.encode({
                                     graph: encryptedGraph
                                 }).finish()
                             })];
-                    case 4: return [2 /*return*/, _b.sent()];
+                    case 3: return [2 /*return*/, _b.sent()];
+                }
+            });
+        });
+    };
+    /**
+     * Generate new keys for an identity.
+     * The identity will no longer be able access any things (resources, shared identities, ...) that have previously been shared with it.
+     * Only administrator can do this.
+     * @param login The login of the identity to set the active status.
+     * @return(p) On success the promise will be resolved with void.
+     * On error the promise will be rejected with an {@link Error} with kind:
+     * - `IdentityNotFound` if `login` does not exists.
+     * - `IdentityNotAdmin` if the identity logged along the current session is not an admin.
+     * - `IdentityNotAdminDomain` if the identity logged along with the current session cannot adinistrate the domain of `login`.
+     */
+    IdentityAPI.prototype.overwriteKeys = function (login, secret) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            var graph, nextPublicKeys, encryptedGraph;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.getSharingGraphWithPublicKey(login)];
+                    case 1:
+                        graph = _a.sent();
+                        if (graph[0].value.id.login != login) {
+                            throw new Error_1.Error({
+                                kind: Error_1.SDKKind.SDKInternalError,
+                                payload: { login: login, graph: graph, hint: "unexpected graph" }
+                            });
+                        }
+                        // Filter only latest identites
+                        graph = graph.filter(function (elt) { return elt.latest; });
+                        // We do not replace the identities that are shared by another identity
+                        // as overwrited identities cannot access to their history.
+                        // So we update only:
+                        // - the main identity
+                        // - the graph elements in which the only element in sharing group is the main identity (for example a delegate, but not a group)
+                        graph = graph.filter(function (elt) {
+                            return elt.value.id.login == login ||
+                                (elt.sharingGroup.length == 1 && elt.sharingGroup[0].login == login);
+                        });
+                        nextPublicKeys = new Map();
+                        encryptedGraph = graph
+                            .map(function (elt) {
+                            // Create the next IdentityKeySet, for each identities in the graph
+                            var keySetID = {
+                                version: elt.value.id.version + 1,
+                                login: elt.value.id.login
+                            };
+                            var _a = elt.value.id.login == login
+                                ? IdentityKeySetAPI_1.IdentityKeySetAPI.initWithSecret(keySetID, secret)
+                                : IdentityKeySetAPI_1.IdentityKeySetAPI.initWithMasterSeed(keySetID, elt.value.seed), encryptedKeySet = _a.encryptedKeySet, keySet = _a.keySet;
+                            // Put the next IdentityPublicKey in a map
+                            nextPublicKeys.set(keySetID.login, keySet.public());
+                            return {
+                                elt: elt,
+                                nextencryptedKeySet: encryptedKeySet,
+                                nextKeySet: keySet
+                            };
+                        })
+                            .map(function (_a) {
+                            var elt = _a.elt, nextencryptedKeySet = _a.nextencryptedKeySet, nextKeySet = _a.nextKeySet;
+                            // administrator signs the 'overwrited' new version of identity
+                            var signChain = _this.session.encryption.sign(Tools_1.Uint8Tool.concat(nextencryptedKeySet.boxEncrypted.publicKey, nextencryptedKeySet.signEncrypted.publicKey));
+                            // Share the next IdentityKeySet with the sharingGroup of the previous IdentityKeySet
+                            var sharingGroup = elt.sharingGroup.map(function (publicKey) {
+                                var kind = proto_1.api.IdentityShareKind.SHARING;
+                                var nextPublicKey = nextPublicKeys.get(publicKey.login);
+                                publicKey = nextPublicKey != null ? nextPublicKey : publicKey;
+                                var _a = nextKeySet.shareKey(kind, publicKey), encryptedKey = _a.encryptedKey, nonce = _a.nonce;
+                                return {
+                                    login: publicKey.login,
+                                    version: publicKey.version,
+                                    encryptedKey: encryptedKey,
+                                    nonce: nonce,
+                                    kind: kind
+                                };
+                            });
+                            return {
+                                login: nextKeySet.id.login,
+                                version: nextKeySet.id.version,
+                                encryption: nextencryptedKeySet,
+                                signChain: signChain,
+                                sharingGroup: sharingGroup
+                            };
+                        });
+                        return [4 /*yield*/, this.session.doProtoRequest({
+                                method: "POST",
+                                expectedCode: 201,
+                                path: "/api/v1/identity/" + encodeURIComponent(login) + "/sharingGraph",
+                                body: proto_1.api.IdentityPostSharingGraphRequest.encode({
+                                    graph: encryptedGraph
+                                }).finish()
+                            })];
+                    case 2: return [2 /*return*/, _a.sent()];
                 }
             });
         });
@@ -588,7 +596,7 @@ var IdentityAPI = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "GET",
                             expectedCode: 200,
-                            path: "/api/v4/identity/" + encodeURIComponent(login) + "/accessGroup",
+                            path: "/api/v1/identity/" + encodeURIComponent(login) + "/accessGroup",
                             response: function (r) {
                                 return proto_1.api.IdentityGetAccessGroupResponse.decode(r)
                                     .accessGroup;
@@ -615,7 +623,7 @@ var IdentityAPI = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.session.doProtoRequest({
                             method: "POST",
                             expectedCode: 200,
-                            path: "/api/v4/identities/latestPublicChains",
+                            path: "/api/v1/identities/latestPublicChains",
                             body: proto_1.api.IdentityGetLatestPublicChainsRequest.encode({
                                 ids: [{ login: login, since: 0 }]
                             }).finish(),
@@ -663,14 +671,14 @@ var IdentityAPI = /** @class */ (function () {
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "GET",
                                 expectedCode: 200,
-                                path: "/api/v4/identity/" + encodeURI(login) + "/lockedVersions",
+                                path: "/api/v1/identity/" + encodeURI(login) + "/lockedVersions",
                                 params: options,
                                 assume: login == this.session.login
                                     ? null
-                                    : { login: login, kind: IdentityAccessKind.READ },
+                                    : { login: login, kind: proto_1.api.IdentityAccessKeyKind.READ },
                                 response: function (r) {
                                     return proto_1.api.IdentityGetLockedVersionsResponse.decode(r).lockedVersions.map(function (lockedVersion) {
-                                        return __assign({}, lockedVersion, { publicKey: __assign({}, lockedVersion.publicKey.publicKey, { created: new Date(lockedVersion.publicKey.created * 1000) }) });
+                                        return __assign({}, lockedVersion, { publicKey: __assign({}, lockedVersion.publicKey.publicKey, { created: Tools_1.timestampToDate(lockedVersion.publicKey.created) }) });
                                     });
                                 }
                             })];
@@ -697,13 +705,12 @@ var IdentityAPI = /** @class */ (function () {
                         unlockedVersions = [];
                         resolvedChallengesWithEncryptedKeys = [];
                         if (!(login == this.session.login)) return [3 /*break*/, 2];
-                        publicKey = this.session.encryption.getPublic().boxEncrypted
-                            .publicKey;
+                        publicKey = this.session.getSessionPublicKey();
                         return [3 /*break*/, 4];
                     case 2: return [4 /*yield*/, this.session.getLatestPublicKey(login)];
                     case 3:
                         // TODO: possible race condition between the assumed version here and when sending the request
-                        publicKey = (_a.sent()).box;
+                        publicKey = _a.sent();
                         _a.label = 4;
                     case 4:
                         lockedVersions.forEach(function (locked) {
@@ -716,18 +723,17 @@ var IdentityAPI = /** @class */ (function () {
                                     }
                                 });
                             }
-                            var encryption = new CryptoFuncs_1.Encryption(proto_1.api.IdentityEncryption.create(locked.challenge.encryption));
                             try {
-                                encryption.recover(Tools_1.Uint8Tool.convert(secret), proto_1.api.IdentityPublicKey.create(locked.challenge.creator));
+                                var keySet = IdentityKeySetAPI_1.IdentityKeySetAPI.recoverWithSecret(login, secret, locked.challenge.encryption);
                                 unlockedVersions.push(locked.publicKey);
                                 // the current version of session identity is signed by the unlocked one (as keys are accessible by current session)
-                                var _a = encryption.encryptKey(proto_1.api.IdentityShareKind.SHARING, encryption, publicKey), message = _a.message, nonce = _a.nonce;
-                                var backward = { nonce: nonce, encryptedKey: message };
+                                var _a = keySet.shareKey(proto_1.api.IdentityShareKind.SHARING, publicKey), encryptedKey = _a.encryptedKey, nonce = _a.nonce;
+                                var backward = { nonce: nonce, encryptedKey: encryptedKey };
                                 resolvedChallengesWithEncryptedKeys.push(new proto_1.api.UnlockVersionsRequest.UnlockedVersion({
                                     resolvedChallenge: {
                                         token: locked.challenge.token,
                                         salt: locked.challenge.salt,
-                                        signature: encryption.sign(locked.challenge.salt)
+                                        signature: keySet.sign(locked.challenge.salt)
                                     },
                                     backward: backward
                                 }));
@@ -742,8 +748,8 @@ var IdentityAPI = /** @class */ (function () {
                                 expectedCode: 200,
                                 assume: login == this.session.login
                                     ? null
-                                    : { login: login, kind: IdentityAccessKind.WRITE },
-                                path: "/api/v4/identity/" + encodeURI(login) + "/unlockVersions",
+                                    : { login: login, kind: proto_1.api.IdentityAccessKeyKind.WRITE },
+                                path: "/api/v1/identity/" + encodeURI(login) + "/unlockVersions",
                                 body: proto_1.api.UnlockVersionsRequest.encode({
                                     unlockedVersions: resolvedChallengesWithEncryptedKeys
                                 }).finish(),
@@ -757,80 +763,133 @@ var IdentityAPI = /** @class */ (function () {
             });
         });
     };
-    IdentityAPI.prototype.getSharingGraph = function (login, options) {
+    IdentityAPI.prototype.getSharingGraphWithPublicKey = function (login) {
+        return __awaiter(this, void 0, void 0, function () {
+            var graph;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.session.doProtoRequest({
+                            method: "GET",
+                            expectedCode: 200,
+                            path: "/api/v1/identity/" + encodeURIComponent(login) + "/sharingGraph",
+                            response: proto_1.api.IdentityGetSharingGraphResponse.decode
+                        })];
+                    case 1:
+                        graph = (_a.sent()).graph;
+                        // Return the graph with IdentityPublicKeyID
+                        return [2 /*return*/, graph.map(function (_a) {
+                                var latest = _a.latest, login = _a.login, version = _a.version, sharingGroup = _a.sharingGroup, masterPublicKey = _a.masterPublicKey;
+                                return ({
+                                    value: {
+                                        id: { login: login, version: version },
+                                        seed: { publicKey: masterPublicKey, masterSalt: null }
+                                    },
+                                    sharingGroup: sharingGroup,
+                                    latest: latest
+                                });
+                            })];
+                }
+            });
+        });
+    };
+    IdentityAPI.prototype.getSharingGraphWithKeySet = function (login) {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
-            var withKeys, graph, ciphers, resolvedCiphers, resolvedGraph, key, boxKeys, firstSharingKey, x;
+            var assume, graph, rootKeySet, identityKeySets, rootNode, resolvedGraph, decyptedGraph;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        options = options != null ? options : {};
-                        withKeys = options.withKeys == null ? true : options.withKeys;
+                        assume = {
+                            login: login,
+                            kind: proto_1.api.IdentityAccessKeyKind.WRITE
+                        };
                         return [4 /*yield*/, this.session.doProtoRequest({
                                 method: "GET",
                                 expectedCode: 200,
-                                path: "/api/v4/identity/" + encodeURIComponent(login) + "/sharingGraph",
-                                assume: withKeys ? { login: login, kind: IdentityAccessKind.WRITE } : null,
+                                path: "/api/v1/identity/" + encodeURIComponent(login) + "/sharingGraph",
+                                assume: assume,
                                 response: proto_1.api.IdentityGetSharingGraphResponse.decode
                             })];
                     case 1:
                         graph = (_a.sent()).graph;
-                        if (!withKeys) {
-                            return [2 /*return*/, graph];
+                        rootKeySet = assume.keySet;
+                        identityKeySets = new Map();
+                        identityKeySets.set(rootKeySet.id.login + rootKeySet.id.version, rootKeySet);
+                        rootNode = graph.shift();
+                        if (rootNode.login != rootKeySet.id.login ||
+                            rootNode.version != rootKeySet.id.version) {
+                            throw new Error_1.Error({
+                                kind: Error_1.SDKKind.SDKInternalError,
+                                payload: {
+                                    message: "unexpected rootNode"
+                                }
+                            });
                         }
-                        ciphers = [];
-                        graph.forEach(function (elt, i) {
-                            if (i != 0) {
-                                ciphers.push(graph[i].sharingKey);
-                            }
-                            ciphers.push(graph[i].signKey);
-                            ciphers.push(graph[i].boxKey);
-                        });
-                        return [4 /*yield*/, this.session.resolveCipherList(ciphers)];
+                        return [4 /*yield*/, Promise.all(graph.map(function (elt) { return __awaiter(_this, void 0, void 0, function () {
+                                var sharingKey;
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0: return [4 /*yield*/, this
+                                                .session.resolveCipherList([elt.sharingKey])];
+                                        case 1:
+                                            sharingKey = (_a.sent())[0];
+                                            return [2 /*return*/, __assign({}, elt, { sharingKey: sharingKey })];
+                                    }
+                                });
+                            }); }))];
                     case 2:
-                        resolvedCiphers = _a.sent();
-                        resolvedGraph = graph.map(function (elt, i) {
-                            var sharingKey = i == 0 ? null : resolvedCiphers.shift();
-                            var signKey = resolvedCiphers.shift();
-                            var boxKey = resolvedCiphers.shift();
-                            return __assign({}, elt, { sharingKey: sharingKey, signKey: signKey, boxKey: boxKey });
+                        resolvedGraph = _a.sent();
+                        decyptedGraph = resolvedGraph.map(function (elt, i) {
+                            var parentKeySet = identityKeySets.get(elt.sharedFrom.login + elt.sharedFrom.version);
+                            var keySet = IdentityKeySetAPI_1.IdentityKeySetAPI.recoverWithEncrytedKeys({ login: elt.login, version: elt.version }, parentKeySet, [elt.sharingKey], {
+                                boxEncrypted: {
+                                    encryptedKey: elt.boxKey.message,
+                                    nonce: elt.boxKey.nonce,
+                                    publicKey: elt.boxPublicKey
+                                },
+                                signEncrypted: {
+                                    encryptedKey: elt.signKey.message,
+                                    nonce: elt.signKey.nonce,
+                                    publicKey: elt.signPublicKey
+                                },
+                                readEncrypted: null // TODO
+                            });
+                            identityKeySets.set(elt.login + elt.version, keySet);
+                            var seed = { publicKey: elt.masterPublicKey, masterSalt: null };
+                            return {
+                                sharingGroup: elt.sharingGroup,
+                                latest: elt.latest,
+                                value: { keySet: keySet, seed: seed }
+                            };
                         });
-                        return [4 /*yield*/, this.session.getAssumeParams({
-                                login: login,
-                                kind: IdentityAccessKind.WRITE
-                            })];
-                    case 3:
-                        key = (_a.sent()).key;
-                        boxKeys = {};
-                        return [4 /*yield*/, this.session.getAssumeParams({
-                                login: login,
-                                kind: IdentityAccessKind.WRITE
-                            })];
-                    case 4:
-                        firstSharingKey = (_a.sent()).key.sharingKey;
-                        x = resolvedGraph.map(function (elt, i) {
-                            var sharingKey;
-                            if (i == 0) {
-                                sharingKey = firstSharingKey;
+                        // Reintroduce the rootNode in the graph
+                        decyptedGraph.unshift({
+                            latest: rootNode.latest,
+                            sharingGroup: rootNode.sharingGroup,
+                            value: {
+                                keySet: rootKeySet,
+                                seed: {
+                                    publicKey: rootNode.masterPublicKey,
+                                    masterSalt: null
+                                }
                             }
-                            else {
-                                var boxkey = boxKeys[elt.sharedFrom.login + elt.sharedFrom.version];
-                                sharingKey = _this.session.encryption
-                                    .decrypt(proto_1.api.ResourceType.SES, boxkey)
-                                    .decrypt(elt.sharingKey);
-                            }
-                            var boxKey = _this.session.encryption
-                                .decrypt(proto_1.api.ResourceType.SES, sharingKey)
-                                .decrypt(elt.boxKey);
-                            var signKey = _this.session.encryption
-                                .decrypt(proto_1.api.ResourceType.SES, sharingKey)
-                                .decrypt(elt.signKey);
-                            boxKeys[elt.login + elt.version] = boxKey;
-                            return __assign({}, elt, { sharingKey: sharingKey, boxKey: boxKey, signKey: signKey });
                         });
-                        return [2 /*return*/, x];
+                        return [2 /*return*/, decyptedGraph];
                 }
             });
+        });
+    };
+    IdentityAPI.createSharingGroup = function (keySet, publicKeys) {
+        return publicKeys.map(function (pk) {
+            var kind = proto_1.api.IdentityShareKind.SHARING;
+            var _a = keySet.shareKey(kind, pk), encryptedKey = _a.encryptedKey, nonce = _a.nonce;
+            return {
+                login: pk.login,
+                version: pk.version,
+                nonce: nonce,
+                kind: kind,
+                encryptedKey: encryptedKey
+            };
         });
     };
     return IdentityAPI;

@@ -28,28 +28,28 @@ describe("applicationJWT.createSession", () => {
       ///////////////////////////////////////////////
 
       it(`A new user creates a session, algo(${algorithm}), secret(${secretType})`, async () => {
-        let { session, app, new: isNew } = await ApplicationJWT.createSession(
+        let { session, appSession, isNew } = await ApplicationJWT.createSession(
           ctx.apps[i].identity.login,
           login,
           secret,
           createConnector(keys.sk, config.signAlgorithm, secret)
         );
         expect(session).to.be.not.null;
-        expect(app).to.be.not.null;
-        expect(app.login).to.equal(login);
+        expect(appSession).to.be.not.null;
+        expect(appSession.login).to.equal(login);
         expect(isNew).to.be.true;
       });
 
       it(`An already registered user creates a session, algo(${algorithm}), secret(${secretType})`, async () => {
-        let { session, app, new: isNew } = await ApplicationJWT.createSession(
+        let { session, appSession, isNew } = await ApplicationJWT.createSession(
           ctx.apps[i].identity.login,
           login,
           secret,
           createConnector(keys.sk, config.signAlgorithm, secret)
         );
         expect(session).to.be.not.null;
-        expect(app).to.be.not.null;
-        expect(app.login).to.equal(login);
+        expect(appSession).to.be.not.null;
+        expect(appSession.login).to.equal(login);
         expect(isNew).to.be.false;
       });
 

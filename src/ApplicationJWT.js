@@ -74,7 +74,7 @@ var ApplicationJWT;
      */
     function createSession(appID, appLogin, secret, connector) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, session, appSecret, app, e_1, app, token, session;
+            var _a, session, appSecret, appSession, e_1, appSession, token, session;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -91,15 +91,15 @@ var ApplicationJWT;
                         }
                         return [4 /*yield*/, connector.createSession(appLogin, secret)];
                     case 2:
-                        app = _b.sent();
-                        return [2 /*return*/, { session: session, app: app, new: false }];
+                        appSession = _b.sent();
+                        return [2 /*return*/, { session: session, appSession: appSession, isNew: false }];
                     case 3:
                         e_1 = _b.sent();
                         if (!(e_1.kind == proto_1.api.PepsErrorKind.IdentityNotFound)) return [3 /*break*/, 8];
                         return [4 /*yield*/, connector.createSession(appLogin, secret)];
                     case 4:
-                        app = _b.sent();
-                        return [4 /*yield*/, connector.getToken(app)];
+                        appSession = _b.sent();
+                        return [4 /*yield*/, connector.getToken(appSession)];
                     case 5:
                         token = _b.sent();
                         // Create the DataPeps Identity
@@ -110,7 +110,7 @@ var ApplicationJWT;
                         return [4 /*yield*/, Application_1.secure(appID, appLogin, secret)];
                     case 7:
                         session = (_b.sent()).session;
-                        return [2 /*return*/, { session: session, app: app, new: true }];
+                        return [2 /*return*/, { session: session, appSession: appSession, isNew: true }];
                     case 8: throw e_1;
                     case 9: return [2 /*return*/];
                 }

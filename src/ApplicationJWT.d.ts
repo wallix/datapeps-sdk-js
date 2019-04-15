@@ -65,7 +65,7 @@ export declare namespace ApplicationJWT {
      */
     function createSession<AppSession, Secret extends string | Uint8Array>(appID: string, appLogin: string, secret: Secret, connector: Connector<AppSession, Secret>): Promise<{
         session: Session;
-        app: AppSession;
-        new: boolean;
+        appSession: AppSession;
+        isNew: boolean;
     }>;
 }

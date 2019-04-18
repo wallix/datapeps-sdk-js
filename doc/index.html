@@ -66,19 +66,16 @@
 				<h2 id="getting-started">Getting started</h2>
 				<p>The simplest way to get started is to add DataPeps SDK, using your favourite package manager.</p>
 				<p>With <code>npm</code>, go to your project directory and run:</p>
-				<pre><code class="lang-bash">npm install datapeps-sdk --save
-</code></pre>
+				<pre><code class="language-bash">npm install datapeps-sdk --save</code></pre>
 				<p>If you prefer <code>yarn</code>, go to your project directory and run:</p>
-				<pre><code class="lang-bash">yarn add datapeps-sdk
-</code></pre>
+				<pre><code class="language-bash">yarn add datapeps-sdk</code></pre>
 				<p>Once installed, just add the following line to your code to import the DataPeps SDK:</p>
-				<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> DataPeps <span class="hljs-keyword">from</span> <span class="hljs-string">"datapeps-sdk"</span>;
-</code></pre>
+				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> DataPeps <span class="hljs-keyword">from</span> <span class="hljs-string">"datapeps-sdk"</span>;</code></pre>
 				<p>If you plan to use DataPeps with Node.js (for testing with <a href="https://mochajs.org/">Mocha</a> for instance), please read more about dependencies <a href="https://github.com/wallix/datapeps-sdk-js/wiki/Setting-up#using-the-sdk-with-nodejs">in the wiki</a>.</p>
 				<h2 id="hello-datapeps-">Hello, DataPeps!</h2>
 				<p>Say there are two friends, Alice and Bob. Alice wants to send a picture to Bob; however, Alice is quite rather concerned about data security (good for her!), and she wants to ensure, that only Bob can eventually read the picture. DataPeps to the rescue!</p>
 				<p>With DataPeps, Alice encrypts the message like this:</p>
-				<pre><code class="lang-javascript"><span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">aliceSend</span>(<span class="hljs-params"></span>) </span>{
+				<pre><code class="language-javascript"><span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">aliceSend</span>(<span class="hljs-params"></span>) </span>{
   <span class="hljs-keyword">let</span> aliceSession = <span class="hljs-keyword">await</span> DataPeps.Session.login(aliceLogin, alicePassword);
   <span class="hljs-keyword">let</span> resource = <span class="hljs-keyword">await</span> aliceSession.Resource.create(<span class="hljs-string">"text"</span>, <span class="hljs-string">""</span>, [bobLogin]);
   <span class="hljs-keyword">let</span> messageToBob = <span class="hljs-string">"Hello, Bob!"</span>;
@@ -87,17 +84,15 @@
   );
   <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Alice sent a message: "'</span> + messageToBob + <span class="hljs-string">'"'</span>);
   <span class="hljs-keyword">return</span> [resource.id, encryptedMessage];
-}
-</code></pre>
+}</code></pre>
 				<p>and Bob decrypts the message like this:</p>
-				<pre><code class="lang-javascript"><span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">bobReceive</span>(<span class="hljs-params">resourceId, encryptedMessage</span>) </span>{
+				<pre><code class="language-javascript"><span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">bobReceive</span>(<span class="hljs-params">resourceId, encryptedMessage</span>) </span>{
   <span class="hljs-keyword">let</span> bobSession = <span class="hljs-keyword">await</span> DataPeps.Session.login(bobLogin, bobPassword);
   <span class="hljs-keyword">let</span> resource = <span class="hljs-keyword">await</span> bobSession.Resource.get(resourceId);
   <span class="hljs-keyword">let</span> decryptedMessage = resource.decrypt(encryptedMessage);
   <span class="hljs-keyword">let</span> messageToBob = <span class="hljs-keyword">new</span> TextDecoder().decode(decryptedMessage);
   <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Bob received message: "'</span> + messageToBob + <span class="hljs-string">'"'</span>);
-}
-</code></pre>
+}</code></pre>
 				<p>If you want a detailed explanation of the code above, look it up <a href="https://github.com/wallix/datapeps-sdk-js/wiki/Setting-up#hello-datapeps">in the wiki</a>.</p>
 				<p>Want to try asap? Here is a <a href="https://gist.github.com/hbi-wallix/2229fec260f8670de5657628ef28e522">complete Gist</a>.</p>
 				<h2 id="learn-more">Learn more</h2>
@@ -114,13 +109,115 @@
 					<li class="globals  ">
 						<a href="globals.html"><em>Globals</em></a>
 					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="modules/_datapeps_.html">"<wbr>Data<wbr>Peps"</a>
+					<li class=" tsd-kind-module">
+						<a href="modules/applicationjwt.html">ApplicationJWT</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/delegatedaccess.html">Delegated<wbr>Access</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/id.html">ID</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/identitypublickey.html">Identity<wbr>Public<wbr>Key</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/session.html">Session</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-enum">
+						<a href="enums/applicationidentitysortingfield.html" class="tsd-kind-icon">Application<wbr>Identity<wbr>Sorting<wbr>Field</a>
+					</li>
+					<li class=" tsd-kind-enum">
+						<a href="enums/identitysortingfield.html" class="tsd-kind-icon">Identity<wbr>Sorting<wbr>Field</a>
+					</li>
+					<li class=" tsd-kind-enum">
+						<a href="enums/resourcetype.html" class="tsd-kind-icon">Resource<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/adminapi.html" class="tsd-kind-icon">AdminAPI</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/applicationapi.html" class="tsd-kind-icon">ApplicationAPI</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/delegatedaccessapi.html" class="tsd-kind-icon">Delegated<wbr>AccessAPI</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/identityapi.html" class="tsd-kind-icon">IdentityAPI</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/resourceapi.html" class="tsd-kind-icon">ResourceAPI</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-has-type-parameter">
+						<a href="interfaces/identity.html" class="tsd-kind-icon">Identity</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/identityfields.html" class="tsd-kind-icon">Identity<wbr>Fields</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/identitypublickeyid.html" class="tsd-kind-icon">Identity<wbr>Public<wbr>KeyID</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/identitypublickeywithmetadata.html" class="tsd-kind-icon">Identity<wbr>Public<wbr>Key<wbr>With<wbr>Metadata</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/lockedversion.html" class="tsd-kind-icon">Locked<wbr>Version</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-has-type-parameter">
+						<a href="interfaces/resource.html" class="tsd-kind-icon">Resource</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/resourceaccesslog.html" class="tsd-kind-icon">Resource<wbr>Access<wbr>Log</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/resourcesharelink.html" class="tsd-kind-icon">Resource<wbr>Share<wbr>Link</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-has-type-parameter">
+						<a href="interfaces/sessionrequest.html" class="tsd-kind-icon">Session<wbr>Request</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#assumeoptions" class="tsd-kind-icon">Assume<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#identitykeykind" class="tsd-kind-icon">Identity<wbr>Key<wbr>Kind</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#identitysharelink" class="tsd-kind-icon">Identity<wbr>Share<wbr>Link</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#loginoptions" class="tsd-kind-icon">Login<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#registeremailvalidationtoken" class="tsd-kind-icon">Register<wbr>Email<wbr>Validation<wbr>Token</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#sessionparameters" class="tsd-kind-icon">Session<wbr>Parameters</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#sessionsaltkind" class="tsd-kind-icon">Session<wbr>Salt<wbr>Kind</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#registertokenstatus" class="tsd-kind-icon">Register<wbr>Token<wbr>Status</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#configure" class="tsd-kind-icon">configure</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#getlogin" class="tsd-kind-icon">get<wbr>Login</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#register" class="tsd-kind-icon">register</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#registerwithtoken" class="tsd-kind-icon">register<wbr>With<wbr>Token</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#sendregisterlink" class="tsd-kind-icon">send<wbr>Register<wbr>Link</a>
+					</li>
 				</ul>
 			</nav>
 		</div>

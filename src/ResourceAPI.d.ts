@@ -107,6 +107,7 @@ export declare class ResourceAPI {
      */
     getNamed<T>(login: string, resourceName: string, options?: {
         parse?: ((u: Uint8Array) => T);
+        resourceOwner?: string;
     }): Promise<Resource<T>>;
     /**
      * Save a one-to-one association between the key <login, resourceName> and a resourceID.

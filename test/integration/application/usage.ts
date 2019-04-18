@@ -164,7 +164,7 @@ describe("applicationAPI.usage", () => {
     let charlieDataPepsSecret = "angelsTest=1234";
 
     // Make Charlie open a JWT session
-    let { new: isNew } = await ApplicationJWT.createSession(
+    let { isNew } = await ApplicationJWT.createSession(
       ctx.app.identity.login,
       "charlie",
       charlieDataPepsSecret,
@@ -178,7 +178,7 @@ describe("applicationAPI.usage", () => {
     expect(isNew).to.be.true;
 
     // Let's open another
-    let { new: isNewAgain } = await ApplicationJWT.createSession(
+    let { isNew: isNewAgain } = await ApplicationJWT.createSession(
       ctx.app.identity.login,
       "charlie",
       charlieDataPepsSecret,

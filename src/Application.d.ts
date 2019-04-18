@@ -19,3 +19,4 @@ export declare function secure(appID: string, login: string, secret: string | Ui
     session: Session;
     secret: Uint8Array;
 }>;
+export declare function getLogin(login: string, appID: string): string;

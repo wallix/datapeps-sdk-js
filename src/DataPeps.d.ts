@@ -4,6 +4,13 @@ export { Error, ErrorKind, ServerKind as ServerError, SDKKind as SDKError } from
  * @param APIUrl The url of the DataPeps service.
  */
 export declare function configure(APIUrl: string, WSUrl?: string): void;
+/**
+ * Gets the DataPeps login from the application identity login.
+ * @param appLogin The application identity login (must not be null)
+ * @param appID The application ID (must not be null)
+ * @returns The DataPeps login of the application identity.
+ */
+export declare function getLogin(appLogin: string, appID: string): string;
 export * from "./Register";
 export * from "./ID";
 export * from "./Session";

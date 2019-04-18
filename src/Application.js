@@ -94,16 +94,15 @@ function createUser(appID, auth, secret) {
 exports.createUser = createUser;
 function secure(appID, login, secret) {
     return __awaiter(this, void 0, void 0, function () {
-        var appLogin, session, identityLogin, appSecretResource;
+        var datapepsLogin, session, appSecretResource;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    appLogin = composeApplicationLogin(login, appID);
-                    return [4 /*yield*/, Session_1.Session.login(appLogin, secret)];
+                    datapepsLogin = getLogin(login, appID);
+                    return [4 /*yield*/, Session_1.Session.login(datapepsLogin, secret)];
                 case 1:
                     session = _a.sent();
-                    identityLogin = login.concat("@", appID);
-                    return [4 /*yield*/, new ResourceAPI_1.ResourceAPI(session).getNamed(identityLogin, "appSecret", { parse: function (u) { return u; } })];
+                    return [4 /*yield*/, new ResourceAPI_1.ResourceAPI(session).getNamed(datapepsLogin, "appSecret", { parse: function (u) { return u; } })];
                 case 2:
                     appSecretResource = _a.sent();
                     return [2 /*return*/, { session: session, secret: appSecretResource.payload }];
@@ -112,8 +111,9 @@ function secure(appID, login, secret) {
     });
 }
 exports.secure = secure;
-function composeApplicationLogin(login, appID) {
+function getLogin(login, appID) {
     var appLogin = login.concat("@", appID);
     return appLogin;
 }
+exports.getLogin = getLogin;
 //# sourceMappingURL=Application.js.map

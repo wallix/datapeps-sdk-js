@@ -81,7 +81,7 @@ export namespace ApplicationJWT {
     appLogin: string,
     secret: Secret,
     connector: Connector<AppSession, Secret>
-  ): Promise<{ session: Session; app: AppSession; new: boolean }> {
+  ): Promise<{ session: Session; appSession: AppSession; isNew: boolean }> {
     // Try to connect to DataPeps
     try {
       let { session, secret: appSecret } = await secure(
@@ -95,20 +95,20 @@ export namespace ApplicationJWT {
       } else {
         secret = Uint8Tool.decode(appSecret) as Secret;
       }
-      let app = await connector.createSession(appLogin, secret);
-      return { session, app, new: false };
+      let appSession = await connector.createSession(appLogin, secret);
+      return { session, appSession, isNew: false };
     } catch (e) {
       // If the DataPeps Identity doesn't exists
       if (e.kind == api.PepsErrorKind.IdentityNotFound) {
         // Connect to the application
-        let app = await connector.createSession(appLogin, secret);
+        let appSession = await connector.createSession(appLogin, secret);
         // Get the jwt token to create the DataPeps Identity for the Application End-User.
-        let token = await connector.getToken(app);
+        let token = await connector.getToken(appSession);
         // Create the DataPeps Identity
         await createUser(appID, { jwt: { token } }, secret);
         // Login to DataPeps
         let { session } = await secure(appID, appLogin, secret);
-        return { session, app, new: true };
+        return { session, appSession, isNew: true };
       }
       throw e;
     }

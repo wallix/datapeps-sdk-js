@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Long = require("long");
 var protobufjs = require("protobufjs");
 var HTTP = require("./HTTP");
+var Application_1 = require("./Application");
 var Error_1 = require("./Error");
 exports.Error = Error_1.Error;
 exports.ServerError = Error_1.ServerKind;
@@ -20,6 +21,16 @@ function configure(APIUrl, WSUrl) {
     HTTP.configure(APIUrl);
 }
 exports.configure = configure;
+/**
+ * Gets the DataPeps login from the application identity login.
+ * @param appLogin The application identity login (must not be null)
+ * @param appID The application ID (must not be null)
+ * @returns The DataPeps login of the application identity.
+ */
+function getLogin(appLogin, appID) {
+    return Application_1.getLogin(appLogin, appID);
+}
+exports.getLogin = getLogin;
 __export(require("./Register"));
 __export(require("./ID"));
 __export(require("./Session"));

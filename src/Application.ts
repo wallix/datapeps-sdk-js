@@ -79,19 +79,18 @@ export async function secure(
   login: string,
   secret: string | Uint8Array
 ): Promise<{ session: Session; secret: Uint8Array }> {
-  let appLogin = composeApplicationLogin(login, appID);
-  let session = await Session.login(appLogin, secret);
-  let identityLogin = login.concat("@", appID);
+  let datapepsLogin = getLogin(login, appID);
+  let session = await Session.login(datapepsLogin, secret);
 
   let appSecretResource = await new ResourceAPI(session).getNamed<Uint8Array>(
-    identityLogin,
+    datapepsLogin,
     "appSecret",
     { parse: u => u }
   );
   return { session, secret: appSecretResource.payload };
 }
 
-function composeApplicationLogin(login: string, appID: string): string {
+export function getLogin(login: string, appID: string): string {
   let appLogin = login.concat("@", appID);
   return appLogin;
 }

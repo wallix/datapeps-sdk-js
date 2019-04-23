@@ -13731,7 +13731,6 @@ $root.api = (function() {
          * @interface IIdentityGetNamedResourceRequest
          * @property {string|null} [login] IdentityGetNamedResourceRequest login
          * @property {string|null} [resourceName] IdentityGetNamedResourceRequest resourceName
-         * @property {string|null} [owner] IdentityGetNamedResourceRequest owner
          */
 
         /**
@@ -13766,14 +13765,6 @@ $root.api = (function() {
         IdentityGetNamedResourceRequest.prototype.resourceName = "";
 
         /**
-         * IdentityGetNamedResourceRequest owner.
-         * @member {string} owner
-         * @memberof api.IdentityGetNamedResourceRequest
-         * @instance
-         */
-        IdentityGetNamedResourceRequest.prototype.owner = "";
-
-        /**
          * Creates a new IdentityGetNamedResourceRequest instance using the specified properties.
          * @function create
          * @memberof api.IdentityGetNamedResourceRequest
@@ -13801,8 +13792,6 @@ $root.api = (function() {
                 writer.uint32(/* id 1, wireType 2 =*/10).string(message.login);
             if (message.resourceName != null && message.hasOwnProperty("resourceName"))
                 writer.uint32(/* id 2, wireType 2 =*/18).string(message.resourceName);
-            if (message.owner != null && message.hasOwnProperty("owner"))
-                writer.uint32(/* id 3, wireType 2 =*/26).string(message.owner);
             return writer;
         };
 
@@ -13842,9 +13831,6 @@ $root.api = (function() {
                     break;
                 case 2:
                     message.resourceName = reader.string();
-                    break;
-                case 3:
-                    message.owner = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -13887,9 +13873,6 @@ $root.api = (function() {
             if (message.resourceName != null && message.hasOwnProperty("resourceName"))
                 if (!$util.isString(message.resourceName))
                     return "resourceName: string expected";
-            if (message.owner != null && message.hasOwnProperty("owner"))
-                if (!$util.isString(message.owner))
-                    return "owner: string expected";
             return null;
         };
 
@@ -13909,8 +13892,6 @@ $root.api = (function() {
                 message.login = String(object.login);
             if (object.resourceName != null)
                 message.resourceName = String(object.resourceName);
-            if (object.owner != null)
-                message.owner = String(object.owner);
             return message;
         };
 
@@ -13930,14 +13911,11 @@ $root.api = (function() {
             if (options.defaults) {
                 object.login = "";
                 object.resourceName = "";
-                object.owner = "";
             }
             if (message.login != null && message.hasOwnProperty("login"))
                 object.login = message.login;
             if (message.resourceName != null && message.hasOwnProperty("resourceName"))
                 object.resourceName = message.resourceName;
-            if (message.owner != null && message.hasOwnProperty("owner"))
-                object.owner = message.owner;
             return object;
         };
 

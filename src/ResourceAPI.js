@@ -179,24 +179,20 @@ var ResourceAPI = /** @class */ (function () {
      */
     ResourceAPI.prototype.getNamed = function (login, resourceName, options) {
         return __awaiter(this, void 0, void 0, function () {
-            var resp;
+            var assume, resp;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         options = options != null ? options : {};
-                        options.resourceOwner =
-                            options.resourceOwner != null ? options.resourceOwner : login;
+                        assume = { login: login, kind: proto_1.api.IdentityAccessKeyKind.READ };
                         return [4 /*yield*/, this.session.doProtoRequest({
-                                method: "POST",
+                                method: "GET",
                                 expectedCode: 200,
-                                assume: { login: login, kind: proto_1.api.IdentityAccessKeyKind.READ },
+                                assume: assume,
                                 path: "/api/v1/identity/" +
                                     encodeURIComponent(login) +
                                     "/resource/" +
                                     encodeURIComponent(resourceName),
-                                body: proto_1.api.IdentityGetNamedResourceRequest.encode({
-                                    owner: options.resourceOwner
-                                }).finish(),
                                 response: function (r) { return proto_1.api.IdentityGetNamedResourceResponse.decode(r); }
                             })];
                     case 1:

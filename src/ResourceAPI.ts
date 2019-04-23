@@ -223,24 +223,19 @@ export class ResourceAPI {
     resourceName: string,
     options?: {
       parse?: ((u: Uint8Array) => T);
-      resourceOwner?: string;
     }
   ): Promise<Resource<T>> {
     options = options != null ? options : {};
-    options.resourceOwner =
-      options.resourceOwner != null ? options.resourceOwner : login;
+    let assume = { login, kind: api.IdentityAccessKeyKind.READ };
     let resp = await this.session.doProtoRequest({
-      method: "POST",
+      method: "GET",
       expectedCode: 200,
-      assume: { login, kind: api.IdentityAccessKeyKind.READ },
+      assume,
       path:
         "/api/v1/identity/" +
         encodeURIComponent(login) +
         "/resource/" +
         encodeURIComponent(resourceName),
-      body: api.IdentityGetNamedResourceRequest.encode({
-        owner: options.resourceOwner
-      }).finish(),
       response: r => api.IdentityGetNamedResourceResponse.decode(r)
     });
     return makeResourceFromResponse<T>(

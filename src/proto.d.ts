@@ -5650,9 +5650,6 @@ export namespace api {
 
         /** IdentityGetNamedResourceRequest resourceName */
         resourceName?: (string|null);
-
-        /** IdentityGetNamedResourceRequest owner */
-        owner?: (string|null);
     }
 
     /** Represents an IdentityGetNamedResourceRequest. */
@@ -5669,9 +5666,6 @@ export namespace api {
 
         /** IdentityGetNamedResourceRequest resourceName. */
         public resourceName: string;
-
-        /** IdentityGetNamedResourceRequest owner. */
-        public owner: string;
 
         /**
          * Creates a new IdentityGetNamedResourceRequest instance using the specified properties.

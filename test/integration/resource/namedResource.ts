@@ -5,26 +5,20 @@ import * as Long from "long";
 import * as Utils from "../../Utils";
 import { itError } from "../../Utils";
 import * as DataPeps from "../../../src/DataPeps";
-import { ResourceAPI, IdentityAPI } from "../../../src/DataPeps";
-
-let initCtx: Context.initCtx;
+import { ResourceAPI } from "../../../src/DataPeps";
 
 describe("identity.namedResource", () => {
   let resourceA: Utils.Resource,
     resourceB: Utils.Resource,
     resourceC: Utils.Resource;
-  let deviceResource: Utils.Resource;
-  let deviceAliceResource: Utils.Resource;
-  let bobResource: Utils.Resource;
   let resourceName = "nameOfMyResource";
   let ctx: Context.aliceBobWithDeviceAndGroupCtx;
-  let aliceBobChild: Context.identityCtx;
   let randomIdentity: string;
   let fakeId: Long;
 
   before(async () => {
-    initCtx = await Context.init();
-    ctx = await Context.aliceBobWithDeviceAndGroup(initCtx);
+    let init = await Context.init();
+    ctx = await Context.aliceBobWithDeviceAndGroup(init);
 
     let resourceADataPeps = await new ResourceAPI(ctx.alice.session).create(
       "test kind",
@@ -51,45 +45,6 @@ describe("identity.namedResource", () => {
       [ctx.alice.identity.login]
     );
     resourceC = new Utils.Resource(resourceCDataPeps, "Content C");
-
-    let deviceResourceDataPeps = await new ResourceAPI(
-      ctx.aliceDevice.session
-    ).create("test kind", null, [ctx.aliceDevice.identity.login]);
-    deviceResource = new Utils.Resource(
-      deviceResourceDataPeps,
-      "Device resource content"
-    );
-
-    let deviceAliceResourceDataPeps = await new ResourceAPI(
-      ctx.aliceDevice.session
-    ).create("test kind", null, [
-      ctx.alice.identity.login,
-      ctx.aliceDevice.identity.login
-    ]);
-    deviceAliceResource = new Utils.Resource(
-      deviceAliceResourceDataPeps,
-      "Device resource content"
-    );
-
-    let bobResourceDataPeps = await new ResourceAPI(ctx.bob.session).create(
-      "test kind",
-      null,
-      [ctx.bob.identity.login]
-    );
-    bobResource = new Utils.Resource(
-      bobResourceDataPeps,
-      "Bob resource content"
-    );
-
-    aliceBobChild = await Context.identity(initCtx, null);
-    let aliceBobChildSession = await DataPeps.Session.login(
-      aliceBobChild.identity.login,
-      aliceBobChild.secret
-    );
-    await new DataPeps.IdentityAPI(aliceBobChildSession).extendSharingGroup(
-      aliceBobChild.identity.login,
-      [ctx.alice.identity.login, ctx.bob.identity.login]
-    );
   });
 
   it("Creation and access to a named resource", async () => {
@@ -111,7 +66,7 @@ describe("identity.namedResource", () => {
   });
 
   it("Get a named resource when created by an identity in the sharing graph", async () => {
-    // AliceDevice creates a named resource  (Alice, resourceName, resourceA)
+    // AliceDevice creates a named resoure  (Alice, resourceName, resourceA)
     await new ResourceAPI(ctx.aliceDevice.session).setNamed(
       ctx.alice.identity.login,
       resourceName,
@@ -127,47 +82,6 @@ describe("identity.namedResource", () => {
     let namedResourceA2 = await new ResourceAPI(ctx.alice.session).getNamed(
       ctx.alice.identity.login,
       resourceName
-    );
-  });
-
-  it("An identity can create a resource, set it as a named resource for a shared identity and access it", async () => {
-    let deviceResourceAPI = new ResourceAPI(ctx.aliceDevice.session);
-
-    await deviceResourceAPI.setNamed(
-      ctx.alice.identity.login,
-      resourceName,
-      deviceResource.resource.id
-    );
-    await deviceResourceAPI.getNamed(ctx.alice.identity.login, resourceName, {
-      resourceOwner: ctx.aliceDevice.identity.login
-    });
-  });
-
-  it("An identity can access to a resource associated with its descendent", async () => {
-    await new ResourceAPI(ctx.alice.session).setNamed(
-      aliceBobChild.identity.login,
-      resourceName,
-      deviceAliceResource.resource.id
-    );
-
-    await new ResourceAPI(ctx.aliceDevice.session).getNamed(
-      aliceBobChild.identity.login,
-      resourceName,
-      { resourceOwner: ctx.aliceDevice.identity.login }
-    );
-  });
-
-  it("An identity can access to a resource associated with its descendent", async () => {
-    await new ResourceAPI(ctx.alice.session).setNamed(
-      aliceBobChild.identity.login,
-      resourceName,
-      resourceA.resource.id
-    );
-
-    await new ResourceAPI(ctx.aliceDevice.session).getNamed(
-      aliceBobChild.identity.login,
-      resourceName,
-      { resourceOwner: ctx.alice.identity.login }
     );
   });
 
@@ -299,30 +213,6 @@ describe("identity.namedResource", () => {
     })
   );
 
-  itError(
-    "A device can get a foreign resource associated with its descendant, but cannot decipher it",
-    async () => {
-      try {
-        await new ResourceAPI(ctx.bob.session).setNamed(
-          aliceBobChild.identity.login,
-          "Bob's named resource",
-          bobResource.resource.id
-        );
-      } catch (e) {
-        throw `An unexpected error occurred: ${e}`;
-      }
-
-      await new ResourceAPI(ctx.aliceDevice.session).getNamed(
-        aliceBobChild.identity.login,
-        "Bob's named resource",
-        {
-          resourceOwner: ctx.bob.identity.login
-        }
-      );
-    },
-    DataPeps.ServerError.IdentityCannotAssumeOwnership
-  );
-
   it("Overwrite a named resource", async () => {
     // Alice overwrites the named resource (Alice, resourceName, resourceA) with (Alice, resourceName, resourceC)
     await new ResourceAPI(ctx.alice.session).setNamed(
@@ -331,7 +221,7 @@ describe("identity.namedResource", () => {
       resourceC.resource.id
     );
 
-    // access to the overwritten named resource
+    // access to the overwrited named resource
     let namedResource = await new ResourceAPI(ctx.alice.session).getNamed(
       ctx.alice.identity.login,
       resourceName

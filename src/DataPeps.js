@@ -13,6 +13,12 @@ exports.ServerError = Error_1.ServerKind;
 exports.SDKError = Error_1.SDKKind;
 protobufjs.util.Long = Long;
 protobufjs.configure();
+if (typeof fetch === "undefined" &&
+    typeof global !== "undefined" &&
+    typeof global.fetch === "undefined") {
+    global.fetch = require("node-fetch");
+    global.Headers = global.fetch.Headers;
+}
 /**
  * Configure the endpoint of the SDK.
  * @param APIUrl The url of the DataPeps service.

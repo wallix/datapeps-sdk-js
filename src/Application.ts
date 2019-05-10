@@ -1,6 +1,5 @@
 import { api } from "./proto";
 import { Uint8Tool } from "./Tools";
-import { MasterPrivateSeed } from "./IdentityKeySet";
 import * as HTTP from "./HTTP";
 import { createWithEncryption } from "./ResourceInternal";
 import { IdentityFields } from "./IdentityAPI";

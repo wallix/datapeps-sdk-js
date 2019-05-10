@@ -2,7 +2,7 @@ import * as Config from "../../Config";
 import * as DataPeps from "../../../src/DataPeps";
 import * as nacl from "tweetnacl";
 import { expect } from "chai";
-import { AdminAPI, IdentityAPI } from "../../../src/DataPeps";
+import { IdentityAPI } from "../../../src/DataPeps";
 
 describe("identity.LockedVersions", () => {
   let seed = Math.floor(Math.random() * 99999);
@@ -27,21 +27,24 @@ describe("identity.LockedVersions", () => {
     await DataPeps.register(alice, aliceSecret); // v1
     aliceSession = await DataPeps.Session.login(alice.login, aliceSecret);
     adminSession = await Config.adminLogin();
-    await aliceSession.renewKeys(); // v2
-    await aliceSession.renewKeys(otherPassword); // v3
+    await new IdentityAPI(aliceSession).renewKeys(aliceSession.login); // v2
+    await new IdentityAPI(aliceSession).renewKeys(
+      aliceSession.login,
+      otherPassword
+    ); // v3
     await new IdentityAPI(adminSession).overwriteKeys(
       alice.login,
       adminSecret1
     ); // key reset: v4
     aliceSession = await DataPeps.Session.login(alice.login, adminSecret1);
-    await aliceSession.renewKeys(); // v5
+    await new IdentityAPI(aliceSession).renewKeys(aliceSession.login); // v5
     let adminSecret2 = "a second admin secret";
     await new IdentityAPI(adminSession).overwriteKeys(
       alice.login,
       adminSecret2
     ); // key reset: v6
     aliceSession = await DataPeps.Session.login(alice.login, adminSecret2);
-    await aliceSession.renewKeys(); // v7
+    await new IdentityAPI(aliceSession).renewKeys(aliceSession.login); // v7
     publicKeys = (await new IdentityAPI(aliceSession).getPublicKeyHistory(
       alice.login
     )).sort((a, b) => a.version - b.version);

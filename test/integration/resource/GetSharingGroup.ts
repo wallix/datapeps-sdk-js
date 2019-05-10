@@ -159,7 +159,7 @@ describe("resource.getSharingGroup", () => {
   });
 
   it("Check right identity version in sharing group after key renewal of sharers", async () => {
-    await bobSession.renewKeys();
+    await new IdentityAPI(bobSession).renewKeys(bobSession.login);
     let sharedRes = await new ResourceAPI(aliceSession).create(
       "test/A",
       { description: "This is a test resource for Alice and Bob" },

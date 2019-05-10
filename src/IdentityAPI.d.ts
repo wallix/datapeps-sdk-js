@@ -95,7 +95,7 @@ export declare enum IdentitySortingField {
     KIND = 2,
 }
 export declare class IdentityAPI {
-    private session;
+    private api;
     constructor(session: Session);
     /**
      * Get the latest public key of the given identity login.

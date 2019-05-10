@@ -10,6 +10,7 @@ import { IdentityPublicKey, IdentityPublicKeyID } from "./IdentityAPI";
 import { Session } from "./Session";
 import { ID } from "./ID";
 import { CipherType } from "./Cryptor";
+import { SessionState } from "./SessionInternal";
 
 export enum ResourceType {
   ANONYMOUS = 0
@@ -78,10 +79,9 @@ export interface ResourceShareLink {
 }
 
 export class ResourceAPI {
-  private session: Session;
-
+  private api: SessionState;
   constructor(session: Session) {
-    this.session = session;
+    this.api = SessionState.create(session);
   }
 
   /**
@@ -104,20 +104,18 @@ export class ResourceAPI {
     options = options == null ? {} : options;
     // keys and payload are always encrypted with SES
     // TODO(K1): safe
-    let encryptFunc = (this.session as any).encryption.encryptor(
-      CipherType.NACL_SES
-    );
+    let encryptFunc = this.api.keySet.root.encryptor(CipherType.NACL_SES);
     // resource only support ANONYMOUS for now (i.e. the data encrypted by the resource)
     let type = api.ResourceType.ANONYMOUS;
-    let creator = this.session.getSessionPublicKey();
+    let creator = this.api.keySet.getCurrentPublicKey();
     let { body, keypair } = await createBodyRequest(
       payload,
       sharingGroup,
       encryptFunc,
-      this.session,
+      this.api.publicKeys,
       options
     );
-    let { id } = await this.session.doProtoRequest({
+    let { id } = await this.api.client.doProtoRequest({
       method: "POST",
       expectedCode: 201,
       path: "/api/v1/resources",
@@ -150,14 +148,14 @@ export class ResourceAPI {
     reason?: string;
   }): Promise<Resource<T>[]> {
     options = options != null ? options : {};
-    let assume = options.assume != null ? options.assume : this.session.login;
+    let assume = options.assume != null ? options.assume : this.api.login;
     let parse = options.parse;
     let params =
       options.reason != null
         ? { ...options, access_reason: options.reason }
         : options;
     delete params.parse;
-    return await this.session
+    return await this.api.client
       .doProtoRequest({
         method: "GET",
         expectedCode: 200,
@@ -167,7 +165,12 @@ export class ResourceAPI {
         response: r => api.ResourceListResponse.decode(r).resources
       })
       .then(resources =>
-        makeResourcesFromResponses<T>(resources, this.session, parse)
+        makeResourcesFromResponses<T>(
+          resources,
+          this.api.keySet,
+          this.api.publicKeys,
+          parse
+        )
       );
   }
 
@@ -191,10 +194,10 @@ export class ResourceAPI {
     }
   ): Promise<Resource<T>> {
     options = options != null ? options : {};
-    let assume = options.assume != null ? options.assume : this.session.login;
+    let assume = options.assume != null ? options.assume : this.api.login;
     let params =
       options.reason != null ? { access_reason: options.reason } : undefined;
-    let response = await this.session.doProtoRequest({
+    let response = await this.api.client.doProtoRequest({
       method: "GET",
       expectedCode: 200,
       path: "/api/v1/resource/" + id,
@@ -205,7 +208,8 @@ export class ResourceAPI {
     return makeResourceFromResponse<T>(
       response,
       CipherType.NACL_SES,
-      this.session,
+      this.api.publicKeys,
+      this.api.keySet,
       options.parse
     );
   }
@@ -227,21 +231,22 @@ export class ResourceAPI {
   ): Promise<Resource<T>> {
     options = options != null ? options : {};
     let assume = { login, kind: api.IdentityAccessKeyKind.READ };
-    let resp = await this.session.doProtoRequest({
+    let resp = await this.api.client.doProtoRequest({
       method: "GET",
       expectedCode: 200,
-      assume,
       path:
         "/api/v1/identity/" +
         encodeURIComponent(login) +
         "/resource/" +
         encodeURIComponent(resourceName),
+      assume,
       response: r => api.IdentityGetNamedResourceResponse.decode(r)
     });
     return makeResourceFromResponse<T>(
       resp.resource,
       CipherType.NACL_SES,
-      this.session,
+      this.api.publicKeys,
+      this.api.keySet,
       options.parse
     );
   }
@@ -261,7 +266,7 @@ export class ResourceAPI {
     resourceID: ID
   ): Promise<void> {
     let assume = { login, kind: api.IdentityAccessKeyKind.WRITE };
-    let res = await this.session.doProtoRequest<void>({
+    let res = await this.api.client.doProtoRequest<void>({
       method: "PUT",
       expectedCode: 200,
       assume,
@@ -285,8 +290,8 @@ export class ResourceAPI {
    */
   async unlink(id: ID, options?: { assume?: string }): Promise<void> {
     options = options != null ? options : {};
-    let assume = options.assume != null ? options.assume : this.session.login;
-    return await this.session.doProtoRequest<void>({
+    let assume = options.assume != null ? options.assume : this.api.login;
+    return await this.api.client.doProtoRequest<void>({
       method: "DELETE",
       expectedCode: 200,
       path: "/api/v1/resource/" + id,
@@ -305,8 +310,8 @@ export class ResourceAPI {
    */
   async delete(id: ID, options?: { assume?: string }): Promise<void> {
     options = options != null ? options : {};
-    let assume = options.assume != null ? options.assume : this.session.login;
-    return await this.session.doProtoRequest<void>({
+    let assume = options.assume != null ? options.assume : this.api.login;
+    return await this.api.client.doProtoRequest<void>({
       method: "DELETE",
       expectedCode: 200,
       path: "/api/v1/resource/" + id,
@@ -328,34 +333,27 @@ export class ResourceAPI {
   async extendSharingGroup(
     id: ID,
     sharingGroup: string[],
-    options: { assume?: string } = { assume: this.session.login }
+    options: { assume?: string } = { assume: this.api.login }
   ): Promise<void> {
     options = options != null ? options : {};
-    let { encryptedKey, owner } = await this.session.doProtoRequest({
+    let { encryptedKey, owner } = await this.api.client.doProtoRequest({
       method: "GET",
       expectedCode: 200,
       path: "/api/v1/resource/" + id + "/key",
       response: api.ResourceGetKeyResponse.decode
     });
-    let keySet = await this.session.getIdentityKeySet(
-      owner.login,
-      owner.version
-    );
+    let keySet = await this.api.keySet.get(owner.login, owner.version);
     let secretKey = keySet
       .decryptor(CipherType.NACL_SES)
-      .decryptList(
-        await (this.session as any).resolveCipherList([encryptedKey])
-      );
-    let encryptFunc = (this.session as any).encryption.encryptor(
-      CipherType.NACL_SES
-    );
+      .decryptList(await this.api.publicKeys.resolveCipherList([encryptedKey]));
+    let encryptFunc = this.api.keySet.root.encryptor(CipherType.NACL_SES);
     let encryptedSharingGroup = await encryptForSharingGroup(
       secretKey,
       sharingGroup,
       encryptFunc,
-      this.session
+      this.api.publicKeys
     );
-    return await this.session.doProtoRequest<void>({
+    return await this.api.client.doProtoRequest<void>({
       method: "PATCH",
       expectedCode: 201,
       path: "/api/v1/resource/" + id + "/sharingGroup",
@@ -383,8 +381,8 @@ export class ResourceAPI {
     assume?: string;
   }): Promise<ResourceAccessLog[]> {
     options = options != null ? options : {};
-    let assume = options.assume != null ? options.assume : this.session.login;
-    let { logs } = await this.session.doProtoRequest({
+    let assume = options.assume != null ? options.assume : this.api.login;
+    let { logs } = await this.api.client.doProtoRequest({
       method: "POST",
       expectedCode: 200,
       path: "/api/v1/resources/accessLogs",
@@ -417,8 +415,8 @@ export class ResourceAPI {
     options?: { assume?: string }
   ): Promise<ResourceShareLink[]> {
     options = options != null ? options : {};
-    let assume = options.assume != null ? options.assume : this.session.login;
-    return await this.session.doProtoRequest({
+    let assume = options.assume != null ? options.assume : this.api.login;
+    return await this.api.client.doProtoRequest({
       method: "GET",
       expectedCode: 200,
       path: "/api/v1/resource/" + id + "/sharingGroup",

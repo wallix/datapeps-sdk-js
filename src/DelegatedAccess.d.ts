@@ -32,7 +32,7 @@ export interface DelegatedAccess {
     resolved: boolean;
 }
 export declare class DelegatedAccessAPI {
-    private session;
+    private api;
     constructor(session: Session);
     /**
      * Resolve an access request.

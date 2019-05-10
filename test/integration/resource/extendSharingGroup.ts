@@ -1,13 +1,10 @@
-import * as Config from "../../Config";
 import * as Context from "../../Context";
 import * as DataPeps from "../../../src/DataPeps";
-import * as nacl from "tweetnacl";
 import { expect } from "chai";
-import * as mocha from "mocha";
 import * as Long from "long";
-import { Session } from "inspector";
 import { ResourceAPI } from "../../../src/DataPeps";
 import { Uint8Tool } from "../../../src/Tools";
+import { itErrors, itErrorsParam } from "../../Utils";
 
 class ResourceContent {
   plain: Uint8Array;
@@ -69,8 +66,16 @@ async function fetchAndCheckResource(
 }
 
 describe("resource.extendSharingGroup", () => {
-  let alice, bob, charlie, dave: DataPeps.Identity<Uint8Array>;
-  let aliceSession, bobSession, charlieSession, daveSession: DataPeps.Session;
+  let [alice, bob, charlie, dave]: DataPeps.Identity<Uint8Array>[] = [];
+  let [
+    aliceSession,
+    bobSession,
+    charlieSession,
+    daveSession
+  ]: DataPeps.Session[] = [];
+
+  const nonexistentIdentityLogin = "Ned.Nonexistent";
+  const nonexistentIdentityLoginSecond = "Ned.Nonexistent.Jr";
 
   let resourceA: Resource;
   let resourceB: Resource;
@@ -129,6 +134,75 @@ describe("resource.extendSharingGroup", () => {
     let high = Math.floor(Math.random() * 0x7fffffff);
     randomResourceIdLong = new Long(low, high, true);
   });
+
+  let getGroupsWithNonexistentLogins: () => itErrorsParam<
+    string[],
+    { logins: string[] }
+  >[] = () => {
+    let checkPayload = (expected: { logins: string[] }) => {
+      return (actual: { logins: string[] }) => {
+        let actualSorted = actual.logins.sort();
+        let expectedSorted = expected.logins.sort();
+        expect(
+          expectedSorted,
+          `expected deep equality of the actual value ${actualSorted} and the expected value ${expectedSorted}`
+        ).deep.equals(actualSorted);
+      };
+    };
+    return [
+      {
+        arg: [nonexistentIdentityLogin],
+        payload: {
+          value: { logins: [nonexistentIdentityLogin] }
+        }
+      },
+      {
+        arg: [nonexistentIdentityLogin, nonexistentIdentityLogin],
+        payload: {
+          value: {
+            logins: [nonexistentIdentityLogin, nonexistentIdentityLogin]
+          }
+        }
+      },
+      {
+        arg: [bob.login, nonexistentIdentityLogin],
+        payload: {
+          value: { logins: [nonexistentIdentityLogin] }
+        }
+      },
+      {
+        arg: [bob.login, charlie.login, nonexistentIdentityLogin],
+        payload: {
+          value: { logins: [nonexistentIdentityLogin] }
+        }
+      },
+      {
+        arg: [
+          bob.login,
+          nonexistentIdentityLogin,
+          nonexistentIdentityLoginSecond
+        ],
+        payload: {
+          func: checkPayload({
+            logins: [nonexistentIdentityLogin, nonexistentIdentityLoginSecond]
+          })
+        }
+      },
+      {
+        arg: [
+          bob.login,
+          charlie.login,
+          nonexistentIdentityLogin,
+          nonexistentIdentityLoginSecond
+        ],
+        payload: {
+          func: checkPayload({
+            logins: [nonexistentIdentityLogin, nonexistentIdentityLoginSecond]
+          })
+        }
+      }
+    ];
+  };
 
   it("An identity that is not a Resource A sharer cannot add an himself to the resource sharers", async () => {
     let errorOccurred = { isTrue: false };
@@ -373,6 +447,18 @@ describe("resource.extendSharingGroup", () => {
 
     await fetchAndCheckResource(aliceSession, resourceC);
   });
+
+  itErrors(
+    "Sharing a resource with a group with nonexistent identities results in an error",
+    getGroupsWithNonexistentLogins,
+    (group: string[]) => {
+      return new ResourceAPI(aliceSession).extendSharingGroup(
+        resourceD.resource.id,
+        group
+      );
+    },
+    DataPeps.ServerError.IdentitiesNotFound
+  );
 
   it("An identity cannot add himself to the sharers of an inexisting resource", async () => {
     for (let i = 0; i < 2; i++) {

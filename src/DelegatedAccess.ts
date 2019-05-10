@@ -12,6 +12,7 @@ import {
 } from "./IdentityAPI";
 import { Uint8Tool, timestampToDate } from "./Tools";
 import { Session } from "./Session";
+import { SessionState } from "./SessionInternal";
 import { ID } from "./ID";
 import { IdentityKeySet } from "./IdentityKeySet";
 
@@ -53,10 +54,9 @@ export interface DelegatedAccess {
 }
 
 export class DelegatedAccessAPI {
-  private session: Session;
-
+  private api: SessionState;
   constructor(session: Session) {
-    this.session = session;
+    this.api = SessionState.create(session);
   }
 
   /**
@@ -66,7 +66,7 @@ export class DelegatedAccessAPI {
   async resolveAccessRequest(
     requestId: ID
   ): Promise<DelegatedAccess.RequestResolver> {
-    let { sign, resource } = await this.session.doProtoRequest({
+    let { sign, resource } = await this.api.client.doProtoRequest({
       method: "GET",
       expectedCode: 200,
       path: "/api/v1/delegatedAccess/" + requestId.toString(),
@@ -75,13 +75,11 @@ export class DelegatedAccessAPI {
     let r = await makeResourceFromResponse<null>(
       resource,
       CipherType.NACL_ANON,
-      this.session
+      this.api.publicKeys,
+      this.api.keySet
     );
     // Verify requester's signature
-    let msg = Uint8Tool.concat(
-      Uint8Tool.encode(this.session.login),
-      r.publicKey()
-    );
+    let msg = Uint8Tool.concat(Uint8Tool.encode(this.api.login), r.publicKey());
     if (!nacl.sign.detached.verify(msg, sign, r.creator.sign)) {
       throw new Error({
         kind: SDKKind.IdentitySignChainInvalid,
@@ -94,19 +92,19 @@ export class DelegatedAccessAPI {
     class AccessRequestResolverImpl implements DelegatedAccess.RequestResolver {
       id: ID;
       requesterKey: IdentityPublicKey;
+      private api: SessionState;
       private resource: ResourceBox<null>;
-      private session: Session;
 
-      constructor(id: ID, resource: ResourceBox<null>, session: Session) {
+      constructor(id: ID, resource: ResourceBox<null>, api: SessionState) {
         this.id = id;
         this.requesterKey = resource.creator;
         this.resource = resource;
-        this.session = session;
+        this.api = api;
       }
 
       async resolve(login: string): Promise<void> {
-        let keySet = await this.session.getIdentityKeySet(login);
-        await this.session.doProtoRequest({
+        let keySet = await this.api.keySet.get(login);
+        await this.api.client.doProtoRequest({
           method: "PUT",
           expectedCode: 200,
           path: "/api/v1/delegatedAccess/" + this.id.toString() + "/keys",
@@ -118,7 +116,7 @@ export class DelegatedAccessAPI {
         });
       }
     }
-    return new AccessRequestResolverImpl(requestId, r, this.session);
+    return new AccessRequestResolverImpl(requestId, r, this.api);
   }
 
   /**
@@ -132,7 +130,7 @@ export class DelegatedAccessAPI {
       sinceID?: ID;
     }
   ): Promise<DelegatedAccess[]> {
-    let { accesses } = await this.session.doProtoRequest({
+    let { accesses } = await this.api.client.doProtoRequest({
       method: "GET",
       expectedCode: 200,
       path: "/api/v1/delegatedAccesses",

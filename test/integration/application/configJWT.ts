@@ -37,6 +37,9 @@ describe("applicationAPI.config.JWT", () => {
   ///////////////////////////////////////////////
 
   configs.forEach(({ keys, config }, i) => {
+    if (i >= 2) {
+      return;
+    }
     let algorithm = ApplicationJWT.Algorithm[config.signAlgorithm];
 
     it(`should configure an application (${algorithm})`, async () => {
@@ -132,7 +135,6 @@ describe("applicationAPI.config.JWT", () => {
 
       // Developer renews its keys
       await new IdentityAPI(ctx.dev.session).renewKeys(ctx.dev.session.login);
-
       // Developer gets the configuration of its application. It should not have changed
       let secondConfigReceived = await api.getConfig(firstConfigID);
       expect(secondConfigReceived).to.deep.equal(firstConfigReceived);
@@ -160,7 +162,6 @@ describe("applicationAPI.config.JWT", () => {
   ///////////////////////////////////////////////
   // Error cases: putConfig
   ///////////////////////////////////////////////
-
   // `IdentityCannotAssumeAccess` if cannot have right to write the configuration.
   itError(
     `should not configure an application of someone else`,
@@ -305,7 +306,9 @@ fwIDAQAB
   ];
   invalidConfigVersions.map(version =>
     itError(
-      `should fail when getting an application configuration with an invalid version (${version.actual})`,
+      `should fail when getting an application configuration with an invalid version (${
+        version.actual
+      })`,
       () =>
         new ApplicationAPI(ctx.dev.session).getConfig({
           appID: ctx.app.identity.login,

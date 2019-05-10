@@ -54,7 +54,7 @@ export declare namespace ApplicationAPI {
     };
 }
 export declare class ApplicationAPI {
-    private session;
+    private api;
     constructor(session: Session);
     /**
      * Put configuration of an application

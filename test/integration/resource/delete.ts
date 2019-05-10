@@ -1,12 +1,9 @@
-import * as Config from "../../Config";
 import * as Context from "../../Context";
-import * as DataPeps from "../../../src/DataPeps";
 import * as nacl from "tweetnacl";
 import { expect } from "chai";
-import * as mocha from "mocha";
 import * as Long from "long";
 import * as Utils from "../../Utils";
-import { ResourceAPI } from "../../../src/DataPeps";
+import { IdentityAPI, ResourceAPI } from "../../../src/DataPeps";
 
 describe("resource.delete", () => {
   let seed = Math.floor(Math.random() * 99999);
@@ -387,7 +384,9 @@ describe("resource.delete", () => {
 
   it("The owner can soft-delete the resource D after renewing the key", async () => {
     // AliceChild renews its keys
-    await aliceChild.session.renewKeys();
+    await new IdentityAPI(aliceChild.session).renewKeys(
+      aliceChild.session.login
+    );
 
     // AliceChild gets the resourceD (he is in its sharing group)
     let resourceAliceChild = await new ResourceAPI(aliceChild.session).get(
@@ -422,7 +421,7 @@ describe("resource.delete", () => {
 
   it("A sharer can soft-delete the resource D after renewing the key", async () => {
     // Alice renews its keys
-    await ctx.alice.session.renewKeys();
+    await new IdentityAPI(ctx.alice.session).renewKeys(ctx.alice.session.login);
 
     // Alice gets the resourceD (she is in its sharing group)
     let resourceAlice = await new ResourceAPI(ctx.alice.session).get(
@@ -464,7 +463,9 @@ describe("resource.delete", () => {
     Utils.checkFetchedResource(resourceBob, resourceD);
 
     // AliceChild renews its keys
-    await aliceChild.session.renewKeys();
+    await new IdentityAPI(aliceChild.session).renewKeys(
+      aliceChild.session.login
+    );
 
     // AliceChild hard deletes the resourceD (he is its creator)
     await new ResourceAPI(aliceChild.session).delete(resourceD.resource.id);

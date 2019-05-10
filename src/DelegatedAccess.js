@@ -53,10 +53,11 @@ var Constants_1 = require("./Constants");
 var IdentityAPI_1 = require("./IdentityAPI");
 var Tools_1 = require("./Tools");
 var Session_1 = require("./Session");
+var SessionInternal_1 = require("./SessionInternal");
 var IdentityKeySet_1 = require("./IdentityKeySet");
 var DelegatedAccessAPI = /** @class */ (function () {
     function DelegatedAccessAPI(session) {
-        this.session = session;
+        this.api = SessionInternal_1.SessionState.create(session);
     }
     /**
      * Resolve an access request.
@@ -67,7 +68,7 @@ var DelegatedAccessAPI = /** @class */ (function () {
             var _a, sign, resource, r, msg, AccessRequestResolverImpl;
             return __generator(this, function (_b) {
                 switch (_b.label) {
-                    case 0: return [4 /*yield*/, this.session.doProtoRequest({
+                    case 0: return [4 /*yield*/, this.api.client.doProtoRequest({
                             method: "GET",
                             expectedCode: 200,
                             path: "/api/v1/delegatedAccess/" + requestId.toString(),
@@ -75,10 +76,10 @@ var DelegatedAccessAPI = /** @class */ (function () {
                         })];
                     case 1:
                         _a = _b.sent(), sign = _a.sign, resource = _a.resource;
-                        return [4 /*yield*/, ResourceInternal_1.makeResourceFromResponse(resource, Cryptor_1.CipherType.NACL_ANON, this.session)];
+                        return [4 /*yield*/, ResourceInternal_1.makeResourceFromResponse(resource, Cryptor_1.CipherType.NACL_ANON, this.api.publicKeys, this.api.keySet)];
                     case 2:
                         r = _b.sent();
-                        msg = Tools_1.Uint8Tool.concat(Tools_1.Uint8Tool.encode(this.session.login), r.publicKey());
+                        msg = Tools_1.Uint8Tool.concat(Tools_1.Uint8Tool.encode(this.api.login), r.publicKey());
                         if (!nacl.sign.detached.verify(msg, sign, r.creator.sign)) {
                             throw new Error_1.Error({
                                 kind: Error_1.SDKKind.IdentitySignChainInvalid,
@@ -89,21 +90,21 @@ var DelegatedAccessAPI = /** @class */ (function () {
                             });
                         }
                         AccessRequestResolverImpl = /** @class */ (function () {
-                            function AccessRequestResolverImpl(id, resource, session) {
+                            function AccessRequestResolverImpl(id, resource, api) {
                                 this.id = id;
                                 this.requesterKey = resource.creator;
                                 this.resource = resource;
-                                this.session = session;
+                                this.api = api;
                             }
                             AccessRequestResolverImpl.prototype.resolve = function (login) {
                                 return __awaiter(this, void 0, void 0, function () {
                                     var keySet;
                                     return __generator(this, function (_a) {
                                         switch (_a.label) {
-                                            case 0: return [4 /*yield*/, this.session.getIdentityKeySet(login)];
+                                            case 0: return [4 /*yield*/, this.api.keySet.get(login)];
                                             case 1:
                                                 keySet = _a.sent();
-                                                return [4 /*yield*/, this.session.doProtoRequest({
+                                                return [4 /*yield*/, this.api.client.doProtoRequest({
                                                         method: "PUT",
                                                         expectedCode: 200,
                                                         path: "/api/v1/delegatedAccess/" + this.id.toString() + "/keys",
@@ -120,7 +121,7 @@ var DelegatedAccessAPI = /** @class */ (function () {
                             };
                             return AccessRequestResolverImpl;
                         }());
-                        return [2 /*return*/, new AccessRequestResolverImpl(requestId, r, this.session)];
+                        return [2 /*return*/, new AccessRequestResolverImpl(requestId, r, this.api)];
                 }
             });
         });
@@ -133,7 +134,7 @@ var DelegatedAccessAPI = /** @class */ (function () {
             var accesses;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.session.doProtoRequest({
+                    case 0: return [4 /*yield*/, this.api.client.doProtoRequest({
                             method: "GET",
                             expectedCode: 200,
                             path: "/api/v1/delegatedAccesses",

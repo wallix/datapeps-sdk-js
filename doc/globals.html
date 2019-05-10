@@ -70,7 +70,6 @@
 								<li class="tsd-kind-module"><a href="modules/delegatedaccess.html" class="tsd-kind-icon">Delegated<wbr>Access</a></li>
 								<li class="tsd-kind-module"><a href="modules/id.html" class="tsd-kind-icon">ID</a></li>
 								<li class="tsd-kind-module"><a href="modules/identitypublickey.html" class="tsd-kind-icon">Identity<wbr>Public<wbr>Key</a></li>
-								<li class="tsd-kind-module"><a href="modules/session.html" class="tsd-kind-icon">Session</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -89,6 +88,7 @@
 								<li class="tsd-kind-class"><a href="classes/delegatedaccessapi.html" class="tsd-kind-icon">Delegated<wbr>AccessAPI</a></li>
 								<li class="tsd-kind-class"><a href="classes/identityapi.html" class="tsd-kind-icon">IdentityAPI</a></li>
 								<li class="tsd-kind-class"><a href="classes/resourceapi.html" class="tsd-kind-icon">ResourceAPI</a></li>
+								<li class="tsd-kind-class"><a href="classes/session.html" class="tsd-kind-icon">Session</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -103,6 +103,7 @@
 								<li class="tsd-kind-interface"><a href="interfaces/resourceaccesslog.html" class="tsd-kind-icon">Resource<wbr>Access<wbr>Log</a></li>
 								<li class="tsd-kind-interface"><a href="interfaces/resourcesharelink.html" class="tsd-kind-icon">Resource<wbr>Share<wbr>Link</a></li>
 								<li class="tsd-kind-interface tsd-has-type-parameter"><a href="interfaces/sessionrequest.html" class="tsd-kind-icon">Session<wbr>Request</a></li>
+								<li class="tsd-kind-interface"><a href="interfaces/trustpolicy.html" class="tsd-kind-icon">Trust<wbr>Policy</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -113,7 +114,6 @@
 								<li class="tsd-kind-type-alias"><a href="globals.html#identitysharelink" class="tsd-kind-icon">Identity<wbr>Share<wbr>Link</a></li>
 								<li class="tsd-kind-type-alias"><a href="globals.html#loginoptions" class="tsd-kind-icon">Login<wbr>Options</a></li>
 								<li class="tsd-kind-type-alias"><a href="globals.html#registeremailvalidationtoken" class="tsd-kind-icon">Register<wbr>Email<wbr>Validation<wbr>Token</a></li>
-								<li class="tsd-kind-type-alias"><a href="globals.html#sessionparameters" class="tsd-kind-icon">Session<wbr>Parameters</a></li>
 								<li class="tsd-kind-type-alias"><a href="globals.html#sessionsaltkind" class="tsd-kind-icon">Session<wbr>Salt<wbr>Kind</a></li>
 							</ul>
 						</section>
@@ -144,7 +144,7 @@
 					<div class="tsd-signature tsd-kind-icon">Assume<wbr>Options<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/Session.ts#L34">Session.ts:34</a></li>
+							<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/Session.ts#L25">Session.ts:25</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -159,7 +159,7 @@
 					<div class="tsd-signature tsd-kind-icon">Identity<wbr>Key<wbr>Kind<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">IdentityShareKind</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/IdentityAPI.ts#L113">IdentityAPI.ts:113</a></li>
+							<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/IdentityAPI.ts#L110">IdentityAPI.ts:110</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -174,7 +174,7 @@
 					<div class="tsd-signature tsd-kind-icon">Identity<wbr>Share<wbr>Link<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/IdentityAPI.ts#L118">IdentityAPI.ts:118</a></li>
+							<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/IdentityAPI.ts#L115">IdentityAPI.ts:115</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -194,7 +194,7 @@
 					<div class="tsd-signature tsd-kind-icon">Login<wbr>Options<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/Session.ts#L237">Session.ts:237</a></li>
+							<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/Session.ts#L41">Session.ts:41</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -214,27 +214,12 @@
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-type-alias">
-					<a name="sessionparameters" class="tsd-anchor"></a>
-					<h3>Session<wbr>Parameters</h3>
-					<div class="tsd-signature tsd-kind-icon">Session<wbr>Parameters<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/Session.ts#L241">Session.ts:241</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-type-declaration">
-						<h4>Type declaration</h4>
-						<ul class="tsd-parameters">
-						</ul>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-type-alias">
 					<a name="sessionsaltkind" class="tsd-anchor"></a>
 					<h3>Session<wbr>Salt<wbr>Kind</h3>
 					<div class="tsd-signature tsd-kind-icon">Session<wbr>Salt<wbr>Kind<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">SessionSaltKind</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/Session.ts#L32">Session.ts:32</a></li>
+							<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/Session.ts#L23">Session.ts:23</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -495,9 +480,6 @@
 					<li class=" tsd-kind-module">
 						<a href="modules/identitypublickey.html">Identity<wbr>Public<wbr>Key</a>
 					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/session.html">Session</a>
-					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
@@ -526,6 +508,9 @@
 					<li class=" tsd-kind-class">
 						<a href="classes/resourceapi.html" class="tsd-kind-icon">ResourceAPI</a>
 					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/session.html" class="tsd-kind-icon">Session</a>
+					</li>
 					<li class=" tsd-kind-interface tsd-has-type-parameter">
 						<a href="interfaces/identity.html" class="tsd-kind-icon">Identity</a>
 					</li>
@@ -553,6 +538,9 @@
 					<li class=" tsd-kind-interface tsd-has-type-parameter">
 						<a href="interfaces/sessionrequest.html" class="tsd-kind-icon">Session<wbr>Request</a>
 					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/trustpolicy.html" class="tsd-kind-icon">Trust<wbr>Policy</a>
+					</li>
 					<li class=" tsd-kind-type-alias">
 						<a href="globals.html#assumeoptions" class="tsd-kind-icon">Assume<wbr>Options</a>
 					</li>
@@ -567,9 +555,6 @@
 					</li>
 					<li class=" tsd-kind-type-alias">
 						<a href="globals.html#registeremailvalidationtoken" class="tsd-kind-icon">Register<wbr>Email<wbr>Validation<wbr>Token</a>
-					</li>
-					<li class=" tsd-kind-type-alias">
-						<a href="globals.html#sessionparameters" class="tsd-kind-icon">Session<wbr>Parameters</a>
 					</li>
 					<li class=" tsd-kind-type-alias">
 						<a href="globals.html#sessionsaltkind" class="tsd-kind-icon">Session<wbr>Salt<wbr>Kind</a>

@@ -3,7 +3,7 @@ import { Session } from "./Session";
 export declare const RegisterTokenStatus: typeof api.RegisterTokenStatus;
 export declare type RegisterEmailValidationToken = api.IRegisterEmailValidationToken;
 export declare class AdminAPI {
-    private session;
+    private api;
     constructor(session: Session);
     /**
      * Set the admin status of an identity.

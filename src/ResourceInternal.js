@@ -122,30 +122,30 @@ function createWithEncryption(payload, encryption, kind, options) {
     return { resourceRequestBody: body, resource: resource };
 }
 exports.createWithEncryption = createWithEncryption;
-function makeResourceFromResponse(_a, typeOfKey, session, parse) {
+function makeResourceFromResponse(_a, typeOfKey, publicKeyManager, keySetManager, parse) {
     var resource = _a.resource, owner = _a.owner, creator = _a.creator, encryptedKey = _a.encryptedKey;
     return __awaiter(this, void 0, void 0, function () {
         var ownerKeySet;
         return __generator(this, function (_b) {
             switch (_b.label) {
-                case 0: return [4 /*yield*/, session.getIdentityKeySet(owner.login, owner.version)];
+                case 0: return [4 /*yield*/, keySetManager.get(owner.login, owner.version)];
                 case 1:
                     ownerKeySet = _b.sent();
-                    return [4 /*yield*/, makeResource({ resource: resource, creator: creator, encryptedKey: encryptedKey }, session, ownerKeySet, typeOfKey, parse)];
+                    return [4 /*yield*/, makeResource({ resource: resource, creator: creator, encryptedKey: encryptedKey }, publicKeyManager, ownerKeySet, typeOfKey, parse)];
                 case 2: return [2 /*return*/, _b.sent()];
             }
         });
     });
 }
 exports.makeResourceFromResponse = makeResourceFromResponse;
-function makeResource(_a, session, ownerKeySet, typeOfKey, parse) {
+function makeResource(_a, publicKeyManager, ownerKeySet, typeOfKey, parse) {
     var resource = _a.resource, encryptedKey = _a.encryptedKey, creator = _a.creator;
     if (parse === void 0) { parse = function (u) { return JSON.parse(Tools_1.Uint8Tool.decode(u)); }; }
     return __awaiter(this, void 0, void 0, function () {
         var resolvedKey, secretKey, keypair, creatorPk, payload;
         return __generator(this, function (_b) {
             switch (_b.label) {
-                case 0: return [4 /*yield*/, session.resolveCipherList([encryptedKey])];
+                case 0: return [4 /*yield*/, publicKeyManager.resolveCipherList([encryptedKey])];
                 case 1:
                     resolvedKey = (_b.sent())[0];
                     secretKey = ownerKeySet.decryptor(typeOfKey).decrypt(resolvedKey);
@@ -159,7 +159,7 @@ function makeResource(_a, session, ownerKeySet, typeOfKey, parse) {
                             }
                         });
                     }
-                    return [4 /*yield*/, session.getPublicKey(creator)];
+                    return [4 /*yield*/, publicKeyManager.getPublicKey(creator)];
                 case 2:
                     creatorPk = _b.sent();
                     payload = resource.payload.length == 0
@@ -175,7 +175,7 @@ function makeResource(_a, session, ownerKeySet, typeOfKey, parse) {
     });
 }
 exports.makeResource = makeResource;
-function makeResourcesFromResponses(resources, session, parse) {
+function makeResourcesFromResponses(resources, keySetManager, publicKeyManager, parse) {
     return __awaiter(this, void 0, void 0, function () {
         var owners, ownersKeys, i, owner, keySet, resolvedResources, i, resource, keySet, j, _a, _b;
         return __generator(this, function (_c) {
@@ -208,7 +208,7 @@ function makeResourcesFromResponses(resources, session, parse) {
                     if (!(i < owners.length)) return [3 /*break*/, 4];
                     owner = owners[i];
                     if (!(owner.login != undefined && owner.version != undefined)) return [3 /*break*/, 3];
-                    return [4 /*yield*/, session.getIdentityKeySet(owner.login, owner.version)];
+                    return [4 /*yield*/, keySetManager.get(owner.login, owner.version)];
                 case 2:
                     keySet = _c.sent();
                     ownersKeys.push(keySet);
@@ -232,7 +232,7 @@ function makeResourcesFromResponses(resources, session, parse) {
                     }
                     // TODO(K1): Rid keySet as any
                     _b = (_a = resolvedResources).push;
-                    return [4 /*yield*/, makeResource(resource, session, keySet, Cryptor_1.CipherType.NACL_SES, parse)];
+                    return [4 /*yield*/, makeResource(resource, publicKeyManager, keySet, Cryptor_1.CipherType.NACL_SES, parse)];
                 case 6:
                     // TODO(K1): Rid keySet as any
                     _b.apply(_a, [_c.sent()]);
@@ -246,7 +246,7 @@ function makeResourcesFromResponses(resources, session, parse) {
     });
 }
 exports.makeResourcesFromResponses = makeResourcesFromResponses;
-function createBodyRequest(payload, sharingGroup, crypto, session, options) {
+function createBodyRequest(payload, sharingGroup, crypto, publicKeyManager, options) {
     return __awaiter(this, void 0, void 0, function () {
         var serialize, keypair, encryptedSharingGroup, _a, message, nonce;
         return __generator(this, function (_b) {
@@ -257,7 +257,7 @@ function createBodyRequest(payload, sharingGroup, crypto, session, options) {
                         ? options.serialize
                         : function (p) { return Tools_1.Uint8Tool.encode(JSON.stringify(p)); };
                     keypair = nacl.box.keyPair();
-                    return [4 /*yield*/, encryptForSharingGroup(keypair.secretKey, sharingGroup, crypto, session)];
+                    return [4 /*yield*/, encryptForSharingGroup(keypair.secretKey, sharingGroup, crypto, publicKeyManager)];
                 case 1:
                     encryptedSharingGroup = _b.sent();
                     _a = crypto.encrypt({ box: keypair.publicKey }, serialize(payload)), message = _a.message, nonce = _a.nonce;
@@ -275,12 +275,12 @@ function createBodyRequest(payload, sharingGroup, crypto, session, options) {
     });
 }
 exports.createBodyRequest = createBodyRequest;
-function encryptForSharingGroup(text, sharingGroup, crypto, session) {
+function encryptForSharingGroup(text, sharingGroup, crypto, publicKeyManager) {
     return __awaiter(this, void 0, void 0, function () {
         var publicKeys;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, session.getLatestPublicKeys(sharingGroup)];
+                case 0: return [4 /*yield*/, publicKeyManager.getLatestPublicKeys(sharingGroup)];
                 case 1:
                     publicKeys = _a.sent();
                     return [2 /*return*/, publicKeys.map(function (pk) {

@@ -2,11 +2,14 @@ import * as Config from "../Config";
 import * as DataPeps from "../../src/DataPeps";
 import * as nacl from "tweetnacl";
 import { expect } from "chai";
-import { itError } from "../Utils";
+import { itError, itErrors, itErrorsParam } from "../Utils";
 import { AdminAPI, IdentityAPI } from "../../src/DataPeps";
 import { Uint8Tool } from "../../src/Tools";
 
 describe("identity.main", () => {
+  const nonexistentIdentityLogin = "Ned.Nonexistent";
+  const nonexistentIdentityLoginSecond = "Ned.Nonexistent.Jr";
+
   let seed = Math.floor(Math.random() * 99999);
   let deviceASecret = nacl.randomBytes(128);
   let deviceA: DataPeps.IdentityFields = {
@@ -64,7 +67,7 @@ describe("identity.main", () => {
     kind: "group",
     payload: Uint8Tool.encode(
       JSON.stringify({
-        description: "This is an awsome group!!!"
+        description: "This is an awesome group!!!"
       })
     )
   };
@@ -101,7 +104,10 @@ describe("identity.main", () => {
 
   it("setSecret of alice then login", async () => {
     aliceSecret = nacl.randomBytes(128);
-    await aliceSession.renewKeys(aliceSecret);
+    await new IdentityAPI(aliceSession).renewKeys(
+      aliceSession.login,
+      aliceSecret
+    );
     // The old session must works
     let identity = await new IdentityAPI(aliceSession).get(alice.login);
     // Try with a new session
@@ -154,8 +160,8 @@ describe("identity.main", () => {
 
   it("alice renew its keys twice", async () => {
     //We renew keys twice too see that the auto unStale works
-    await aliceSession.renewKeys();
-    await aliceSession.renewKeys();
+    await new IdentityAPI(aliceSession).renewKeys(aliceSession.login);
+    await new IdentityAPI(aliceSession).renewKeys(aliceSession.login);
   });
 
   it("alice add the deviceB thanks deviceA", async () => {
@@ -178,10 +184,6 @@ describe("identity.main", () => {
       ]),
     DataPeps.ServerError.IdentityCannotAssumeOwnership
   );
-
-  it("deviceB validate public keys of group", async () => {
-    let k = await deviceBSession.getLatestPublicKey(group.login);
-  });
 
   it("alice attempt to promote bob to admin", async () => {
     try {
@@ -224,7 +226,7 @@ describe("identity.main", () => {
     throw new Error("alice could not list identities after key renewal");
   });
 
-  it("login with alice with overwrited keys", async () => {
+  it("login with alice with overwritten keys", async () => {
     aliceSession = await sdk.Session.login(alice.login, renewSecret);
     expect(aliceSession).to.be.not.null;
   });
@@ -232,10 +234,6 @@ describe("identity.main", () => {
   let bobSession: DataPeps.Session;
   it("login with bob", async () => {
     bobSession = await sdk.Session.login(bob.login, bobSecret);
-  });
-
-  it("bob check alice keys", async () => {
-    await bobSession.getLatestPublicKey(alice.login);
   });
 
   it("deactivate bob identity", async () => {
@@ -270,4 +268,85 @@ describe("identity.main", () => {
     bobSession = await sdk.Session.login(bob.login, bobSecret);
     expect(bobSession).to.be.not.null;
   });
+
+  itErrors(
+    "alice cannot share its identity with nonexistent identities",
+    getGroupsWithNonexistentLogins,
+    (group: string[]) => {
+      return new IdentityAPI(aliceSession).extendSharingGroup(
+        alice.login,
+        group
+      );
+    },
+    DataPeps.ServerError.IdentitiesNotFound
+  );
+
+  function getGroupsWithNonexistentLogins(): itErrorsParam<
+    string[],
+    { logins: string[] }
+  >[] {
+    let checkPayload = (expected: { logins: string[] }) => {
+      return (actual: { logins: string[] }) => {
+        let actualSorted = actual.logins.sort();
+        let expectedSorted = expected.logins.sort();
+        expect(
+          expectedSorted,
+          `expected deep equality of the actual value ${actualSorted} and the expected value ${expectedSorted}`
+        ).deep.equals(actualSorted);
+      };
+    };
+    return [
+      {
+        arg: [nonexistentIdentityLogin],
+        payload: {
+          value: { logins: [nonexistentIdentityLogin] }
+        }
+      },
+      {
+        arg: [nonexistentIdentityLogin, nonexistentIdentityLogin],
+        payload: {
+          value: {
+            logins: [nonexistentIdentityLogin, nonexistentIdentityLogin]
+          }
+        }
+      },
+      {
+        arg: [bob.login, nonexistentIdentityLogin],
+        payload: {
+          value: { logins: [nonexistentIdentityLogin] }
+        }
+      },
+      {
+        arg: [bob.login, group.login, nonexistentIdentityLogin],
+        payload: {
+          value: { logins: [nonexistentIdentityLogin] }
+        }
+      },
+      {
+        arg: [
+          bob.login,
+          nonexistentIdentityLogin,
+          nonexistentIdentityLoginSecond
+        ],
+        payload: {
+          func: checkPayload({
+            logins: [nonexistentIdentityLogin, nonexistentIdentityLoginSecond]
+          })
+        }
+      },
+      {
+        arg: [
+          bob.login,
+          group.login,
+          nonexistentIdentityLogin,
+          nonexistentIdentityLoginSecond
+        ],
+        payload: {
+          func: checkPayload({
+            logins: [nonexistentIdentityLogin, nonexistentIdentityLoginSecond]
+          })
+        }
+      }
+    ];
+  }
 });

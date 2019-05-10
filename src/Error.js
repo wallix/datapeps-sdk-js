@@ -20,14 +20,14 @@ var SDKKind;
  */
 var Error = /** @class */ (function () {
     function Error(properties) {
-        // console.log("error", properties);
-        // var err = new global.Error();
-        // console.log("stack", err.stack);
-        this.name = "DataPepsError";
-        var kname = kindName(properties.kind);
+        this.name = kindName(properties.kind);
         this.kind = properties.kind;
         this.payload = properties.payload;
         this.code = properties.code;
+        this.message =
+            properties.message == null
+                ? "DataPeps(" + this.name + ")"
+                : properties.message;
     }
     return Error;
 }());

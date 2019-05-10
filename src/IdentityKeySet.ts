@@ -12,7 +12,6 @@ import {
 import { IdentityPublicKey, IdentityPublicKeyID } from "./IdentityAPI";
 import { Error, SDKKind } from "./Error";
 import { Crypto, Uint8Tool } from "./Tools";
-import { Cipher } from "crypto";
 
 /**
  * The default length of the salt used to derivate the master key of an IdentityKeySet.

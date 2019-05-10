@@ -65,7 +65,7 @@ describe("identity.UnlockVersions", () => {
   });
   it("Create identity and resource v2", async () => {
     adminSession = await Config.adminLogin();
-    await aliceSession.renewKeys(); // v2
+    await new IdentityAPI(aliceSession).renewKeys(aliceSession.login); // v2
     aliceSession = await DataPeps.Session.login(alice.login, aliceSecret);
     resv2 = await new ResourceAPI(aliceSession).create(
       "test",
@@ -74,7 +74,10 @@ describe("identity.UnlockVersions", () => {
     );
   });
   it("Create identity and resource v3", async () => {
-    await aliceSession.renewKeys(otherPassword); // v3
+    await new IdentityAPI(aliceSession).renewKeys(
+      aliceSession.login,
+      otherPassword
+    ); // v3
     aliceSession = await DataPeps.Session.login(alice.login, otherPassword);
     resv3 = await new ResourceAPI(aliceSession).create(
       "test",
@@ -95,7 +98,7 @@ describe("identity.UnlockVersions", () => {
     );
   });
   it("Create identity and resource v5", async () => {
-    await aliceSession.renewKeys(); // v5
+    await new IdentityAPI(aliceSession).renewKeys(aliceSession.login); // v5
     aliceSession = await DataPeps.Session.login(alice.login, adminSecret1);
     resv5 = await new ResourceAPI(aliceSession).create(
       "test",
@@ -120,7 +123,7 @@ describe("identity.UnlockVersions", () => {
   });
 
   it("Create identity and resource v7", async () => {
-    await aliceSession.renewKeys(); // v7
+    await new IdentityAPI(aliceSession).renewKeys(aliceSession.login); // v7
     aliceSession = await DataPeps.Session.login(alice.login, adminSecret2);
     resv7 = await new ResourceAPI(aliceSession).create(
       "test",

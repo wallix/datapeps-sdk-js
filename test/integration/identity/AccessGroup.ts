@@ -70,7 +70,7 @@ describe("identity.AccessGroup", () => {
   });
 
   it("checks alice accessGroup after renew alice keys", async () => {
-    await aliceSession.renewKeys();
+    await new IdentityAPI(aliceSession).renewKeys(aliceSession.login);
     await checkAliceAccessGroup();
   });
 

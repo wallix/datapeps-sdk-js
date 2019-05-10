@@ -11502,6 +11502,7 @@ export namespace api {
         IdentityNotFound = 15,
         IdentityVersionMismatch = 16,
         IdentityNotAdmin = 17,
+        IdentitiesNotFound = 18,
         IdentitySharingKindMismatch = 19,
         ResourceNotFound = 24,
         RegisterInvalidEmail = 25,
@@ -12704,6 +12705,96 @@ export namespace api {
 
         /**
          * Converts this PayloadIdentityNotAdmin to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a PayloadIdentitiesNotFound. */
+    interface IPayloadIdentitiesNotFound {
+
+        /** PayloadIdentitiesNotFound logins */
+        logins?: (string[]|null);
+    }
+
+    /** Represents a PayloadIdentitiesNotFound. */
+    class PayloadIdentitiesNotFound implements IPayloadIdentitiesNotFound {
+
+        /**
+         * Constructs a new PayloadIdentitiesNotFound.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: api.IPayloadIdentitiesNotFound);
+
+        /** PayloadIdentitiesNotFound logins. */
+        public logins: string[];
+
+        /**
+         * Creates a new PayloadIdentitiesNotFound instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PayloadIdentitiesNotFound instance
+         */
+        public static create(properties?: api.IPayloadIdentitiesNotFound): api.PayloadIdentitiesNotFound;
+
+        /**
+         * Encodes the specified PayloadIdentitiesNotFound message. Does not implicitly {@link api.PayloadIdentitiesNotFound.verify|verify} messages.
+         * @param message PayloadIdentitiesNotFound message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: api.IPayloadIdentitiesNotFound, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PayloadIdentitiesNotFound message, length delimited. Does not implicitly {@link api.PayloadIdentitiesNotFound.verify|verify} messages.
+         * @param message PayloadIdentitiesNotFound message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: api.IPayloadIdentitiesNotFound, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PayloadIdentitiesNotFound message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PayloadIdentitiesNotFound
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): api.PayloadIdentitiesNotFound;
+
+        /**
+         * Decodes a PayloadIdentitiesNotFound message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PayloadIdentitiesNotFound
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): api.PayloadIdentitiesNotFound;
+
+        /**
+         * Verifies a PayloadIdentitiesNotFound message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PayloadIdentitiesNotFound message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PayloadIdentitiesNotFound
+         */
+        public static fromObject(object: { [k: string]: any }): api.PayloadIdentitiesNotFound;
+
+        /**
+         * Creates a plain object from a PayloadIdentitiesNotFound message. Also converts values to other types if specified.
+         * @param message PayloadIdentitiesNotFound
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: api.PayloadIdentitiesNotFound, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PayloadIdentitiesNotFound to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };

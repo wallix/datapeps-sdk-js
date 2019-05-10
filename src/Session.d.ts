@@ -1,7 +1,6 @@
 import { api } from "./proto";
 import { IdentityPublicKey, IdentityPublicKeyID } from "./IdentityAPI";
 import { Client, Request } from "./HTTP";
-import { TrustPolicy, PublicKeysCache } from "./SessionUtils";
 import { IdentityKeySet } from "./IdentityKeySet";
 /**
  * Specify how the sdk request should be authenticated by the DataPeps service.
@@ -23,7 +22,42 @@ export interface SessionRequest<T> extends Request<T> {
      */
     assume?: AssumeOptions;
 }
-export declare namespace Session {
+export declare type LoginOptions = {
+    saltKind?: api.SessionSaltKind;
+};
+/**
+ * Unknown keys are fetched from the DataPeps service.
+ * To mitigate MitM or Operator attacks the client must validate the keys by a side-channel, that could be a hand-check, a tier-service check or whatever...
+ */
+export interface TrustPolicy {
+    trust(pk: IdentityPublicKey, mandate?: IdentityPublicKeyID): Promise<void>;
+}
+export declare class Session {
+    private api;
+    private constructor();
+    /** The login of the {@link Identity} logged into the session */
+    readonly login: string;
+    /**
+     * Close the session.
+     * @return(p) On success the promise will be resolved with void.
+     */
+    close(): Promise<void>;
+    /**
+     * Get the public key of the current session.
+     * @return The public key of the current session.
+     */
+    getSessionPublicKey(): IdentityPublicKey;
+    /**
+     * Create a new session for an identity that the current session identity can access.
+     * @param login The login of the identity to login with.
+     */
+    createSession(login: string): Promise<Session>;
+    /**
+     * Set the trust policy for the session, see {@link TrustPolicy} for more details.
+     * @param policy The trust policy to set.
+     */
+    setTrustPolicy(policy: TrustPolicy): void;
+    sign(message: Uint8Array): Uint8Array;
     /**
      * Create a new session.
      * @param login The login of the identity to login with.
@@ -34,104 +68,8 @@ export declare namespace Session {
      * On error the promise will be rejected with an {@link Error} with kind
      * - `IdentityNotFound` if the `login` does not exists or if the identity has no secret.
      */
-    function login(login: string, secret: string | Uint8Array, options?: LoginOptions): Promise<Session>;
-    function create(client: Client, login: string, recover: (e: api.IdentityEncryptedKeySet) => IdentityKeySet, options?: LoginOptions): Promise<Session>;
+    static login(login: string, secret: string | Uint8Array, options?: LoginOptions): Promise<Session>;
+    static create(client: Client, login: string, recover: (e: api.IdentityEncryptedKeySet) => IdentityKeySet, options?: LoginOptions): Promise<Session>;
+    private static createWithSecret(client, login, recover, options, secret);
+    private static createSessionMaterial(client, login, recover, options?);
 }
-/**
- * A Session is used to perform authenticated requests to the DataPeps service and allows access to the authenticated API of the DataPeps service.
- */
-export interface Session {
-    /** The login of the {@link Identity} logged into the session */
-    login: string;
-    /**
-     * Close the session.
-     * @return(p) On success the promise will be resolved with void.
-     */
-    close(): Promise<void>;
-    /**
-     * Renew keys for the identity logged along with this session.
-     * @param secret An optional secret to renew keys, if not retain the old secret as still valid.
-     * @return(p) On success the promise will be resolved with void.
-     */
-    renewKeys(secret?: string | Uint8Array): Promise<void>;
-    /**
-     * Get the public key of the current session.
-     * @return The public key of the current session.
-     */
-    getSessionPublicKey(): IdentityPublicKey;
-    /**
-     * Get the latest public key of the given identity login.
-     * @param login The login of identity to get the key.
-     * @return(p) On success the promise will be resolved with the public key of `login`.
-     * On error the promise will be rejected with an {@link Error} with kind
-     * - `IdentityNotFound` if the identity is not found.
-     */
-    getLatestPublicKey(login: string): Promise<IdentityPublicKey>;
-    /**
-     * Get the latest public key of a list of identities.
-     * @param logins The login of identities to get the key.
-     * @return(p) On success the promise will be resolved with list of the public key in the same order of the `logins` list.
-     * On error the promise will be rejected with an {@link Error} with kind
-     * - `IdentityNotFound` if an identity is not found.
-     */
-    getLatestPublicKeys(logins: string[]): Promise<IdentityPublicKey[]>;
-    /**
-     * Get a specific version of the public key of an identity.
-     * @param id The id of the key to get.
-     * @return(p) On success the promise will be resolved with the public key.
-     * On error the promise will be rejected with an {@link Error} with kind
-     * - `IdentityNotFound` if the identity is not found.
-     */
-    getPublicKey(id: IdentityPublicKeyID): Promise<IdentityPublicKey>;
-    /**
-     * Get specific versions of the public keys.
-     * @param ids The ids of the keys to get.
-     * @return(p) On success the promise will be resolved with a list of the public keys in the same order as the `ids` list.
-     * On error the promise will be rejected with an {@link Error} with kind
-     * - `IdentityNotFound` if an identity is not found.
-     */
-    getPublicKeys(ids: IdentityPublicKeyID[]): Promise<IdentityPublicKey[]>;
-    getIdentityKeySet(login: string, version?: number): Promise<IdentityKeySet>;
-    /**
-     * Create a new session for an identity that the current session identity can access.
-     * @param login The login of the identity to login with.
-     */
-    createSession(login: string): Promise<Session>;
-    /**
-     * Set the trust policy for the session, see {@link TrustPolicy} for more details.
-     * @param policy The trust policy to set.
-     */
-    setTrustPolicy(policy: TrustPolicy): any;
-    /**
-     * Set the public keys cache for the session, see {@link PublicKeyCache} for more details.
-     * @param cache The public key cache to set.
-     */
-    setPublicKeyCache(cache: PublicKeysCache): any;
-    /**
-     * Sign a message.
-     */
-    sign(message: Uint8Array): any;
-    /**
-     * Get the secret token of an identity.
-     */
-    getSecretToken(login: string): Promise<string>;
-    /**
-     * Do an authenticated request.
-     * @param request
-     */
-    doRequest<T>(request: SessionRequest<T>): Promise<T>;
-    /**
-     * Do an authenticated proto request.
-     * @param request
-     */
-    doProtoRequest<T>(request: SessionRequest<T>): Promise<T>;
-}
-export declare type LoginOptions = {
-    saltKind?: api.SessionSaltKind;
-};
-export declare type SessionParameters = {
-    token: Uint8Array;
-    login: string;
-    salt: Uint8Array;
-    saltKind: api.SessionSaltKind;
-};

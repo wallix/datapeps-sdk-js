@@ -3,6 +3,7 @@ import { ApplicationIdentityAuth } from "./Application";
 import { Error, SDKKind } from "./Error";
 import { api } from "./proto";
 import { Session } from "./Session";
+import { SessionState } from "./SessionInternal";
 import {
   Identity,
   IdentitySortingField,
@@ -74,10 +75,9 @@ export namespace ApplicationAPI {
 }
 
 export class ApplicationAPI {
-  private session: Session;
-
+  private api: SessionState;
   constructor(session: Session) {
-    this.session = session;
+    this.api = SessionState.create(session);
   }
 
   /**
@@ -113,7 +113,7 @@ export class ApplicationAPI {
         signAlgorithm: jwtConfig.signAlgorithm.valueOf()
       }
     };
-    return await this.session.doProtoRequest<
+    return await this.api.client.doProtoRequest<
       ApplicationAPI.ApplicationConfigID
     >({
       method: "PUT",
@@ -144,25 +144,23 @@ export class ApplicationAPI {
   ): Promise<ApplicationAPI.ConfigWithMetadata> {
     // if appConfigID == null, the server returns IdenityNotFound as appID is empty
     appConfigID = appConfigID == null ? { appID: "", version: 1 } : appConfigID;
-    return await this.session.doProtoRequest<ApplicationAPI.ConfigWithMetadata>(
-      {
-        method: "POST",
-        assume: {
-          login: appConfigID.appID,
-          kind: api.IdentityAccessKeyKind.READ
-        },
-        expectedCode: 200,
-        path: `/api/v1/application/${encodeURI(
-          appConfigID.appID
-        )}/configuration`,
-        body: api.ApplicationConfigID.encode({
-          version: appConfigID.version
-        }).finish(),
-        response: r => {
-          return this.decodeConfigWithMetadata(r);
-        }
+    return await this.api.client.doProtoRequest<
+      ApplicationAPI.ConfigWithMetadata
+    >({
+      method: "POST",
+      assume: {
+        login: appConfigID.appID,
+        kind: api.IdentityAccessKeyKind.READ
+      },
+      expectedCode: 200,
+      path: `/api/v1/application/${encodeURI(appConfigID.appID)}/configuration`,
+      body: api.ApplicationConfigID.encode({
+        version: appConfigID.version
+      }).finish(),
+      response: r => {
+        return this.decodeConfigWithMetadata(r);
       }
-    );
+    });
   }
 
   /**
@@ -176,20 +174,20 @@ export class ApplicationAPI {
   async getLatestConfig(
     appID: string
   ): Promise<ApplicationAPI.ConfigWithMetadata> {
-    return await this.session.doProtoRequest<ApplicationAPI.ConfigWithMetadata>(
-      {
-        method: "GET",
-        assume: {
-          login: appID,
-          kind: api.IdentityAccessKeyKind.READ
-        },
-        expectedCode: 200,
-        path: `/api/v1/application/${encodeURI(appID)}/latestConfiguration`,
-        response: r => {
-          return this.decodeConfigWithMetadata(r);
-        }
+    return await this.api.client.doProtoRequest<
+      ApplicationAPI.ConfigWithMetadata
+    >({
+      method: "GET",
+      assume: {
+        login: appID,
+        kind: api.IdentityAccessKeyKind.READ
+      },
+      expectedCode: 200,
+      path: `/api/v1/application/${encodeURI(appID)}/latestConfiguration`,
+      response: r => {
+        return this.decodeConfigWithMetadata(r);
       }
-    );
+    });
   }
 
   private decodeConfigWithMetadata(
@@ -239,7 +237,7 @@ export class ApplicationAPI {
     }
   ): Promise<ApplicationAPI.UsageOverview> {
     options = options == null ? {} : options;
-    return await this.session.doProtoRequest<ApplicationAPI.UsageOverview>({
+    return await this.api.client.doProtoRequest<ApplicationAPI.UsageOverview>({
       method: "POST",
       assume: { login: appID, kind: api.IdentityAccessKeyKind.READ },
       expectedCode: 200,
@@ -301,7 +299,7 @@ export class ApplicationAPI {
     let sortingOrder = IdentityRequestsUtils.resolveSortingOrder(
       options.sortingOrder
     );
-    return await this.session.doProtoRequest({
+    return await this.api.client.doProtoRequest({
       method: "POST",
       expectedCode: 200,
       path: `/api/v1/application/${encodeURI(appID)}/identities/list`,
@@ -349,7 +347,7 @@ export class ApplicationAPI {
     appID: string,
     dataPepsLogin: string
   ): Promise<ApplicationAPI.IdentityAuthWithContext> {
-    return await this.session.doProtoRequest({
+    return await this.api.client.doProtoRequest({
       method: "GET",
       expectedCode: 200,
       path: `/api/v1/application/identity/${encodeURI(dataPepsLogin)}/auth`,
@@ -407,7 +405,9 @@ export class ApplicationAPI {
     since?: number
   ): Promise<ApplicationAPI.IdentitySession[]> {
     since = since == null ? 0 : since;
-    return await this.session.doProtoRequest<ApplicationAPI.IdentitySession[]>({
+    return await this.api.client.doProtoRequest<
+      ApplicationAPI.IdentitySession[]
+    >({
       path: `/api/v1/application/${encodeURI(appID)}/identitiesSession/list`,
       method: "POST",
       expectedCode: 200,

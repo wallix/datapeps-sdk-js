@@ -85,7 +85,6 @@ describe("admin.overwriteKeys", () => {
       aliceDelegateRes.id
     );
     expect(res).to.be.deep.equal(aliceDelegateRes);
-
     res = await new ResourceAPI(aliceSession).get(aliceDelegateRes.id, {
       assume: aliceDelegate.login
     });

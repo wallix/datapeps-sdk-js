@@ -3,9 +3,10 @@ import { Resource, ResourceType } from "./ResourceAPI";
 import { api } from "./proto";
 import { Encryptor, CipherType } from "./Cryptor";
 import { IdentityPublicKey } from "./IdentityAPI";
-import { Session } from "./Session";
 import { ID } from "./ID";
 import { IdentityKeySet } from "./IdentityKeySet";
+import { IdentityKeySetManager } from "./IdentityKeySetManager";
+import { PublicKeysManager } from "./PublicKeyManager";
 export declare class ResourceBox<T> implements Resource<T> {
     id: ID;
     kind: string;
@@ -28,10 +29,10 @@ export declare function createWithEncryption<T>(payload: T, encryption: Identity
     resourceRequestBody: api.IResourcePostRequest;
     resource: ResourceBox<T>;
 };
-export declare function makeResourceFromResponse<T>({resource, owner, creator, encryptedKey}: api.IResourceGetResponse, typeOfKey: CipherType, session: Session, parse?: any): Promise<ResourceBox<T>>;
-export declare function makeResource<T>({resource, encryptedKey, creator}: api.IResourceGetResponse, session: Session, ownerKeySet: IdentityKeySet, typeOfKey: CipherType, parse?: (u: any) => any): Promise<ResourceBox<T>>;
-export declare function makeResourcesFromResponses<T>(resources: api.IResourceGetResponse[], session: Session, parse?: any): Promise<ResourceBox<T>[]>;
-export declare function createBodyRequest<T>(payload: T, sharingGroup: string[], crypto: Encryptor, session: Session, options?: {
+export declare function makeResourceFromResponse<T>({resource, owner, creator, encryptedKey}: api.IResourceGetResponse, typeOfKey: CipherType, publicKeyManager: PublicKeysManager, keySetManager: IdentityKeySetManager, parse?: any): Promise<ResourceBox<T>>;
+export declare function makeResource<T>({resource, encryptedKey, creator}: api.IResourceGetResponse, publicKeyManager: PublicKeysManager, ownerKeySet: IdentityKeySet, typeOfKey: CipherType, parse?: (u: any) => any): Promise<ResourceBox<T>>;
+export declare function makeResourcesFromResponses<T>(resources: api.IResourceGetResponse[], keySetManager: IdentityKeySetManager, publicKeyManager: PublicKeysManager, parse?: any): Promise<ResourceBox<T>[]>;
+export declare function createBodyRequest<T>(payload: T, sharingGroup: string[], crypto: Encryptor, publicKeyManager: PublicKeysManager, options?: {
     serialize?: ((payload: T) => Uint8Array);
 }): Promise<{
     keypair: nacl.BoxKeyPair;
@@ -47,7 +48,7 @@ export declare function createBodyRequest<T>(payload: T, sharingGroup: string[],
         }[];
     };
 }>;
-export declare function encryptForSharingGroup(text: Uint8Array, sharingGroup: string[], crypto: Encryptor, session: Session): Promise<{
+export declare function encryptForSharingGroup(text: Uint8Array, sharingGroup: string[], crypto: Encryptor, publicKeyManager: PublicKeysManager): Promise<{
     login: string;
     version: number;
     nonce: Uint8Array;

@@ -10,7 +10,7 @@ import {
   IdentityPublicKeyID,
   IdentityAPI
 } from "./IdentityAPI";
-import { Uint8Tool, timestampToDate } from "./Tools";
+import { Uint8Tool, timestampToDate, Base64 } from "./Tools";
 import { Session } from "./Session";
 import { SessionState } from "./SessionInternal";
 import { ID } from "./ID";
@@ -57,6 +57,14 @@ export class DelegatedAccessAPI {
   private api: SessionState;
   constructor(session: Session) {
     this.api = SessionState.create(session);
+  }
+
+  /**
+   * Get the secret token of an identity.
+   */
+  async getSecretToken(login: string): Promise<string> {
+    let keySet = await this.api.keySet.get(login);
+    return Base64.encode(keySet.getSecretToken());
   }
 
   /**

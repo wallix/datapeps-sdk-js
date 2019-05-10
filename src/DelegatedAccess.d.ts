@@ -35,6 +35,10 @@ export declare class DelegatedAccessAPI {
     private api;
     constructor(session: Session);
     /**
+     * Get the secret token of an identity.
+     */
+    getSecretToken(login: string): Promise<string>;
+    /**
      * Resolve an access request.
      * @param requestID The id to the access request to resolve.
      */

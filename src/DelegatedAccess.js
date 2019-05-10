@@ -60,6 +60,22 @@ var DelegatedAccessAPI = /** @class */ (function () {
         this.api = SessionInternal_1.SessionState.create(session);
     }
     /**
+     * Get the secret token of an identity.
+     */
+    DelegatedAccessAPI.prototype.getSecretToken = function (login) {
+        return __awaiter(this, void 0, void 0, function () {
+            var keySet;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.api.keySet.get(login)];
+                    case 1:
+                        keySet = _a.sent();
+                        return [2 /*return*/, Tools_1.Base64.encode(keySet.getSecretToken())];
+                }
+            });
+        });
+    };
+    /**
      * Resolve an access request.
      * @param requestID The id to the access request to resolve.
      */

@@ -3,7 +3,7 @@ import { ApplicationJWT, ServerError, SDKError } from "../../../src/DataPeps";
 import * as nacl from "tweetnacl";
 import { expect } from "chai";
 import * as JWT from "jsonwebtoken";
-import { configs, getBadAlgoKey } from "./Utils";
+import { configs, getBadAlgoKey, createConnector } from "./Utils";
 import { initCtx, devCtx, init } from "../../Context";
 import { itError } from "../../Utils";
 import { devWithAllConfigs } from "./Context";
@@ -138,43 +138,3 @@ describe("applicationJWT.createSession", () => {
     })
   );
 });
-
-class MockApplicationSession {
-  login: string;
-}
-
-function createConnector<Secret>(
-  appSecretKey: string | Uint8Array,
-  appSignAlgorithm: ApplicationJWT.Algorithm,
-  userSecret: Secret
-): ApplicationJWT.Connector<MockApplicationSession, Secret> {
-  let _appSecretKey: string | Buffer;
-  if (appSecretKey instanceof Uint8Array) {
-    _appSecretKey = Buffer.from(appSecretKey.buffer);
-  } else {
-    _appSecretKey = appSecretKey;
-  }
-  return {
-    createSession: async (login: string, secret: Secret) => {
-      if (secret instanceof Uint8Array) {
-        if (!(userSecret instanceof Uint8Array)) {
-          throw new Error("bad type of secret");
-        }
-        if (
-          secret.length != userSecret.length ||
-          !secret.every((b, i) => b == userSecret[i])
-        ) {
-          throw new Error("Uint8Array secrets doesn't match");
-        }
-      } else if (secret !== userSecret) {
-        throw new Error("secrets doesn't match");
-      }
-      return { login };
-    },
-    getToken: async (session: MockApplicationSession) => {
-      return JWT.sign({ login: session.login }, _appSecretKey, {
-        algorithm: ApplicationJWT.Algorithm[appSignAlgorithm]
-      });
-    }
-  };
-}

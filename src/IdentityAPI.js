@@ -210,6 +210,8 @@ var IdentityAPI = /** @class */ (function () {
     };
     /**
      * Create a new identity.
+     * If the creator of the identity is an application identity, the login field of the
+     * identity must be an application identity login, see {@link getLogin}.
      * @param identity The description of the identity.
      * @param options A collection of options:
      *  - secret: An optional secret associated with the created identity that could be used to login.

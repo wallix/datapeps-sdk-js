@@ -10,7 +10,8 @@ import { ResourceAPI } from "../../../src/DataPeps";
 describe("identity.namedResource", () => {
   let resourceA: Utils.Resource,
     resourceB: Utils.Resource,
-    resourceC: Utils.Resource;
+    resourceC: Utils.Resource,
+    resourceD: Utils.Resource;
   let resourceName = "nameOfMyResource";
   let ctx: Context.aliceBobWithDeviceAndGroupCtx;
   let randomIdentity: string;
@@ -45,6 +46,13 @@ describe("identity.namedResource", () => {
       [ctx.alice.identity.login]
     );
     resourceC = new Utils.Resource(resourceCDataPeps, "Content C");
+
+    let resourceDDataPeps = await new ResourceAPI(
+      ctx.aliceDevice.session
+    ).create("test kind", { text: "payload D" }, [
+      ctx.aliceDevice.identity.login
+    ]);
+    resourceD = new Utils.Resource(resourceDDataPeps, "Content D");
   });
 
   it("Creation and access to a named resource", async () => {
@@ -162,6 +170,17 @@ describe("identity.namedResource", () => {
       login: ctx.alice.identity.login,
       name: resourceName + "difference"
     })
+  );
+
+  itError(
+    "Set a named resource not shared with the targeted identity",
+    () =>
+      new ResourceAPI(ctx.aliceDevice.session).setNamed(
+        ctx.alice.identity.login,
+        resourceName,
+        resourceD.resource.id
+      ),
+    DataPeps.ServerError.ResourceNotFound
   );
 
   itError(

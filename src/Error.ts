@@ -26,15 +26,20 @@ export class Error {
   payload: any;
   code: number;
 
-  constructor(properties: { kind: ErrorKind; payload?: any; code?: number }) {
-    // console.log("error", properties);
-    // var err = new global.Error();
-    // console.log("stack", err.stack);
-    this.name = "DataPepsError";
-    let kname = kindName(properties.kind);
+  constructor(properties: {
+    kind: ErrorKind;
+    payload?: any;
+    code?: number;
+    message?: string;
+  }) {
+    this.name = kindName(properties.kind);
     this.kind = properties.kind;
     this.payload = properties.payload;
     this.code = properties.code;
+    this.message =
+      properties.message == null
+        ? `DataPeps(${this.name})`
+        : properties.message;
   }
 }
 

@@ -36,10 +36,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var proto_1 = require("./proto");
+var SessionInternal_1 = require("./SessionInternal");
 exports.RegisterTokenStatus = proto_1.api.RegisterTokenStatus;
 var AdminAPI = /** @class */ (function () {
     function AdminAPI(session) {
-        this.session = session;
+        this.api = SessionInternal_1.SessionState.create(session);
     }
     /**
      * Set the admin status of an identity.
@@ -54,7 +55,7 @@ var AdminAPI = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.session.doProtoRequest({
+                    case 0: return [4 /*yield*/, this.api.client.doProtoRequest({
                             method: "POST",
                             expectedCode: 200,
                             path: "/api/v1/identity/" + encodeURIComponent(login) + "/promote",
@@ -80,7 +81,7 @@ var AdminAPI = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.session.doProtoRequest({
+                    case 0: return [4 /*yield*/, this.api.client.doProtoRequest({
                             method: "POST",
                             expectedCode: 200,
                             path: "/api/v1/identity/" + encodeURI(login) + "/active",
@@ -106,7 +107,7 @@ var AdminAPI = /** @class */ (function () {
             var links;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.session.doProtoRequest({
+                    case 0: return [4 /*yield*/, this.api.client.doProtoRequest({
                             method: "GET",
                             expectedCode: 200,
                             path: "/api/v1/register/links",

@@ -27,6 +27,7 @@ export declare class Error {
         kind: ErrorKind;
         payload?: any;
         code?: number;
+        message?: string;
     });
 }
 export declare function kindName(kind: ErrorKind): string;

@@ -27889,6 +27889,7 @@ $root.api = (function() {
                 case 15:
                 case 16:
                 case 17:
+                case 18:
                 case 19:
                 case 24:
                 case 25:
@@ -27992,6 +27993,10 @@ $root.api = (function() {
             case "IdentityNotAdmin":
             case 17:
                 message.kind = 17;
+                break;
+            case "IdentitiesNotFound":
+            case 18:
+                message.kind = 18;
                 break;
             case "IdentitySharingKindMismatch":
             case 19:
@@ -28108,6 +28113,7 @@ $root.api = (function() {
      * @property {number} IdentityNotFound=15 IdentityNotFound value
      * @property {number} IdentityVersionMismatch=16 IdentityVersionMismatch value
      * @property {number} IdentityNotAdmin=17 IdentityNotAdmin value
+     * @property {number} IdentitiesNotFound=18 IdentitiesNotFound value
      * @property {number} IdentitySharingKindMismatch=19 IdentitySharingKindMismatch value
      * @property {number} ResourceNotFound=24 ResourceNotFound value
      * @property {number} RegisterInvalidEmail=25 RegisterInvalidEmail value
@@ -28139,6 +28145,7 @@ $root.api = (function() {
         values[valuesById[15] = "IdentityNotFound"] = 15;
         values[valuesById[16] = "IdentityVersionMismatch"] = 16;
         values[valuesById[17] = "IdentityNotAdmin"] = 17;
+        values[valuesById[18] = "IdentitiesNotFound"] = 18;
         values[valuesById[19] = "IdentitySharingKindMismatch"] = 19;
         values[valuesById[24] = "ResourceNotFound"] = 24;
         values[valuesById[25] = "RegisterInvalidEmail"] = 25;
@@ -30696,6 +30703,209 @@ $root.api = (function() {
         };
 
         return PayloadIdentityNotAdmin;
+    })();
+
+    api.PayloadIdentitiesNotFound = (function() {
+
+        /**
+         * Properties of a PayloadIdentitiesNotFound.
+         * @memberof api
+         * @interface IPayloadIdentitiesNotFound
+         * @property {Array.<string>|null} [logins] PayloadIdentitiesNotFound logins
+         */
+
+        /**
+         * Constructs a new PayloadIdentitiesNotFound.
+         * @memberof api
+         * @classdesc Represents a PayloadIdentitiesNotFound.
+         * @implements IPayloadIdentitiesNotFound
+         * @constructor
+         * @param {api.IPayloadIdentitiesNotFound=} [properties] Properties to set
+         */
+        function PayloadIdentitiesNotFound(properties) {
+            this.logins = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * PayloadIdentitiesNotFound logins.
+         * @member {Array.<string>} logins
+         * @memberof api.PayloadIdentitiesNotFound
+         * @instance
+         */
+        PayloadIdentitiesNotFound.prototype.logins = $util.emptyArray;
+
+        /**
+         * Creates a new PayloadIdentitiesNotFound instance using the specified properties.
+         * @function create
+         * @memberof api.PayloadIdentitiesNotFound
+         * @static
+         * @param {api.IPayloadIdentitiesNotFound=} [properties] Properties to set
+         * @returns {api.PayloadIdentitiesNotFound} PayloadIdentitiesNotFound instance
+         */
+        PayloadIdentitiesNotFound.create = function create(properties) {
+            return new PayloadIdentitiesNotFound(properties);
+        };
+
+        /**
+         * Encodes the specified PayloadIdentitiesNotFound message. Does not implicitly {@link api.PayloadIdentitiesNotFound.verify|verify} messages.
+         * @function encode
+         * @memberof api.PayloadIdentitiesNotFound
+         * @static
+         * @param {api.IPayloadIdentitiesNotFound} message PayloadIdentitiesNotFound message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        PayloadIdentitiesNotFound.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.logins != null && message.logins.length)
+                for (var i = 0; i < message.logins.length; ++i)
+                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.logins[i]);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified PayloadIdentitiesNotFound message, length delimited. Does not implicitly {@link api.PayloadIdentitiesNotFound.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof api.PayloadIdentitiesNotFound
+         * @static
+         * @param {api.IPayloadIdentitiesNotFound} message PayloadIdentitiesNotFound message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        PayloadIdentitiesNotFound.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a PayloadIdentitiesNotFound message from the specified reader or buffer.
+         * @function decode
+         * @memberof api.PayloadIdentitiesNotFound
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {api.PayloadIdentitiesNotFound} PayloadIdentitiesNotFound
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        PayloadIdentitiesNotFound.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.api.PayloadIdentitiesNotFound();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    if (!(message.logins && message.logins.length))
+                        message.logins = [];
+                    message.logins.push(reader.string());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a PayloadIdentitiesNotFound message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof api.PayloadIdentitiesNotFound
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {api.PayloadIdentitiesNotFound} PayloadIdentitiesNotFound
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        PayloadIdentitiesNotFound.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a PayloadIdentitiesNotFound message.
+         * @function verify
+         * @memberof api.PayloadIdentitiesNotFound
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        PayloadIdentitiesNotFound.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.logins != null && message.hasOwnProperty("logins")) {
+                if (!Array.isArray(message.logins))
+                    return "logins: array expected";
+                for (var i = 0; i < message.logins.length; ++i)
+                    if (!$util.isString(message.logins[i]))
+                        return "logins: string[] expected";
+            }
+            return null;
+        };
+
+        /**
+         * Creates a PayloadIdentitiesNotFound message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof api.PayloadIdentitiesNotFound
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {api.PayloadIdentitiesNotFound} PayloadIdentitiesNotFound
+         */
+        PayloadIdentitiesNotFound.fromObject = function fromObject(object) {
+            if (object instanceof $root.api.PayloadIdentitiesNotFound)
+                return object;
+            var message = new $root.api.PayloadIdentitiesNotFound();
+            if (object.logins) {
+                if (!Array.isArray(object.logins))
+                    throw TypeError(".api.PayloadIdentitiesNotFound.logins: array expected");
+                message.logins = [];
+                for (var i = 0; i < object.logins.length; ++i)
+                    message.logins[i] = String(object.logins[i]);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a PayloadIdentitiesNotFound message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof api.PayloadIdentitiesNotFound
+         * @static
+         * @param {api.PayloadIdentitiesNotFound} message PayloadIdentitiesNotFound
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        PayloadIdentitiesNotFound.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.arrays || options.defaults)
+                object.logins = [];
+            if (message.logins && message.logins.length) {
+                object.logins = [];
+                for (var j = 0; j < message.logins.length; ++j)
+                    object.logins[j] = message.logins[j];
+            }
+            return object;
+        };
+
+        /**
+         * Converts this PayloadIdentitiesNotFound to JSON.
+         * @function toJSON
+         * @memberof api.PayloadIdentitiesNotFound
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        PayloadIdentitiesNotFound.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return PayloadIdentitiesNotFound;
     })();
 
     api.PayloadResourceNotFound = (function() {

@@ -62,7 +62,7 @@ export async function registerIdentitiesForEachApp(
   return await Promise.all(promises);
 }
 
-async function registerIdentitiesWithApp(
+export async function registerIdentitiesWithApp(
   init: initCtx,
   app: Identity<Uint8Array>,
   config: JWTConfig,

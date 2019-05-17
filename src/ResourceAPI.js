@@ -46,13 +46,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var proto_1 = require("./proto");
 var ResourceInternal_1 = require("./ResourceInternal");
 var Cryptor_1 = require("./Cryptor");
+var SessionInternal_1 = require("./SessionInternal");
 var ResourceType;
 (function (ResourceType) {
     ResourceType[ResourceType["ANONYMOUS"] = 0] = "ANONYMOUS";
 })(ResourceType = exports.ResourceType || (exports.ResourceType = {}));
 var ResourceAPI = /** @class */ (function () {
     function ResourceAPI(session) {
-        this.session = session;
+        this.api = SessionInternal_1.SessionState.create(session);
     }
     /**
      * Create and share a resource between a set of identities.
@@ -72,13 +73,13 @@ var ResourceAPI = /** @class */ (function () {
                 switch (_b.label) {
                     case 0:
                         options = options == null ? {} : options;
-                        encryptFunc = this.session.encryption.encryptor(Cryptor_1.CipherType.NACL_SES);
+                        encryptFunc = this.api.keySet.root.encryptor(Cryptor_1.CipherType.NACL_SES);
                         type = proto_1.api.ResourceType.ANONYMOUS;
-                        creator = this.session.getSessionPublicKey();
-                        return [4 /*yield*/, ResourceInternal_1.createBodyRequest(payload, sharingGroup, encryptFunc, this.session, options)];
+                        creator = this.api.keySet.getCurrentPublicKey();
+                        return [4 /*yield*/, ResourceInternal_1.createBodyRequest(payload, sharingGroup, encryptFunc, this.api.publicKeys, options)];
                     case 1:
                         _a = _b.sent(), body = _a.body, keypair = _a.keypair;
-                        return [4 /*yield*/, this.session.doProtoRequest({
+                        return [4 /*yield*/, this.api.client.doProtoRequest({
                                 method: "POST",
                                 expectedCode: 201,
                                 path: "/api/v1/resources",
@@ -112,12 +113,12 @@ var ResourceAPI = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         options = options != null ? options : {};
-                        assume = options.assume != null ? options.assume : this.session.login;
+                        assume = options.assume != null ? options.assume : this.api.login;
                         parse = options.parse;
                         params = options.reason != null
                             ? __assign({}, options, { access_reason: options.reason }) : options;
                         delete params.parse;
-                        return [4 /*yield*/, this.session
+                        return [4 /*yield*/, this.api.client
                                 .doProtoRequest({
                                 method: "GET",
                                 expectedCode: 200,
@@ -127,7 +128,7 @@ var ResourceAPI = /** @class */ (function () {
                                 response: function (r) { return proto_1.api.ResourceListResponse.decode(r).resources; }
                             })
                                 .then(function (resources) {
-                                return ResourceInternal_1.makeResourcesFromResponses(resources, _this.session, parse);
+                                return ResourceInternal_1.makeResourcesFromResponses(resources, _this.api.keySet, _this.api.publicKeys, parse);
                             })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
@@ -152,9 +153,9 @@ var ResourceAPI = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         options = options != null ? options : {};
-                        assume = options.assume != null ? options.assume : this.session.login;
+                        assume = options.assume != null ? options.assume : this.api.login;
                         params = options.reason != null ? { access_reason: options.reason } : undefined;
-                        return [4 /*yield*/, this.session.doProtoRequest({
+                        return [4 /*yield*/, this.api.client.doProtoRequest({
                                 method: "GET",
                                 expectedCode: 200,
                                 path: "/api/v1/resource/" + id,
@@ -164,7 +165,7 @@ var ResourceAPI = /** @class */ (function () {
                             })];
                     case 1:
                         response = _a.sent();
-                        return [2 /*return*/, ResourceInternal_1.makeResourceFromResponse(response, Cryptor_1.CipherType.NACL_SES, this.session, options.parse)];
+                        return [2 /*return*/, ResourceInternal_1.makeResourceFromResponse(response, Cryptor_1.CipherType.NACL_SES, this.api.publicKeys, this.api.keySet, options.parse)];
                 }
             });
         });
@@ -185,19 +186,19 @@ var ResourceAPI = /** @class */ (function () {
                     case 0:
                         options = options != null ? options : {};
                         assume = { login: login, kind: proto_1.api.IdentityAccessKeyKind.READ };
-                        return [4 /*yield*/, this.session.doProtoRequest({
+                        return [4 /*yield*/, this.api.client.doProtoRequest({
                                 method: "GET",
                                 expectedCode: 200,
-                                assume: assume,
                                 path: "/api/v1/identity/" +
                                     encodeURIComponent(login) +
                                     "/resource/" +
                                     encodeURIComponent(resourceName),
+                                assume: assume,
                                 response: function (r) { return proto_1.api.IdentityGetNamedResourceResponse.decode(r); }
                             })];
                     case 1:
                         resp = _a.sent();
-                        return [2 /*return*/, ResourceInternal_1.makeResourceFromResponse(resp.resource, Cryptor_1.CipherType.NACL_SES, this.session, options.parse)];
+                        return [2 /*return*/, ResourceInternal_1.makeResourceFromResponse(resp.resource, Cryptor_1.CipherType.NACL_SES, this.api.publicKeys, this.api.keySet, options.parse)];
                 }
             });
         });
@@ -218,7 +219,7 @@ var ResourceAPI = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         assume = { login: login, kind: proto_1.api.IdentityAccessKeyKind.WRITE };
-                        return [4 /*yield*/, this.session.doProtoRequest({
+                        return [4 /*yield*/, this.api.client.doProtoRequest({
                                 method: "PUT",
                                 expectedCode: 200,
                                 assume: assume,
@@ -249,8 +250,8 @@ var ResourceAPI = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         options = options != null ? options : {};
-                        assume = options.assume != null ? options.assume : this.session.login;
-                        return [4 /*yield*/, this.session.doProtoRequest({
+                        assume = options.assume != null ? options.assume : this.api.login;
+                        return [4 /*yield*/, this.api.client.doProtoRequest({
                                 method: "DELETE",
                                 expectedCode: 200,
                                 path: "/api/v1/resource/" + id,
@@ -277,8 +278,8 @@ var ResourceAPI = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         options = options != null ? options : {};
-                        assume = options.assume != null ? options.assume : this.session.login;
-                        return [4 /*yield*/, this.session.doProtoRequest({
+                        assume = options.assume != null ? options.assume : this.api.login;
+                        return [4 /*yield*/, this.api.client.doProtoRequest({
                                 method: "DELETE",
                                 expectedCode: 200,
                                 path: "/api/v1/resource/" + id,
@@ -301,14 +302,14 @@ var ResourceAPI = /** @class */ (function () {
      * - `ResourceNotFound` if the resource does not exists.
      */
     ResourceAPI.prototype.extendSharingGroup = function (id, sharingGroup, options) {
-        if (options === void 0) { options = { assume: this.session.login }; }
+        if (options === void 0) { options = { assume: this.api.login }; }
         return __awaiter(this, void 0, void 0, function () {
             var _a, encryptedKey, owner, keySet, secretKey, _b, _c, encryptFunc, encryptedSharingGroup;
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
                         options = options != null ? options : {};
-                        return [4 /*yield*/, this.session.doProtoRequest({
+                        return [4 /*yield*/, this.api.client.doProtoRequest({
                                 method: "GET",
                                 expectedCode: 200,
                                 path: "/api/v1/resource/" + id + "/key",
@@ -316,19 +317,19 @@ var ResourceAPI = /** @class */ (function () {
                             })];
                     case 1:
                         _a = _d.sent(), encryptedKey = _a.encryptedKey, owner = _a.owner;
-                        return [4 /*yield*/, this.session.getIdentityKeySet(owner.login, owner.version)];
+                        return [4 /*yield*/, this.api.keySet.get(owner.login, owner.version)];
                     case 2:
                         keySet = _d.sent();
                         _c = (_b = keySet
                             .decryptor(Cryptor_1.CipherType.NACL_SES)).decryptList;
-                        return [4 /*yield*/, this.session.resolveCipherList([encryptedKey])];
+                        return [4 /*yield*/, this.api.publicKeys.resolveCipherList([encryptedKey])];
                     case 3:
                         secretKey = _c.apply(_b, [_d.sent()]);
-                        encryptFunc = this.session.encryption.encryptor(Cryptor_1.CipherType.NACL_SES);
-                        return [4 /*yield*/, ResourceInternal_1.encryptForSharingGroup(secretKey, sharingGroup, encryptFunc, this.session)];
+                        encryptFunc = this.api.keySet.root.encryptor(Cryptor_1.CipherType.NACL_SES);
+                        return [4 /*yield*/, ResourceInternal_1.encryptForSharingGroup(secretKey, sharingGroup, encryptFunc, this.api.publicKeys)];
                     case 4:
                         encryptedSharingGroup = _d.sent();
-                        return [4 /*yield*/, this.session.doProtoRequest({
+                        return [4 /*yield*/, this.api.client.doProtoRequest({
                                 method: "PATCH",
                                 expectedCode: 201,
                                 path: "/api/v1/resource/" + id + "/sharingGroup",
@@ -359,8 +360,8 @@ var ResourceAPI = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         options = options != null ? options : {};
-                        assume = options.assume != null ? options.assume : this.session.login;
-                        return [4 /*yield*/, this.session.doProtoRequest({
+                        assume = options.assume != null ? options.assume : this.api.login;
+                        return [4 /*yield*/, this.api.client.doProtoRequest({
                                 method: "POST",
                                 expectedCode: 200,
                                 path: "/api/v1/resources/accessLogs",
@@ -395,8 +396,8 @@ var ResourceAPI = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         options = options != null ? options : {};
-                        assume = options.assume != null ? options.assume : this.session.login;
-                        return [4 /*yield*/, this.session.doProtoRequest({
+                        assume = options.assume != null ? options.assume : this.api.login;
+                        return [4 /*yield*/, this.api.client.doProtoRequest({
                                 method: "GET",
                                 expectedCode: 200,
                                 path: "/api/v1/resource/" + id + "/sharingGroup",

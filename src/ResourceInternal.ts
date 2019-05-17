@@ -5,9 +5,10 @@ import { SDKKind, Error } from "./Error";
 import { api } from "./proto";
 import { Encryptor, CipherType } from "./Cryptor";
 import { IdentityPublicKey, IdentityPublicKeyID } from "./IdentityAPI";
-import { Session } from "./Session";
 import { ID } from "./ID";
 import { IdentityKeySet } from "./IdentityKeySet";
+import { IdentityKeySetManager } from "./IdentityKeySetManager";
+import { PublicKeysManager } from "./PublicKeyManager";
 
 export class ResourceBox<T> implements Resource<T> {
   id: ID;
@@ -128,13 +129,14 @@ export function createWithEncryption<T>(
 export async function makeResourceFromResponse<T>(
   { resource, owner, creator, encryptedKey }: api.IResourceGetResponse,
   typeOfKey: CipherType,
-  session: Session,
+  publicKeyManager: PublicKeysManager,
+  keySetManager: IdentityKeySetManager,
   parse?
 ) {
-  let ownerKeySet = await session.getIdentityKeySet(owner.login, owner.version);
+  let ownerKeySet = await keySetManager.get(owner.login, owner.version);
   return await makeResource<T>(
     { resource, creator, encryptedKey },
-    session,
+    publicKeyManager,
     ownerKeySet,
     typeOfKey,
     parse
@@ -143,13 +145,13 @@ export async function makeResourceFromResponse<T>(
 
 export async function makeResource<T>(
   { resource, encryptedKey, creator }: api.IResourceGetResponse,
-  session: Session,
+  publicKeyManager: PublicKeysManager,
   ownerKeySet: IdentityKeySet,
   typeOfKey: CipherType,
   parse = u => JSON.parse(Uint8Tool.decode(u))
 ) {
   // TODO(K1): as any
-  let [resolvedKey] = await (session as any).resolveCipherList([encryptedKey]);
+  let [resolvedKey] = await publicKeyManager.resolveCipherList([encryptedKey]);
   let secretKey = ownerKeySet.decryptor(typeOfKey).decrypt(resolvedKey);
   let keypair = nacl.box.keyPair.fromSecretKey(secretKey);
   if (!Uint8Tool.equals(resource.publicKey, keypair.publicKey)) {
@@ -161,7 +163,9 @@ export async function makeResource<T>(
       }
     });
   }
-  let creatorPk = await session.getPublicKey(creator as IdentityPublicKeyID);
+  let creatorPk = await publicKeyManager.getPublicKey(
+    creator as IdentityPublicKeyID
+  );
   let payload =
     resource.payload.length == 0
       ? null
@@ -186,7 +190,8 @@ export async function makeResource<T>(
 
 export async function makeResourcesFromResponses<T>(
   resources: api.IResourceGetResponse[],
-  session: Session,
+  keySetManager: IdentityKeySetManager,
+  publicKeyManager: PublicKeysManager,
   parse?
 ) {
   let owners: api.IIdentityKeyID[] = [];
@@ -215,7 +220,7 @@ export async function makeResourcesFromResponses<T>(
   for (let i = 0; i < owners.length; i++) {
     let owner = owners[i];
     if (owner.login != undefined && owner.version != undefined) {
-      let keySet = await session.getIdentityKeySet(owner.login, owner.version);
+      let keySet = await keySetManager.get(owner.login, owner.version);
       ownersKeys.push(keySet);
     }
   }
@@ -235,7 +240,7 @@ export async function makeResourcesFromResponses<T>(
     resolvedResources.push(
       await makeResource<T>(
         resource,
-        session,
+        publicKeyManager,
         keySet,
         CipherType.NACL_SES,
         parse
@@ -249,7 +254,7 @@ export async function createBodyRequest<T>(
   payload: T,
   sharingGroup: string[],
   crypto: Encryptor,
-  session: Session,
+  publicKeyManager: PublicKeysManager,
   options?: { serialize?: ((payload: T) => Uint8Array) }
 ) {
   options = options != null ? options : {};
@@ -262,7 +267,7 @@ export async function createBodyRequest<T>(
     keypair.secretKey,
     sharingGroup,
     crypto,
-    session
+    publicKeyManager
   );
   let { message, nonce } = crypto.encrypt(
     { box: keypair.publicKey },
@@ -283,9 +288,9 @@ export async function encryptForSharingGroup(
   text: Uint8Array,
   sharingGroup: string[],
   crypto: Encryptor,
-  session: Session
+  publicKeyManager: PublicKeysManager
 ) {
-  let publicKeys = await session.getLatestPublicKeys(sharingGroup);
+  let publicKeys = await publicKeyManager.getLatestPublicKeys(sharingGroup);
   return publicKeys.map(pk => {
     let { message, nonce } = crypto.encrypt(pk, text);
     return {

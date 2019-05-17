@@ -95,7 +95,7 @@ export declare enum IdentitySortingField {
     KIND = 2,
 }
 export declare class IdentityAPI {
-    private session;
+    private api;
     constructor(session: Session);
     /**
      * Get the latest public key of the given identity login.
@@ -145,6 +145,8 @@ export declare class IdentityAPI {
     }>;
     /**
      * Create a new identity.
+     * If the creator of the identity is an application identity, the login field of the
+     * identity must be an application identity login, see {@link getLogin}.
      * @param identity The description of the identity.
      * @param options A collection of options:
      *  - secret: An optional secret associated with the created identity that could be used to login.

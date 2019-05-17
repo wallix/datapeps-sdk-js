@@ -1,16 +1,15 @@
 import { api } from "./proto";
 import { Session } from "./Session";
-import { IdentityAPI } from "./IdentityAPI";
+import { SessionState } from "./SessionInternal";
 
 export const RegisterTokenStatus = api.RegisterTokenStatus;
 
 export type RegisterEmailValidationToken = api.IRegisterEmailValidationToken;
 
 export class AdminAPI {
-  private session: Session;
-
+  private api: SessionState;
   constructor(session: Session) {
-    this.session = session;
+    this.api = SessionState.create(session);
   }
 
   /**
@@ -23,7 +22,7 @@ export class AdminAPI {
    * - `IdentityNotAdminDomain` if the identity logged along with the current session cannot administer the domain of `login`.
    */
   async setAdmin(login: string, admin: boolean): Promise<void> {
-    return await this.session.doProtoRequest<void>({
+    return await this.api.client.doProtoRequest<void>({
       method: "POST",
       expectedCode: 200,
       path: "/api/v1/identity/" + encodeURIComponent(login) + "/promote",
@@ -43,7 +42,7 @@ export class AdminAPI {
    * - `IdentityNotAdminDomain` if the identity logged along with the current session cannot administer the domain of `login`.
    */
   async setActive(login: string, active: boolean): Promise<void> {
-    return await this.session.doProtoRequest<void>({
+    return await this.api.client.doProtoRequest<void>({
       method: "POST",
       expectedCode: 200,
       path: "/api/v1/identity/" + encodeURI(login) + "/active",
@@ -65,7 +64,7 @@ export class AdminAPI {
     offset?: number;
     limit?: number;
   }): Promise<RegisterEmailValidationToken[]> {
-    let { links } = await this.session.doProtoRequest({
+    let { links } = await this.api.client.doProtoRequest({
       method: "GET",
       expectedCode: 200,
       path: "/api/v1/register/links",

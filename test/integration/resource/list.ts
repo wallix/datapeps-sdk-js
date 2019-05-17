@@ -119,7 +119,7 @@ describe("resource.list", () => {
 
   let aliceRes3: TestResource;
   it("Check alice can access to a new resource after key renewal", async () => {
-    await aliceSession.renewKeys();
+    await new IdentityAPI(aliceSession).renewKeys(aliceSession.login);
     expect(
       await new ResourceAPI(aliceSession).get(aliceRes1.id)
     ).to.be.deep.equal(aliceRes1); //TODO: remove when key staling has been fixed for resource creation

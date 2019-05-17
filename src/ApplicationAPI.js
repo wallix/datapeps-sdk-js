@@ -45,6 +45,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Error_1 = require("./Error");
 var proto_1 = require("./proto");
+var SessionInternal_1 = require("./SessionInternal");
 var IdentityInternal_1 = require("./IdentityInternal");
 exports.ApplicationIdentitySortingOrder = IdentityInternal_1.IdentitySortingOrder;
 var Tools_1 = require("./Tools");
@@ -57,7 +58,7 @@ var ApplicationIdentitySortingField;
 exports.UsageBy = proto_1.api.Period;
 var ApplicationAPI = /** @class */ (function () {
     function ApplicationAPI(session) {
-        this.session = session;
+        this.api = SessionInternal_1.SessionState.create(session);
     }
     /**
      * Put configuration of an application
@@ -94,7 +95,7 @@ var ApplicationAPI = /** @class */ (function () {
                                 signAlgorithm: jwtConfig.signAlgorithm.valueOf()
                             }
                         };
-                        return [4 /*yield*/, this.session.doProtoRequest({
+                        return [4 /*yield*/, this.api.client.doProtoRequest({
                                 method: "PUT",
                                 assume: { login: appID, kind: proto_1.api.IdentityAccessKeyKind.WRITE },
                                 expectedCode: 201,
@@ -129,7 +130,7 @@ var ApplicationAPI = /** @class */ (function () {
                     case 0:
                         // if appConfigID == null, the server returns IdenityNotFound as appID is empty
                         appConfigID = appConfigID == null ? { appID: "", version: 1 } : appConfigID;
-                        return [4 /*yield*/, this.session.doProtoRequest({
+                        return [4 /*yield*/, this.api.client.doProtoRequest({
                                 method: "POST",
                                 assume: {
                                     login: appConfigID.appID,
@@ -162,7 +163,7 @@ var ApplicationAPI = /** @class */ (function () {
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.session.doProtoRequest({
+                    case 0: return [4 /*yield*/, this.api.client.doProtoRequest({
                             method: "GET",
                             assume: {
                                 login: appID,
@@ -220,7 +221,7 @@ var ApplicationAPI = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         options = options == null ? {} : options;
-                        return [4 /*yield*/, this.session.doProtoRequest({
+                        return [4 /*yield*/, this.api.client.doProtoRequest({
                                 method: "POST",
                                 assume: { login: appID, kind: proto_1.api.IdentityAccessKeyKind.READ },
                                 expectedCode: 200,
@@ -267,7 +268,7 @@ var ApplicationAPI = /** @class */ (function () {
                         }
                         sortingField = options.sortingField;
                         sortingOrder = IdentityInternal_1.IdentityRequestsUtils.resolveSortingOrder(options.sortingOrder);
-                        return [4 /*yield*/, this.session.doProtoRequest({
+                        return [4 /*yield*/, this.api.client.doProtoRequest({
                                 method: "POST",
                                 expectedCode: 200,
                                 path: "/api/v1/application/" + encodeURI(appID) + "/identities/list",
@@ -315,7 +316,7 @@ var ApplicationAPI = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.session.doProtoRequest({
+                    case 0: return [4 /*yield*/, this.api.client.doProtoRequest({
                             method: "GET",
                             expectedCode: 200,
                             path: "/api/v1/application/identity/" + encodeURI(dataPepsLogin) + "/auth",
@@ -373,7 +374,7 @@ var ApplicationAPI = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         since = since == null ? 0 : since;
-                        return [4 /*yield*/, this.session.doProtoRequest({
+                        return [4 /*yield*/, this.api.client.doProtoRequest({
                                 path: "/api/v1/application/" + encodeURI(appID) + "/identitiesSession/list",
                                 method: "POST",
                                 expectedCode: 200,

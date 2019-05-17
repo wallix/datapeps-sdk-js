@@ -47,7 +47,7 @@ export interface ResourceShareLink {
     identityID: IdentityPublicKeyID;
 }
 export declare class ResourceAPI {
-    private session;
+    private api;
     constructor(session: Session);
     /**
      * Create and share a resource between a set of identities.

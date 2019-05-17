@@ -6,6 +6,26 @@ import { ResourceAPI } from "../src/DataPeps";
 import { Uint8Tool } from "../src/Tools";
 import { kindName } from "../src/Error";
 
+export interface itErrorsParam<Arg, Payload = null> {
+  arg: Arg;
+  payload?: { value?: Payload } | { func?: (actual: Payload) => void };
+}
+
+export function itErrors<Arg, Payload = null>(
+  description: string,
+  params: () => itErrorsParam<Arg, Payload>[],
+  action: (arg: Arg) => Promise<any>,
+  kind: DataPeps.ErrorKind
+): mocha.ITest {
+  return it(`${description} expect error(${kindName(kind)})`, async () => {
+    await Promise.all(
+      params().map(async p => {
+        await expectErrorWithPayloadFn<Arg, Payload>(action, p, kind);
+      })
+    );
+  });
+}
+
 export function itError(
   description: string,
   action: () => Promise<any>,
@@ -32,6 +52,43 @@ export async function expectError(
     ).equal(kind);
     if (payload != null) {
       expect({ ...e.payload }).to.deep.equals(payload);
+    }
+    return;
+  }
+  throw new Error(`action should throw a DataPepsError(${kindName(kind)})`);
+}
+
+export async function expectErrorWithPayloadFn<Arg, Payload>(
+  action: (arg: Arg) => Promise<any>,
+  param: itErrorsParam<Arg, Payload>,
+  kind: DataPeps.ErrorKind
+): Promise<void> {
+  try {
+    await action(param.arg);
+  } catch (e) {
+    expect(e, "caught error is null").to.not.be.null;
+    expect(e, `caught error "${e}" is not a DataPeps error`).instanceOf(
+      DataPeps.Error
+    );
+    let eErr = e as DataPeps.Error;
+    expect(
+      eErr.kind,
+      `expected ${kindName(e.kind)} to equal ${kindName(kind)}`
+    ).equal(kind);
+    if (param.payload == null) {
+      return;
+    }
+    const payload = param.payload as any;
+    if (payload.func !== undefined) {
+      payload.func(eErr.payload);
+    } else if (payload.value != null) {
+      expect(
+        payload.value,
+        `expected deep equality of the expected payload ${
+          payload.value
+        } and the actual payload ${eErr.payload}`
+      ).to.deep.equals({ ...eErr.payload });
+      return;
     }
     return;
   }

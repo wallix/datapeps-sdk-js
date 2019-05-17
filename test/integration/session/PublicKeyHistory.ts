@@ -2,7 +2,8 @@ import * as Config from "../../Config";
 import * as DataPeps from "../../../src/DataPeps";
 import * as nacl from "tweetnacl";
 import { expect } from "chai";
-import { AdminAPI, IdentityAPI } from "../../../src/DataPeps";
+import { IdentityAPI } from "../../../src/DataPeps";
+import { itError } from "../../Utils";
 
 describe("session.getPublicKeyHistory", () => {
   let seed = Math.floor(Math.random() * 99999);
@@ -18,6 +19,8 @@ describe("session.getPublicKeyHistory", () => {
   let aliceSession: DataPeps.Session;
   let adminSession: DataPeps.Session;
 
+  const nonexistentIdentityLogin = `session.getPublicKeyHistory.${seed}.nonexistent`;
+
   before(async () => {
     await Config.init();
     await DataPeps.register(alice, aliceSecret);
@@ -28,7 +31,7 @@ describe("session.getPublicKeyHistory", () => {
   let publicKeys: DataPeps.IdentityPublicKey[] = [];
 
   it("Alice can get her public key", async () => {
-    let aliceKey = await aliceSession.getLatestPublicKey(alice.login);
+    let aliceKey = await IdentityAPI.getLatestPublicKey(alice.login);
     expect(aliceKey).is.not.null;
     publicKeys.push(aliceKey);
 
@@ -40,13 +43,16 @@ describe("session.getPublicKeyHistory", () => {
   });
 
   it("Public key history contains old and new versions after renewing key", async () => {
-    await aliceSession.renewKeys();
-    let aliceKey = await aliceSession.getLatestPublicKey(alice.login);
+    await new IdentityAPI(aliceSession).renewKeys(aliceSession.login);
+    let aliceKey = await IdentityAPI.getLatestPublicKey(alice.login);
     expect(aliceKey).is.not.null;
     publicKeys.push(aliceKey);
 
-    await aliceSession.renewKeys("other password");
-    aliceKey = await aliceSession.getLatestPublicKey(alice.login);
+    await new IdentityAPI(aliceSession).renewKeys(
+      aliceSession.login,
+      "other password"
+    );
+    aliceKey = await IdentityAPI.getLatestPublicKey(alice.login);
     expect(aliceKey).is.not.null;
     publicKeys.push(aliceKey);
 
@@ -65,7 +71,7 @@ describe("session.getPublicKeyHistory", () => {
     await new IdentityAPI(adminSession).overwriteKeys(alice.login, secret);
     aliceSession = await DataPeps.Session.login(alice.login, secret);
 
-    let aliceKey = await aliceSession.getLatestPublicKey(alice.login);
+    let aliceKey = await IdentityAPI.getLatestPublicKey(alice.login);
     expect(aliceKey).is.not.null;
     publicKeys.push(aliceKey);
 
@@ -78,4 +84,12 @@ describe("session.getPublicKeyHistory", () => {
     }
     expect(aliceKeys).to.be.deep.equal(publicKeys);
   });
+
+  /*
+  itError(
+    "Trying to get the latest public key of an non-existent identity results in an error",
+    () => aliceSession.getLatestPublicKey(nonexistentIdentityLogin),
+    DataPeps.ServerError.IdentityPublicChainsNotFound
+  );
+  */
 });

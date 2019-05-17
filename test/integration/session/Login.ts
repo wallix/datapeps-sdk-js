@@ -45,14 +45,17 @@ describe("session.Login", () => {
   });
 
   it("check alice can login after renew its keys", async () => {
-    await aliceSession.renewKeys();
+    await new IdentityAPI(aliceSession).renewKeys(aliceSession.login);
     aliceSession = await DataPeps.Session.login(alice.login, aliceSecret);
     checkAliceSession(aliceSession);
   });
 
   it("check alice can login after she has changed her password", async () => {
     aliceSecret = nacl.randomBytes(128);
-    await aliceSession.renewKeys(aliceSecret);
+    await new IdentityAPI(aliceSession).renewKeys(
+      aliceSession.login,
+      aliceSecret
+    );
     aliceSession = await DataPeps.Session.login(alice.login, aliceSecret);
     checkAliceSession(aliceSession);
   });

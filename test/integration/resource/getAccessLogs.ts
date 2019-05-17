@@ -1,15 +1,13 @@
-import * as Config from "../../Config";
 import * as Context from "../../Context";
 import * as DataPeps from "../../../src/DataPeps";
-import * as nacl from "tweetnacl";
 import { expect } from "chai";
 import "mocha";
-import { ResourceAPI } from "../../../src/DataPeps";
+import { IdentityAPI, ResourceAPI } from "../../../src/DataPeps";
 
 describe("resource.getAccessLogs", () => {
-  let alice, bob, device: DataPeps.Identity<Uint8Array>;
+  let [alice, bob, device]: DataPeps.Identity<Uint8Array>[] = [];
 
-  let aliceSession, bobSession, deviceSession: DataPeps.Session;
+  let [aliceSession, bobSession, deviceSession]: DataPeps.Session[] = [];
 
   let aliceRes1: DataPeps.Resource<null>;
   let aliceRes2: DataPeps.Resource<null>;
@@ -84,7 +82,7 @@ describe("resource.getAccessLogs", () => {
   });
 
   it("Alice renew keys and access to the resource1, alice check access", async () => {
-    await aliceSession.renewKeys();
+    await new IdentityAPI(aliceSession).renewKeys(aliceSession.login);
     await new ResourceAPI(aliceSession).get(aliceRes1.id);
     let logs = await new ResourceAPI(aliceSession).getAccessLogs({ limit: 1 });
     expect(logs.length).to.be.equals(1);

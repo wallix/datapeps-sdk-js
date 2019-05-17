@@ -1,11 +1,8 @@
 import { Error, SDKKind } from "./Error";
-import {
-  IdentityKeySet,
-  MasterPrivateSeed,
-  MasterPublicSeed
-} from "./IdentityKeySet";
+import { IdentityKeySet, MasterPublicSeed } from "./IdentityKeySet";
 import { Uint8Tool, timestampToDate } from "./Tools";
 import { Session, AssumeOptions } from "./Session";
+import { SessionState } from "./SessionInternal";
 import { client } from "./HTTP";
 import {
   IdentitySerializer,
@@ -129,10 +126,9 @@ export enum IdentitySortingField {
 }
 
 export class IdentityAPI {
-  private session: Session;
-
+  private api: SessionState;
   constructor(session: Session) {
-    this.session = session;
+    this.api = SessionState.create(session);
   }
 
   /**
@@ -152,7 +148,10 @@ export class IdentityAPI {
       expectedCode: 200,
       path: "/api/v1/identities/latestPublicKeys",
       body: api.IdentityGetLatestPublicKeysRequest.encode({ logins }).finish(),
-      response: api.IdentityGetLatestPublicKeysResponse.decode,
+      response: r =>
+        api.IdentityGetLatestPublicKeysResponse.toObject(
+          api.IdentityGetLatestPublicKeysResponse.decode(r)
+        ),
       headers: new Headers({
         "content-type": "application/x-protobuf"
       })
@@ -180,7 +179,7 @@ export class IdentityAPI {
    * - `IdentityNotFound` if the `login` does not exists.
    */
   async get(login: string): Promise<Identity<Uint8Array>> {
-    return await this.session.doProtoRequest({
+    return await this.api.client.doProtoRequest({
       method: "GET",
       expectedCode: 200,
       path: "/api/v1/identity/" + encodeURI(login),
@@ -217,7 +216,7 @@ export class IdentityAPI {
     let sortingOrder = IdentityRequestsUtils.resolveSortingOrder(
       options.sortingOrder
     );
-    return await this.session.doProtoRequest({
+    return await this.api.client.doProtoRequest({
       method: "POST",
       expectedCode: 200,
       path: "/api/v1/identities/list",
@@ -246,6 +245,8 @@ export class IdentityAPI {
 
   /**
    * Create a new identity.
+   * If the creator of the identity is an application identity, the login field of the
+   * identity must be an application identity login, see {@link getLogin}.
    * @param identity The description of the identity.
    * @param options A collection of options:
    *  - secret: An optional secret associated with the created identity that could be used to login.
@@ -271,9 +272,11 @@ export class IdentityAPI {
       { version: 1, login: identity.login },
       options.secret
     );
-    let publicKeys = await this.session.getLatestPublicKeys(osharingGroup);
+    let publicKeys = await this.api.publicKeys.getLatestPublicKeys(
+      osharingGroup
+    );
     let sharingGroup = IdentityAPI.createSharingGroup(keySet, publicKeys);
-    return await this.session.doProtoRequest<void>({
+    return await this.api.client.doProtoRequest<void>({
       method: "POST",
       expectedCode: 201,
       path: "/api/v1/identity",
@@ -282,7 +285,7 @@ export class IdentityAPI {
         sharingGroup,
         encryption: encryptedKeySet,
         email: options.email,
-        signChain: (this.session as any).encryption.sign(
+        signChain: this.api.keySet.sign(
           Uint8Tool.concat(
             encryptedKeySet.boxEncrypted.publicKey,
             encryptedKeySet.signEncrypted.publicKey
@@ -300,7 +303,7 @@ export class IdentityAPI {
    * - `IdentityNotFound` if identity.login doesn't not exists.
    */
   async update(identity: IdentityFields): Promise<void> {
-    return await this.session.doProtoRequest<void>({
+    return await this.api.client.doProtoRequest<void>({
       method: "PUT",
       expectedCode: 200,
       path: "/api/v1/identity/" + encodeURI(identity.login),
@@ -322,7 +325,7 @@ export class IdentityAPI {
       login,
       kind: api.IdentityAccessKeyKind.WRITE
     };
-    let { encryption, sharingGroup } = await this.session.doProtoRequest({
+    let { encryption, sharingGroup } = await this.api.client.doProtoRequest({
       method: "GET",
       expectedCode: 200,
       path: "/api/v1/identity/" + encodeURIComponent(login) + "/keysToRenew",
@@ -357,7 +360,7 @@ export class IdentityAPI {
     // Sign the public keys of the next IdentityKeySet with the current IdentityKeySet
     let signChain = currentKeySet.signKeys(nextKeySet);
     // Push the next IdentityKeySet to DataPeps
-    await this.session.doProtoRequest({
+    await this.api.client.doProtoRequest({
       method: "POST",
       expectedCode: 201,
       path: "/api/v1/identity/" + encodeURIComponent(login) + "/keysToRenew",
@@ -369,6 +372,11 @@ export class IdentityAPI {
       }).finish(),
       assume
     });
+    // if we change the secret of the current identity, we need to update the secret that the SessionClient contains;
+    // otherwise, the SessionClient cannot unstale the session
+    if (this.api.login == login && secret != null) {
+      this.api.client.setSecret(Uint8Tool.convert(secret));
+    }
   }
 
   /**
@@ -380,7 +388,7 @@ export class IdentityAPI {
    * - `IdentityNotFound` if the identity cannot be accessed.
    */
   async getSharingGroup(login: string): Promise<IdentityShareLink[]> {
-    return await this.session.doProtoRequest({
+    return await this.api.client.doProtoRequest({
       method: "GET",
       expectedCode: 200,
       path: "/api/v1/identity/" + encodeURIComponent(login) + "/sharingGroup",
@@ -403,12 +411,14 @@ export class IdentityAPI {
     sharingGroup: string[]
   ): Promise<void> {
     // Get the latest IdentityKeySet
-    let keySet = await this.session.getIdentityKeySet(login);
+    let keySet = await this.api.keySet.get(login);
     // Share key for the sharingGroup
-    let publicKeys = await this.session.getLatestPublicKeys(sharingGroup);
+    let publicKeys = await this.api.publicKeys.getLatestPublicKeys(
+      sharingGroup
+    );
     let encryptedKeys = IdentityAPI.createSharingGroup(keySet, publicKeys);
     // patch the sharingGroup to DataPeps
-    return await this.session.doProtoRequest<void>({
+    return await this.api.client.doProtoRequest<void>({
       method: "PATCH",
       expectedCode: 201,
       path: "/api/v1/identity/" + encodeURI(login) + "/sharingGroup",
@@ -442,7 +452,7 @@ export class IdentityAPI {
       });
     }
     // Replace the sharing group of the root identity
-    graph[0].sharingGroup = await this.session.getLatestPublicKeys(
+    graph[0].sharingGroup = await this.api.publicKeys.getLatestPublicKeys(
       sharingGroup
     );
     // Filter only latest identites
@@ -503,7 +513,7 @@ export class IdentityAPI {
           backward
         };
       });
-    return await this.session.doProtoRequest<void>({
+    return await this.api.client.doProtoRequest<void>({
       method: "POST",
       expectedCode: 201,
       path: "/api/v1/identity/" + encodeURIComponent(login) + "/sharingGraph",
@@ -573,7 +583,7 @@ export class IdentityAPI {
       })
       .map(({ elt, nextencryptedKeySet, nextKeySet }) => {
         // administrator signs the 'overwrited' new version of identity
-        let signChain = (this.session as any).encryption.sign(
+        let signChain = this.api.keySet.sign(
           Uint8Tool.concat(
             nextencryptedKeySet.boxEncrypted.publicKey,
             nextencryptedKeySet.signEncrypted.publicKey
@@ -604,7 +614,7 @@ export class IdentityAPI {
           sharingGroup
         };
       });
-    return await this.session.doProtoRequest<void>({
+    return await this.api.client.doProtoRequest<void>({
       method: "POST",
       expectedCode: 201,
       path: "/api/v1/identity/" + encodeURIComponent(login) + "/sharingGraph",
@@ -623,7 +633,7 @@ export class IdentityAPI {
    * - `IdentityNotFound` if the identity cannot be accessed.
    */
   async getAccessGroup(login: string): Promise<IdentityShareLink[]> {
-    return await this.session.doProtoRequest({
+    return await this.api.client.doProtoRequest({
       method: "GET",
       expectedCode: 200,
       path: "/api/v1/identity/" + encodeURIComponent(login) + "/accessGroup",
@@ -642,13 +652,16 @@ export class IdentityAPI {
    * - `IdentityNotFound` if the identity is not found.
    */
   async getPublicKeyHistory(login: string): Promise<IdentityPublicKey[]> {
-    let { chains } = await this.session.doProtoRequest({
+    let {
+      body: { chains }
+    } = await this.api.client.client.doRequest({
       method: "POST",
       expectedCode: 200,
       path: "/api/v1/identities/latestPublicChains",
       body: api.IdentityGetLatestPublicChainsRequest.encode({
         ids: [{ login, since: 0 }]
       }).finish(),
+      headers: new Headers({ "content-type": "application/x-protobuf" }),
       response: api.IdentityGetLatestPublicChainsResponse.decode
     });
     if (chains.length != 1 || chains[0].login !== login) {
@@ -686,13 +699,13 @@ export class IdentityAPI {
     options?: { withChallenge?: boolean }
   ) {
     options = options != null ? options : {};
-    return await this.session.doProtoRequest({
+    return await this.api.client.doProtoRequest({
       method: "GET",
       expectedCode: 200,
       path: "/api/v1/identity/" + encodeURI(login) + "/lockedVersions",
       params: options,
       assume:
-        login == this.session.login
+        login == this.api.login
           ? null
           : { login, kind: api.IdentityAccessKeyKind.READ },
       response: r => {
@@ -725,13 +738,7 @@ export class IdentityAPI {
     });
     let unlockedVersions: IdentityPublicKeyWithMetadata[] = [];
     let resolvedChallengesWithEncryptedKeys: api.UnlockVersionsRequest.UnlockedVersion[] = [];
-    let publicKey: IdentityPublicKey;
-    if (login == this.session.login) {
-      publicKey = this.session.getSessionPublicKey();
-    } else {
-      // TODO: possible race condition between the assumed version here and when sending the request
-      publicKey = await this.session.getLatestPublicKey(login);
-    }
+    let publicKey = await this.api.publicKeys.getLatestPublicKey(login);
     lockedVersions.forEach(locked => {
       if (locked.challenge == null) {
         throw new Error({
@@ -772,11 +779,11 @@ export class IdentityAPI {
       }
     });
     if (unlockedVersions.length > 0) {
-      await this.session.doProtoRequest({
+      await this.api.client.doProtoRequest({
         method: "POST",
         expectedCode: 200,
         assume:
-          login == this.session.login
+          login == this.api.login
             ? null
             : { login, kind: api.IdentityAccessKeyKind.WRITE },
         path: "/api/v1/identity/" + encodeURI(login) + "/unlockVersions",
@@ -795,7 +802,7 @@ export class IdentityAPI {
     IdentitySharingGraph<{ id: IdentityPublicKeyID; seed: MasterPublicSeed }>
   > {
     // Get the graph from DataPeps
-    let { graph } = await this.session.doProtoRequest({
+    let { graph } = await this.api.client.doProtoRequest({
       method: "GET",
       expectedCode: 200,
       path: "/api/v1/identity/" + encodeURIComponent(login) + "/sharingGraph",
@@ -824,7 +831,7 @@ export class IdentityAPI {
       login,
       kind: api.IdentityAccessKeyKind.WRITE
     };
-    let { graph } = await this.session.doProtoRequest({
+    let { graph } = await this.api.client.doProtoRequest({
       method: "GET",
       expectedCode: 200,
       path: "/api/v1/identity/" + encodeURIComponent(login) + "/sharingGraph",
@@ -856,8 +863,11 @@ export class IdentityAPI {
     let resolvedGraph = await Promise.all(
       graph.map(async elt => {
         // TODO - session
-        let [sharingKey]: SignedCipher[] = await (this
-          .session as any).resolveCipherList([elt.sharingKey]);
+        let [
+          sharingKey
+        ]: SignedCipher[] = await this.api.publicKeys.resolveCipherList([
+          elt.sharingKey
+        ]);
         return { ...elt, sharingKey };
       })
     );

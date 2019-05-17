@@ -83,6 +83,7 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="delegatedaccessapi.html#getsecrettoken" class="tsd-kind-icon">get<wbr>Secret<wbr>Token</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="delegatedaccessapi.html#list" class="tsd-kind-icon">list</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="delegatedaccessapi.html#resolveaccessrequest" class="tsd-kind-icon">resolve<wbr>Access<wbr>Request</a></li>
 							</ul>
@@ -96,19 +97,19 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Delegated<wbr>AccessAPI<span class="tsd-signature-symbol">(</span>session<span class="tsd-signature-symbol">: </span><a href="../modules/session.html" class="tsd-signature-type">Session</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="delegatedaccessapi.html" class="tsd-signature-type">DelegatedAccessAPI</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Delegated<wbr>AccessAPI<span class="tsd-signature-symbol">(</span>session<span class="tsd-signature-symbol">: </span><a href="session.html" class="tsd-signature-type">Session</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="delegatedaccessapi.html" class="tsd-signature-type">DelegatedAccessAPI</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DelegatedAccess.ts#L56">DelegatedAccess.ts:56</a></li>
+									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DelegatedAccess.ts#L57">DelegatedAccess.ts:57</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>session: <a href="../modules/session.html" class="tsd-signature-type">Session</a></h5>
+									<h5>session: <a href="session.html" class="tsd-signature-type">Session</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="delegatedaccessapi.html" class="tsd-signature-type">DelegatedAccessAPI</a></h4>
@@ -119,6 +120,34 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getsecrettoken" class="tsd-anchor"></a>
+					<h3>get<wbr>Secret<wbr>Token</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Secret<wbr>Token<span class="tsd-signature-symbol">(</span>login<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DelegatedAccess.ts#L65">DelegatedAccess.ts:65</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get the secret token of an identity.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>login: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="list" class="tsd-anchor"></a>
 					<h3>list</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -128,7 +157,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DelegatedAccess.ts#L127">DelegatedAccess.ts:127</a></li>
+									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DelegatedAccess.ts#L133">DelegatedAccess.ts:133</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -161,7 +190,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DelegatedAccess.ts#L66">DelegatedAccess.ts:66</a></li>
+									<li>Defined in <a href="https://github.com/wallix/datapeps-sdk-js/blob/master/src/DelegatedAccess.ts#L74">DelegatedAccess.ts:74</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -215,6 +244,9 @@
 								<a href="delegatedaccessapi.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="delegatedaccessapi.html#getsecrettoken" class="tsd-kind-icon">get<wbr>Secret<wbr>Token</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="delegatedaccessapi.html#list" class="tsd-kind-icon">list</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
@@ -229,6 +261,9 @@
 					</li>
 					<li class=" tsd-kind-class">
 						<a href="resourceapi.html" class="tsd-kind-icon">ResourceAPI</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="session.html" class="tsd-kind-icon">Session</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-has-type-parameter">
 						<a href="../interfaces/identity.html" class="tsd-kind-icon">Identity</a>
@@ -257,6 +292,9 @@
 					<li class=" tsd-kind-interface tsd-has-type-parameter">
 						<a href="../interfaces/sessionrequest.html" class="tsd-kind-icon">Session<wbr>Request</a>
 					</li>
+					<li class=" tsd-kind-interface">
+						<a href="../interfaces/trustpolicy.html" class="tsd-kind-icon">Trust<wbr>Policy</a>
+					</li>
 					<li class=" tsd-kind-type-alias">
 						<a href="../globals.html#assumeoptions" class="tsd-kind-icon">Assume<wbr>Options</a>
 					</li>
@@ -271,9 +309,6 @@
 					</li>
 					<li class=" tsd-kind-type-alias">
 						<a href="../globals.html#registeremailvalidationtoken" class="tsd-kind-icon">Register<wbr>Email<wbr>Validation<wbr>Token</a>
-					</li>
-					<li class=" tsd-kind-type-alias">
-						<a href="../globals.html#sessionparameters" class="tsd-kind-icon">Session<wbr>Parameters</a>
 					</li>
 					<li class=" tsd-kind-type-alias">
 						<a href="../globals.html#sessionsaltkind" class="tsd-kind-icon">Session<wbr>Salt<wbr>Kind</a>

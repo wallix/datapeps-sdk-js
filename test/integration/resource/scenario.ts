@@ -83,7 +83,7 @@ describe("resource.scenario", () => {
   });
 
   it("alice renews its keys", async () => {
-    await ctx.alice.session.renewKeys();
+    await new IdentityAPI(ctx.alice.session).renewKeys(ctx.alice.session.login);
   });
 
   it("after key renewal alice retrieves the shared resource and decrypts the encrypted content", async () => {

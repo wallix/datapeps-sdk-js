@@ -51,7 +51,7 @@ export interface identityOptions {
 
 export async function identity(
   init: initCtx,
-  options: identityOptions
+  options?: identityOptions
 ): Promise<identityCtx> {
   let secret = nacl.randomBytes(128);
   let identity = generateIdentityFields(init, options);
@@ -68,7 +68,6 @@ export interface identityAndSessionCtx extends identityCtx {
 
 export async function identityAndSession(
   init: initCtx,
-  name: string,
   options?: identityOptions
 ): Promise<identityAndSessionCtx> {
   let ctx = await identity(init, options);
@@ -77,7 +76,7 @@ export async function identityAndSession(
 }
 
 export interface childIdentityCtx extends identityCtx {
-  parent: identityCtx;
+  parent: identityAndSessionCtx;
 }
 
 export interface childIdentityOptions {
@@ -94,14 +93,21 @@ export async function childIdentity(
   init: initCtx,
   options?: childIdentityOptions
 ): Promise<childIdentityCtx> {
-  let parentIdentityAPI = await new IdentityAPI(parent.session);
   options = options ? options : {};
+  if (parent == null) {
+    parent = await identityAndSession(init);
+    options.sharingGroup =
+      options.sharingGroup == null ? [] : options.sharingGroup;
+    options.sharingGroup.push(parent.identity.login);
+  }
+  let parentIdentityAPI = await new IdentityAPI(parent.session);
   let identityFields = generateIdentityFields(init, options);
   let secret: Uint8Array;
   if (options.hasSecret) {
     secret = nacl.randomBytes(128);
   }
-  let email = `${identityFields.login}@${options.domain}`;
+  let email =
+    options.domain == null ? null : `${identityFields.login}@${options.domain}`;
   await parentIdentityAPI.create(identityFields, {
     secret,
     sharingGroup: options.sharingGroup,

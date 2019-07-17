@@ -37,9 +37,6 @@ describe("applicationAPI.config.JWT", () => {
   ///////////////////////////////////////////////
 
   configs.forEach(({ keys, config }, i) => {
-    if (i >= 2) {
-      return;
-    }
     let algorithm = ApplicationJWT.Algorithm[config.signAlgorithm];
 
     it(`should configure an application (${algorithm})`, async () => {

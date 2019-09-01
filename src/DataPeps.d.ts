@@ -21,4 +21,5 @@ export * from "./AdminAPI";
 export * from "./ApplicationAPI";
 export * from "./ApplicationJWT";
 export * from "./Tenant";
+export * from "./GraphQL";
 export { Uint8Converter } from "./Tools";

@@ -32,6 +32,7 @@ export declare class SessionClient {
     doProtoRequest<T>(request: SessionRequest<T>): Promise<T>;
     unStale(secret?: Uint8Array): Promise<void>;
     setSecret(secret: Uint8Array): void;
+    getAuthHeaders(request: SessionRequest<any>): Promise<Map<string, string>>;
     private addAuthHeaders(request);
     private getSalt();
     private handleResponseHeaders(headers);

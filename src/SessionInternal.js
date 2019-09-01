@@ -154,14 +154,14 @@ var SessionClient = /** @class */ (function () {
     SessionClient.prototype.setSecret = function (secret) {
         this.secret = secret;
     };
-    SessionClient.prototype.addAuthHeaders = function (request) {
+    SessionClient.prototype.getAuthHeaders = function (request) {
         return __awaiter(this, void 0, void 0, function () {
             var body, headers, salt, tosign, assumeKeySet, assumeKind;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         body = request.body;
-                        headers = request.headers;
+                        headers = new Map();
                         salt = this.getSalt();
                         headers.set("x-peps-token", this.params.token);
                         tosign = body == null ? salt : Tools_1.Uint8Tool.concat(body, salt);
@@ -178,6 +178,22 @@ var SessionClient = /** @class */ (function () {
                     case 2:
                         headers.set("x-peps-salt", Tools_1.Base64.encode(salt));
                         headers.set("x-peps-signature", Tools_1.Base64.encode(this.keySet.root.sign(tosign)));
+                        return [2 /*return*/, headers];
+                }
+            });
+        });
+    };
+    SessionClient.prototype.addAuthHeaders = function (request) {
+        return __awaiter(this, void 0, void 0, function () {
+            var headers, h;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        headers = request.headers;
+                        return [4 /*yield*/, this.getAuthHeaders(request)];
+                    case 1:
+                        h = _a.sent();
+                        h.forEach(function (v, k) { return headers.set(k, v); });
                         return [2 /*return*/];
                 }
             });

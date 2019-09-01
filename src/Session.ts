@@ -1,6 +1,6 @@
 import { api } from "./proto";
 import { IdentityPublicKey, IdentityPublicKeyID } from "./IdentityAPI";
-import { Uint8Tool, Base64 } from "./Tools";
+import { Uint8Tool, Base64, Uint8Converter } from "./Tools";
 import { Client, Request, client } from "./HTTP";
 import {
   SessionParams,

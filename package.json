@@ -1,6 +1,6 @@
 {
   "name": "datapeps-sdk",
-  "version": "1.0.6-dev-b54351",
+  "version": "1.0.6-dev-dc21a2",
   "description": "DataPeps SDK enables safe end-to-end-encryption for any application",
   "main": "./src/DataPeps.js",
   "types": "./src/DataPeps.d.ts",
@@ -42,7 +42,10 @@
     "webpack": "^3.6.0"
   },
   "dependencies": {
+    "apollo-boost": "^0.4.3",
+    "apollo-link-context": "^1.0.18",
     "bs58": "^4.0.1",
+    "graphql": "^14.4.2",
     "long": "^3.2.0",
     "protobufjs": "^6.8.8",
     "sha.js": "^2.4.10",

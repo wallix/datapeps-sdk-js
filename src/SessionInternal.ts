@@ -127,10 +127,12 @@ export class SessionClient {
     this.secret = secret;
   }
 
-  private async addAuthHeaders(request: SessionRequest<any>) {
-    // Add session headers
+  async getAuthHeaders(
+    request: SessionRequest<any>
+  ): Promise<Map<string, string>> {
+    // get session headers
     let body = request.body;
-    let headers = request.headers;
+    let headers = new Map<string, string>();
     let salt = this.getSalt();
     headers.set("x-peps-token", this.params.token);
     let tosign = body == null ? salt : Uint8Tool.concat(body, salt);
@@ -154,6 +156,14 @@ export class SessionClient {
       "x-peps-signature",
       Base64.encode(this.keySet.root.sign(tosign))
     );
+    return headers;
+  }
+
+  private async addAuthHeaders(request: SessionRequest<any>) {
+    // Add session headers
+    let headers = request.headers;
+    let h = await this.getAuthHeaders(request);
+    h.forEach((v, k) => headers.set(k, v));
   }
 
   private getSalt(): Uint8Array {

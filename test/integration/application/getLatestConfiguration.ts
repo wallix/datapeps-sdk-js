@@ -41,7 +41,7 @@ describe("applicationAPI.getLatestConfig.JWT", () => {
     const algorithm = ApplicationJWT.Algorithm[config.signAlgorithm];
     it(`application.getLatestConfig returns a latest config (${algorithm})`, async () => {
       const appID = ctx.dev.apps[i].identity.login;
-      await devApi.putConfig(appID, { jwt: config });
+      await devApi.putConfig(appID, { jwt: config }, ctx.dev.customers[0].id);
       let userLogin = `alice.getLatestConfig.${Math.random()}`;
       let aliceDataPepsLogin = await createUser(
         userLogin,
@@ -62,7 +62,7 @@ describe("applicationAPI.getLatestConfig.JWT", () => {
     it(`application.getLatestConfig returns a latest config after reconfiguring the application (${algorithm})`, async () => {
       const appID = ctx.dev.apps[i].identity.login;
 
-      await devApi.putConfig(appID, { jwt: config });
+      await devApi.putConfig(appID, { jwt: config }, ctx.dev.customers[0].id);
 
       let userLogin = `bob.getLatestConfig.${Math.random()}`;
       let bobDataPepsLogin = await createUser(
@@ -77,7 +77,7 @@ describe("applicationAPI.getLatestConfig.JWT", () => {
         identityAuth.applicationConfigID
       );
 
-      await devApi.putConfig(appID, { jwt: config });
+      await devApi.putConfig(appID, { jwt: config }, ctx.dev.customers[0].id);
       userLogin = `charlie.getLatestConfig.${Math.random()}`;
       let charlieDataPepsLogin = await createUser(
         userLogin,

@@ -45,7 +45,9 @@ export class Base64 {
   /**
    * Encode a Uint8Array to a base64 string
    */
-  static encode(aBytes) {
+  static encode(aBytes, url = false) {
+    const a62 = url ? 45 : 43;
+    const a63 = url ? 95 : 47;
     function uint6ToB64(nUint6) {
       return nUint6 < 26
         ? nUint6 + 65
@@ -54,9 +56,9 @@ export class Base64 {
           : nUint6 < 62
             ? nUint6 - 4
             : nUint6 === 62
-              ? 43
+              ? a62
               : nUint6 === 63
-                ? 47
+                ? a63
                 : 65;
     }
 

@@ -237,7 +237,7 @@ var IdentityAPI = /** @class */ (function () {
                         sharingGroup = IdentityAPI.createSharingGroup(keySet, publicKeys);
                         return [4 /*yield*/, this.api.client.doProtoRequest({
                                 method: "POST",
-                                expectedCode: 201,
+                                expectedCode: 200,
                                 path: "/api/v1/identity",
                                 body: proto_1.api.IdentityCreateRequest.encode({
                                     identity: identity,
@@ -318,7 +318,7 @@ var IdentityAPI = /** @class */ (function () {
                         // Push the next IdentityKeySet to DataPeps
                         return [4 /*yield*/, this.api.client.doProtoRequest({
                                 method: "POST",
-                                expectedCode: 201,
+                                expectedCode: 200,
                                 path: "/api/v1/identity/" + encodeURIComponent(login) + "/keysToRenew",
                                 body: proto_1.api.IdentityPostKeysToRenewRequest.encode({
                                     encryption: nextEncryptedKeySet,
@@ -389,7 +389,7 @@ var IdentityAPI = /** @class */ (function () {
                         encryptedKeys = IdentityAPI.createSharingGroup(keySet, publicKeys);
                         return [4 /*yield*/, this.api.client.doProtoRequest({
                                 method: "PATCH",
-                                expectedCode: 201,
+                                expectedCode: 200,
                                 path: "/api/v1/identity/" + encodeURI(login) + "/sharingGroup",
                                 assume: { login: login, kind: proto_1.api.IdentityAccessKeyKind.WRITE },
                                 body: proto_1.api.IdentityShareRequest.encode({
@@ -484,7 +484,7 @@ var IdentityAPI = /** @class */ (function () {
                         });
                         return [4 /*yield*/, this.api.client.doProtoRequest({
                                 method: "POST",
-                                expectedCode: 201,
+                                expectedCode: 200,
                                 path: "/api/v1/identity/" + encodeURIComponent(login) + "/sharingGraph",
                                 assume: { login: login, kind: proto_1.api.IdentityAccessKeyKind.WRITE },
                                 body: proto_1.api.IdentityPostSharingGraphRequest.encode({
@@ -580,7 +580,7 @@ var IdentityAPI = /** @class */ (function () {
                         });
                         return [4 /*yield*/, this.api.client.doProtoRequest({
                                 method: "POST",
-                                expectedCode: 201,
+                                expectedCode: 200,
                                 path: "/api/v1/identity/" + encodeURIComponent(login) + "/sharingGraph",
                                 body: proto_1.api.IdentityPostSharingGraphRequest.encode({
                                     graph: encryptedGraph
@@ -734,7 +734,7 @@ var IdentityAPI = /** @class */ (function () {
                                 // the current version of session identity is signed by the unlocked one (as keys are accessible by current session)
                                 var _a = keySet.shareKey(proto_1.api.IdentityShareKind.SHARING, publicKey), encryptedKey = _a.encryptedKey, nonce = _a.nonce;
                                 var backward = { nonce: nonce, encryptedKey: encryptedKey };
-                                resolvedChallengesWithEncryptedKeys.push(new proto_1.api.UnlockVersionsRequest.UnlockedVersion({
+                                resolvedChallengesWithEncryptedKeys.push(new proto_1.api.IdentityUnlockVersionsRequest.UnlockedVersion({
                                     resolvedChallenge: {
                                         token: locked.challenge.token,
                                         salt: locked.challenge.salt,
@@ -755,7 +755,7 @@ var IdentityAPI = /** @class */ (function () {
                                     ? null
                                     : { login: login, kind: proto_1.api.IdentityAccessKeyKind.WRITE },
                                 path: "/api/v1/identity/" + encodeURI(login) + "/unlockVersions",
-                                body: proto_1.api.UnlockVersionsRequest.encode({
+                                body: proto_1.api.IdentityUnlockVersionsRequest.encode({
                                     unlockedVersions: resolvedChallengesWithEncryptedKeys
                                 }).finish(),
                                 response: proto_1.api.SessionResolveChallengeResponse.decode

@@ -70,7 +70,7 @@ var ApplicationAPI = /** @class */ (function () {
      * - `ApplicationConfigInvalid` if configuration object is invalid.
      * - `IdentityNotFound` if the identity `appID` doesn't exists.
      */
-    ApplicationAPI.prototype.putConfig = function (appID, config) {
+    ApplicationAPI.prototype.putConfig = function (appID, config, customerID) {
         return __awaiter(this, void 0, void 0, function () {
             var jwtConfig, c;
             return __generator(this, function (_a) {
@@ -98,11 +98,12 @@ var ApplicationAPI = /** @class */ (function () {
                         return [4 /*yield*/, this.api.client.doProtoRequest({
                                 method: "PUT",
                                 assume: { login: appID, kind: proto_1.api.IdentityAccessKeyKind.WRITE },
-                                expectedCode: 201,
+                                expectedCode: 200,
                                 path: "/api/v1/identity/" + encodeURI(appID) + "/configureAsApplication",
                                 body: proto_1.api.IdentityConfigurationAsApplicationRequest.encode({
-                                    Login: appID,
-                                    config: c
+                                    login: appID,
+                                    config: c,
+                                    customerID: customerID
                                 }).finish(),
                                 response: function (r) {
                                     return proto_1.api.ApplicationConfigID.decode(r);
@@ -226,7 +227,7 @@ var ApplicationAPI = /** @class */ (function () {
                                 assume: { login: appID, kind: proto_1.api.IdentityAccessKeyKind.READ },
                                 expectedCode: 200,
                                 path: "/api/v1/application/" + encodeURI(appID) + "/usageOverview",
-                                body: proto_1.api.ApplicationUsageOverviewRequest.encode(__assign({ Login: appID }, options)).finish(),
+                                body: proto_1.api.ApplicationUsageOverviewRequest.encode(__assign({ login: appID }, options)).finish(),
                                 response: function (r) {
                                     return proto_1.api.ApplicationUsageOverviewResponse.decode(r).overview.map(function (_a) {
                                         var start = _a.start, jwt = _a.jwt, delegates = _a.delegates;

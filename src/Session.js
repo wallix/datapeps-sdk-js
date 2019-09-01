@@ -171,7 +171,7 @@ var Session = /** @class */ (function () {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, client.doRequest({
                             method: "POST",
-                            expectedCode: 201,
+                            expectedCode: 200,
                             path: "/api/v1/session/challenge/create",
                             body: proto_1.api.SessionCreateChallengeRequest.encode({
                                 login: login,

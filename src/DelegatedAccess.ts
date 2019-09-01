@@ -78,7 +78,7 @@ export class DelegatedAccessAPI {
       method: "GET",
       expectedCode: 200,
       path: "/api/v1/delegatedAccess/" + requestId.toString(),
-      response: api.DelegatedGetResponse.decode
+      response: api.DelegatedAccessGetResponse.decode
     });
     let r = await makeResourceFromResponse<null>(
       resource,
@@ -116,7 +116,7 @@ export class DelegatedAccessAPI {
           method: "PUT",
           expectedCode: 200,
           path: "/api/v1/delegatedAccess/" + this.id.toString() + "/keys",
-          body: api.DelegatedPostKeysRequest.encode({
+          body: api.DelegatedAccessPostKeysRequest.encode({
             keys: this.resource.encrypt(
               api.DelegatedKeys.encode(keySet.toDelegatedKeys()).finish()
             )
@@ -229,9 +229,9 @@ export namespace DelegatedAccess {
       body: { id }
     } = await client.doRequest({
       method: "POST",
-      expectedCode: 201,
+      expectedCode: 200,
       path: "/api/v1/delegatedAccess",
-      body: api.DelegatedPostRequest.encode({
+      body: api.DelegatedAccessPostRequest.encode({
         publicKey: keypair.publicKey,
         sign: signResult.sign,
         requester: signResult.requester,
@@ -242,7 +242,7 @@ export namespace DelegatedAccess {
           version
         }
       }).finish(),
-      response: api.DelegatedPostResponse.decode,
+      response: api.DelegatedAccessPostResponse.decode,
       headers: new Headers({ "content-type": "application/x-protobuf" })
     });
     let resource = new ResourceBox(0, null, null, keypair, null);
@@ -283,7 +283,7 @@ export namespace DelegatedAccess {
           method: "GET",
           expectedCode: 200,
           path: "/api/v1/delegatedAccess/" + this.id.toString() + "/keys",
-          response: api.DelegatedGetKeysResponse.decode,
+          response: api.DelegatedAccessGetKeysResponse.decode,
           headers: new Headers({ "content-type": "application/x-protobuf" })
         });
         this.keys = api.DelegatedKeys.decode(this.resource.decrypt(keys));

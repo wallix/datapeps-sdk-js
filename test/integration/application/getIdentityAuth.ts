@@ -80,12 +80,16 @@ describe("ApplicationAPI.getIdentityAuth", () => {
 
     it(`getIdentityAuth returns a correct auth object after application's configuration renewal (${algorithm})`, async () => {
       let appID = ctx.firstDev.ctx.apps[i].identity.login;
-      let newAppConfigID = await ctx.firstDev.api.putConfig(appID, {
-        jwt: {
-          ...c.config,
-          key: c.keys.secondPk
-        }
-      });
+      let newAppConfigID = await ctx.firstDev.api.putConfig(
+        appID,
+        {
+          jwt: {
+            ...c.config,
+            key: c.keys.secondPk
+          }
+        },
+        ctx.firstDev.ctx.customers[0].id
+      );
       let auth = composeIdentityAuth(
         secondIdentityLogin,
         c.keys.secondSk,

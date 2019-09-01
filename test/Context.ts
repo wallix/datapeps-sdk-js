@@ -1,8 +1,9 @@
 import * as DataPeps from "../src/DataPeps";
 import * as Config from "./Config";
 import * as nacl from "tweetnacl";
-import { IdentityAPI, IdentityFields, Identity } from "../src/DataPeps";
+import { IdentityAPI, IdentityFields, Identity, Tenant } from "../src/DataPeps";
 import { Uint8Tool } from "../src/Tools";
+import { api } from "../src/proto";
 
 export interface initCtx {
   seed: number;
@@ -234,6 +235,7 @@ export async function aliceBobWithDeviceAndGroup(
 
 export interface devCtx {
   dev: userAndSessionCtx;
+  customers: api.ITenantCustomer[];
   app: { identity: DataPeps.Identity<Uint8Array>; secret: Uint8Array };
   apps: { identity: DataPeps.Identity<Uint8Array>; secret: Uint8Array }[];
 }
@@ -245,6 +247,7 @@ export interface devCtx {
  */
 export async function dev(init: initCtx, n = 1): Promise<devCtx> {
   let dev = await userAndSession(init, "dev");
+  let { customers } = await new Tenant(dev.session).getCustomers();
   let apps = await Promise.all(
     new Array(n)
       .fill(null)
@@ -280,6 +283,7 @@ export async function dev(init: initCtx, n = 1): Promise<devCtx> {
   );
   return {
     dev,
+    customers,
     app: apps[0],
     apps
   };

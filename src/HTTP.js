@@ -77,7 +77,7 @@ var Client = /** @class */ (function () {
                             }
                             err = void 0;
                             try {
-                                err = proto_1.api.ProtoError.decode(new Uint8Array(body));
+                                err = proto_1.api.ProtoError.decode(body);
                             }
                             catch (e) {
                                 throw new Error_1.Error({

@@ -38,12 +38,16 @@ describe("applicationAPI.listSession", () => {
     const key = "supersecurekey";
 
     let api = new ApplicationAPI(ctx.firstDev.dev.session);
-    await api.putConfig(ctx.firstDev.app.identity.login, {
-      jwt: {
-        key: Uint8Tool.encode(key),
-        signAlgorithm: ApplicationJWT.Algorithm.HS256
-      }
-    });
+    await api.putConfig(
+      ctx.firstDev.app.identity.login,
+      {
+        jwt: {
+          key: Uint8Tool.encode(key),
+          signAlgorithm: ApplicationJWT.Algorithm.HS256
+        }
+      },
+      ctx.firstDev.customers[0].id
+    );
 
     // Let's see if Charlie will be more motivated. Made up charlie's secret for datapeps
     let secret = "angelsTest=1234";
@@ -107,12 +111,16 @@ describe("applicationAPI.listSession", () => {
     const sessionCreationTimeout = 2000;
 
     let api = new ApplicationAPI(ctx.secondDev.dev.session);
-    await api.putConfig(ctx.secondDev.app.identity.login, {
-      jwt: {
-        key: Uint8Tool.encode(key),
-        signAlgorithm: ApplicationJWT.Algorithm.HS256
-      }
-    });
+    await api.putConfig(
+      ctx.secondDev.app.identity.login,
+      {
+        jwt: {
+          key: Uint8Tool.encode(key),
+          signAlgorithm: ApplicationJWT.Algorithm.HS256
+        }
+      },
+      ctx.secondDev.customers[0].id
+    );
     await ApplicationJWT.createSession(
       ctx.secondDev.app.identity.login,
       "charlie",

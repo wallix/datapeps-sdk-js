@@ -7,7 +7,7 @@ export declare class Base64 {
     /**
      * Encode a Uint8Array to a base64 string
      */
-    static encode(aBytes: any): string;
+    static encode(aBytes: any, url?: boolean): string;
 }
 export declare class Uint8Converter {
     /**

@@ -29,7 +29,11 @@ describe("application.secure", () => {
     let initCtx = await Context.init();
     appADevCtx = await Context.dev(initCtx);
     let api = new ApplicationAPI(appADevCtx.dev.session);
-    await api.putConfig(appADevCtx.app.identity.login, appAConfig);
+    await api.putConfig(
+      appADevCtx.app.identity.login,
+      appAConfig,
+      appADevCtx.customers[0].id
+    );
   });
 
   it("An application can create a user", async () => {

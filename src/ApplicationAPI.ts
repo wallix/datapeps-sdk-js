@@ -92,7 +92,8 @@ export class ApplicationAPI {
    */
   async putConfig(
     appID: string,
-    config: ApplicationAPI.Config
+    config: ApplicationAPI.Config,
+    customerID: number
   ): Promise<ApplicationAPI.ApplicationConfigID> {
     if (!("jwt" in config)) {
       return;
@@ -118,11 +119,12 @@ export class ApplicationAPI {
     >({
       method: "PUT",
       assume: { login: appID, kind: api.IdentityAccessKeyKind.WRITE },
-      expectedCode: 201,
+      expectedCode: 200,
       path: `/api/v1/identity/${encodeURI(appID)}/configureAsApplication`,
       body: api.IdentityConfigurationAsApplicationRequest.encode({
-        Login: appID,
-        config: c
+        login: appID,
+        config: c,
+        customerID
       }).finish(),
       response: r => {
         return api.ApplicationConfigID.decode(r);
@@ -243,7 +245,7 @@ export class ApplicationAPI {
       expectedCode: 200,
       path: `/api/v1/application/${encodeURI(appID)}/usageOverview`,
       body: api.ApplicationUsageOverviewRequest.encode({
-        Login: appID,
+        login: appID,
         ...options
       }).finish(),
       response: r => {

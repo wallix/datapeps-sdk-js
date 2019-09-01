@@ -117,7 +117,7 @@ export class ResourceAPI {
     );
     let { id } = await this.api.client.doProtoRequest({
       method: "POST",
-      expectedCode: 201,
+      expectedCode: 200,
       path: "/api/v1/resources",
       body: api.ResourcePostRequest.encode({
         ...body,
@@ -152,7 +152,7 @@ export class ResourceAPI {
     let parse = options.parse;
     let params =
       options.reason != null
-        ? { ...options, access_reason: options.reason }
+        ? { ...options, accessReason: options.reason }
         : options;
     delete params.parse;
     return await this.api.client
@@ -196,7 +196,7 @@ export class ResourceAPI {
     options = options != null ? options : {};
     let assume = options.assume != null ? options.assume : this.api.login;
     let params =
-      options.reason != null ? { access_reason: options.reason } : undefined;
+      options.reason != null ? { accessReason: options.reason } : undefined;
     let response = await this.api.client.doProtoRequest({
       method: "GET",
       expectedCode: 200,
@@ -355,7 +355,7 @@ export class ResourceAPI {
     );
     return await this.api.client.doProtoRequest<void>({
       method: "PATCH",
-      expectedCode: 201,
+      expectedCode: 200,
       path: "/api/v1/resource/" + id + "/sharingGroup",
       assume: { login: options.assume, kind: api.IdentityAccessKeyKind.WRITE },
       body: api.ResourceExtendSharingGroupRequest.encode({

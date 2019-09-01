@@ -88,7 +88,7 @@ var DelegatedAccessAPI = /** @class */ (function () {
                             method: "GET",
                             expectedCode: 200,
                             path: "/api/v1/delegatedAccess/" + requestId.toString(),
-                            response: proto_1.api.DelegatedGetResponse.decode
+                            response: proto_1.api.DelegatedAccessGetResponse.decode
                         })];
                     case 1:
                         _a = _b.sent(), sign = _a.sign, resource = _a.resource;
@@ -124,7 +124,7 @@ var DelegatedAccessAPI = /** @class */ (function () {
                                                         method: "PUT",
                                                         expectedCode: 200,
                                                         path: "/api/v1/delegatedAccess/" + this.id.toString() + "/keys",
-                                                        body: proto_1.api.DelegatedPostKeysRequest.encode({
+                                                        body: proto_1.api.DelegatedAccessPostKeysRequest.encode({
                                                             keys: this.resource.encrypt(proto_1.api.DelegatedKeys.encode(keySet.toDelegatedKeys()).finish())
                                                         }).finish()
                                                     })];
@@ -209,9 +209,9 @@ var DelegatedAccess;
                         signResult = _b.sent();
                         return [4 /*yield*/, HTTP_1.client.doRequest({
                                 method: "POST",
-                                expectedCode: 201,
+                                expectedCode: 200,
                                 path: "/api/v1/delegatedAccess",
-                                body: proto_1.api.DelegatedPostRequest.encode({
+                                body: proto_1.api.DelegatedAccessPostRequest.encode({
                                     publicKey: keypair.publicKey,
                                     sign: signResult.sign,
                                     requester: signResult.requester,
@@ -222,7 +222,7 @@ var DelegatedAccess;
                                         version: version
                                     }
                                 }).finish(),
-                                response: proto_1.api.DelegatedPostResponse.decode,
+                                response: proto_1.api.DelegatedAccessPostResponse.decode,
                                 headers: new Headers({ "content-type": "application/x-protobuf" })
                             })];
                     case 3:
@@ -255,7 +255,7 @@ var DelegatedAccess;
                                     method: "GET",
                                     expectedCode: 200,
                                     path: "/api/v1/delegatedAccess/" + this.id.toString() + "/keys",
-                                    response: proto_1.api.DelegatedGetKeysResponse.decode,
+                                    response: proto_1.api.DelegatedAccessGetKeysResponse.decode,
                                     headers: new Headers({ "content-type": "application/x-protobuf" })
                                 })];
                         case 1:

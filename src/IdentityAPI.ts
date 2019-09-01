@@ -278,7 +278,7 @@ export class IdentityAPI {
     let sharingGroup = IdentityAPI.createSharingGroup(keySet, publicKeys);
     return await this.api.client.doProtoRequest<void>({
       method: "POST",
-      expectedCode: 201,
+      expectedCode: 200,
       path: "/api/v1/identity",
       body: api.IdentityCreateRequest.encode({
         identity,
@@ -362,7 +362,7 @@ export class IdentityAPI {
     // Push the next IdentityKeySet to DataPeps
     await this.api.client.doProtoRequest({
       method: "POST",
-      expectedCode: 201,
+      expectedCode: 200,
       path: "/api/v1/identity/" + encodeURIComponent(login) + "/keysToRenew",
       body: api.IdentityPostKeysToRenewRequest.encode({
         encryption: nextEncryptedKeySet,
@@ -420,7 +420,7 @@ export class IdentityAPI {
     // patch the sharingGroup to DataPeps
     return await this.api.client.doProtoRequest<void>({
       method: "PATCH",
-      expectedCode: 201,
+      expectedCode: 200,
       path: "/api/v1/identity/" + encodeURI(login) + "/sharingGroup",
       assume: { login, kind: api.IdentityAccessKeyKind.WRITE },
       body: api.IdentityShareRequest.encode({
@@ -515,7 +515,7 @@ export class IdentityAPI {
       });
     return await this.api.client.doProtoRequest<void>({
       method: "POST",
-      expectedCode: 201,
+      expectedCode: 200,
       path: "/api/v1/identity/" + encodeURIComponent(login) + "/sharingGraph",
       assume: { login, kind: api.IdentityAccessKeyKind.WRITE },
       body: api.IdentityPostSharingGraphRequest.encode({
@@ -616,7 +616,7 @@ export class IdentityAPI {
       });
     return await this.api.client.doProtoRequest<void>({
       method: "POST",
-      expectedCode: 201,
+      expectedCode: 200,
       path: "/api/v1/identity/" + encodeURIComponent(login) + "/sharingGraph",
       body: api.IdentityPostSharingGraphRequest.encode({
         graph: encryptedGraph
@@ -737,7 +737,7 @@ export class IdentityAPI {
       withChallenge: true
     });
     let unlockedVersions: IdentityPublicKeyWithMetadata[] = [];
-    let resolvedChallengesWithEncryptedKeys: api.UnlockVersionsRequest.UnlockedVersion[] = [];
+    let resolvedChallengesWithEncryptedKeys: api.IdentityUnlockVersionsRequest.UnlockedVersion[] = [];
     let publicKey = await this.api.publicKeys.getLatestPublicKey(login);
     lockedVersions.forEach(locked => {
       if (locked.challenge == null) {
@@ -765,7 +765,7 @@ export class IdentityAPI {
         let backward = { nonce, encryptedKey };
 
         resolvedChallengesWithEncryptedKeys.push(
-          new api.UnlockVersionsRequest.UnlockedVersion({
+          new api.IdentityUnlockVersionsRequest.UnlockedVersion({
             resolvedChallenge: {
               token: locked.challenge.token,
               salt: locked.challenge.salt,
@@ -787,7 +787,7 @@ export class IdentityAPI {
             ? null
             : { login, kind: api.IdentityAccessKeyKind.WRITE },
         path: "/api/v1/identity/" + encodeURI(login) + "/unlockVersions",
-        body: api.UnlockVersionsRequest.encode({
+        body: api.IdentityUnlockVersionsRequest.encode({
           unlockedVersions: resolvedChallengesWithEncryptedKeys
         }).finish(),
         response: api.SessionResolveChallengeResponse.decode

@@ -23,9 +23,13 @@ describe("identity.create", () => {
       let devCtx = await dev(initCtx, 2);
       devAppAPI = new ApplicationAPI(devCtx.dev.session);
       let { keys, config } = configs[0];
-      await devAppAPI.putConfig(devCtx.app.identity.login, {
-        jwt: config
-      });
+      await devAppAPI.putConfig(
+        devCtx.app.identity.login,
+        {
+          jwt: config
+        },
+        devCtx.customers[0].id
+      );
       let secret = "password";
       let { session } = await ApplicationJWT.createSession(
         devCtx.app.identity.login,

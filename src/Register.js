@@ -85,7 +85,7 @@ function registerWithToken(token, identity, secret) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    btoken = token instanceof Uint8Array ? Tools_1.Base64.encode(token) : token;
+                    btoken = token instanceof Uint8Array ? Tools_1.Base64.encode(token, true) : token;
                     return [4 /*yield*/, _register("/api/v1/register/link/" + encodeURIComponent(btoken), identity, secret, function (r) { return proto_1.api.RegisterPostLinkTokenRequest.encode(r).finish(); })];
                 case 1: return [2 /*return*/, _a.sent()];
             }
@@ -102,7 +102,7 @@ function _register(path, identity, secret, request) {
                     encryptedKeySet = IdentityKeySetAPI_1.IdentityKeySetAPI.initWithSecret({ version: 1, login: identity.login }, secret).encryptedKeySet;
                     return [4 /*yield*/, HTTP.client.doRequest({
                             method: "POST",
-                            expectedCode: 201,
+                            expectedCode: 200,
                             path: path,
                             body: request({ identity: identity, encryption: encryptedKeySet }),
                             headers: new Headers({
@@ -131,7 +131,7 @@ function sendRegisterLink(email) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, HTTP.client.doRequest({
                         method: "POST",
-                        expectedCode: 201,
+                        expectedCode: 200,
                         path: "/api/v1/register/link",
                         body: proto_1.api.RegisterLinkRequest.encode({
                             email: email

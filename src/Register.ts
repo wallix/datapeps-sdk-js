@@ -50,7 +50,7 @@ export async function registerWithToken(
   identity: IdentityFields,
   secret: string | Uint8Array
 ): Promise<void> {
-  let btoken = token instanceof Uint8Array ? Base64.encode(token) : token;
+  let btoken = token instanceof Uint8Array ? Base64.encode(token, true) : token;
   return await _register(
     "/api/v1/register/link/" + encodeURIComponent(btoken),
     identity,
@@ -76,7 +76,7 @@ async function _register(
   );
   await HTTP.client.doRequest<void>({
     method: "POST",
-    expectedCode: 201,
+    expectedCode: 200,
     path,
     body: request({ identity, encryption: encryptedKeySet }),
     headers: new Headers({
@@ -98,7 +98,7 @@ async function _register(
 export async function sendRegisterLink(email: string): Promise<void> {
   await HTTP.client.doRequest<void>({
     method: "POST",
-    expectedCode: 201,
+    expectedCode: 200,
     path: "/api/v1/register/link",
     body: api.RegisterLinkRequest.encode({
       email

@@ -58,7 +58,7 @@ export async function createUser(
     api.RegisterApplicationIdentityResponse
   >({
     method: "POST",
-    expectedCode: 201,
+    expectedCode: 200,
     path: `/api/v1/application/${appID}/identity`,
     body: api.RegisterApplicationIdentityRequest.encode({
       appID,

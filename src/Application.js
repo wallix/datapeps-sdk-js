@@ -72,7 +72,7 @@ function createUser(appID, auth, secret) {
                     resource = ResourceInternal_1.createWithEncryption(secretBytes, keySet, appIdentityResourceKind, { serialize: function (u) { return u; } });
                     return [4 /*yield*/, HTTP.client.doRequest({
                             method: "POST",
-                            expectedCode: 201,
+                            expectedCode: 200,
                             path: "/api/v1/application/" + appID + "/identity",
                             body: proto_1.api.RegisterApplicationIdentityRequest.encode({
                                 appID: appID,

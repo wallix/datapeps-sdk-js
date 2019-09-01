@@ -66,7 +66,7 @@ export declare class ApplicationAPI {
      * - `ApplicationConfigInvalid` if configuration object is invalid.
      * - `IdentityNotFound` if the identity `appID` doesn't exists.
      */
-    putConfig(appID: string, config: ApplicationAPI.Config): Promise<ApplicationAPI.ApplicationConfigID>;
+    putConfig(appID: string, config: ApplicationAPI.Config, customerID: number): Promise<ApplicationAPI.ApplicationConfigID>;
     /**
      * Get configuration of an application
      * @param appConfigID the application configuration ID, that specifies tha application ID and the application configuration version.

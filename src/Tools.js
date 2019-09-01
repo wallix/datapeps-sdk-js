@@ -38,7 +38,10 @@ var Base64 = /** @class */ (function () {
     /**
      * Encode a Uint8Array to a base64 string
      */
-    Base64.encode = function (aBytes) {
+    Base64.encode = function (aBytes, url) {
+        if (url === void 0) { url = false; }
+        var a62 = url ? 45 : 43;
+        var a63 = url ? 95 : 47;
         function uint6ToB64(nUint6) {
             return nUint6 < 26
                 ? nUint6 + 65
@@ -47,9 +50,9 @@ var Base64 = /** @class */ (function () {
                     : nUint6 < 62
                         ? nUint6 - 4
                         : nUint6 === 62
-                            ? 43
+                            ? a62
                             : nUint6 === 63
-                                ? 47
+                                ? a63
                                 : 65;
         }
         var nMod3 = 2, sB64Enc = "";

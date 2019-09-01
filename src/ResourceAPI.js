@@ -81,7 +81,7 @@ var ResourceAPI = /** @class */ (function () {
                         _a = _b.sent(), body = _a.body, keypair = _a.keypair;
                         return [4 /*yield*/, this.api.client.doProtoRequest({
                                 method: "POST",
-                                expectedCode: 201,
+                                expectedCode: 200,
                                 path: "/api/v1/resources",
                                 body: proto_1.api.ResourcePostRequest.encode(__assign({}, body, { type: type,
                                     kind: kind })).finish(),
@@ -116,7 +116,7 @@ var ResourceAPI = /** @class */ (function () {
                         assume = options.assume != null ? options.assume : this.api.login;
                         parse = options.parse;
                         params = options.reason != null
-                            ? __assign({}, options, { access_reason: options.reason }) : options;
+                            ? __assign({}, options, { accessReason: options.reason }) : options;
                         delete params.parse;
                         return [4 /*yield*/, this.api.client
                                 .doProtoRequest({
@@ -154,7 +154,7 @@ var ResourceAPI = /** @class */ (function () {
                     case 0:
                         options = options != null ? options : {};
                         assume = options.assume != null ? options.assume : this.api.login;
-                        params = options.reason != null ? { access_reason: options.reason } : undefined;
+                        params = options.reason != null ? { accessReason: options.reason } : undefined;
                         return [4 /*yield*/, this.api.client.doProtoRequest({
                                 method: "GET",
                                 expectedCode: 200,
@@ -331,7 +331,7 @@ var ResourceAPI = /** @class */ (function () {
                         encryptedSharingGroup = _d.sent();
                         return [4 /*yield*/, this.api.client.doProtoRequest({
                                 method: "PATCH",
-                                expectedCode: 201,
+                                expectedCode: 200,
                                 path: "/api/v1/resource/" + id + "/sharingGroup",
                                 assume: { login: options.assume, kind: proto_1.api.IdentityAccessKeyKind.WRITE },
                                 body: proto_1.api.ResourceExtendSharingGroupRequest.encode({

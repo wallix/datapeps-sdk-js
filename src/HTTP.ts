@@ -53,7 +53,7 @@ export class Client {
       // Unexpected code & response body
       let err;
       try {
-        err = api.ProtoError.decode(new Uint8Array(body));
+        err = api.ProtoError.decode(body);
       } catch (e) {
         throw new Error({
           kind: SDKKind.BadStatusCode,

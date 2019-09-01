@@ -191,7 +191,7 @@ export class Session {
   }> {
     let { body: createResponse } = await client.doRequest({
       method: "POST",
-      expectedCode: 201,
+      expectedCode: 200,
       path: "/api/v1/session/challenge/create",
       body: api.SessionCreateChallengeRequest.encode({
         login: login,

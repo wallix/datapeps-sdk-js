@@ -35,14 +35,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var proto_1 = require("../proto");
-var SessionInternal_1 = require("../SessionInternal");
-var Error_1 = require("../Error");
+var proto_1 = require("./proto");
+var Error_1 = require("./Error");
 var billing = proto_1.services.interfaces.billing;
-var HTTP_1 = require("../HTTP");
+var HTTP_1 = require("./HTTP");
 var BillingAPI = /** @class */ (function () {
-    function BillingAPI(session) {
-        this.api = SessionInternal_1.SessionState.create(session);
+    function BillingAPI() {
     }
     BillingAPI.prototype.getSimpleBill = function (tenantName, period) {
         return __awaiter(this, void 0, void 0, function () {

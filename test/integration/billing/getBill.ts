@@ -1,4 +1,4 @@
-import { BillingAPI } from "../../../src/billing/Billing";
+import { BillingAPI } from "../../../src/Billing";
 import {
   initCtx,
   init,
@@ -26,13 +26,10 @@ describe("billing", () => {
     });
 
     it("getting a bill", async () => {
-      let response = await new BillingAPI(ctx.alice.session).getSimpleBill(
-        "Uncle Thierry",
-        {
-          from: 123,
-          to: 456
-        }
-      );
+      let response = await new BillingAPI().getSimpleBill("Uncle Thierry", {
+        from: 123,
+        to: 456
+      });
       console.log("Tenant: ", response.tenant.name);
       for (let i = 0; i < response.customers.length; i++) {
         console.log("Customer", response.customers[i].customer);

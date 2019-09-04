@@ -1,17 +1,10 @@
-import { services, wallix as wallixProto } from "../proto";
-import { Session } from "../Session";
-import { SessionState } from "../SessionInternal";
-import { Error, SDKKind } from "../Error";
+import { services, wallix as wallixProto } from "./proto";
+import { Error, SDKKind } from "./Error";
 
 import billing = services.interfaces.billing;
-import { client } from "../HTTP";
+import { client } from "./HTTP";
 
 export class BillingAPI {
-  private api: SessionState;
-  constructor(session: Session) {
-    this.api = SessionState.create(session);
-  }
-
   async getSimpleBill(
     tenantName: string,
     period: {

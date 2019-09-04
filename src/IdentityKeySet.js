@@ -13,6 +13,7 @@ var nacl = require("tweetnacl");
 var Cryptor_1 = require("./Cryptor");
 var Error_1 = require("./Error");
 var Tools_1 = require("./Tools");
+var api = proto_1.wallix.gopeps.protobuf.datapeps;
 /**
  * The default length of the salt used to derivate the master key of an IdentityKeySet.
  */
@@ -253,7 +254,8 @@ var IdentityKeySet = /** @class */ (function () {
      * @param msg
      */
     IdentityKeySet.prototype.sign = function (msg, kind) {
-        if (kind === void 0) { kind = proto_1.api.IdentityAccessKeyKind.WRITE; }
+        if (kind === void 0) { kind = proto_1.wallix.gopeps.protobuf.datapeps
+            .IdentityAccessKeyKind.WRITE; }
         return nacl.sign.detached(msg, this.getSecretSignKey(kind).secretKey);
     };
     IdentityKeySet.prototype.getSecretToken = function () {
@@ -261,17 +263,17 @@ var IdentityKeySet = /** @class */ (function () {
     };
     IdentityKeySet.prototype.getSecretKey = function (kind) {
         switch (kind) {
-            case proto_1.api.IdentityShareKind.BOX:
+            case api.IdentityShareKind.BOX:
                 return this.boxKeyPair.secretKey;
-            case proto_1.api.IdentityShareKind.SHARING:
+            case api.IdentityShareKind.SHARING:
                 return this.sharingKeyPair.secretKey;
         }
     };
     IdentityKeySet.prototype.getSecretSignKey = function (kind) {
         switch (kind) {
-            case proto_1.api.IdentityAccessKeyKind.READ:
+            case api.IdentityAccessKeyKind.READ:
                 return this.readKeyPair;
-            case proto_1.api.IdentityAccessKeyKind.WRITE:
+            case api.IdentityAccessKeyKind.WRITE:
                 return this.signKeyPair;
         }
     };

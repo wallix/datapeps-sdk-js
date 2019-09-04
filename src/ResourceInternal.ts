@@ -2,13 +2,15 @@ import * as nacl from "tweetnacl";
 import { Resource, ResourceType } from "./ResourceAPI";
 import { Uint8Tool, Base64 } from "./Tools";
 import { SDKKind, Error } from "./Error";
-import { api } from "./proto";
+import { wallix } from "./proto";
 import { Encryptor, CipherType } from "./Cryptor";
 import { IdentityPublicKey, IdentityPublicKeyID } from "./IdentityAPI";
 import { ID } from "./ID";
 import { IdentityKeySet } from "./IdentityKeySet";
 import { IdentityKeySetManager } from "./IdentityKeySetManager";
 import { PublicKeysManager } from "./PublicKeyManager";
+
+import api = wallix.gopeps.protobuf.datapeps;
 
 export class ResourceBox<T> implements Resource<T> {
   id: ID;

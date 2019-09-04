@@ -42,11 +42,7 @@ describe("applicationAPI.config.JWT", () => {
     it(`should configure an application (${algorithm})`, async () => {
       let api = new ApplicationAPI(ctx.dev.session);
       let appLogin = ctx.apps[i].identity.login;
-      let appConfigID = await api.putConfig(
-        appLogin,
-        { jwt: config },
-        ctx.customers[0].id
-      );
+      let appConfigID = await api.putConfig(appLogin, { jwt: config });
       expect(appConfigID.version).equal(firstAppConfigVersion);
       let configReceived = await api.getConfig(appConfigID);
       expect(configReceived.payload.jwt).not.null;
@@ -71,11 +67,7 @@ describe("applicationAPI.config.JWT", () => {
       };
       let appLogin = ctx.apps[i].identity.login;
       let api = new ApplicationAPI(ctx.dev.session);
-      let appConfigID = await api.putConfig(
-        appLogin,
-        defaultConfig,
-        ctx.customers[0].id
-      );
+      let appConfigID = await api.putConfig(appLogin, defaultConfig);
       let configReceived = await api.getConfig(appConfigID);
       expect(configReceived.payload.jwt).to.exist;
       expect(configReceived.payload.jwt.key).to.deep.equal(
@@ -101,7 +93,7 @@ describe("applicationAPI.config.JWT", () => {
       };
       let appLogin = ctx.apps[i].identity.login;
       let api = new ApplicationAPI(ctx.dev.session);
-      await api.putConfig(appLogin, newConfig, ctx.customers[0].id);
+      await api.putConfig(appLogin, newConfig);
 
       newConfig = {
         jwt: {
@@ -110,11 +102,7 @@ describe("applicationAPI.config.JWT", () => {
           claimForLogin: "field_2"
         }
       };
-      let appConfigID = await api.putConfig(
-        appLogin,
-        newConfig,
-        ctx.customers[0].id
-      );
+      let appConfigID = await api.putConfig(appLogin, newConfig);
 
       let configReceived = await api.getConfig(appConfigID);
       expect(configReceived.payload.jwt.claimForLogin).to.equal(
@@ -139,11 +127,7 @@ describe("applicationAPI.config.JWT", () => {
       let appLogin = ctx.apps[i].identity.login;
       let api = new ApplicationAPI(ctx.dev.session);
       // Developer reconfigures its application
-      let firstConfigID = await api.putConfig(
-        appLogin,
-        appConfig,
-        ctx.customers[0].id
-      );
+      let firstConfigID = await api.putConfig(appLogin, appConfig);
       let firstConfigReceived = await api.getConfig(firstConfigID);
 
       // Developer renews its keys
@@ -153,11 +137,7 @@ describe("applicationAPI.config.JWT", () => {
       expect(secondConfigReceived).to.deep.equal(firstConfigReceived);
 
       // Developer reconfigures the application
-      let secondConfigID = await api.putConfig(
-        appLogin,
-        appConfig,
-        ctx.customers[0].id
-      );
+      let secondConfigID = await api.putConfig(appLogin, appConfig);
       let thirdConfigReceived = await api.getConfig(secondConfigID);
 
       expect(thirdConfigReceived.payload).to.deep.equal(
@@ -191,8 +171,7 @@ describe("applicationAPI.config.JWT", () => {
             signAlgorithm: ApplicationJWT.Algorithm.HS256,
             claimForLogin: "login"
           }
-        },
-        ctx.customers[0].id
+        }
       ),
     ServerError.IdentityCannotAssumeOwnership
   );
@@ -200,12 +179,10 @@ describe("applicationAPI.config.JWT", () => {
   itError(
     `should not configure with a invalid key RS PEM`,
     () =>
-      new ApplicationAPI(ctx.dev.session).putConfig(
-        ctx.app.identity.login,
-        {
-          jwt: {
-            key: Uint8Tool.encode(
-              `-----BEGIN PUBLIC KEY-----
+      new ApplicationAPI(ctx.dev.session).putConfig(ctx.app.identity.login, {
+        jwt: {
+          key: Uint8Tool.encode(
+            `-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAy2kQaxIDLw6vXEmSyDIU
 W2+7zumTbO9KE2o5/afE55lUyTV8lY+kVZDoRToP6yfiUKYC9t3fFBui50rBdtXJ
 d8TgD7ecw9tdoLiQ8usELOIV1Il+e0NUOocypPRYuI26RzOBQ98ULtqXWRPvW7G3
@@ -214,31 +191,25 @@ XhvwhB7FY31LXSRtbTA2ZOXhl64ZfWYBqWwsFMQ0wmWxnnF60J+NDESR1dWKHrzB
 /799hgxtB04Wz+cjm1O6gRuau7q7qxNRkvWL+hoXBXWUv2/WrBcglDr0f9tsvnh4
 fwIDAQAB
   -----END PUBLIC KEY-----` // Invalid because spaces in front of last line
-            ),
-            signAlgorithm: ApplicationJWT.Algorithm.RS256
-          }
-        },
-        ctx.customers[0].id
-      ),
+          ),
+          signAlgorithm: ApplicationJWT.Algorithm.RS256
+        }
+      }),
     ServerError.ApplicationConfigInvalid
   );
 
   itError(
     `should not configure with a invalid key ES PEM`,
     () =>
-      new ApplicationAPI(ctx.dev.session).putConfig(
-        ctx.app.identity.login,
-        {
-          jwt: {
-            key: Uint8Tool.encode(
-              `-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEQ4/x3bCZotGA3n+5CxFmuNZnzB7L\nZUd9C885FDhZN8+oRavvPrWSiGKv72hMKsfL9wVpEygSzZWXqZW+H/w7Jw==
+      new ApplicationAPI(ctx.dev.session).putConfig(ctx.app.identity.login, {
+        jwt: {
+          key: Uint8Tool.encode(
+            `-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEQ4/x3bCZotGA3n+5CxFmuNZnzB7L\nZUd9C885FDhZN8+oRavvPrWSiGKv72hMKsfL9wVpEygSzZWXqZW+H/w7Jw==
             -----END PUBLIC KEY-----` // Invalid because spaces in front of last line
-            ),
-            signAlgorithm: ApplicationJWT.Algorithm.ES256
-          }
-        },
-        ctx.customers[0].id
-      ),
+          ),
+          signAlgorithm: ApplicationJWT.Algorithm.ES256
+        }
+      }),
     ServerError.ApplicationConfigInvalid
   );
 
@@ -250,17 +221,13 @@ fwIDAQAB
         ApplicationJWT.Algorithm[signAlgorithm]
       })`,
       () =>
-        new ApplicationAPI(ctx.dev.session).putConfig(
-          ctx.app.identity.login,
-          {
-            jwt: {
-              key: invalidKey(signAlgorithm),
-              signAlgorithm,
-              claimForLogin: "login"
-            }
-          },
-          ctx.customers[0].id
-        ),
+        new ApplicationAPI(ctx.dev.session).putConfig(ctx.app.identity.login, {
+          jwt: {
+            key: invalidKey(signAlgorithm),
+            signAlgorithm,
+            claimForLogin: "login"
+          }
+        }),
       ServerError.ApplicationConfigInvalid
     );
   });
@@ -269,17 +236,13 @@ fwIDAQAB
   itError(
     `should not configure a non existent application`,
     () =>
-      new ApplicationAPI(ctx.dev.session).putConfig(
-        "non.existent.app",
-        {
-          jwt: {
-            key: nacl.randomBytes(128),
-            signAlgorithm: ApplicationJWT.Algorithm.HS256,
-            claimForLogin: "login"
-          }
-        },
-        ctx.customers[0].id
-      ),
+      new ApplicationAPI(ctx.dev.session).putConfig("non.existent.app", {
+        jwt: {
+          key: nacl.randomBytes(128),
+          signAlgorithm: ApplicationJWT.Algorithm.HS256,
+          claimForLogin: "login"
+        }
+      }),
     ServerError.IdentityNotFound
   );
 

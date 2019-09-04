@@ -38,6 +38,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var proto_1 = require("./proto");
 var Error_1 = require("./Error");
 var Tools_1 = require("./Tools");
+var api = proto_1.wallix.gopeps.protobuf.datapeps;
 var defaultAPIURL = "https://api.datapeps.com";
 exports.debug = false;
 var Client = /** @class */ (function () {
@@ -70,6 +71,7 @@ var Client = /** @class */ (function () {
                         if (response.status != request.expectedCode) {
                             // Unexpected code & no response body
                             if (body == null || body.length == 0) {
+                                console.log("error 0");
                                 throw new Error_1.Error({
                                     kind: Error_1.SDKKind.BadStatusCode,
                                     code: response.status
@@ -77,7 +79,7 @@ var Client = /** @class */ (function () {
                             }
                             err = void 0;
                             try {
-                                err = proto_1.api.ProtoError.decode(body);
+                                err = api.ProtoError.decode(body);
                             }
                             catch (e) {
                                 throw new Error_1.Error({
@@ -88,7 +90,7 @@ var Client = /** @class */ (function () {
                             }
                             payload = void 0;
                             if (err.payload != null) {
-                                X = proto_1.api[err.payload.type_url.split(".").pop()];
+                                X = api[err.payload.type_url.split(".").pop()];
                                 payload = X.decode(err.payload.value);
                             }
                             throw new Error_1.Error({ kind: err.kind, code: err.code, payload: payload });

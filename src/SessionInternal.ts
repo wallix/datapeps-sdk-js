@@ -1,5 +1,5 @@
 import * as nacl from "tweetnacl";
-import { api } from "./proto";
+import { wallix } from "./proto";
 import { IdentityPublicKey, IdentityPublicKeyID } from "./IdentityAPI";
 import { Uint8Tool, Base64 } from "./Tools";
 import { Session, SessionRequest, TrustPolicy } from "./Session";
@@ -12,6 +12,8 @@ import {
 } from "./IdentityKeySet";
 import { IdentityKeySetManager } from "./IdentityKeySetManager";
 import { PublicKeysManager, PublicKeysCache } from "./PublicKeyManager";
+
+import api = wallix.gopeps.protobuf.datapeps;
 
 export type SessionParams = {
   token: string;

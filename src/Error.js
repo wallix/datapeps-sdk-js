@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var proto_1 = require("./proto");
-exports.ServerKind = proto_1.api.PepsErrorKind;
+var api = proto_1.wallix.gopeps.protobuf.datapeps;
+exports.ServerKind = api.PepsErrorKind;
 var SDKKind;
 (function (SDKKind) {
     SDKKind[SDKKind["BadStatusCode"] = -1] = "BadStatusCode";
@@ -33,7 +34,7 @@ var Error = /** @class */ (function () {
 }());
 exports.Error = Error;
 function kindName(kind) {
-    var kname = proto_1.api.PepsErrorKind[kind];
+    var kname = api.PepsErrorKind[kind];
     if (kname == null) {
         kname = SDKKind[kind];
     }

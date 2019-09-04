@@ -42,6 +42,7 @@ var Error_1 = require("./Error");
 var IdentityKeySet_1 = require("./IdentityKeySet");
 var IdentityKeySetManager_1 = require("./IdentityKeySetManager");
 var PublicKeyManager_1 = require("./PublicKeyManager");
+var api = proto_1.wallix.gopeps.protobuf.datapeps;
 var SessionState;
 (function (SessionState) {
     function create(session) {
@@ -137,7 +138,7 @@ var SessionClient = /** @class */ (function () {
                                 method: "PUT",
                                 expectedCode: 200,
                                 path: "/api/v1/session/unStale",
-                                response: proto_1.api.SessionUnStaleResponse.decode
+                                response: api.SessionUnStaleResponse.decode
                             })];
                     case 1:
                         encryption = (_a.sent()).encryption;
@@ -201,9 +202,9 @@ var SessionClient = /** @class */ (function () {
     };
     SessionClient.prototype.getSalt = function () {
         switch (this.params.saltKind) {
-            case proto_1.api.SessionSaltKind.RAND:
+            case api.SessionSaltKind.RAND:
                 return this.params.salt;
-            case proto_1.api.SessionSaltKind.TIME:
+            case api.SessionSaltKind.TIME:
                 var seconds = Math.floor(Date.now() / 1000) + this.deltaSaltTime;
                 var salt = new Uint8Array(4);
                 salt[0] = (seconds >>> 24) & 0xff;

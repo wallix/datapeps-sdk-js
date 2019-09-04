@@ -1,7 +1,7 @@
 import { ApplicationJWT } from "./ApplicationJWT";
 import { ApplicationIdentityAuth } from "./Application";
 import { Error, SDKKind } from "./Error";
-import { api } from "./proto";
+import { wallix } from "./proto";
 import { Session } from "./Session";
 import { SessionState } from "./SessionInternal";
 import {
@@ -15,6 +15,8 @@ import {
   IdentityRequestsUtils
 } from "./IdentityInternal";
 import { timestampToDate } from "./Tools";
+
+import api = wallix.gopeps.protobuf.datapeps;
 
 export { ApplicationIdentitySortingOrder };
 
@@ -92,8 +94,7 @@ export class ApplicationAPI {
    */
   async putConfig(
     appID: string,
-    config: ApplicationAPI.Config,
-    customerID: number
+    config: ApplicationAPI.Config
   ): Promise<ApplicationAPI.ApplicationConfigID> {
     if (!("jwt" in config)) {
       return;
@@ -118,13 +119,15 @@ export class ApplicationAPI {
       ApplicationAPI.ApplicationConfigID
     >({
       method: "PUT",
-      assume: { login: appID, kind: api.IdentityAccessKeyKind.WRITE },
+      assume: {
+        login: appID,
+        kind: api.IdentityAccessKeyKind.WRITE
+      },
       expectedCode: 200,
       path: `/api/v1/identity/${encodeURI(appID)}/configureAsApplication`,
       body: api.IdentityConfigurationAsApplicationRequest.encode({
         login: appID,
-        config: c,
-        customerID
+        config: c
       }).finish(),
       response: r => {
         return api.ApplicationConfigID.decode(r);
@@ -139,7 +142,7 @@ export class ApplicationAPI {
    * On error the promise will be rejected with an {@link Error} with kind:
    * - `IdentityCannotAssumeOwnership` if the client does not have a right to read the configuration.
    * - `IdentityNotFound` if the identity `appID` doesn't exist.
-   * - `AppliacationConfigNotFound` if the `appConfigID` does not correspond to any existing application configuration.
+   * - `ApplicationConfigNotFound` if the `appConfigID` does not correspond to any existing application configuration.
    */
   async getConfig(
     appConfigID: ApplicationAPI.ApplicationConfigID
@@ -241,7 +244,10 @@ export class ApplicationAPI {
     options = options == null ? {} : options;
     return await this.api.client.doProtoRequest<ApplicationAPI.UsageOverview>({
       method: "POST",
-      assume: { login: appID, kind: api.IdentityAccessKeyKind.READ },
+      assume: {
+        login: appID,
+        kind: api.IdentityAccessKeyKind.READ
+      },
       expectedCode: 200,
       path: `/api/v1/application/${encodeURI(appID)}/usageOverview`,
       body: api.ApplicationUsageOverviewRequest.encode({
@@ -305,7 +311,10 @@ export class ApplicationAPI {
       method: "POST",
       expectedCode: 200,
       path: `/api/v1/application/${encodeURI(appID)}/identities/list`,
-      assume: { login: appID, kind: api.IdentityAccessKeyKind.READ },
+      assume: {
+        login: appID,
+        kind: api.IdentityAccessKeyKind.READ
+      },
       body: api.ApplicationListIdentitiesRequest.encode({
         options: {
           limit: options.limit,
@@ -413,7 +422,10 @@ export class ApplicationAPI {
       path: `/api/v1/application/${encodeURI(appID)}/identitiesSession/list`,
       method: "POST",
       expectedCode: 200,
-      assume: { login: appID, kind: api.IdentityAccessKeyKind.READ },
+      assume: {
+        login: appID,
+        kind: api.IdentityAccessKeyKind.READ
+      },
       body: api.ApplicationIdentitySessionListRequest.encode({
         appID,
         since,

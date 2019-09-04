@@ -38,6 +38,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var proto_1 = require("./proto");
 var Error_1 = require("./Error");
 var IdentityKeySetAPI_1 = require("./IdentityKeySetAPI");
+var api = proto_1.wallix.gopeps.protobuf.datapeps;
 var IdentityKeySetManager = /** @class */ (function () {
     function IdentityKeySetManager(root, sessionClient) {
         this.cache = {};
@@ -106,8 +107,10 @@ var IdentityKeySetManager = /** @class */ (function () {
                             method: "POST",
                             path: "/api/v1/identity/" + encodeURI(login) + "/keySet",
                             expectedCode: 200,
-                            body: proto_1.api.IdentityGetKeySetRequest.encode({ version: version }).finish(),
-                            response: proto_1.api.IdentityGetKeySetResponse.decode
+                            body: api.IdentityGetKeySetRequest.encode({
+                                version: version
+                            }).finish(),
+                            response: api.IdentityGetKeySetResponse.decode
                         })];
                     case 1:
                         path = (_a.sent()).path;

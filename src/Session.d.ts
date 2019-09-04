@@ -1,7 +1,8 @@
-import { api } from "./proto";
+import { wallix } from "./proto";
 import { IdentityPublicKey, IdentityPublicKeyID } from "./IdentityAPI";
 import { Client, Request } from "./HTTP";
 import { IdentityKeySet } from "./IdentityKeySet";
+import api = wallix.gopeps.protobuf.datapeps;
 /**
  * Specify how the sdk request should be authenticated by the DataPeps service.
  * - "RAND" means that the service generates a fresh salt for each request `n` which is used to sign request `n+1`. It is the most secure kind of salt, but implies that all requests MUST be done sequentially.

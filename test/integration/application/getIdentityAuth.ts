@@ -12,7 +12,9 @@ import { configs } from "./Utils";
 import { itError } from "../../Utils";
 import * as JWT from "jsonwebtoken";
 import { expect } from "chai";
-import { api } from "../../../src/proto";
+import { wallix } from "../../../src/proto";
+
+import api = wallix.gopeps.protobuf.datapeps;
 
 const identitySecret = "P@ssw0rd";
 const firstIdentityLogin = "charlie.first";
@@ -80,16 +82,12 @@ describe("ApplicationAPI.getIdentityAuth", () => {
 
     it(`getIdentityAuth returns a correct auth object after application's configuration renewal (${algorithm})`, async () => {
       let appID = ctx.firstDev.ctx.apps[i].identity.login;
-      let newAppConfigID = await ctx.firstDev.api.putConfig(
-        appID,
-        {
-          jwt: {
-            ...c.config,
-            key: c.keys.secondPk
-          }
-        },
-        ctx.firstDev.ctx.customers[0].id
-      );
+      let newAppConfigID = await ctx.firstDev.api.putConfig(appID, {
+        jwt: {
+          ...c.config,
+          key: c.keys.secondPk
+        }
+      });
       let auth = composeIdentityAuth(
         secondIdentityLogin,
         c.keys.secondSk,
@@ -125,8 +123,9 @@ describe("ApplicationAPI.getIdentityAuth", () => {
       });
     });
 
-    let invalidLogins = [null, "", `some.non.existant.entity`];
-    invalidLogins.map(appId => {
+    let appInvalidIDs = [null, "", "some.non.existant.app"];
+    let invalidLogins = [null, "some.non.existant.entity"];
+    appInvalidIDs.map(appId => {
       invalidLogins.map(identityLogin => {
         itError(
           `getIdentityAuth fails, with AppID: ${appId} and identityLogin: ${identityLogin}, (${algorithm})`,
@@ -134,6 +133,12 @@ describe("ApplicationAPI.getIdentityAuth", () => {
           ServerError.IdentityNotFound
         );
       });
+
+      itError(
+        `getIdentityAuth fails with AppID: ${appId} and an empty identityLogin (${algorithm})`,
+        () => ctx.firstDev.api.getIdentityAuth(appId, ""),
+        ServerError.IdentityNotFound
+      );
     });
 
     invalidLogins.map(identityLogin => {
@@ -148,7 +153,23 @@ describe("ApplicationAPI.getIdentityAuth", () => {
       );
     });
 
-    invalidLogins.map(appId => {
+    itError(
+      `getIdentityAuth fails with an existingAppID and an empty identityLogin (${algorithm})`,
+      () =>
+        ctx.firstDev.api.getIdentityAuth(
+          ctx.firstDev.ctx.apps[i].identity.login,
+          ""
+        ),
+      ServerError.URLNotFound,
+      () => {
+        return {
+          url: "/api/v1/application/identity/auth",
+          method: "GET"
+        };
+      }
+    );
+
+    appInvalidIDs.map(appId => {
       itError(
         `getIdentityAuth fails, with AppID: ${appId} and an existing identityLogin, (${algorithm})`,
         () =>

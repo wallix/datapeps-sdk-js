@@ -10,11 +10,12 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var proto_1 = require("./proto");
 var Tools_1 = require("./Tools");
+var api = proto_1.wallix.gopeps.protobuf.datapeps;
 var IdentitySerializer = /** @class */ (function () {
     function IdentitySerializer() {
     }
     IdentitySerializer.deserialize = function (t) {
-        var x = proto_1.api.Identity.create(t);
+        var x = api.Identity.create(t);
         return __assign({}, x, { created: Tools_1.timestampToDate(t.created) });
     };
     return IdentitySerializer;
@@ -30,12 +31,12 @@ var IdentityRequestsUtils = /** @class */ (function () {
     function IdentityRequestsUtils() {
     }
     IdentityRequestsUtils.resolveSortingOrder = function (order) {
-        var resolvedSortingOrder = proto_1.api.SortingOrder.ASC;
+        var resolvedSortingOrder = api.SortingOrder.ASC;
         if (order == null) {
             return resolvedSortingOrder;
         }
         if (order === IdentitySortingOrder.DESC) {
-            resolvedSortingOrder = proto_1.api.SortingOrder.DESC;
+            resolvedSortingOrder = api.SortingOrder.DESC;
         }
         else if (order != IdentitySortingOrder.ASC) {
             resolvedSortingOrder = order;

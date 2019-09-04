@@ -74,14 +74,15 @@ function createUser(appID, auth, secret) {
                             method: "POST",
                             expectedCode: 200,
                             path: "/api/v1/application/" + appID + "/identity",
-                            body: proto_1.api.RegisterApplicationIdentityRequest.encode({
+                            body: proto_1.wallix.gopeps.protobuf.datapeps.RegisterApplicationIdentityRequest.encode({
                                 appID: appID,
                                 auth: auth,
                                 encryption: encryptedKeySet,
                                 identity: identity,
                                 resources: { appSecret: resource.resourceRequestBody }
                             }).finish(),
-                            response: proto_1.api.RegisterApplicationIdentityResponse.decode,
+                            response: proto_1.wallix.gopeps.protobuf.datapeps.RegisterApplicationIdentityResponse
+                                .decode,
                             headers: new Headers({ "content-type": "application/x-protobuf" })
                         })];
                 case 1:

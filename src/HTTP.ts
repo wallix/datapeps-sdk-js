@@ -1,6 +1,8 @@
-import { api } from "./proto";
+import { wallix } from "./proto";
 import { SDKKind, Error } from "./Error";
 import { Uint8Tool } from "./Tools";
+
+import api = wallix.gopeps.protobuf.datapeps;
 
 const defaultAPIURL = "https://api.datapeps.com";
 
@@ -45,6 +47,7 @@ export class Client {
     if (response.status != request.expectedCode) {
       // Unexpected code & no response body
       if (body == null || body.length == 0) {
+        console.log("error 0");
         throw new Error({
           kind: SDKKind.BadStatusCode,
           code: response.status

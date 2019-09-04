@@ -1,9 +1,11 @@
 import { SessionClient } from "./SessionInternal";
 import { IdentityKeySet } from "./IdentityKeySet";
 import { IdentityPublicKey } from "./IdentityAPI";
-import { api } from "./proto";
+import { wallix } from "./proto";
 import { Error, SDKKind } from "./Error";
 import { IdentityKeySetAPI } from "./IdentityKeySetAPI";
+
+import api = wallix.gopeps.protobuf.datapeps;
 
 export class IdentityKeySetManager {
   private _root: IdentityKeySet;
@@ -65,7 +67,9 @@ export class IdentityKeySetManager {
       method: "POST",
       path: "/api/v1/identity/" + encodeURI(login) + "/keySet",
       expectedCode: 200,
-      body: api.IdentityGetKeySetRequest.encode({ version }).finish(),
+      body: api.IdentityGetKeySetRequest.encode({
+        version
+      }).finish(),
       response: api.IdentityGetKeySetResponse.decode
     });
     if (path.length == 0) {

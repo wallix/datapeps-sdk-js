@@ -1,7 +1,7 @@
 import * as nacl from "tweetnacl";
 import { EncryptAnonymous, CipherType } from "./Cryptor";
 import { client, Client } from "./HTTP";
-import { api } from "./proto";
+import { wallix } from "./proto";
 import { ResourceBox, makeResourceFromResponse } from "./ResourceInternal";
 import { Error, SDKKind } from "./Error";
 import { Constants } from "./Constants";
@@ -15,6 +15,8 @@ import { Session } from "./Session";
 import { SessionState } from "./SessionInternal";
 import { ID } from "./ID";
 import { IdentityKeySet } from "./IdentityKeySet";
+
+import api = wallix.gopeps.protobuf.datapeps;
 
 export interface DelegatedAccess {
   /**
@@ -143,7 +145,10 @@ export class DelegatedAccessAPI {
       expectedCode: 200,
       path: "/api/v1/delegatedAccesses",
       response: api.DelegatedAccessListResponse.decode,
-      assume: { login, kind: api.IdentityAccessKeyKind.READ },
+      assume: {
+        login,
+        kind: api.IdentityAccessKeyKind.READ
+      },
       params: options
     });
     return accesses.map(

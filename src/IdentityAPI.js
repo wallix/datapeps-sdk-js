@@ -51,6 +51,7 @@ var IdentityInternal_1 = require("./IdentityInternal");
 exports.IdentitySortingOrder = IdentityInternal_1.IdentitySortingOrder;
 var proto_1 = require("./proto");
 var IdentityKeySetAPI_1 = require("./IdentityKeySetAPI");
+var api = proto_1.wallix.gopeps.protobuf.datapeps;
 var IdentityPublicKey;
 (function (IdentityPublicKey) {
     var bs58 = require("bs58");
@@ -102,9 +103,9 @@ var IdentityAPI = /** @class */ (function () {
                             method: "POST",
                             expectedCode: 200,
                             path: "/api/v1/identities/latestPublicKeys",
-                            body: proto_1.api.IdentityGetLatestPublicKeysRequest.encode({ logins: logins }).finish(),
+                            body: api.IdentityGetLatestPublicKeysRequest.encode({ logins: logins }).finish(),
                             response: function (r) {
-                                return proto_1.api.IdentityGetLatestPublicKeysResponse.toObject(proto_1.api.IdentityGetLatestPublicKeysResponse.decode(r));
+                                return api.IdentityGetLatestPublicKeysResponse.toObject(api.IdentityGetLatestPublicKeysResponse.decode(r));
                             },
                             headers: new Headers({
                                 "content-type": "application/x-protobuf"
@@ -152,7 +153,7 @@ var IdentityAPI = /** @class */ (function () {
                             method: "GET",
                             expectedCode: 200,
                             path: "/api/v1/identity/" + encodeURI(login),
-                            response: function (r) { return IdentityInternal_1.IdentitySerializer.deserialize(proto_1.api.Identity.decode(r)); }
+                            response: function (r) { return IdentityInternal_1.IdentitySerializer.deserialize(api.Identity.decode(r)); }
                         })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
@@ -185,7 +186,7 @@ var IdentityAPI = /** @class */ (function () {
                                 method: "POST",
                                 expectedCode: 200,
                                 path: "/api/v1/identities/list",
-                                body: proto_1.api.IdentityListRequest.encode({
+                                body: api.IdentityListRequest.encode({
                                     options: {
                                         offset: options.offset,
                                         limit: options.limit,
@@ -196,7 +197,7 @@ var IdentityAPI = /** @class */ (function () {
                                     }
                                 }).finish(),
                                 response: function (r) {
-                                    var _a = proto_1.api.IdentityListResponse.decode(r), identities = _a.identities, totalIdentitiesCount = _a.totalIdentitiesCount;
+                                    var _a = api.IdentityListResponse.decode(r), identities = _a.identities, totalIdentitiesCount = _a.totalIdentitiesCount;
                                     return {
                                         identities: identities.map(IdentityInternal_1.IdentitySerializer.deserialize),
                                         totalIdentitiesCount: totalIdentitiesCount
@@ -239,7 +240,7 @@ var IdentityAPI = /** @class */ (function () {
                                 method: "POST",
                                 expectedCode: 200,
                                 path: "/api/v1/identity",
-                                body: proto_1.api.IdentityCreateRequest.encode({
+                                body: api.IdentityCreateRequest.encode({
                                     identity: identity,
                                     sharingGroup: sharingGroup,
                                     encryption: encryptedKeySet,
@@ -267,7 +268,7 @@ var IdentityAPI = /** @class */ (function () {
                             method: "PUT",
                             expectedCode: 200,
                             path: "/api/v1/identity/" + encodeURI(identity.login),
-                            body: proto_1.api.IdentityFields.encode(identity).finish()
+                            body: api.IdentityFields.encode(identity).finish()
                         })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
@@ -290,13 +291,13 @@ var IdentityAPI = /** @class */ (function () {
                     case 0:
                         assume = {
                             login: login,
-                            kind: proto_1.api.IdentityAccessKeyKind.WRITE
+                            kind: api.IdentityAccessKeyKind.WRITE
                         };
                         return [4 /*yield*/, this.api.client.doProtoRequest({
                                 method: "GET",
                                 expectedCode: 200,
                                 path: "/api/v1/identity/" + encodeURIComponent(login) + "/keysToRenew",
-                                response: proto_1.api.IdentityGetKeysToRenewResponse.decode,
+                                response: api.IdentityGetKeysToRenewResponse.decode,
                                 assume: assume
                             })];
                     case 1:
@@ -312,7 +313,7 @@ var IdentityAPI = /** @class */ (function () {
                                 publicKey: encryption.masterPublicKey,
                                 masterSalt: encryption.masterSalt
                             }), nextEncryptedKeySet = _b.encryptedKeySet, nextKeySet = _b.keySet;
-                        backward = currentKeySet.shareKey(proto_1.api.IdentityShareKind.SHARING, nextKeySet.public());
+                        backward = currentKeySet.shareKey(api.IdentityShareKind.SHARING, nextKeySet.public());
                         nextSharingGroup = IdentityAPI.createSharingGroup(nextKeySet, sharingGroup);
                         signChain = currentKeySet.signKeys(nextKeySet);
                         // Push the next IdentityKeySet to DataPeps
@@ -320,7 +321,7 @@ var IdentityAPI = /** @class */ (function () {
                                 method: "POST",
                                 expectedCode: 200,
                                 path: "/api/v1/identity/" + encodeURIComponent(login) + "/keysToRenew",
-                                body: proto_1.api.IdentityPostKeysToRenewRequest.encode({
+                                body: api.IdentityPostKeysToRenewRequest.encode({
                                     encryption: nextEncryptedKeySet,
                                     sharingGroup: nextSharingGroup,
                                     backward: backward,
@@ -358,7 +359,7 @@ var IdentityAPI = /** @class */ (function () {
                             expectedCode: 200,
                             path: "/api/v1/identity/" + encodeURIComponent(login) + "/sharingGroup",
                             response: function (r) {
-                                return proto_1.api.IdentityGetSharingGroupResponse.decode(r)
+                                return api.IdentityGetSharingGroupResponse.decode(r)
                                     .sharingGroup;
                             }
                         })];
@@ -391,8 +392,11 @@ var IdentityAPI = /** @class */ (function () {
                                 method: "PATCH",
                                 expectedCode: 200,
                                 path: "/api/v1/identity/" + encodeURI(login) + "/sharingGroup",
-                                assume: { login: login, kind: proto_1.api.IdentityAccessKeyKind.WRITE },
-                                body: proto_1.api.IdentityShareRequest.encode({
+                                assume: {
+                                    login: login,
+                                    kind: api.IdentityAccessKeyKind.WRITE
+                                },
+                                body: api.IdentityShareRequest.encode({
                                     version: keySet.id.version,
                                     sharingGroup: encryptedKeys
                                 }).finish()
@@ -456,10 +460,10 @@ var IdentityAPI = /** @class */ (function () {
                             var elt = _a.elt, nextencryptedKeySet = _a.nextencryptedKeySet, nextKeySet = _a.nextKeySet;
                             var currentKeySet = elt.value.keySet;
                             // Create the backward link
-                            var backward = currentKeySet.shareKey(proto_1.api.IdentityShareKind.SHARING, nextKeySet.public());
+                            var backward = currentKeySet.shareKey(api.IdentityShareKind.SHARING, nextKeySet.public());
                             // Share the next IdentityKeySet with the sharingGroup of the previous IdentityKeySet
                             var sharingGroup = elt.sharingGroup.map(function (publicKey) {
-                                var kind = proto_1.api.IdentityShareKind.SHARING;
+                                var kind = api.IdentityShareKind.SHARING;
                                 var nextPublicKey = nextPublicKeys.get(publicKey.login);
                                 publicKey = nextPublicKey != null ? nextPublicKey : publicKey;
                                 var _a = nextKeySet.shareKey(kind, publicKey), encryptedKey = _a.encryptedKey, nonce = _a.nonce;
@@ -486,8 +490,11 @@ var IdentityAPI = /** @class */ (function () {
                                 method: "POST",
                                 expectedCode: 200,
                                 path: "/api/v1/identity/" + encodeURIComponent(login) + "/sharingGraph",
-                                assume: { login: login, kind: proto_1.api.IdentityAccessKeyKind.WRITE },
-                                body: proto_1.api.IdentityPostSharingGraphRequest.encode({
+                                assume: {
+                                    login: login,
+                                    kind: api.IdentityAccessKeyKind.WRITE
+                                },
+                                body: api.IdentityPostSharingGraphRequest.encode({
                                     graph: encryptedGraph
                                 }).finish()
                             })];
@@ -558,7 +565,7 @@ var IdentityAPI = /** @class */ (function () {
                             var signChain = _this.api.keySet.sign(Tools_1.Uint8Tool.concat(nextencryptedKeySet.boxEncrypted.publicKey, nextencryptedKeySet.signEncrypted.publicKey));
                             // Share the next IdentityKeySet with the sharingGroup of the previous IdentityKeySet
                             var sharingGroup = elt.sharingGroup.map(function (publicKey) {
-                                var kind = proto_1.api.IdentityShareKind.SHARING;
+                                var kind = api.IdentityShareKind.SHARING;
                                 var nextPublicKey = nextPublicKeys.get(publicKey.login);
                                 publicKey = nextPublicKey != null ? nextPublicKey : publicKey;
                                 var _a = nextKeySet.shareKey(kind, publicKey), encryptedKey = _a.encryptedKey, nonce = _a.nonce;
@@ -582,7 +589,7 @@ var IdentityAPI = /** @class */ (function () {
                                 method: "POST",
                                 expectedCode: 200,
                                 path: "/api/v1/identity/" + encodeURIComponent(login) + "/sharingGraph",
-                                body: proto_1.api.IdentityPostSharingGraphRequest.encode({
+                                body: api.IdentityPostSharingGraphRequest.encode({
                                     graph: encryptedGraph
                                 }).finish()
                             })];
@@ -608,7 +615,7 @@ var IdentityAPI = /** @class */ (function () {
                             expectedCode: 200,
                             path: "/api/v1/identity/" + encodeURIComponent(login) + "/accessGroup",
                             response: function (r) {
-                                return proto_1.api.IdentityGetAccessGroupResponse.decode(r)
+                                return api.IdentityGetAccessGroupResponse.decode(r)
                                     .accessGroup;
                             }
                         })];
@@ -634,11 +641,11 @@ var IdentityAPI = /** @class */ (function () {
                             method: "POST",
                             expectedCode: 200,
                             path: "/api/v1/identities/latestPublicChains",
-                            body: proto_1.api.IdentityGetLatestPublicChainsRequest.encode({
+                            body: api.IdentityGetLatestPublicChainsRequest.encode({
                                 ids: [{ login: login, since: 0 }]
                             }).finish(),
                             headers: new Headers({ "content-type": "application/x-protobuf" }),
-                            response: proto_1.api.IdentityGetLatestPublicChainsResponse.decode
+                            response: api.IdentityGetLatestPublicChainsResponse.decode
                         })];
                     case 1:
                         chains = (_a.sent()).body.chains;
@@ -686,9 +693,12 @@ var IdentityAPI = /** @class */ (function () {
                                 params: options,
                                 assume: login == this.api.login
                                     ? null
-                                    : { login: login, kind: proto_1.api.IdentityAccessKeyKind.READ },
+                                    : {
+                                        login: login,
+                                        kind: api.IdentityAccessKeyKind.READ
+                                    },
                                 response: function (r) {
-                                    return proto_1.api.IdentityGetLockedVersionsResponse.decode(r).lockedVersions.map(function (lockedVersion) {
+                                    return api.IdentityGetLockedVersionsResponse.decode(r).lockedVersions.map(function (lockedVersion) {
                                         return __assign({}, lockedVersion, { publicKey: __assign({}, lockedVersion.publicKey.publicKey, { created: Tools_1.timestampToDate(lockedVersion.publicKey.created) }) });
                                     });
                                 }
@@ -732,9 +742,9 @@ var IdentityAPI = /** @class */ (function () {
                                 var keySet = IdentityKeySetAPI_1.IdentityKeySetAPI.recoverWithSecret(login, secret, locked.challenge.encryption);
                                 unlockedVersions.push(locked.publicKey);
                                 // the current version of session identity is signed by the unlocked one (as keys are accessible by current session)
-                                var _a = keySet.shareKey(proto_1.api.IdentityShareKind.SHARING, publicKey), encryptedKey = _a.encryptedKey, nonce = _a.nonce;
+                                var _a = keySet.shareKey(api.IdentityShareKind.SHARING, publicKey), encryptedKey = _a.encryptedKey, nonce = _a.nonce;
                                 var backward = { nonce: nonce, encryptedKey: encryptedKey };
-                                resolvedChallengesWithEncryptedKeys.push(new proto_1.api.IdentityUnlockVersionsRequest.UnlockedVersion({
+                                resolvedChallengesWithEncryptedKeys.push(new api.IdentityUnlockVersionsRequest.UnlockedVersion({
                                     resolvedChallenge: {
                                         token: locked.challenge.token,
                                         salt: locked.challenge.salt,
@@ -753,12 +763,15 @@ var IdentityAPI = /** @class */ (function () {
                                 expectedCode: 200,
                                 assume: login == this.api.login
                                     ? null
-                                    : { login: login, kind: proto_1.api.IdentityAccessKeyKind.WRITE },
+                                    : {
+                                        login: login,
+                                        kind: api.IdentityAccessKeyKind.WRITE
+                                    },
                                 path: "/api/v1/identity/" + encodeURI(login) + "/unlockVersions",
-                                body: proto_1.api.IdentityUnlockVersionsRequest.encode({
+                                body: api.IdentityUnlockVersionsRequest.encode({
                                     unlockedVersions: resolvedChallengesWithEncryptedKeys
                                 }).finish(),
-                                response: proto_1.api.SessionResolveChallengeResponse.decode
+                                response: api.SessionResolveChallengeResponse.decode
                             })];
                     case 3:
                         _a.sent();
@@ -777,7 +790,7 @@ var IdentityAPI = /** @class */ (function () {
                             method: "GET",
                             expectedCode: 200,
                             path: "/api/v1/identity/" + encodeURIComponent(login) + "/sharingGraph",
-                            response: proto_1.api.IdentityGetSharingGraphResponse.decode
+                            response: api.IdentityGetSharingGraphResponse.decode
                         })];
                     case 1:
                         graph = (_a.sent()).graph;
@@ -806,14 +819,14 @@ var IdentityAPI = /** @class */ (function () {
                     case 0:
                         assume = {
                             login: login,
-                            kind: proto_1.api.IdentityAccessKeyKind.WRITE
+                            kind: api.IdentityAccessKeyKind.WRITE
                         };
                         return [4 /*yield*/, this.api.client.doProtoRequest({
                                 method: "GET",
                                 expectedCode: 200,
                                 path: "/api/v1/identity/" + encodeURIComponent(login) + "/sharingGraph",
                                 assume: assume,
-                                response: proto_1.api.IdentityGetSharingGraphResponse.decode
+                                response: api.IdentityGetSharingGraphResponse.decode
                             })];
                     case 1:
                         graph = (_a.sent()).graph;
@@ -887,7 +900,7 @@ var IdentityAPI = /** @class */ (function () {
     };
     IdentityAPI.createSharingGroup = function (keySet, publicKeys) {
         return publicKeys.map(function (pk) {
-            var kind = proto_1.api.IdentityShareKind.SHARING;
+            var kind = api.IdentityShareKind.SHARING;
             var _a = keySet.shareKey(kind, pk), encryptedKey = _a.encryptedKey, nonce = _a.nonce;
             return {
                 login: pk.login,

@@ -38,6 +38,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var proto_1 = require("./proto");
 var Application_1 = require("./Application");
 var Tools_1 = require("./Tools");
+var api = proto_1.wallix.gopeps.protobuf.datapeps;
 /**
  * Expose all specific types and functions for JWT application.
  */
@@ -95,7 +96,7 @@ var ApplicationJWT;
                         return [2 /*return*/, { session: session, appSession: appSession, isNew: false }];
                     case 3:
                         e_1 = _b.sent();
-                        if (!(e_1.kind == proto_1.api.PepsErrorKind.IdentityNotFound)) return [3 /*break*/, 8];
+                        if (!(e_1.kind == api.PepsErrorKind.IdentityNotFound)) return [3 /*break*/, 8];
                         return [4 /*yield*/, connector.createSession(appLogin, secret)];
                     case 4:
                         appSession = _b.sent();

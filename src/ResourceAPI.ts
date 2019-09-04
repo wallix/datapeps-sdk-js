@@ -1,4 +1,4 @@
-import { api } from "./proto";
+import { wallix } from "./proto";
 import {
   ResourceBox,
   makeResourcesFromResponses,
@@ -11,6 +11,8 @@ import { Session } from "./Session";
 import { ID } from "./ID";
 import { CipherType } from "./Cryptor";
 import { SessionState } from "./SessionInternal";
+
+import api = wallix.gopeps.protobuf.datapeps;
 
 export enum ResourceType {
   ANONYMOUS = 0
@@ -160,7 +162,10 @@ export class ResourceAPI {
         method: "GET",
         expectedCode: 200,
         path: "/api/v1/resources",
-        assume: { login: assume, kind: api.IdentityAccessKeyKind.READ },
+        assume: {
+          login: assume,
+          kind: api.IdentityAccessKeyKind.READ
+        },
         params,
         response: r => api.ResourceListResponse.decode(r).resources
       })
@@ -201,7 +206,10 @@ export class ResourceAPI {
       method: "GET",
       expectedCode: 200,
       path: "/api/v1/resource/" + id,
-      assume: { login: assume, kind: api.IdentityAccessKeyKind.READ },
+      assume: {
+        login: assume,
+        kind: api.IdentityAccessKeyKind.READ
+      },
       params,
       response: r => api.ResourceGetResponse.decode(r)
     });
@@ -230,7 +238,10 @@ export class ResourceAPI {
     }
   ): Promise<Resource<T>> {
     options = options != null ? options : {};
-    let assume = { login, kind: api.IdentityAccessKeyKind.READ };
+    let assume = {
+      login,
+      kind: api.IdentityAccessKeyKind.READ
+    };
     let resp = await this.api.client.doProtoRequest({
       method: "GET",
       expectedCode: 200,
@@ -265,7 +276,10 @@ export class ResourceAPI {
     resourceName: string,
     resourceID: ID
   ): Promise<void> {
-    let assume = { login, kind: api.IdentityAccessKeyKind.WRITE };
+    let assume = {
+      login,
+      kind: api.IdentityAccessKeyKind.WRITE
+    };
     let res = await this.api.client.doProtoRequest<void>({
       method: "PUT",
       expectedCode: 200,
@@ -295,7 +309,10 @@ export class ResourceAPI {
       method: "DELETE",
       expectedCode: 200,
       path: "/api/v1/resource/" + id,
-      assume: { login: assume, kind: api.IdentityAccessKeyKind.WRITE },
+      assume: {
+        login: assume,
+        kind: api.IdentityAccessKeyKind.WRITE
+      },
       params: { soft: true }
     });
   }
@@ -315,7 +332,10 @@ export class ResourceAPI {
       method: "DELETE",
       expectedCode: 200,
       path: "/api/v1/resource/" + id,
-      assume: { login: assume, kind: api.IdentityAccessKeyKind.WRITE },
+      assume: {
+        login: assume,
+        kind: api.IdentityAccessKeyKind.WRITE
+      },
       params: { soft: false }
     });
   }
@@ -357,7 +377,10 @@ export class ResourceAPI {
       method: "PATCH",
       expectedCode: 200,
       path: "/api/v1/resource/" + id + "/sharingGroup",
-      assume: { login: options.assume, kind: api.IdentityAccessKeyKind.WRITE },
+      assume: {
+        login: options.assume,
+        kind: api.IdentityAccessKeyKind.WRITE
+      },
       body: api.ResourceExtendSharingGroupRequest.encode({
         sharingGroup: encryptedSharingGroup
       }).finish()
@@ -420,7 +443,10 @@ export class ResourceAPI {
       method: "GET",
       expectedCode: 200,
       path: "/api/v1/resource/" + id + "/sharingGroup",
-      assume: { login: assume, kind: api.IdentityAccessKeyKind.READ },
+      assume: {
+        login: assume,
+        kind: api.IdentityAccessKeyKind.READ
+      },
       response: r =>
         api.ResourceGetSharingGroupResponse.decode(r)
           .sharingGroup as ResourceShareLink[]

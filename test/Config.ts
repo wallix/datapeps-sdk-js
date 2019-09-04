@@ -3,9 +3,11 @@ import * as DataPeps from "../src/DataPeps";
 declare var process: any;
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
 
-let APIHost = process.env.DATAPEPS_API_HOST;
+const coreHostEnvVar = "DATAPEPS_CORE_HOST";
+
+let APIHost = process.env[coreHostEnvVar];
 if (APIHost == null) {
-  throw new Error("Missing DATAPEPS_API_HOST");
+  throw new Error(`Missing ${coreHostEnvVar}`);
 }
 APIHost = "https://" + APIHost;
 

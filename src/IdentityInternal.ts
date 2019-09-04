@@ -1,6 +1,8 @@
-import { api } from "./proto";
+import { wallix } from "./proto";
 import { Identity } from "./IdentityAPI";
 import { timestampToDate } from "./Tools";
+
+import api = wallix.gopeps.protobuf.datapeps;
 
 export class IdentitySerializer {
   static deserialize(t: api.IIdentity): Identity<Uint8Array> {

@@ -1,5 +1,6 @@
-import { api } from "./proto";
+import { wallix } from "./proto";
 import { Session } from "./Session";
+import api = wallix.gopeps.protobuf.datapeps;
 export declare const RegisterTokenStatus: typeof api.RegisterTokenStatus;
 export declare type RegisterEmailValidationToken = api.IRegisterEmailValidationToken;
 export declare class AdminAPI {

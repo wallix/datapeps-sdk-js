@@ -41,6 +41,7 @@ var HTTP_1 = require("./HTTP");
 var SessionInternal_1 = require("./SessionInternal");
 var IdentityKeySet_1 = require("./IdentityKeySet");
 var PublicKeyManager_1 = require("./PublicKeyManager");
+var api = proto_1.wallix.gopeps.protobuf.datapeps;
 var Session = /** @class */ (function () {
     function Session(params, encryption, client, secret) {
         this.api = SessionInternal_1.SessionState.createBase(params.login, new SessionInternal_1.SessionClient(params, encryption, client, secret), new PublicKeyManager_1.MemoryPublicKeysCache(), new SessionInternal_1.TrustOnFirstUse());
@@ -136,7 +137,9 @@ var Session = /** @class */ (function () {
         });
     };
     Session.create = function (client, login, recover, options) {
-        if (options === void 0) { options = { saltKind: proto_1.api.SessionSaltKind.TIME }; }
+        if (options === void 0) { options = {
+            saltKind: api.SessionSaltKind.TIME
+        }; }
         return __awaiter(this, void 0, void 0, function () {
             var _a, connectionParameters, identityKeySet;
             return __generator(this, function (_b) {
@@ -150,7 +153,9 @@ var Session = /** @class */ (function () {
         });
     };
     Session.createWithSecret = function (client, login, recover, options, secret) {
-        if (options === void 0) { options = { saltKind: proto_1.api.SessionSaltKind.TIME }; }
+        if (options === void 0) { options = {
+            saltKind: api.SessionSaltKind.TIME
+        }; }
         return __awaiter(this, void 0, void 0, function () {
             var _a, connectionParameters, identityKeySet;
             return __generator(this, function (_b) {
@@ -164,7 +169,9 @@ var Session = /** @class */ (function () {
         });
     };
     Session.createSessionMaterial = function (client, login, recover, options) {
-        if (options === void 0) { options = { saltKind: proto_1.api.SessionSaltKind.TIME }; }
+        if (options === void 0) { options = {
+            saltKind: api.SessionSaltKind.TIME
+        }; }
         return __awaiter(this, void 0, void 0, function () {
             var createResponse, identityKeySet, resolveResponse, connectionParameters;
             return __generator(this, function (_a) {
@@ -173,28 +180,28 @@ var Session = /** @class */ (function () {
                             method: "POST",
                             expectedCode: 200,
                             path: "/api/v1/session/challenge/create",
-                            body: proto_1.api.SessionCreateChallengeRequest.encode({
+                            body: api.SessionCreateChallengeRequest.encode({
                                 login: login,
                                 saltKind: options.saltKind
                             }).finish(),
-                            response: proto_1.api.SessionCreateChallengeResponse.decode,
+                            response: api.SessionCreateChallengeResponse.decode,
                             headers: new Headers({
                                 "content-type": "application/x-protobuf"
                             })
                         })];
                     case 1:
                         createResponse = (_a.sent()).body;
-                        identityKeySet = recover(proto_1.api.IdentityEncryptedKeySet.create(createResponse.encryption));
+                        identityKeySet = recover(api.IdentityEncryptedKeySet.create(createResponse.encryption));
                         return [4 /*yield*/, client.doRequest({
                                 method: "POST",
                                 expectedCode: 200,
                                 path: "/api/v1/session/challenge/resolve",
-                                body: proto_1.api.SessionResolveChallengeRequest.encode({
+                                body: api.SessionResolveChallengeRequest.encode({
                                     token: createResponse.token,
                                     salt: createResponse.salt,
                                     signature: identityKeySet.sign(createResponse.salt)
                                 }).finish(),
-                                response: proto_1.api.SessionResolveChallengeResponse.decode,
+                                response: api.SessionResolveChallengeResponse.decode,
                                 headers: new Headers({
                                     "content-type": "application/x-protobuf"
                                 })

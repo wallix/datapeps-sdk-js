@@ -1,4 +1,4 @@
-import { api } from "./proto";
+import { wallix } from "./proto";
 import * as nacl from "tweetnacl";
 import {
   Encryptor,
@@ -12,6 +12,8 @@ import {
 import { IdentityPublicKey, IdentityPublicKeyID } from "./IdentityAPI";
 import { Error, SDKKind } from "./Error";
 import { Crypto, Uint8Tool } from "./Tools";
+
+import api = wallix.gopeps.protobuf.datapeps;
 
 /**
  * The default length of the salt used to derivate the master key of an IdentityKeySet.
@@ -381,7 +383,8 @@ export class IdentityKeySet {
    */
   sign(
     msg: Uint8Array,
-    kind: api.IdentityAccessKeyKind = api.IdentityAccessKeyKind.WRITE
+    kind: api.IdentityAccessKeyKind = wallix.gopeps.protobuf.datapeps
+      .IdentityAccessKeyKind.WRITE
   ): Uint8Array {
     return nacl.sign.detached(msg, this.getSecretSignKey(kind).secretKey);
   }

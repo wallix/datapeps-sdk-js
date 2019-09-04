@@ -1,4 +1,4 @@
-import { api } from "./proto";
+import { wallix } from "./proto";
 import { Uint8Tool } from "./Tools";
 import * as HTTP from "./HTTP";
 import { createWithEncryption } from "./ResourceInternal";
@@ -6,6 +6,8 @@ import { IdentityFields } from "./IdentityAPI";
 import { Session } from "./Session";
 import { ResourceAPI } from "./ResourceAPI";
 import { IdentityKeySetAPI } from "./IdentityKeySetAPI";
+
+import api = wallix.gopeps.protobuf.datapeps;
 
 export type ApplicationIdentityAuth = {
   jwt: {
@@ -26,7 +28,9 @@ export async function createUser(
   appID: string,
   auth: ApplicationIdentityAuth,
   secret: string | Uint8Array
-): Promise<api.RegisterApplicationIdentityResponse> {
+): Promise<
+  wallix.gopeps.protobuf.datapeps.RegisterApplicationIdentityResponse
+> {
   let secretBytes = Uint8Tool.convert(secret);
 
   let { keySet, encryptedKeySet } = IdentityKeySetAPI.initWithSecret(
@@ -55,19 +59,23 @@ export async function createUser(
     { serialize: u => u }
   );
   let { body } = await HTTP.client.doRequest<
-    api.RegisterApplicationIdentityResponse
+    wallix.gopeps.protobuf.datapeps.RegisterApplicationIdentityResponse
   >({
     method: "POST",
     expectedCode: 200,
     path: `/api/v1/application/${appID}/identity`,
-    body: api.RegisterApplicationIdentityRequest.encode({
-      appID,
-      auth,
-      encryption: encryptedKeySet,
-      identity,
-      resources: { appSecret: resource.resourceRequestBody }
-    }).finish(),
-    response: api.RegisterApplicationIdentityResponse.decode,
+    body: wallix.gopeps.protobuf.datapeps.RegisterApplicationIdentityRequest.encode(
+      {
+        appID,
+        auth,
+        encryption: encryptedKeySet,
+        identity,
+        resources: { appSecret: resource.resourceRequestBody }
+      }
+    ).finish(),
+    response:
+      wallix.gopeps.protobuf.datapeps.RegisterApplicationIdentityResponse
+        .decode,
     headers: new Headers({ "content-type": "application/x-protobuf" })
   });
   return body;

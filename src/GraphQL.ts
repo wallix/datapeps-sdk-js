@@ -1,4 +1,3 @@
-import { api } from "./proto";
 import { Session } from "./Session";
 import { SessionState } from "./SessionInternal";
 import { Uint8Converter } from "./Tools";

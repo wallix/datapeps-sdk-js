@@ -39,6 +39,7 @@ var nacl = require("tweetnacl");
 var proto_1 = require("./proto");
 var Error_1 = require("./Error");
 var Tools_1 = require("./Tools");
+var api = proto_1.wallix.gopeps.protobuf.datapeps;
 var MemoryPublicKeysCache = /** @class */ (function () {
     function MemoryPublicKeysCache() {
         this.cache = {};
@@ -90,13 +91,13 @@ var PublicKeysManager = /** @class */ (function () {
                             expectedCode: 200,
                             path: "/api/v1/identities/latestPublicChains",
                             headers: new Headers({ "content-type": "application/x-protobuf" }),
-                            body: proto_1.api.IdentityGetLatestPublicChainsRequest.encode({
+                            body: api.IdentityGetLatestPublicChainsRequest.encode({
                                 ids: logins.map(function (login) {
                                     var pk = _this.cache.latest(login);
                                     return { login: login, since: pk == null ? 0 : pk.version };
                                 })
                             }).finish(),
-                            response: proto_1.api.IdentityGetLatestPublicChainsResponse.decode
+                            response: api.IdentityGetLatestPublicChainsResponse.decode
                         })];
                     case 1:
                         chains = (_a.sent()).body.chains;
@@ -134,7 +135,7 @@ var PublicKeysManager = /** @class */ (function () {
                                 expectedCode: 200,
                                 path: "/api/v1/identities/publicChains",
                                 headers: new Headers({ "content-type": "application/x-protobuf" }),
-                                body: proto_1.api.IdentityGetPublicChainsRequest.encode({
+                                body: api.IdentityGetPublicChainsRequest.encode({
                                     ids: Object.keys(requestIds).map(function (login) {
                                         var pk = _this.cache.latest(login);
                                         var since = pk == null ? 0 : pk.version;
@@ -142,7 +143,7 @@ var PublicKeysManager = /** @class */ (function () {
                                         return { id: { login: login, version: version }, since: since };
                                     })
                                 }).finish(),
-                                response: proto_1.api.IdentityGetPublicChainsResponse.decode
+                                response: api.IdentityGetPublicChainsResponse.decode
                             })];
                     case 1:
                         chains = (_a.sent()).body.chains;

@@ -55,6 +55,7 @@ var Tools_1 = require("./Tools");
 var Session_1 = require("./Session");
 var SessionInternal_1 = require("./SessionInternal");
 var IdentityKeySet_1 = require("./IdentityKeySet");
+var api = proto_1.wallix.gopeps.protobuf.datapeps;
 var DelegatedAccessAPI = /** @class */ (function () {
     function DelegatedAccessAPI(session) {
         this.api = SessionInternal_1.SessionState.create(session);
@@ -88,7 +89,7 @@ var DelegatedAccessAPI = /** @class */ (function () {
                             method: "GET",
                             expectedCode: 200,
                             path: "/api/v1/delegatedAccess/" + requestId.toString(),
-                            response: proto_1.api.DelegatedAccessGetResponse.decode
+                            response: api.DelegatedAccessGetResponse.decode
                         })];
                     case 1:
                         _a = _b.sent(), sign = _a.sign, resource = _a.resource;
@@ -124,8 +125,8 @@ var DelegatedAccessAPI = /** @class */ (function () {
                                                         method: "PUT",
                                                         expectedCode: 200,
                                                         path: "/api/v1/delegatedAccess/" + this.id.toString() + "/keys",
-                                                        body: proto_1.api.DelegatedAccessPostKeysRequest.encode({
-                                                            keys: this.resource.encrypt(proto_1.api.DelegatedKeys.encode(keySet.toDelegatedKeys()).finish())
+                                                        body: api.DelegatedAccessPostKeysRequest.encode({
+                                                            keys: this.resource.encrypt(api.DelegatedKeys.encode(keySet.toDelegatedKeys()).finish())
                                                         }).finish()
                                                     })];
                                             case 2:
@@ -154,8 +155,11 @@ var DelegatedAccessAPI = /** @class */ (function () {
                             method: "GET",
                             expectedCode: 200,
                             path: "/api/v1/delegatedAccesses",
-                            response: proto_1.api.DelegatedAccessListResponse.decode,
-                            assume: { login: login, kind: proto_1.api.IdentityAccessKeyKind.READ },
+                            response: api.DelegatedAccessListResponse.decode,
+                            assume: {
+                                login: login,
+                                kind: api.IdentityAccessKeyKind.READ
+                            },
                             params: options
                         })];
                     case 1:
@@ -211,7 +215,7 @@ var DelegatedAccess;
                                 method: "POST",
                                 expectedCode: 200,
                                 path: "/api/v1/delegatedAccess",
-                                body: proto_1.api.DelegatedAccessPostRequest.encode({
+                                body: api.DelegatedAccessPostRequest.encode({
                                     publicKey: keypair.publicKey,
                                     sign: signResult.sign,
                                     requester: signResult.requester,
@@ -222,7 +226,7 @@ var DelegatedAccess;
                                         version: version
                                     }
                                 }).finish(),
-                                response: proto_1.api.DelegatedAccessPostResponse.decode,
+                                response: api.DelegatedAccessPostResponse.decode,
                                 headers: new Headers({ "content-type": "application/x-protobuf" })
                             })];
                     case 3:
@@ -255,12 +259,12 @@ var DelegatedAccess;
                                     method: "GET",
                                     expectedCode: 200,
                                     path: "/api/v1/delegatedAccess/" + this.id.toString() + "/keys",
-                                    response: proto_1.api.DelegatedAccessGetKeysResponse.decode,
+                                    response: api.DelegatedAccessGetKeysResponse.decode,
                                     headers: new Headers({ "content-type": "application/x-protobuf" })
                                 })];
                         case 1:
                             keys = (_a.sent()).body.keys;
-                            this.keys = proto_1.api.DelegatedKeys.decode(this.resource.decrypt(keys));
+                            this.keys = api.DelegatedKeys.decode(this.resource.decrypt(keys));
                             this.resolve();
                             return [3 /*break*/, 3];
                         case 2:

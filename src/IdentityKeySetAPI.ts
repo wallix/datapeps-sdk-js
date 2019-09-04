@@ -1,6 +1,6 @@
 import * as nacl from "tweetnacl";
 import { IdentityPublicKeyID } from "./IdentityAPI";
-import { api } from "./proto";
+import { wallix } from "./proto";
 import {
   IdentityKeySet,
   MasterPrivateSeed,
@@ -8,6 +8,8 @@ import {
   IdentityEncryptedKeySet
 } from "./IdentityKeySet";
 import { SignedCipher, CipherType } from "./Cryptor";
+
+import api = wallix.gopeps.protobuf.datapeps;
 
 /**
  * Declare some usefull function that generates, exports and recovers IdentityKeySet to objects that are formatted to the API.
@@ -21,7 +23,10 @@ export namespace IdentityKeySetAPI {
   export function initWithSecret(
     id: IdentityPublicKeyID,
     secret: Uint8Array | string
-  ): { encryptedKeySet: api.IIdentityEncryptedKeySet; keySet: IdentityKeySet } {
+  ): {
+    encryptedKeySet: api.IIdentityEncryptedKeySet;
+    keySet: IdentityKeySet;
+  } {
     let seed = secret == null ? null : MasterPrivateSeed.fromSecret(secret);
     return IdentityKeySetAPI.initWithMasterSeed(id, seed);
   }
@@ -34,7 +39,10 @@ export namespace IdentityKeySetAPI {
   export function initWithMasterSeed(
     id: IdentityPublicKeyID,
     seed: MasterPublicSeed
-  ): { encryptedKeySet: api.IIdentityEncryptedKeySet; keySet: IdentityKeySet } {
+  ): {
+    encryptedKeySet: api.IIdentityEncryptedKeySet;
+    keySet: IdentityKeySet;
+  } {
     let keySet = IdentityKeySet.generate(id);
     return {
       keySet,

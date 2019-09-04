@@ -1,12 +1,13 @@
 import * as nacl from "tweetnacl";
 import { Resource, ResourceType } from "./ResourceAPI";
-import { api } from "./proto";
+import { wallix } from "./proto";
 import { Encryptor, CipherType } from "./Cryptor";
 import { IdentityPublicKey } from "./IdentityAPI";
 import { ID } from "./ID";
 import { IdentityKeySet } from "./IdentityKeySet";
 import { IdentityKeySetManager } from "./IdentityKeySetManager";
 import { PublicKeysManager } from "./PublicKeyManager";
+import api = wallix.gopeps.protobuf.datapeps;
 export declare class ResourceBox<T> implements Resource<T> {
     id: ID;
     kind: string;

@@ -42,6 +42,7 @@ var Error_1 = require("./Error");
 var proto_1 = require("./proto");
 var Cryptor_1 = require("./Cryptor");
 var IdentityKeySet_1 = require("./IdentityKeySet");
+var api = proto_1.wallix.gopeps.protobuf.datapeps;
 var ResourceBox = /** @class */ (function () {
     function ResourceBox(id, kind, payload, keypair, creator, type) {
         if (type === void 0) { type = ResourceAPI_1.ResourceType.ANONYMOUS; }
@@ -112,7 +113,7 @@ function createWithEncryption(payload, encryption, kind, options) {
     var payloadEncrypted = cryptoSES.encrypt({ box: keyPair.publicKey }, serialize(payload));
     var body = {
         kind: kind,
-        type: proto_1.api.ResourceType.ANONYMOUS,
+        type: api.ResourceType.ANONYMOUS,
         payload: payloadEncrypted.message,
         nonce: payloadEncrypted.nonce,
         publicKey: keyPair.publicKey,

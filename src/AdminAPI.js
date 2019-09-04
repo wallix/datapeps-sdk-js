@@ -37,7 +37,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var proto_1 = require("./proto");
 var SessionInternal_1 = require("./SessionInternal");
-exports.RegisterTokenStatus = proto_1.api.RegisterTokenStatus;
+var api = proto_1.wallix.gopeps.protobuf.datapeps;
+exports.RegisterTokenStatus = api.RegisterTokenStatus;
 var AdminAPI = /** @class */ (function () {
     function AdminAPI(session) {
         this.api = SessionInternal_1.SessionState.create(session);
@@ -59,7 +60,7 @@ var AdminAPI = /** @class */ (function () {
                             method: "POST",
                             expectedCode: 200,
                             path: "/api/v1/identity/" + encodeURIComponent(login) + "/promote",
-                            body: proto_1.api.IdentityPromoteRequest.encode({
+                            body: api.IdentityPromoteRequest.encode({
                                 admin: admin
                             }).finish()
                         })];
@@ -85,7 +86,7 @@ var AdminAPI = /** @class */ (function () {
                             method: "POST",
                             expectedCode: 200,
                             path: "/api/v1/identity/" + encodeURI(login) + "/active",
-                            body: proto_1.api.IdentityToggleActiveStatusRequest.encode({
+                            body: api.IdentityToggleActiveStatusRequest.encode({
                                 login: login,
                                 active: active
                             }).finish()
@@ -112,7 +113,7 @@ var AdminAPI = /** @class */ (function () {
                             expectedCode: 200,
                             path: "/api/v1/register/links",
                             params: options,
-                            response: proto_1.api.LinksGetResponse.decode
+                            response: api.LinksGetResponse.decode
                         })];
                     case 1:
                         links = (_a.sent()).links;

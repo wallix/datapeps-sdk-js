@@ -1,7 +1,8 @@
-import { api } from "./proto";
+import { wallix } from "./proto";
 import * as nacl from "tweetnacl";
 import { Encryptor, Decryptor, CipherType } from "./Cryptor";
 import { IdentityPublicKey, IdentityPublicKeyID } from "./IdentityAPI";
+import api = wallix.gopeps.protobuf.datapeps;
 export interface MasterPublicSeed {
     masterSalt: Uint8Array;
     publicKey: Uint8Array;

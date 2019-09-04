@@ -1,10 +1,11 @@
-import { api } from "./proto";
+import { wallix } from "./proto";
 import { IdentityPublicKey, IdentityPublicKeyID } from "./IdentityAPI";
 import { Session, SessionRequest, TrustPolicy } from "./Session";
 import { Client } from "./HTTP";
 import { IdentityKeySet } from "./IdentityKeySet";
 import { IdentityKeySetManager } from "./IdentityKeySetManager";
 import { PublicKeysManager, PublicKeysCache } from "./PublicKeyManager";
+import api = wallix.gopeps.protobuf.datapeps;
 export declare type SessionParams = {
     token: string;
     login: string;

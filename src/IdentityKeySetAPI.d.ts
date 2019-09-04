@@ -1,7 +1,8 @@
 import { IdentityPublicKeyID } from "./IdentityAPI";
-import { api } from "./proto";
+import { wallix } from "./proto";
 import { IdentityKeySet, MasterPublicSeed } from "./IdentityKeySet";
 import { SignedCipher } from "./Cryptor";
+import api = wallix.gopeps.protobuf.datapeps;
 /**
  * Declare some usefull function that generates, exports and recovers IdentityKeySet to objects that are formatted to the API.
  */

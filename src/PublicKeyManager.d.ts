@@ -1,8 +1,9 @@
 import { IdentityPublicKey, IdentityPublicKeyID } from "./IdentityAPI";
 import { Client } from "./HTTP";
-import { api } from "./proto";
+import { wallix } from "./proto";
 import { SignedCipher } from "./Cryptor";
 import { TrustPolicy } from "./Session";
+import api = wallix.gopeps.protobuf.datapeps;
 /**
  * The public keys of identities are fetched from DataPeps and then validated thanks to a {@TrustPolicy}.
  * Once the keys are fetched and trusted, they are locally saved to a cache.

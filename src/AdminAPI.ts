@@ -1,6 +1,8 @@
-import { api } from "./proto";
+import { wallix } from "./proto";
 import { Session } from "./Session";
 import { SessionState } from "./SessionInternal";
+
+import api = wallix.gopeps.protobuf.datapeps;
 
 export const RegisterTokenStatus = api.RegisterTokenStatus;
 

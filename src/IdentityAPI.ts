@@ -9,9 +9,11 @@ import {
   IdentitySortingOrder,
   IdentityRequestsUtils
 } from "./IdentityInternal";
-import { api } from "./proto";
+import { wallix } from "./proto";
 import { SignedCipher } from "./Cryptor";
 import { IdentityKeySetAPI } from "./IdentityKeySetAPI";
+
+import api = wallix.gopeps.protobuf.datapeps;
 
 export { IdentitySortingOrder };
 
@@ -422,7 +424,10 @@ export class IdentityAPI {
       method: "PATCH",
       expectedCode: 200,
       path: "/api/v1/identity/" + encodeURI(login) + "/sharingGroup",
-      assume: { login, kind: api.IdentityAccessKeyKind.WRITE },
+      assume: {
+        login,
+        kind: api.IdentityAccessKeyKind.WRITE
+      },
       body: api.IdentityShareRequest.encode({
         version: keySet.id.version,
         sharingGroup: encryptedKeys
@@ -517,7 +522,10 @@ export class IdentityAPI {
       method: "POST",
       expectedCode: 200,
       path: "/api/v1/identity/" + encodeURIComponent(login) + "/sharingGraph",
-      assume: { login, kind: api.IdentityAccessKeyKind.WRITE },
+      assume: {
+        login,
+        kind: api.IdentityAccessKeyKind.WRITE
+      },
       body: api.IdentityPostSharingGraphRequest.encode({
         graph: encryptedGraph
       }).finish()
@@ -707,7 +715,10 @@ export class IdentityAPI {
       assume:
         login == this.api.login
           ? null
-          : { login, kind: api.IdentityAccessKeyKind.READ },
+          : {
+              login,
+              kind: api.IdentityAccessKeyKind.READ
+            },
       response: r => {
         return api.IdentityGetLockedVersionsResponse.decode(
           r
@@ -785,7 +796,10 @@ export class IdentityAPI {
         assume:
           login == this.api.login
             ? null
-            : { login, kind: api.IdentityAccessKeyKind.WRITE },
+            : {
+                login,
+                kind: api.IdentityAccessKeyKind.WRITE
+              },
         path: "/api/v1/identity/" + encodeURI(login) + "/unlockVersions",
         body: api.IdentityUnlockVersionsRequest.encode({
           unlockedVersions: resolvedChallengesWithEncryptedKeys

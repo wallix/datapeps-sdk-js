@@ -45,6 +45,7 @@ var Error_1 = require("./Error");
 exports.Error = Error_1.Error;
 exports.ServerError = Error_1.ServerKind;
 exports.SDKError = Error_1.SDKKind;
+var api = proto_1.wallix.gopeps.protobuf.datapeps;
 protobufjs.util.Long = Long;
 protobufjs.configure();
 /**
@@ -61,7 +62,7 @@ function register(identity, secret) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, _register("/api/v1/register", identity, secret, function (r) {
-                        return proto_1.api.IdentityRegisterRequest.encode(r).finish();
+                        return api.IdentityRegisterRequest.encode(r).finish();
                     })];
                 case 1: return [2 /*return*/, _a.sent()];
             }
@@ -86,7 +87,7 @@ function registerWithToken(token, identity, secret) {
             switch (_a.label) {
                 case 0:
                     btoken = token instanceof Uint8Array ? Tools_1.Base64.encode(token, true) : token;
-                    return [4 /*yield*/, _register("/api/v1/register/link/" + encodeURIComponent(btoken), identity, secret, function (r) { return proto_1.api.RegisterPostLinkTokenRequest.encode(r).finish(); })];
+                    return [4 /*yield*/, _register("/api/v1/register/link/" + encodeURIComponent(btoken), identity, secret, function (r) { return api.RegisterPostLinkTokenRequest.encode(r).finish(); })];
                 case 1: return [2 /*return*/, _a.sent()];
             }
         });
@@ -133,7 +134,7 @@ function sendRegisterLink(email) {
                         method: "POST",
                         expectedCode: 200,
                         path: "/api/v1/register/link",
-                        body: proto_1.api.RegisterLinkRequest.encode({
+                        body: api.RegisterLinkRequest.encode({
                             email: email
                         }).finish(),
                         headers: new Headers({

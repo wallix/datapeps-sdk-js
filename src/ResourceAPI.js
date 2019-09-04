@@ -47,6 +47,7 @@ var proto_1 = require("./proto");
 var ResourceInternal_1 = require("./ResourceInternal");
 var Cryptor_1 = require("./Cryptor");
 var SessionInternal_1 = require("./SessionInternal");
+var api = proto_1.wallix.gopeps.protobuf.datapeps;
 var ResourceType;
 (function (ResourceType) {
     ResourceType[ResourceType["ANONYMOUS"] = 0] = "ANONYMOUS";
@@ -74,7 +75,7 @@ var ResourceAPI = /** @class */ (function () {
                     case 0:
                         options = options == null ? {} : options;
                         encryptFunc = this.api.keySet.root.encryptor(Cryptor_1.CipherType.NACL_SES);
-                        type = proto_1.api.ResourceType.ANONYMOUS;
+                        type = api.ResourceType.ANONYMOUS;
                         creator = this.api.keySet.getCurrentPublicKey();
                         return [4 /*yield*/, ResourceInternal_1.createBodyRequest(payload, sharingGroup, encryptFunc, this.api.publicKeys, options)];
                     case 1:
@@ -83,9 +84,9 @@ var ResourceAPI = /** @class */ (function () {
                                 method: "POST",
                                 expectedCode: 200,
                                 path: "/api/v1/resources",
-                                body: proto_1.api.ResourcePostRequest.encode(__assign({}, body, { type: type,
+                                body: api.ResourcePostRequest.encode(__assign({}, body, { type: type,
                                     kind: kind })).finish(),
-                                response: proto_1.api.ResourcePostResponse.decode
+                                response: api.ResourcePostResponse.decode
                             })];
                     case 2:
                         id = (_b.sent()).id;
@@ -123,9 +124,12 @@ var ResourceAPI = /** @class */ (function () {
                                 method: "GET",
                                 expectedCode: 200,
                                 path: "/api/v1/resources",
-                                assume: { login: assume, kind: proto_1.api.IdentityAccessKeyKind.READ },
+                                assume: {
+                                    login: assume,
+                                    kind: api.IdentityAccessKeyKind.READ
+                                },
                                 params: params,
-                                response: function (r) { return proto_1.api.ResourceListResponse.decode(r).resources; }
+                                response: function (r) { return api.ResourceListResponse.decode(r).resources; }
                             })
                                 .then(function (resources) {
                                 return ResourceInternal_1.makeResourcesFromResponses(resources, _this.api.keySet, _this.api.publicKeys, parse);
@@ -159,9 +163,12 @@ var ResourceAPI = /** @class */ (function () {
                                 method: "GET",
                                 expectedCode: 200,
                                 path: "/api/v1/resource/" + id,
-                                assume: { login: assume, kind: proto_1.api.IdentityAccessKeyKind.READ },
+                                assume: {
+                                    login: assume,
+                                    kind: api.IdentityAccessKeyKind.READ
+                                },
                                 params: params,
-                                response: function (r) { return proto_1.api.ResourceGetResponse.decode(r); }
+                                response: function (r) { return api.ResourceGetResponse.decode(r); }
                             })];
                     case 1:
                         response = _a.sent();
@@ -185,7 +192,10 @@ var ResourceAPI = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         options = options != null ? options : {};
-                        assume = { login: login, kind: proto_1.api.IdentityAccessKeyKind.READ };
+                        assume = {
+                            login: login,
+                            kind: api.IdentityAccessKeyKind.READ
+                        };
                         return [4 /*yield*/, this.api.client.doProtoRequest({
                                 method: "GET",
                                 expectedCode: 200,
@@ -194,7 +204,7 @@ var ResourceAPI = /** @class */ (function () {
                                     "/resource/" +
                                     encodeURIComponent(resourceName),
                                 assume: assume,
-                                response: function (r) { return proto_1.api.IdentityGetNamedResourceResponse.decode(r); }
+                                response: function (r) { return api.IdentityGetNamedResourceResponse.decode(r); }
                             })];
                     case 1:
                         resp = _a.sent();
@@ -218,13 +228,16 @@ var ResourceAPI = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        assume = { login: login, kind: proto_1.api.IdentityAccessKeyKind.WRITE };
+                        assume = {
+                            login: login,
+                            kind: api.IdentityAccessKeyKind.WRITE
+                        };
                         return [4 /*yield*/, this.api.client.doProtoRequest({
                                 method: "PUT",
                                 expectedCode: 200,
                                 assume: assume,
                                 path: "/api/v1/identity/" + encodeURI(login) + "/resource/" + encodeURIComponent(resourceName),
-                                body: proto_1.api.IdentitySetNamedResourceRequest.encode({
+                                body: api.IdentitySetNamedResourceRequest.encode({
                                     resourceID: resourceID
                                 }).finish()
                             })];
@@ -255,7 +268,10 @@ var ResourceAPI = /** @class */ (function () {
                                 method: "DELETE",
                                 expectedCode: 200,
                                 path: "/api/v1/resource/" + id,
-                                assume: { login: assume, kind: proto_1.api.IdentityAccessKeyKind.WRITE },
+                                assume: {
+                                    login: assume,
+                                    kind: api.IdentityAccessKeyKind.WRITE
+                                },
                                 params: { soft: true }
                             })];
                     case 1: return [2 /*return*/, _a.sent()];
@@ -283,7 +299,10 @@ var ResourceAPI = /** @class */ (function () {
                                 method: "DELETE",
                                 expectedCode: 200,
                                 path: "/api/v1/resource/" + id,
-                                assume: { login: assume, kind: proto_1.api.IdentityAccessKeyKind.WRITE },
+                                assume: {
+                                    login: assume,
+                                    kind: api.IdentityAccessKeyKind.WRITE
+                                },
                                 params: { soft: false }
                             })];
                     case 1: return [2 /*return*/, _a.sent()];
@@ -313,7 +332,7 @@ var ResourceAPI = /** @class */ (function () {
                                 method: "GET",
                                 expectedCode: 200,
                                 path: "/api/v1/resource/" + id + "/key",
-                                response: proto_1.api.ResourceGetKeyResponse.decode
+                                response: api.ResourceGetKeyResponse.decode
                             })];
                     case 1:
                         _a = _d.sent(), encryptedKey = _a.encryptedKey, owner = _a.owner;
@@ -333,8 +352,11 @@ var ResourceAPI = /** @class */ (function () {
                                 method: "PATCH",
                                 expectedCode: 200,
                                 path: "/api/v1/resource/" + id + "/sharingGroup",
-                                assume: { login: options.assume, kind: proto_1.api.IdentityAccessKeyKind.WRITE },
-                                body: proto_1.api.ResourceExtendSharingGroupRequest.encode({
+                                assume: {
+                                    login: options.assume,
+                                    kind: api.IdentityAccessKeyKind.WRITE
+                                },
+                                body: api.ResourceExtendSharingGroupRequest.encode({
                                     sharingGroup: encryptedSharingGroup
                                 }).finish()
                             })];
@@ -365,11 +387,11 @@ var ResourceAPI = /** @class */ (function () {
                                 method: "POST",
                                 expectedCode: 200,
                                 path: "/api/v1/resources/accessLogs",
-                                body: proto_1.api.ResourceGetAccessLogsRequest.encode(options).finish(),
-                                response: proto_1.api.ResourceGetAccessLogsResponse.decode,
+                                body: api.ResourceGetAccessLogsRequest.encode(options).finish(),
+                                response: api.ResourceGetAccessLogsResponse.decode,
                                 assume: {
                                     login: assume,
-                                    kind: proto_1.api.IdentityAccessKeyKind.READ
+                                    kind: api.IdentityAccessKeyKind.READ
                                 }
                             })];
                     case 1:
@@ -401,9 +423,12 @@ var ResourceAPI = /** @class */ (function () {
                                 method: "GET",
                                 expectedCode: 200,
                                 path: "/api/v1/resource/" + id + "/sharingGroup",
-                                assume: { login: assume, kind: proto_1.api.IdentityAccessKeyKind.READ },
+                                assume: {
+                                    login: assume,
+                                    kind: api.IdentityAccessKeyKind.READ
+                                },
                                 response: function (r) {
-                                    return proto_1.api.ResourceGetSharingGroupResponse.decode(r)
+                                    return api.ResourceGetSharingGroupResponse.decode(r)
                                         .sharingGroup;
                                 }
                             })];

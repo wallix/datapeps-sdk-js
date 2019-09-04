@@ -1,9 +1,10 @@
 import { ApplicationJWT } from "./ApplicationJWT";
 import { ApplicationIdentityAuth } from "./Application";
-import { api } from "./proto";
+import { wallix } from "./proto";
 import { Session } from "./Session";
 import { Identity, IdentityPublicKeyID } from "./IdentityAPI";
 import { IdentitySortingOrder as ApplicationIdentitySortingOrder } from "./IdentityInternal";
+import api = wallix.gopeps.protobuf.datapeps;
 export { ApplicationIdentitySortingOrder };
 /** Allows to indicate which kind of field should be sorted. */
 export declare enum ApplicationIdentitySortingField {
@@ -66,7 +67,7 @@ export declare class ApplicationAPI {
      * - `ApplicationConfigInvalid` if configuration object is invalid.
      * - `IdentityNotFound` if the identity `appID` doesn't exists.
      */
-    putConfig(appID: string, config: ApplicationAPI.Config, customerID: number): Promise<ApplicationAPI.ApplicationConfigID>;
+    putConfig(appID: string, config: ApplicationAPI.Config): Promise<ApplicationAPI.ApplicationConfigID>;
     /**
      * Get configuration of an application
      * @param appConfigID the application configuration ID, that specifies tha application ID and the application configuration version.
@@ -74,7 +75,7 @@ export declare class ApplicationAPI {
      * On error the promise will be rejected with an {@link Error} with kind:
      * - `IdentityCannotAssumeOwnership` if the client does not have a right to read the configuration.
      * - `IdentityNotFound` if the identity `appID` doesn't exist.
-     * - `AppliacationConfigNotFound` if the `appConfigID` does not correspond to any existing application configuration.
+     * - `ApplicationConfigNotFound` if the `appConfigID` does not correspond to any existing application configuration.
      */
     getConfig(appConfigID: ApplicationAPI.ApplicationConfigID): Promise<ApplicationAPI.ConfigWithMetadata>;
     /**

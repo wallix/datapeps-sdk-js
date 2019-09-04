@@ -1,7 +1,9 @@
-import { api } from "./proto";
+import { wallix } from "./proto";
 import { secure, createUser } from "./Application";
 import { Session } from "./Session";
 import { Uint8Tool } from "./Tools";
+
+import api = wallix.gopeps.protobuf.datapeps;
 
 /**
  * Expose all specific types and functions for JWT application.

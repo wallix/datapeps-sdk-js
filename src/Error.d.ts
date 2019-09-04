@@ -1,4 +1,5 @@
-import { api } from "./proto";
+import { wallix } from "./proto";
+import api = wallix.gopeps.protobuf.datapeps;
 export declare type ErrorKind = ServerKind | SDKKind;
 export declare const ServerKind: typeof api.PepsErrorKind;
 export declare type ServerKind = api.PepsErrorKind;

@@ -139,16 +139,12 @@ describe("applicationAPI.usage", () => {
     const key = "supersecurekey";
 
     let api = new ApplicationAPI(ctx.dev.session);
-    await api.putConfig(
-      ctx.app.identity.login,
-      {
-        jwt: {
-          key: Uint8Tool.encode(key),
-          signAlgorithm: ApplicationJWT.Algorithm.HS256
-        }
-      },
-      ctx.customers[0].id
-    );
+    await api.putConfig(ctx.app.identity.login, {
+      jwt: {
+        key: Uint8Tool.encode(key),
+        signAlgorithm: ApplicationJWT.Algorithm.HS256
+      }
+    });
 
     // Let's enroll David, David don't really use the app
     await createUser(

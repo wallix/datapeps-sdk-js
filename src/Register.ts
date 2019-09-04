@@ -1,6 +1,6 @@
 import * as Long from "long";
 import * as protobufjs from "protobufjs";
-import { api } from "./proto";
+import { wallix } from "./proto";
 import { Base64, Uint8Tool } from "./Tools";
 import * as HTTP from "./HTTP";
 
@@ -13,6 +13,8 @@ export {
   ServerKind as ServerError,
   SDKKind as SDKError
 } from "./Error";
+
+import api = wallix.gopeps.protobuf.datapeps;
 
 protobufjs.util.Long = Long;
 protobufjs.configure();

@@ -3,11 +3,13 @@ import * as nacl from "tweetnacl";
 import { IdentityPublicKey, IdentityPublicKeyID } from "./IdentityAPI";
 import { TrustOnFirstUse } from "./SessionInternal";
 import { Client } from "./HTTP";
-import { api } from "./proto";
+import { wallix } from "./proto";
 import { SignedCipher } from "./Cryptor";
 import { Error, SDKKind } from "./Error";
 import { Uint8Tool } from "./Tools";
 import { TrustPolicy } from "./Session";
+
+import api = wallix.gopeps.protobuf.datapeps;
 
 /**
  * The public keys of identities are fetched from DataPeps and then validated thanks to a {@TrustPolicy}.

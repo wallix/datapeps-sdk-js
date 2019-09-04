@@ -1,5 +1,6 @@
-import { api } from "./proto";
+import { wallix } from "./proto";
 import { Identity } from "./IdentityAPI";
+import api = wallix.gopeps.protobuf.datapeps;
 export declare class IdentitySerializer {
     static deserialize(t: api.IIdentity): Identity<Uint8Array>;
 }

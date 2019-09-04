@@ -1,4 +1,4 @@
-import { api } from "./proto";
+import { wallix } from "./proto";
 import { IdentityPublicKey, IdentityPublicKeyID } from "./IdentityAPI";
 import { Uint8Tool, Base64, Uint8Converter } from "./Tools";
 import { Client, Request, client } from "./HTTP";
@@ -14,6 +14,8 @@ import {
   IdentityEncryptedKeySet
 } from "./IdentityKeySet";
 import { MemoryPublicKeysCache } from "./PublicKeyManager";
+
+import api = wallix.gopeps.protobuf.datapeps;
 
 /**
  * Specify how the sdk request should be authenticated by the DataPeps service.
@@ -152,7 +154,9 @@ export class Session {
     client: Client,
     login: string,
     recover: (e: api.IdentityEncryptedKeySet) => IdentityKeySet,
-    options: LoginOptions = { saltKind: api.SessionSaltKind.TIME }
+    options: LoginOptions = {
+      saltKind: api.SessionSaltKind.TIME
+    }
   ): Promise<Session> {
     let {
       connectionParameters,
@@ -165,7 +169,9 @@ export class Session {
     client: Client,
     login: string,
     recover: (e: api.IdentityEncryptedKeySet) => IdentityKeySet,
-    options: LoginOptions = { saltKind: api.SessionSaltKind.TIME },
+    options: LoginOptions = {
+      saltKind: api.SessionSaltKind.TIME
+    },
     secret: string | Uint8Array
   ) {
     let {
@@ -184,7 +190,9 @@ export class Session {
     client: Client,
     login: string,
     recover: (e: api.IdentityEncryptedKeySet) => IdentityKeySet,
-    options: LoginOptions = { saltKind: api.SessionSaltKind.TIME }
+    options: LoginOptions = {
+      saltKind: api.SessionSaltKind.TIME
+    }
   ): Promise<{
     connectionParameters: SessionParams;
     identityKeySet: IdentityKeySet;

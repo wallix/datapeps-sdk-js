@@ -26,13 +26,9 @@ export async function devWithAllConfigs(init: initCtx): Promise<devCtx> {
   await Promise.all(
     devCtx.apps.slice(0, configs.length).map(
       async (app, i) =>
-        await api.putConfig(
-          app.identity.login,
-          {
-            jwt: configs[i].config
-          },
-          devCtx.customers[0].id
-        )
+        await api.putConfig(app.identity.login, {
+          jwt: configs[i].config
+        })
     )
   );
   return devCtx;

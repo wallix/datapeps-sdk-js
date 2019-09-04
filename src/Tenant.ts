@@ -1,4 +1,5 @@
-import { api } from "./proto";
+/*
+import { wallix } from "./proto";
 import { Session } from "./Session";
 import { SessionState } from "./SessionInternal";
 
@@ -14,16 +15,21 @@ export class Tenant {
   constructor(session: Session) {
     this.api = SessionState.create(session);
   }
-  async getCustomers(): Promise<api.TenantGetCustomersResponse> {
-    return await this.api.client.doProtoRequest<api.TenantGetCustomersResponse>(
-      {
-        method: "GET",
-        expectedCode: 200,
-        path: `/api/v1/tenant/customers`,
-        response: r => {
-          return api.TenantGetCustomersResponse.decode(r);
-        }
+  async getCustomers(): Promise<
+    wallix.gopeps.protobuf.datapeps.TenantGetCustomersResponse
+  > {
+    return await this.api.client.doProtoRequest<
+      wallix.gopeps.protobuf.datapeps.TenantGetCustomersResponse
+    >({
+      method: "GET",
+      expectedCode: 200,
+      path: `/api/v1/tenant/customers`,
+      response: r => {
+        return wallix.gopeps.protobuf.datapeps.TenantGetCustomersResponse.decode(
+          r
+        );
       }
-    );
+    });
   }
 }
+*/

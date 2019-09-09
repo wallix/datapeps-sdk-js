@@ -6,6 +6,7 @@ import { client } from "./HTTP";
 
 export class BillingAPI {
   async getSimpleBill(
+    login: string,
     tenantName: string,
     period: {
       from: number | Long;
@@ -17,6 +18,7 @@ export class BillingAPI {
       method: "POST",
       path: "/api/v1/billing/bill",
       body: billing.GetTenantBillRequest.encode({
+        login,
         tenant: new billing.Tenant({
           name: tenantName
         }),

@@ -40931,14 +40931,460 @@ $root.services = (function() {
                 return Tenant;
             })();
 
+            billing.TenantSimpleStats = (function() {
+
+                /**
+                 * Properties of a TenantSimpleStats.
+                 * @memberof services.interfaces.billing
+                 * @interface ITenantSimpleStats
+                 * @property {services.interfaces.billing.ITenant|null} [tenant] TenantSimpleStats tenant
+                 * @property {Array.<services.interfaces.billing.ICustomerSimpleBill>|null} [customers] TenantSimpleStats customers
+                 */
+
+                /**
+                 * Constructs a new TenantSimpleStats.
+                 * @memberof services.interfaces.billing
+                 * @classdesc Represents a TenantSimpleStats.
+                 * @implements ITenantSimpleStats
+                 * @constructor
+                 * @param {services.interfaces.billing.ITenantSimpleStats=} [properties] Properties to set
+                 */
+                function TenantSimpleStats(properties) {
+                    this.customers = [];
+                    if (properties)
+                        for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                            if (properties[keys[i]] != null)
+                                this[keys[i]] = properties[keys[i]];
+                }
+
+                /**
+                 * TenantSimpleStats tenant.
+                 * @member {services.interfaces.billing.ITenant|null|undefined} tenant
+                 * @memberof services.interfaces.billing.TenantSimpleStats
+                 * @instance
+                 */
+                TenantSimpleStats.prototype.tenant = null;
+
+                /**
+                 * TenantSimpleStats customers.
+                 * @member {Array.<services.interfaces.billing.ICustomerSimpleBill>} customers
+                 * @memberof services.interfaces.billing.TenantSimpleStats
+                 * @instance
+                 */
+                TenantSimpleStats.prototype.customers = $util.emptyArray;
+
+                /**
+                 * Creates a new TenantSimpleStats instance using the specified properties.
+                 * @function create
+                 * @memberof services.interfaces.billing.TenantSimpleStats
+                 * @static
+                 * @param {services.interfaces.billing.ITenantSimpleStats=} [properties] Properties to set
+                 * @returns {services.interfaces.billing.TenantSimpleStats} TenantSimpleStats instance
+                 */
+                TenantSimpleStats.create = function create(properties) {
+                    return new TenantSimpleStats(properties);
+                };
+
+                /**
+                 * Encodes the specified TenantSimpleStats message. Does not implicitly {@link services.interfaces.billing.TenantSimpleStats.verify|verify} messages.
+                 * @function encode
+                 * @memberof services.interfaces.billing.TenantSimpleStats
+                 * @static
+                 * @param {services.interfaces.billing.ITenantSimpleStats} message TenantSimpleStats message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                TenantSimpleStats.encode = function encode(message, writer) {
+                    if (!writer)
+                        writer = $Writer.create();
+                    if (message.tenant != null && message.hasOwnProperty("tenant"))
+                        $root.services.interfaces.billing.Tenant.encode(message.tenant, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                    if (message.customers != null && message.customers.length)
+                        for (var i = 0; i < message.customers.length; ++i)
+                            $root.services.interfaces.billing.CustomerSimpleBill.encode(message.customers[i], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                    return writer;
+                };
+
+                /**
+                 * Encodes the specified TenantSimpleStats message, length delimited. Does not implicitly {@link services.interfaces.billing.TenantSimpleStats.verify|verify} messages.
+                 * @function encodeDelimited
+                 * @memberof services.interfaces.billing.TenantSimpleStats
+                 * @static
+                 * @param {services.interfaces.billing.ITenantSimpleStats} message TenantSimpleStats message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                TenantSimpleStats.encodeDelimited = function encodeDelimited(message, writer) {
+                    return this.encode(message, writer).ldelim();
+                };
+
+                /**
+                 * Decodes a TenantSimpleStats message from the specified reader or buffer.
+                 * @function decode
+                 * @memberof services.interfaces.billing.TenantSimpleStats
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @param {number} [length] Message length if known beforehand
+                 * @returns {services.interfaces.billing.TenantSimpleStats} TenantSimpleStats
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                TenantSimpleStats.decode = function decode(reader, length) {
+                    if (!(reader instanceof $Reader))
+                        reader = $Reader.create(reader);
+                    var end = length === undefined ? reader.len : reader.pos + length, message = new $root.services.interfaces.billing.TenantSimpleStats();
+                    while (reader.pos < end) {
+                        var tag = reader.uint32();
+                        switch (tag >>> 3) {
+                        case 1:
+                            message.tenant = $root.services.interfaces.billing.Tenant.decode(reader, reader.uint32());
+                            break;
+                        case 2:
+                            if (!(message.customers && message.customers.length))
+                                message.customers = [];
+                            message.customers.push($root.services.interfaces.billing.CustomerSimpleBill.decode(reader, reader.uint32()));
+                            break;
+                        default:
+                            reader.skipType(tag & 7);
+                            break;
+                        }
+                    }
+                    return message;
+                };
+
+                /**
+                 * Decodes a TenantSimpleStats message from the specified reader or buffer, length delimited.
+                 * @function decodeDelimited
+                 * @memberof services.interfaces.billing.TenantSimpleStats
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @returns {services.interfaces.billing.TenantSimpleStats} TenantSimpleStats
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                TenantSimpleStats.decodeDelimited = function decodeDelimited(reader) {
+                    if (!(reader instanceof $Reader))
+                        reader = new $Reader(reader);
+                    return this.decode(reader, reader.uint32());
+                };
+
+                /**
+                 * Verifies a TenantSimpleStats message.
+                 * @function verify
+                 * @memberof services.interfaces.billing.TenantSimpleStats
+                 * @static
+                 * @param {Object.<string,*>} message Plain object to verify
+                 * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                 */
+                TenantSimpleStats.verify = function verify(message) {
+                    if (typeof message !== "object" || message === null)
+                        return "object expected";
+                    if (message.tenant != null && message.hasOwnProperty("tenant")) {
+                        var error = $root.services.interfaces.billing.Tenant.verify(message.tenant);
+                        if (error)
+                            return "tenant." + error;
+                    }
+                    if (message.customers != null && message.hasOwnProperty("customers")) {
+                        if (!Array.isArray(message.customers))
+                            return "customers: array expected";
+                        for (var i = 0; i < message.customers.length; ++i) {
+                            var error = $root.services.interfaces.billing.CustomerSimpleBill.verify(message.customers[i]);
+                            if (error)
+                                return "customers." + error;
+                        }
+                    }
+                    return null;
+                };
+
+                /**
+                 * Creates a TenantSimpleStats message from a plain object. Also converts values to their respective internal types.
+                 * @function fromObject
+                 * @memberof services.interfaces.billing.TenantSimpleStats
+                 * @static
+                 * @param {Object.<string,*>} object Plain object
+                 * @returns {services.interfaces.billing.TenantSimpleStats} TenantSimpleStats
+                 */
+                TenantSimpleStats.fromObject = function fromObject(object) {
+                    if (object instanceof $root.services.interfaces.billing.TenantSimpleStats)
+                        return object;
+                    var message = new $root.services.interfaces.billing.TenantSimpleStats();
+                    if (object.tenant != null) {
+                        if (typeof object.tenant !== "object")
+                            throw TypeError(".services.interfaces.billing.TenantSimpleStats.tenant: object expected");
+                        message.tenant = $root.services.interfaces.billing.Tenant.fromObject(object.tenant);
+                    }
+                    if (object.customers) {
+                        if (!Array.isArray(object.customers))
+                            throw TypeError(".services.interfaces.billing.TenantSimpleStats.customers: array expected");
+                        message.customers = [];
+                        for (var i = 0; i < object.customers.length; ++i) {
+                            if (typeof object.customers[i] !== "object")
+                                throw TypeError(".services.interfaces.billing.TenantSimpleStats.customers: object expected");
+                            message.customers[i] = $root.services.interfaces.billing.CustomerSimpleBill.fromObject(object.customers[i]);
+                        }
+                    }
+                    return message;
+                };
+
+                /**
+                 * Creates a plain object from a TenantSimpleStats message. Also converts values to other types if specified.
+                 * @function toObject
+                 * @memberof services.interfaces.billing.TenantSimpleStats
+                 * @static
+                 * @param {services.interfaces.billing.TenantSimpleStats} message TenantSimpleStats
+                 * @param {$protobuf.IConversionOptions} [options] Conversion options
+                 * @returns {Object.<string,*>} Plain object
+                 */
+                TenantSimpleStats.toObject = function toObject(message, options) {
+                    if (!options)
+                        options = {};
+                    var object = {};
+                    if (options.arrays || options.defaults)
+                        object.customers = [];
+                    if (options.defaults)
+                        object.tenant = null;
+                    if (message.tenant != null && message.hasOwnProperty("tenant"))
+                        object.tenant = $root.services.interfaces.billing.Tenant.toObject(message.tenant, options);
+                    if (message.customers && message.customers.length) {
+                        object.customers = [];
+                        for (var j = 0; j < message.customers.length; ++j)
+                            object.customers[j] = $root.services.interfaces.billing.CustomerSimpleBill.toObject(message.customers[j], options);
+                    }
+                    return object;
+                };
+
+                /**
+                 * Converts this TenantSimpleStats to JSON.
+                 * @function toJSON
+                 * @memberof services.interfaces.billing.TenantSimpleStats
+                 * @instance
+                 * @returns {Object.<string,*>} JSON object
+                 */
+                TenantSimpleStats.prototype.toJSON = function toJSON() {
+                    return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                };
+
+                return TenantSimpleStats;
+            })();
+
+            billing.BillTotal = (function() {
+
+                /**
+                 * Properties of a BillTotal.
+                 * @memberof services.interfaces.billing
+                 * @interface IBillTotal
+                 * @property {number|null} [sum] BillTotal sum
+                 * @property {string|null} [currency] BillTotal currency
+                 */
+
+                /**
+                 * Constructs a new BillTotal.
+                 * @memberof services.interfaces.billing
+                 * @classdesc Represents a BillTotal.
+                 * @implements IBillTotal
+                 * @constructor
+                 * @param {services.interfaces.billing.IBillTotal=} [properties] Properties to set
+                 */
+                function BillTotal(properties) {
+                    if (properties)
+                        for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                            if (properties[keys[i]] != null)
+                                this[keys[i]] = properties[keys[i]];
+                }
+
+                /**
+                 * BillTotal sum.
+                 * @member {number} sum
+                 * @memberof services.interfaces.billing.BillTotal
+                 * @instance
+                 */
+                BillTotal.prototype.sum = 0;
+
+                /**
+                 * BillTotal currency.
+                 * @member {string} currency
+                 * @memberof services.interfaces.billing.BillTotal
+                 * @instance
+                 */
+                BillTotal.prototype.currency = "";
+
+                /**
+                 * Creates a new BillTotal instance using the specified properties.
+                 * @function create
+                 * @memberof services.interfaces.billing.BillTotal
+                 * @static
+                 * @param {services.interfaces.billing.IBillTotal=} [properties] Properties to set
+                 * @returns {services.interfaces.billing.BillTotal} BillTotal instance
+                 */
+                BillTotal.create = function create(properties) {
+                    return new BillTotal(properties);
+                };
+
+                /**
+                 * Encodes the specified BillTotal message. Does not implicitly {@link services.interfaces.billing.BillTotal.verify|verify} messages.
+                 * @function encode
+                 * @memberof services.interfaces.billing.BillTotal
+                 * @static
+                 * @param {services.interfaces.billing.IBillTotal} message BillTotal message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                BillTotal.encode = function encode(message, writer) {
+                    if (!writer)
+                        writer = $Writer.create();
+                    if (message.sum != null && message.hasOwnProperty("sum"))
+                        writer.uint32(/* id 1, wireType 1 =*/9).double(message.sum);
+                    if (message.currency != null && message.hasOwnProperty("currency"))
+                        writer.uint32(/* id 2, wireType 2 =*/18).string(message.currency);
+                    return writer;
+                };
+
+                /**
+                 * Encodes the specified BillTotal message, length delimited. Does not implicitly {@link services.interfaces.billing.BillTotal.verify|verify} messages.
+                 * @function encodeDelimited
+                 * @memberof services.interfaces.billing.BillTotal
+                 * @static
+                 * @param {services.interfaces.billing.IBillTotal} message BillTotal message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                BillTotal.encodeDelimited = function encodeDelimited(message, writer) {
+                    return this.encode(message, writer).ldelim();
+                };
+
+                /**
+                 * Decodes a BillTotal message from the specified reader or buffer.
+                 * @function decode
+                 * @memberof services.interfaces.billing.BillTotal
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @param {number} [length] Message length if known beforehand
+                 * @returns {services.interfaces.billing.BillTotal} BillTotal
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                BillTotal.decode = function decode(reader, length) {
+                    if (!(reader instanceof $Reader))
+                        reader = $Reader.create(reader);
+                    var end = length === undefined ? reader.len : reader.pos + length, message = new $root.services.interfaces.billing.BillTotal();
+                    while (reader.pos < end) {
+                        var tag = reader.uint32();
+                        switch (tag >>> 3) {
+                        case 1:
+                            message.sum = reader.double();
+                            break;
+                        case 2:
+                            message.currency = reader.string();
+                            break;
+                        default:
+                            reader.skipType(tag & 7);
+                            break;
+                        }
+                    }
+                    return message;
+                };
+
+                /**
+                 * Decodes a BillTotal message from the specified reader or buffer, length delimited.
+                 * @function decodeDelimited
+                 * @memberof services.interfaces.billing.BillTotal
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @returns {services.interfaces.billing.BillTotal} BillTotal
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                BillTotal.decodeDelimited = function decodeDelimited(reader) {
+                    if (!(reader instanceof $Reader))
+                        reader = new $Reader(reader);
+                    return this.decode(reader, reader.uint32());
+                };
+
+                /**
+                 * Verifies a BillTotal message.
+                 * @function verify
+                 * @memberof services.interfaces.billing.BillTotal
+                 * @static
+                 * @param {Object.<string,*>} message Plain object to verify
+                 * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                 */
+                BillTotal.verify = function verify(message) {
+                    if (typeof message !== "object" || message === null)
+                        return "object expected";
+                    if (message.sum != null && message.hasOwnProperty("sum"))
+                        if (typeof message.sum !== "number")
+                            return "sum: number expected";
+                    if (message.currency != null && message.hasOwnProperty("currency"))
+                        if (!$util.isString(message.currency))
+                            return "currency: string expected";
+                    return null;
+                };
+
+                /**
+                 * Creates a BillTotal message from a plain object. Also converts values to their respective internal types.
+                 * @function fromObject
+                 * @memberof services.interfaces.billing.BillTotal
+                 * @static
+                 * @param {Object.<string,*>} object Plain object
+                 * @returns {services.interfaces.billing.BillTotal} BillTotal
+                 */
+                BillTotal.fromObject = function fromObject(object) {
+                    if (object instanceof $root.services.interfaces.billing.BillTotal)
+                        return object;
+                    var message = new $root.services.interfaces.billing.BillTotal();
+                    if (object.sum != null)
+                        message.sum = Number(object.sum);
+                    if (object.currency != null)
+                        message.currency = String(object.currency);
+                    return message;
+                };
+
+                /**
+                 * Creates a plain object from a BillTotal message. Also converts values to other types if specified.
+                 * @function toObject
+                 * @memberof services.interfaces.billing.BillTotal
+                 * @static
+                 * @param {services.interfaces.billing.BillTotal} message BillTotal
+                 * @param {$protobuf.IConversionOptions} [options] Conversion options
+                 * @returns {Object.<string,*>} Plain object
+                 */
+                BillTotal.toObject = function toObject(message, options) {
+                    if (!options)
+                        options = {};
+                    var object = {};
+                    if (options.defaults) {
+                        object.sum = 0;
+                        object.currency = "";
+                    }
+                    if (message.sum != null && message.hasOwnProperty("sum"))
+                        object.sum = options.json && !isFinite(message.sum) ? String(message.sum) : message.sum;
+                    if (message.currency != null && message.hasOwnProperty("currency"))
+                        object.currency = message.currency;
+                    return object;
+                };
+
+                /**
+                 * Converts this BillTotal to JSON.
+                 * @function toJSON
+                 * @memberof services.interfaces.billing.BillTotal
+                 * @instance
+                 * @returns {Object.<string,*>} JSON object
+                 */
+                BillTotal.prototype.toJSON = function toJSON() {
+                    return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                };
+
+                return BillTotal;
+            })();
+
             billing.TenantSimpleBill = (function() {
 
                 /**
                  * Properties of a TenantSimpleBill.
                  * @memberof services.interfaces.billing
                  * @interface ITenantSimpleBill
-                 * @property {services.interfaces.billing.ITenant|null} [tenant] TenantSimpleBill tenant
-                 * @property {Array.<services.interfaces.billing.ICustomerSimpleBill>|null} [customers] TenantSimpleBill customers
+                 * @property {services.interfaces.billing.ITenantSimpleStats|null} [stats] TenantSimpleBill stats
+                 * @property {services.interfaces.billing.IBillTotal|null} [total] TenantSimpleBill total
                  */
 
                 /**
@@ -40950,7 +41396,6 @@ $root.services = (function() {
                  * @param {services.interfaces.billing.ITenantSimpleBill=} [properties] Properties to set
                  */
                 function TenantSimpleBill(properties) {
-                    this.customers = [];
                     if (properties)
                         for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                             if (properties[keys[i]] != null)
@@ -40958,20 +41403,20 @@ $root.services = (function() {
                 }
 
                 /**
-                 * TenantSimpleBill tenant.
-                 * @member {services.interfaces.billing.ITenant|null|undefined} tenant
+                 * TenantSimpleBill stats.
+                 * @member {services.interfaces.billing.ITenantSimpleStats|null|undefined} stats
                  * @memberof services.interfaces.billing.TenantSimpleBill
                  * @instance
                  */
-                TenantSimpleBill.prototype.tenant = null;
+                TenantSimpleBill.prototype.stats = null;
 
                 /**
-                 * TenantSimpleBill customers.
-                 * @member {Array.<services.interfaces.billing.ICustomerSimpleBill>} customers
+                 * TenantSimpleBill total.
+                 * @member {services.interfaces.billing.IBillTotal|null|undefined} total
                  * @memberof services.interfaces.billing.TenantSimpleBill
                  * @instance
                  */
-                TenantSimpleBill.prototype.customers = $util.emptyArray;
+                TenantSimpleBill.prototype.total = null;
 
                 /**
                  * Creates a new TenantSimpleBill instance using the specified properties.
@@ -40997,11 +41442,10 @@ $root.services = (function() {
                 TenantSimpleBill.encode = function encode(message, writer) {
                     if (!writer)
                         writer = $Writer.create();
-                    if (message.tenant != null && message.hasOwnProperty("tenant"))
-                        $root.services.interfaces.billing.Tenant.encode(message.tenant, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
-                    if (message.customers != null && message.customers.length)
-                        for (var i = 0; i < message.customers.length; ++i)
-                            $root.services.interfaces.billing.CustomerSimpleBill.encode(message.customers[i], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                    if (message.stats != null && message.hasOwnProperty("stats"))
+                        $root.services.interfaces.billing.TenantSimpleStats.encode(message.stats, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                    if (message.total != null && message.hasOwnProperty("total"))
+                        $root.services.interfaces.billing.BillTotal.encode(message.total, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
                     return writer;
                 };
 
@@ -41037,12 +41481,10 @@ $root.services = (function() {
                         var tag = reader.uint32();
                         switch (tag >>> 3) {
                         case 1:
-                            message.tenant = $root.services.interfaces.billing.Tenant.decode(reader, reader.uint32());
+                            message.stats = $root.services.interfaces.billing.TenantSimpleStats.decode(reader, reader.uint32());
                             break;
                         case 2:
-                            if (!(message.customers && message.customers.length))
-                                message.customers = [];
-                            message.customers.push($root.services.interfaces.billing.CustomerSimpleBill.decode(reader, reader.uint32()));
+                            message.total = $root.services.interfaces.billing.BillTotal.decode(reader, reader.uint32());
                             break;
                         default:
                             reader.skipType(tag & 7);
@@ -41079,19 +41521,15 @@ $root.services = (function() {
                 TenantSimpleBill.verify = function verify(message) {
                     if (typeof message !== "object" || message === null)
                         return "object expected";
-                    if (message.tenant != null && message.hasOwnProperty("tenant")) {
-                        var error = $root.services.interfaces.billing.Tenant.verify(message.tenant);
+                    if (message.stats != null && message.hasOwnProperty("stats")) {
+                        var error = $root.services.interfaces.billing.TenantSimpleStats.verify(message.stats);
                         if (error)
-                            return "tenant." + error;
+                            return "stats." + error;
                     }
-                    if (message.customers != null && message.hasOwnProperty("customers")) {
-                        if (!Array.isArray(message.customers))
-                            return "customers: array expected";
-                        for (var i = 0; i < message.customers.length; ++i) {
-                            var error = $root.services.interfaces.billing.CustomerSimpleBill.verify(message.customers[i]);
-                            if (error)
-                                return "customers." + error;
-                        }
+                    if (message.total != null && message.hasOwnProperty("total")) {
+                        var error = $root.services.interfaces.billing.BillTotal.verify(message.total);
+                        if (error)
+                            return "total." + error;
                     }
                     return null;
                 };
@@ -41108,20 +41546,15 @@ $root.services = (function() {
                     if (object instanceof $root.services.interfaces.billing.TenantSimpleBill)
                         return object;
                     var message = new $root.services.interfaces.billing.TenantSimpleBill();
-                    if (object.tenant != null) {
-                        if (typeof object.tenant !== "object")
-                            throw TypeError(".services.interfaces.billing.TenantSimpleBill.tenant: object expected");
-                        message.tenant = $root.services.interfaces.billing.Tenant.fromObject(object.tenant);
+                    if (object.stats != null) {
+                        if (typeof object.stats !== "object")
+                            throw TypeError(".services.interfaces.billing.TenantSimpleBill.stats: object expected");
+                        message.stats = $root.services.interfaces.billing.TenantSimpleStats.fromObject(object.stats);
                     }
-                    if (object.customers) {
-                        if (!Array.isArray(object.customers))
-                            throw TypeError(".services.interfaces.billing.TenantSimpleBill.customers: array expected");
-                        message.customers = [];
-                        for (var i = 0; i < object.customers.length; ++i) {
-                            if (typeof object.customers[i] !== "object")
-                                throw TypeError(".services.interfaces.billing.TenantSimpleBill.customers: object expected");
-                            message.customers[i] = $root.services.interfaces.billing.CustomerSimpleBill.fromObject(object.customers[i]);
-                        }
+                    if (object.total != null) {
+                        if (typeof object.total !== "object")
+                            throw TypeError(".services.interfaces.billing.TenantSimpleBill.total: object expected");
+                        message.total = $root.services.interfaces.billing.BillTotal.fromObject(object.total);
                     }
                     return message;
                 };
@@ -41139,17 +41572,14 @@ $root.services = (function() {
                     if (!options)
                         options = {};
                     var object = {};
-                    if (options.arrays || options.defaults)
-                        object.customers = [];
-                    if (options.defaults)
-                        object.tenant = null;
-                    if (message.tenant != null && message.hasOwnProperty("tenant"))
-                        object.tenant = $root.services.interfaces.billing.Tenant.toObject(message.tenant, options);
-                    if (message.customers && message.customers.length) {
-                        object.customers = [];
-                        for (var j = 0; j < message.customers.length; ++j)
-                            object.customers[j] = $root.services.interfaces.billing.CustomerSimpleBill.toObject(message.customers[j], options);
+                    if (options.defaults) {
+                        object.stats = null;
+                        object.total = null;
                     }
+                    if (message.stats != null && message.hasOwnProperty("stats"))
+                        object.stats = $root.services.interfaces.billing.TenantSimpleStats.toObject(message.stats, options);
+                    if (message.total != null && message.hasOwnProperty("total"))
+                        object.total = $root.services.interfaces.billing.BillTotal.toObject(message.total, options);
                     return object;
                 };
 
@@ -41412,6 +41842,7 @@ $root.services = (function() {
                  * @property {services.interfaces.billing.ITenant|null} [tenant] GetTenantBillRequest tenant
                  * @property {wallix.gopeps.protobuf.common.IDuration|null} [period] GetTenantBillRequest period
                  * @property {services.interfaces.billing.GetTenantBillRequest.BillType|null} [type] GetTenantBillRequest type
+                 * @property {string|null} [login] GetTenantBillRequest login
                  */
 
                 /**
@@ -41454,6 +41885,14 @@ $root.services = (function() {
                 GetTenantBillRequest.prototype.type = 0;
 
                 /**
+                 * GetTenantBillRequest login.
+                 * @member {string} login
+                 * @memberof services.interfaces.billing.GetTenantBillRequest
+                 * @instance
+                 */
+                GetTenantBillRequest.prototype.login = "";
+
+                /**
                  * Creates a new GetTenantBillRequest instance using the specified properties.
                  * @function create
                  * @memberof services.interfaces.billing.GetTenantBillRequest
@@ -41483,6 +41922,8 @@ $root.services = (function() {
                         $root.wallix.gopeps.protobuf.common.Duration.encode(message.period, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
                     if (message.type != null && message.hasOwnProperty("type"))
                         writer.uint32(/* id 3, wireType 0 =*/24).int32(message.type);
+                    if (message.login != null && message.hasOwnProperty("login"))
+                        writer.uint32(/* id 4, wireType 2 =*/34).string(message.login);
                     return writer;
                 };
 
@@ -41525,6 +41966,9 @@ $root.services = (function() {
                             break;
                         case 3:
                             message.type = reader.int32();
+                            break;
+                        case 4:
+                            message.login = reader.string();
                             break;
                         default:
                             reader.skipType(tag & 7);
@@ -41579,6 +42023,9 @@ $root.services = (function() {
                         case 1:
                             break;
                         }
+                    if (message.login != null && message.hasOwnProperty("login"))
+                        if (!$util.isString(message.login))
+                            return "login: string expected";
                     return null;
                 };
 
@@ -41614,6 +42061,8 @@ $root.services = (function() {
                         message.type = 1;
                         break;
                     }
+                    if (object.login != null)
+                        message.login = String(object.login);
                     return message;
                 };
 
@@ -41634,6 +42083,7 @@ $root.services = (function() {
                         object.tenant = null;
                         object.period = null;
                         object.type = options.enums === String ? "SIMPLE" : 0;
+                        object.login = "";
                     }
                     if (message.tenant != null && message.hasOwnProperty("tenant"))
                         object.tenant = $root.services.interfaces.billing.Tenant.toObject(message.tenant, options);
@@ -41641,6 +42091,8 @@ $root.services = (function() {
                         object.period = $root.wallix.gopeps.protobuf.common.Duration.toObject(message.period, options);
                     if (message.type != null && message.hasOwnProperty("type"))
                         object.type = options.enums === String ? $root.services.interfaces.billing.GetTenantBillRequest.BillType[message.type] : message.type;
+                    if (message.login != null && message.hasOwnProperty("login"))
+                        object.login = message.login;
                     return object;
                 };
 

@@ -42,7 +42,7 @@ var HTTP_1 = require("./HTTP");
 var BillingAPI = /** @class */ (function () {
     function BillingAPI() {
     }
-    BillingAPI.prototype.getSimpleBill = function (tenantName, period) {
+    BillingAPI.prototype.getSimpleBill = function (login, tenantName, period) {
         return __awaiter(this, void 0, void 0, function () {
             var response, bill;
             return __generator(this, function (_a) {
@@ -52,6 +52,7 @@ var BillingAPI = /** @class */ (function () {
                             method: "POST",
                             path: "/api/v1/billing/bill",
                             body: billing.GetTenantBillRequest.encode({
+                                login: login,
                                 tenant: new billing.Tenant({
                                     name: tenantName
                                 }),

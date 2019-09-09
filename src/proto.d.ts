@@ -17245,14 +17245,206 @@ export namespace services {
                 public toJSON(): { [k: string]: any };
             }
 
+            /** Properties of a TenantSimpleStats. */
+            interface ITenantSimpleStats {
+
+                /** TenantSimpleStats tenant */
+                tenant?: (services.interfaces.billing.ITenant|null);
+
+                /** TenantSimpleStats customers */
+                customers?: (services.interfaces.billing.ICustomerSimpleBill[]|null);
+            }
+
+            /** Represents a TenantSimpleStats. */
+            class TenantSimpleStats implements ITenantSimpleStats {
+
+                /**
+                 * Constructs a new TenantSimpleStats.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: services.interfaces.billing.ITenantSimpleStats);
+
+                /** TenantSimpleStats tenant. */
+                public tenant?: (services.interfaces.billing.ITenant|null);
+
+                /** TenantSimpleStats customers. */
+                public customers: services.interfaces.billing.ICustomerSimpleBill[];
+
+                /**
+                 * Creates a new TenantSimpleStats instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns TenantSimpleStats instance
+                 */
+                public static create(properties?: services.interfaces.billing.ITenantSimpleStats): services.interfaces.billing.TenantSimpleStats;
+
+                /**
+                 * Encodes the specified TenantSimpleStats message. Does not implicitly {@link services.interfaces.billing.TenantSimpleStats.verify|verify} messages.
+                 * @param message TenantSimpleStats message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: services.interfaces.billing.ITenantSimpleStats, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified TenantSimpleStats message, length delimited. Does not implicitly {@link services.interfaces.billing.TenantSimpleStats.verify|verify} messages.
+                 * @param message TenantSimpleStats message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: services.interfaces.billing.ITenantSimpleStats, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a TenantSimpleStats message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns TenantSimpleStats
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): services.interfaces.billing.TenantSimpleStats;
+
+                /**
+                 * Decodes a TenantSimpleStats message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns TenantSimpleStats
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): services.interfaces.billing.TenantSimpleStats;
+
+                /**
+                 * Verifies a TenantSimpleStats message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a TenantSimpleStats message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns TenantSimpleStats
+                 */
+                public static fromObject(object: { [k: string]: any }): services.interfaces.billing.TenantSimpleStats;
+
+                /**
+                 * Creates a plain object from a TenantSimpleStats message. Also converts values to other types if specified.
+                 * @param message TenantSimpleStats
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: services.interfaces.billing.TenantSimpleStats, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this TenantSimpleStats to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
+            /** Properties of a BillTotal. */
+            interface IBillTotal {
+
+                /** BillTotal sum */
+                sum?: (number|null);
+
+                /** BillTotal currency */
+                currency?: (string|null);
+            }
+
+            /** Represents a BillTotal. */
+            class BillTotal implements IBillTotal {
+
+                /**
+                 * Constructs a new BillTotal.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: services.interfaces.billing.IBillTotal);
+
+                /** BillTotal sum. */
+                public sum: number;
+
+                /** BillTotal currency. */
+                public currency: string;
+
+                /**
+                 * Creates a new BillTotal instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns BillTotal instance
+                 */
+                public static create(properties?: services.interfaces.billing.IBillTotal): services.interfaces.billing.BillTotal;
+
+                /**
+                 * Encodes the specified BillTotal message. Does not implicitly {@link services.interfaces.billing.BillTotal.verify|verify} messages.
+                 * @param message BillTotal message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: services.interfaces.billing.IBillTotal, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified BillTotal message, length delimited. Does not implicitly {@link services.interfaces.billing.BillTotal.verify|verify} messages.
+                 * @param message BillTotal message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: services.interfaces.billing.IBillTotal, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a BillTotal message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns BillTotal
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): services.interfaces.billing.BillTotal;
+
+                /**
+                 * Decodes a BillTotal message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns BillTotal
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): services.interfaces.billing.BillTotal;
+
+                /**
+                 * Verifies a BillTotal message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a BillTotal message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns BillTotal
+                 */
+                public static fromObject(object: { [k: string]: any }): services.interfaces.billing.BillTotal;
+
+                /**
+                 * Creates a plain object from a BillTotal message. Also converts values to other types if specified.
+                 * @param message BillTotal
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: services.interfaces.billing.BillTotal, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this BillTotal to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+            }
+
             /** Properties of a TenantSimpleBill. */
             interface ITenantSimpleBill {
 
-                /** TenantSimpleBill tenant */
-                tenant?: (services.interfaces.billing.ITenant|null);
+                /** TenantSimpleBill stats */
+                stats?: (services.interfaces.billing.ITenantSimpleStats|null);
 
-                /** TenantSimpleBill customers */
-                customers?: (services.interfaces.billing.ICustomerSimpleBill[]|null);
+                /** TenantSimpleBill total */
+                total?: (services.interfaces.billing.IBillTotal|null);
             }
 
             /** Represents a TenantSimpleBill. */
@@ -17264,11 +17456,11 @@ export namespace services {
                  */
                 constructor(properties?: services.interfaces.billing.ITenantSimpleBill);
 
-                /** TenantSimpleBill tenant. */
-                public tenant?: (services.interfaces.billing.ITenant|null);
+                /** TenantSimpleBill stats. */
+                public stats?: (services.interfaces.billing.ITenantSimpleStats|null);
 
-                /** TenantSimpleBill customers. */
-                public customers: services.interfaces.billing.ICustomerSimpleBill[];
+                /** TenantSimpleBill total. */
+                public total?: (services.interfaces.billing.IBillTotal|null);
 
                 /**
                  * Creates a new TenantSimpleBill instance using the specified properties.
@@ -17448,6 +17640,9 @@ export namespace services {
 
                 /** GetTenantBillRequest type */
                 type?: (services.interfaces.billing.GetTenantBillRequest.BillType|null);
+
+                /** GetTenantBillRequest login */
+                login?: (string|null);
             }
 
             /** Represents a GetTenantBillRequest. */
@@ -17467,6 +17662,9 @@ export namespace services {
 
                 /** GetTenantBillRequest type. */
                 public type: services.interfaces.billing.GetTenantBillRequest.BillType;
+
+                /** GetTenantBillRequest login. */
+                public login: string;
 
                 /**
                  * Creates a new GetTenantBillRequest instance using the specified properties.
